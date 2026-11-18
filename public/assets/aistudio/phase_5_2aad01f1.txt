@@ -1,0 +1,680 @@
+PHASE 5/10 — TEACHER ATTENDANCE & STUDENT ABSENCE NOTIFICATIONS
+
+Complete Implementation Prompt
+
+1. ROLE
+
+Act as a senior full-stack engineer, software architect, security engineer and UI/UX designer.
+
+Implement Phase 5 inside the existing Tuition Management System.
+
+This is an existing application. Do not create a new project or replace the architecture.
+
+Before coding:
+
+1. Inspect the project structure.
+2. Review Phases 1–4 and their implementation.
+3. Review account, academic, enrolment, assignment and timetable services.
+4. Identify reusable components and existing conventions.
+5. Prepare an implementation plan.
+6. Implement Phase 5 only.
+
+Do not start Phase 6.
+
+2. EXISTING ARCHITECTURE
+
+Preserve exactly two web applications.
+
+Admin Portal
+
+- Admin Website for desktop and laptop.
+- Admin Web App for mobile and tablet.
+
+Teacher & Student Portal
+
+- Shared Teacher/Student login.
+- Automatic role detection.
+- Teacher-specific dashboard.
+- Student-specific dashboard.
+- Parents use the student's credentials.
+- No separate Parent login.
+
+Preserve all completed Phase 1–4 features.
+
+3. CONFIRMED TECHNOLOGY
+
+Keep:
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+
+Do not migrate frameworks or replace the existing design system.
+
+Do not introduce PostgreSQL or another database.
+
+4. STRICT INTEGRATION RULES
+
+The user personally connects Firebase.
+
+Do not create a Firebase project, connect Google accounts, access credentials, connect Firebase automatically, modify Firebase Console or deploy Firebase resources.
+
+Until the user manually connects Firebase:
+
+- Use the existing local development adapter.
+- Store clearly labelled DEMO DATA.
+- Keep development data isolated.
+- Never claim demo data is production data.
+
+Do not use:
+
+- Gemini API.
+- OpenAI API.
+- Any external AI model.
+- WhatsApp API.
+- SMS services.
+- Email notification services.
+- Payment gateways.
+- External analytics.
+- Other third-party services without explicit authorization.
+
+Absence notifications in this phase must be in-app notifications only.
+
+5. PHASE OBJECTIVES
+
+Implement:
+
+1. Teacher attendance marking.
+2. Daily attendance management.
+3. Exam-day attendance support.
+4. Student attendance history.
+5. Attendance percentage calculations.
+6. Admin attendance monitoring.
+7. In-app absence notifications.
+8. Attendance corrections and audit history.
+9. Role-based access restrictions.
+
+All features must use the existing Phase 3 student accounts and Phase 4 academic records.
+
+Do not create duplicate student, teacher, class or batch records.
+
+6. TEACHER ATTENDANCE DASHBOARD
+
+Create an Attendance section in the Teacher Portal.
+
+The teacher must see only:
+
+- Their assigned classes.
+- Their assigned batches.
+- Their assigned subjects.
+- Relevant scheduled sessions.
+
+Provide a clear workflow:
+
+1. Select an assigned class.
+2. Select an assigned batch.
+3. Select the attendance date.
+4. Select the relevant subject or scheduled session.
+5. Load enrolled students.
+6. Mark attendance.
+7. Review the complete attendance list.
+8. Submit attendance.
+9. Show a successful submission confirmation.
+
+The teacher must not see students from unrelated batches.
+
+Use the existing TeacherAssignment, StudentEnrolment and TimetableEntry relationships.
+
+7. ATTENDANCE STATUSES
+
+Support these statuses:
+
+- Present.
+- Absent.
+- Late.
+- Excused.
+
+Use clear visual indicators and labels.
+
+Rules:
+
+- Every enrolled student must have an attendance status for a submitted session.
+- Do not silently mark students absent when a teacher forgets to mark them.
+- Incomplete attendance must be clearly identified.
+- Teachers must be able to review all statuses before submission.
+- Prevent accidental duplicate submissions.
+
+Define the attendance calculation rules clearly.
+
+For the default attendance percentage:
+
+- Present counts as attended.
+- Late counts as attended.
+- Absent does not count as attended.
+- Excused is excluded from the percentage denominator.
+
+Display the numerator and denominator where useful so the percentage is understandable.
+
+8. DAILY ATTENDANCE
+
+Support attendance for regular scheduled classes.
+
+Use:
+
+- Existing active student enrolments.
+- Existing teacher assignments.
+- Existing timetable records.
+
+Validate:
+
+- Teacher is active.
+- Student account is active.
+- Enrolment is active.
+- Teacher has the relevant active assignment.
+- Selected batch belongs to the selected class.
+- Selected subject is valid.
+- Selected date is valid.
+
+Do not allow teachers to mark attendance for classes or batches they are not assigned to.
+
+Prevent duplicate attendance records for the same student and session.
+
+If a timetable session is cancelled, do not allow attendance to be submitted for that cancelled session.
+
+9. EXAM-DAY ATTENDANCE
+
+Support a separate attendance type for examination sessions.
+
+Teachers must be able to identify an attendance session as:
+
+- Regular Class.
+- Examination.
+
+For examination attendance:
+
+- Select the relevant class and batch.
+- Select the subject.
+- Enter an exam title or reference.
+- Select the date.
+- Load eligible students.
+- Mark attendance.
+- Review and submit.
+
+Do not build the full examination, question-paper or marks-management system in this phase.
+
+Those features belong to Phase 6.
+
+10. ATTENDANCE RECORD MODEL
+
+Create or extend appropriate TypeScript models.
+
+AttendanceSession
+
+- id.
+- sessionDate.
+- classId.
+- batchId.
+- subjectId.
+- teacherId.
+- sessionType: regular or examination.
+- timetableEntryId, where applicable.
+- examTitle, where applicable.
+- status: draft, submitted or corrected.
+- createdAt.
+- submittedAt.
+- updatedAt.
+
+AttendanceRecord
+
+- id.
+- attendanceSessionId.
+- studentId.
+- status.
+- remarks, optional.
+- markedBy.
+- markedAt.
+- updatedAt.
+
+AttendanceAuditEntry
+
+- id.
+- attendanceSessionId.
+- attendanceRecordId, where applicable.
+- action.
+- previousValue, where applicable.
+- newValue, where applicable.
+- actorId.
+- timestamp.
+- reason, where applicable.
+
+Use stable IDs and existing project types.
+
+Do not store passwords or authentication secrets in attendance records.
+
+11. SUBMISSION AND CORRECTION
+
+Before submission:
+
+- Show the full student list.
+- Show each attendance status.
+- Show status counts.
+- Highlight unmarked students.
+- Require confirmation.
+
+After submission:
+
+- Save attendance records through the service layer.
+- Prevent ordinary duplicate submissions.
+- Record the submitting teacher.
+- Record submission time.
+- Display a confirmation.
+
+Correction workflow
+
+Teachers may request or perform corrections only according to the defined permission policy.
+
+For this phase, implement:
+
+- Teacher correction within a clearly defined editable window, if supported by the existing architecture.
+- Admin correction for submitted attendance.
+- Mandatory reason for changing a submitted attendance record.
+- Audit entry containing the previous and new status.
+- Clear indication that the record was corrected.
+
+Do not silently overwrite submitted attendance.
+
+If a teacher's correction window cannot be reliably enforced in the local adapter, document it as a demo limitation and use an explicit Admin-mediated correction workflow instead.
+
+12. IN-APP ABSENCE NOTIFICATIONS
+
+When submitted attendance contains an Absent student, create an in-app absence notification.
+
+The notification must contain:
+
+- Student name.
+- Student ID.
+- Absence date.
+- Class.
+- Batch.
+- Subject.
+- Attendance type: regular or examination.
+- Notification creation time.
+- Read/unread status.
+
+Target the notification to:
+
+- The affected Student account.
+- The Admin account or Admin notification centre.
+
+Parents will use the Student account, so they can see the same notification.
+
+Do not create a separate Parent account.
+
+Notification requirements:
+
+- Create notifications only after successful attendance submission.
+- Do not create notifications for draft attendance.
+- Do not create absence notifications for Present, Late or Excused statuses.
+- Prevent duplicate notifications for the same absence event.
+- If an absence is corrected, update the notification state or create an appropriate correction notice so users are not misled.
+- Show notifications in the existing dashboards.
+- Support marking notifications as read.
+- Display unread notification counts.
+- Keep notification history.
+
+Do not send WhatsApp messages, SMS or emails.
+
+Do not claim any external notification was delivered.
+
+13. STUDENT ATTENDANCE DASHBOARD
+
+Add an Attendance section to the Student Portal.
+
+Display:
+
+- Overall attendance percentage.
+- Total eligible sessions.
+- Present count.
+- Absent count.
+- Late count.
+- Excused count.
+- Recent attendance.
+- Attendance history.
+
+Provide:
+
+- Date filtering.
+- Subject filtering.
+- Regular class versus examination filtering.
+- Clear status labels.
+- Useful empty states.
+
+Students may view only their own attendance records.
+
+Parents using the student's credentials see the same student information.
+
+Do not expose other students' attendance.
+
+14. ADMIN ATTENDANCE MANAGEMENT
+
+Add an Attendance Management section to the Admin Portal.
+
+Admin must be able to:
+
+- View attendance across classes and batches.
+- Filter by date.
+- Filter by class.
+- Filter by batch.
+- Filter by teacher.
+- Filter by subject.
+- Filter by attendance type.
+- Search by Student ID.
+- Open attendance-session details.
+- Review submitted records.
+- Correct submitted attendance with a mandatory reason.
+- View attendance audit history.
+
+Dashboard overview:
+
+- Total attendance sessions.
+- Sessions submitted.
+- Sessions awaiting submission.
+- Present count.
+- Absent count.
+- Attendance overview by class.
+
+Use actual service data rather than hardcoded numbers.
+
+Ensure that Admin-only operations are protected at the service layer.
+
+15. ATTENDANCE PERCENTAGE CALCULATIONS
+
+Use one consistent calculation method across Admin, Teacher and Student views.
+
+Formula:
+
+Attendance percentage = (Present + Late) / (Present + Absent + Late) × 100
+
+Excused sessions are excluded from the denominator.
+
+If the denominator is zero:
+
+- Display "Not available" or an equivalent clear empty state.
+- Do not divide by zero.
+- Do not display an invented percentage.
+
+Keep calculations in a shared utility or service rather than duplicating formulas across components.
+
+Document the formula.
+
+16. ROLE-BASED ACCESS AND SECURITY
+
+Admin
+
+- View all attendance.
+- Filter all academic attendance data.
+- Correct submitted records.
+- View audit history.
+- Access absence notifications.
+
+Teacher
+
+- Mark attendance only for assigned batches and subjects.
+- View their own submitted sessions.
+- Correct attendance only where explicitly permitted.
+- Cannot modify another teacher's sessions.
+
+Student
+
+- View only their own attendance.
+- View their own absence notifications.
+- Mark notifications as read.
+
+Unauthenticated users
+
+- Cannot access attendance or notification data.
+
+Check permissions in service methods as well as the UI.
+
+Do not rely only on hidden buttons or route guards.
+
+The local adapter is development-only. Document the future Firebase Security Rules and backend enforcement required for production.
+
+17. UI AND DESIGN
+
+Preserve the established Phase 1 design system.
+
+Do not redesign the entire application in this phase.
+
+Build a natural, professional attendance interface.
+
+Requirements:
+
+- Responsive desktop, tablet and mobile.
+- Easy-to-use attendance list.
+- Clear Present/Absent/Late/Excused controls.
+- Useful status counts.
+- Confirmation before submission.
+- Accessible dialogs.
+- Readable attendance history.
+- Purposeful animations.
+- Existing light and dark themes.
+- Existing navigation and components.
+
+Avoid excessive gradients, decorative charts, unnecessary animations and crowded layouts.
+
+A dedicated UI-polishing stage can be completed later after all core phases are implemented.
+
+18. ERROR HANDLING AND VALIDATION
+
+Handle:
+
+- Invalid session dates.
+- Missing student enrolments.
+- Inactive students.
+- Inactive teachers.
+- Invalid teacher assignments.
+- Invalid class/batch combinations.
+- Cancelled timetable sessions.
+- Duplicate attendance submissions.
+- Incomplete attendance lists.
+- Unauthorized corrections.
+- Missing correction reasons.
+- Duplicate absence notifications.
+- Invalid attendance statuses.
+
+Show helpful messages.
+
+Do not silently ignore errors.
+
+Prevent accidental duplicate submissions.
+
+19. TESTING
+
+Create meaningful automated tests.
+
+Test:
+
+Attendance creation
+
+- Create a regular attendance session.
+- Create an examination attendance session.
+- Load correct enrolled students.
+- Reject unrelated batches.
+- Reject inactive students.
+- Reject invalid teacher assignments.
+
+Attendance marking
+
+- Mark Present.
+- Mark Absent.
+- Mark Late.
+- Mark Excused.
+- Reject invalid status.
+- Prevent incomplete submission.
+- Prevent duplicate submission.
+
+Calculations
+
+- Correct percentage calculation.
+- Late counts as attended.
+- Excused excluded from denominator.
+- Zero-denominator handling.
+- Consistent calculations across roles.
+
+Notifications
+
+- Create absence notification after submission.
+- Do not notify for draft attendance.
+- Do not notify for Present, Late or Excused.
+- Prevent duplicate notifications.
+- Handle corrected absences.
+- Mark notifications as read.
+
+Permissions
+
+- Admin can review all attendance.
+- Teacher can access assigned sessions only.
+- Student can access own attendance only.
+- Teacher cannot modify another teacher's session.
+- Student cannot change attendance.
+- Unauthenticated users are rejected.
+
+Corrections
+
+- Require correction reason.
+- Preserve audit history.
+- Verify previous and new status.
+
+Run:
+
+- npm run build
+- npx tsc --noEmit
+- Phase 2 tests.
+- Phase 3 tests.
+- Phase 4 tests.
+- New Phase 5 tests.
+
+Report actual results only.
+
+Do not claim browser screenshot testing unless it was actually performed.
+
+20. TRANSPARENCY AND DOCUMENTATION
+
+Update docs/ARCHITECTURE_AND_ROADMAP.md.
+
+Document:
+
+- Attendance models.
+- Service contracts.
+- Local adapter implementation.
+- Percentage calculation.
+- Notification creation rules.
+- Correction and audit rules.
+- Role permissions.
+- Demo limitations.
+- Production blockers.
+- Test results.
+
+Provide a complete integration inventory.
+
+React, TypeScript, Vite, Tailwind CSS, Motion and Lucide React remain existing technologies.
+
+Local development attendance and notification storage must be labelled DEMO DATA.
+
+Firebase Authentication and Firestore remain not connected.
+
+AI APIs, PostgreSQL, WhatsApp, SMS, email and payment integrations remain disconnected.
+
+If a new dependency is added, explain its purpose and known cost or limits.
+
+21. STRICT PHASE BOUNDARIES
+
+Do not implement:
+
+- Homework.
+- Tests and examination question systems.
+- Marks entry.
+- Online objective tests.
+- Fees.
+- Payments.
+- Receipts.
+- Salary management.
+- Financial reports.
+- Firebase connection.
+- Native Android or iOS applications.
+
+Exam-day attendance is allowed; exam creation, exam content and marking are not.
+
+These belong to later phases.
+
+22. LIMIT AND CONTINUATION RULE
+
+If usage or context limits approach:
+
+1. Save completed changes.
+2. Stop at a safe checkpoint.
+3. Do not leave partially written files.
+4. Record exact progress.
+5. Record remaining tasks.
+6. Record the last successful test/build.
+7. Provide one continuation instruction.
+
+If the interface supports a real Continue button, use it to resume from the saved checkpoint without repeating completed work.
+
+Otherwise provide a copy-ready continuation instruction.
+
+Never pretend a button exists.
+
+23. FINAL COMPLETION REPORT
+
+Provide:
+
+A. Completion status.
+
+B. Completed, partially completed and deferred features.
+
+C. Files created, modified and deleted.
+
+D. Attendance architecture and data flow.
+
+E. Percentage calculation rules.
+
+F. Notification behaviour.
+
+G. Correction and audit implementation.
+
+H. Role-based permissions.
+
+I. Exact build and test results.
+
+J. Full integrations inventory.
+
+K. Known bugs and production blockers.
+
+L. Confirmation that Phases 1–4 remain functional.
+
+M. Next phase: Phase 6 — Homework, Tests, Examinations and Marks Management.
+
+Do not start Phase 6.
+
+FINAL INSTRUCTION
+
+Implement Phase 5 only.
+
+Preserve all completed work from Phases 1–4.
+
+Do not connect Firebase.
+
+Do not use AI APIs.
+
+Do not add PostgreSQL or another database.
+
+Do not connect WhatsApp, SMS or email services.
+
+Prioritize correct attendance records, accurate calculations, secure role-based access, reliable in-app notifications and actual test results.
+
+Finish with a complete and honest completion report.

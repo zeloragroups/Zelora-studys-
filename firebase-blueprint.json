@@ -1,0 +1,994 @@
+{
+  "entities": {
+    "TestConnectionDoc": {
+      "title": "TestConnectionDoc",
+      "description": "Lightweight server connectivity health document.",
+      "type": "object",
+      "properties": {
+        "status": { "type": "string", "maxLength": 40 }
+      },
+      "required": ["status"]
+    },
+    "AdminRegistryEntry": {
+      "title": "AdminRegistryEntry",
+      "description": "Trusted administrator marker keyed by Firebase Auth UID.",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 4, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "loginId": { "type": "string", "minLength": 4, "maxLength": 32, "pattern": "^ADM-[A-Z0-9]{3,12}$" },
+        "fullName": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "status": { "type": "string", "enum": ["active", "deactivated"] },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "loginId", "fullName", "status", "createdAt"]
+    },
+    "AuthIdMapping": {
+      "title": "AuthIdMapping",
+      "description": "Private server/Admin mapping from institutional loginId to Firebase Auth UID (never publicly readable).",
+      "type": "object",
+      "properties": {
+        "loginId": { "type": "string", "minLength": 4, "maxLength": 32, "pattern": "^[A-Z0-9_\\-]+$" },
+        "uid": { "type": "string", "minLength": 4, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "role": { "type": "string", "enum": ["admin", "teacher", "student"] },
+        "status": { "type": "string", "enum": ["active", "deactivated"] },
+        "internalEmail": { "type": "string", "maxLength": 160 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["loginId", "uid", "role", "status", "internalEmail", "updatedAt"]
+    },
+    "UserAccountProfile": {
+      "title": "UserAccountProfile",
+      "description": "Frontend-safe Teacher, Student, or Admin profile document keyed by Firebase Auth UID (zero passwords or hashes).",
+      "type": "object",
+      "properties": {
+        "uid": { "type": "string", "minLength": 4, "maxLength": 128, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "accountId": { "type": "string", "minLength": 4, "maxLength": 32, "pattern": "^(ADM|TCH|STU)-[A-Z0-9]{3,12}$" },
+        "role": { "type": "string", "enum": ["admin", "teacher", "student"] },
+        "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "phone": { "type": "string", "maxLength": 24 },
+        "email": { "type": "string", "maxLength": 160 },
+        "status": { "type": "string", "enum": ["active", "deactivated"] },
+        "classId": { "type": "string", "maxLength": 64 },
+        "className": { "type": "string", "maxLength": 120 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "batchName": { "type": "string", "maxLength": 120 },
+        "sharedWithParent": { "type": "boolean" },
+        "adminUids": { "type": "array", "description": "Authorized admin UIDs (max 10)" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["uid", "accountId", "role", "name", "phone", "status", "adminUids", "createdAt"]
+    },
+    "ApplicationSettings": {
+      "title": "ApplicationSettings",
+      "description": "Institutional branding, centre profile, theme defaults, academic defaults, and notification preferences.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "enum": ["APP-SETTINGS-001"] },
+        "centreProfile": { "type": "object" },
+        "applicationBranding": { "type": "object" },
+        "appearanceDefaults": { "type": "object" },
+        "academicDefaults": { "type": "object" },
+        "notificationPreferences": { "type": "object" },
+        "updatedBy": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "schemaVersion": { "type": "integer" },
+        "environmentMode": { "type": "string", "enum": ["firebase_connected"] }
+      },
+      "required": ["id", "centreProfile", "applicationBranding", "appearanceDefaults", "academicDefaults", "notificationPreferences", "updatedBy", "updatedAt", "schemaVersion"]
+    },
+    "SettingsAuditEntry": {
+      "title": "SettingsAuditEntry",
+      "description": "Append-only audit record for settings and branding changes.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64, "pattern": "^[a-zA-Z0-9_\\-]+$" },
+        "actorId": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "maxLength": 80 },
+        "category": { "type": "string", "enum": ["centre_profile", "application_branding", "appearance_defaults", "academic_defaults", "notification_preferences", "branding_reset"] },
+        "summary": { "type": "string", "maxLength": 300 },
+        "previousValues": { "type": "string", "maxLength": 600 },
+        "newValues": { "type": "string", "maxLength": 600 },
+        "adminUids": { "type": "array" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorId", "action", "category", "summary", "adminUids", "timestamp"]
+    },
+    "ClassRecord": {
+      "title": "ClassRecord",
+      "description": "Academic class/grade entity.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "description": { "type": "string", "maxLength": 300 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "classId", "name", "status", "createdAt"]
+    },
+    "BatchRecord": {
+      "title": "BatchRecord",
+      "description": "Academic batch cohort linked to a parent ClassRecord.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "description": { "type": "string", "maxLength": 300 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "batchId", "name", "classId", "status", "createdAt"]
+    },
+    "SubjectRecord": {
+      "title": "SubjectRecord",
+      "description": "Subject mapped to bounded classIds.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "name": { "type": "string", "minLength": 2, "maxLength": 100 },
+        "code": { "type": "string", "maxLength": 24 },
+        "classIds": { "type": "array" },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "subjectId", "name", "classIds", "status", "createdAt"]
+    },
+    "StudentEnrolment": {
+      "title": "StudentEnrolment",
+      "description": "Student enrolment linking studentAccountId and studentUid to class and batch.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "enrolmentId": { "type": "string", "maxLength": 64 },
+        "studentAccountId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 100 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "enrolmentDate": { "type": "string", "maxLength": 20 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "adminUids": { "type": "array" },
+        "teacherUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "enrolmentId", "studentAccountId", "studentUid", "classId", "batchId", "enrolmentDate", "status", "adminUids", "createdAt"]
+    },
+    "TeacherAssignment": {
+      "title": "TeacherAssignment",
+      "description": "Authorizes a Teacher to manage a specific subject, class, and batch.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "assignmentId": { "type": "string", "maxLength": 64 },
+        "teacherAccountId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "assignmentId", "teacherAccountId", "teacherUid", "subjectId", "classId", "batchId", "status", "adminUids", "createdAt"]
+    },
+    "TimetableEntry": {
+      "title": "TimetableEntry",
+      "description": "Weekly schedule entry for a batch, subject, and assigned teacher.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "entryId": { "type": "string", "maxLength": 64 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "teacherAccountId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "dayOfWeek": { "type": "string", "maxLength": 20 },
+        "startTime": { "type": "string", "maxLength": 8 },
+        "endTime": { "type": "string", "maxLength": 8 },
+        "room": { "type": "string", "maxLength": 60 },
+        "status": { "type": "string", "enum": ["active", "cancelled"] },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "entryId", "classId", "batchId", "subjectId", "teacherAccountId", "teacherUid", "dayOfWeek", "startTime", "endTime", "status", "createdAt"]
+    },
+    "AnnouncementRecord": {
+      "title": "AnnouncementRecord",
+      "description": "Text-only institutional announcement scoped by audience.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "announcementId": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 160 },
+        "content": { "type": "string", "maxLength": 3000 },
+        "audience": { "type": "string", "enum": ["all", "teachers", "students", "class", "batch"] },
+        "targetClassId": { "type": "string", "maxLength": 64 },
+        "targetBatchId": { "type": "string", "maxLength": 64 },
+        "publicationStatus": { "type": "string", "enum": ["draft", "published", "unpublished", "archived"] },
+        "publishedByAdminId": { "type": "string", "maxLength": 64 },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "publishedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "announcementId", "title", "content", "audience", "publicationStatus", "publishedByAdminId", "adminUids", "createdAt"]
+    },
+    "AttendanceSession": {
+      "title": "AttendanceSession",
+      "description": "Attendance session header (draft, submitted, or corrected).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "sessionDate": { "type": "string", "maxLength": 16 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "teacherId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "sessionType": { "type": "string", "enum": ["regular", "examination"] },
+        "timetableEntryId": { "type": "string", "maxLength": 64 },
+        "examTitle": { "type": "string", "maxLength": 160 },
+        "status": { "type": "string", "enum": ["draft", "submitted", "corrected"] },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "sessionDate", "classId", "batchId", "subjectId", "teacherId", "teacherUid", "sessionType", "status", "adminUids", "createdAt"]
+    },
+    "AttendanceRecord": {
+      "title": "AttendanceRecord",
+      "description": "Per-student attendance record linked to AttendanceSession.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "attendanceSessionId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "status": { "type": "string", "enum": ["present", "absent", "late", "excused"] },
+        "remarks": { "type": "string", "maxLength": 300 },
+        "markedBy": { "type": "string", "maxLength": 64 },
+        "markedAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "corrected": { "type": "boolean" },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "attendanceSessionId", "studentId", "studentUid", "teacherUid", "status", "markedBy", "markedAt", "adminUids"]
+    },
+    "AttendanceAuditEntry": {
+      "title": "AttendanceAuditEntry",
+      "description": "Immutable attendance submission and correction audit trail.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "attendanceSessionId": { "type": "string", "maxLength": 64 },
+        "attendanceRecordId": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "enum": ["session_created", "session_draft_saved", "session_submitted", "record_corrected"] },
+        "previousValue": { "type": "string", "maxLength": 120 },
+        "newValue": { "type": "string", "maxLength": 120 },
+        "actorId": { "type": "string", "maxLength": 64 },
+        "timestamp": { "type": "string", "format": "date-time" },
+        "reason": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "attendanceSessionId", "action", "actorId", "timestamp", "adminUids"]
+    },
+    "AbsenceNotification": {
+      "title": "AbsenceNotification",
+      "description": "In-app absence notification generated upon submitted absence.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "attendanceSessionId": { "type": "string", "maxLength": 64 },
+        "attendanceRecordId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 100 },
+        "absenceDate": { "type": "string", "maxLength": 16 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "className": { "type": "string", "maxLength": 100 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "batchName": { "type": "string", "maxLength": 100 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "subjectName": { "type": "string", "maxLength": 100 },
+        "attendanceType": { "type": "string", "enum": ["regular", "examination"] },
+        "examTitle": { "type": "string", "maxLength": 160 },
+        "readByStudent": { "type": "boolean" },
+        "readByStudentAt": { "type": "string", "format": "date-time" },
+        "readByAdmin": { "type": "boolean" },
+        "readByAdminAt": { "type": "string", "format": "date-time" },
+        "resolutionStatus": { "type": "string", "enum": ["active_absence", "corrected_not_absent"] },
+        "correctionNote": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "attendanceSessionId", "attendanceRecordId", "studentId", "studentUid", "absenceDate", "readByStudent", "readByAdmin", "resolutionStatus", "adminUids", "createdAt"]
+    },
+    "HomeworkRecord": {
+      "title": "HomeworkRecord",
+      "description": "Text-only homework assigned by an authorized teacher.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 160 },
+        "instructions": { "type": "string", "maxLength": 5000 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "teacherId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "assignedAt": { "type": "string", "format": "date-time" },
+        "dueAt": { "type": "string", "format": "date-time" },
+        "maximumMarks": { "type": "number" },
+        "status": { "type": "string", "enum": ["draft", "published", "closed", "archived"] },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "instructions", "classId", "batchId", "subjectId", "teacherId", "teacherUid", "assignedAt", "dueAt", "status", "adminUids", "createdAt", "updatedAt"]
+    },
+    "HomeworkSubmission": {
+      "title": "HomeworkSubmission",
+      "description": "Student text-only homework response and review status.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "homeworkId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "responseText": { "type": "string", "maxLength": 12000 },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["assigned", "submitted", "late_submitted", "reviewed", "returned_for_correction"] },
+        "feedback": { "type": "string", "maxLength": 2000 },
+        "marksAwarded": { "type": "number" },
+        "reviewedBy": { "type": "string", "maxLength": 64 },
+        "reviewedAt": { "type": "string", "format": "date-time" },
+        "revisionNumber": { "type": "integer" },
+        "reopenedByTeacher": { "type": "boolean" },
+        "revisionHistory": { "type": "array" },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "homeworkId", "studentId", "studentUid", "teacherUid", "responseText", "submittedAt", "status", "revisionNumber", "revisionHistory", "adminUids"]
+    },
+    "HomeworkTeacherPrivateNote": {
+      "title": "HomeworkTeacherPrivateNote",
+      "description": "Private teacher-only review note isolated from Student reads.",
+      "type": "object",
+      "properties": {
+        "submissionId": { "type": "string", "maxLength": 64 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "privateTeacherNote": { "type": "string", "maxLength": 2000 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["submissionId", "teacherUid", "privateTeacherNote", "updatedAt"]
+    },
+    "ObjectiveTest": {
+      "title": "ObjectiveTest",
+      "description": "Online MCQ test metadata and sanitized questions (answer keys isolated in subcollection until release).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 160 },
+        "instructions": { "type": "string", "maxLength": 4000 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "teacherId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "questions": { "type": "array" },
+        "totalMarks": { "type": "number" },
+        "durationMinutes": { "type": "integer" },
+        "startsAt": { "type": "string", "format": "date-time" },
+        "endsAt": { "type": "string", "format": "date-time" },
+        "maximumAttempts": { "type": "integer" },
+        "resultReleaseMode": { "type": "string", "enum": ["auto_after_submission", "manual_teacher_release", "scheduled_after_end"] },
+        "scheduledReleaseAt": { "type": "string", "format": "date-time" },
+        "showCorrectAnswersOnRelease": { "type": "boolean" },
+        "manualResultsReleased": { "type": "boolean" },
+        "status": { "type": "string", "enum": ["draft", "published", "active", "completed", "archived"] },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "instructions", "classId", "batchId", "subjectId", "teacherId", "teacherUid", "questions", "totalMarks", "durationMinutes", "startsAt", "endsAt", "maximumAttempts", "resultReleaseMode", "showCorrectAnswersOnRelease", "status", "adminUids", "createdAt", "updatedAt"]
+    },
+    "ObjectiveTestAnswerKey": {
+      "title": "ObjectiveTestAnswerKey",
+      "description": "Protected MCQ answer keys and explanations isolated from students until authorized release.",
+      "type": "object",
+      "properties": {
+        "testId": { "type": "string", "maxLength": 64 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "answersByQuestionId": { "type": "object" },
+        "explanationsByQuestionId": { "type": "object" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["testId", "teacherUid", "answersByQuestionId", "updatedAt"]
+    },
+    "TestAttempt": {
+      "title": "TestAttempt",
+      "description": "Student attempt and server-evaluated objective score.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "testId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "attemptNumber": { "type": "integer" },
+        "startedAt": { "type": "string", "format": "date-time" },
+        "expiresAt": { "type": "string", "format": "date-time" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "answers": { "type": "object" },
+        "status": { "type": "string", "enum": ["in_progress", "submitted", "evaluated"] },
+        "marksObtained": { "type": "number" },
+        "totalMarks": { "type": "number" },
+        "percentage": { "type": "number" },
+        "evaluatedAt": { "type": "string", "format": "date-time" },
+        "resultReleasedAt": { "type": "string", "format": "date-time" },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "testId", "studentId", "studentUid", "teacherUid", "attemptNumber", "startedAt", "expiresAt", "answers", "status", "totalMarks", "adminUids"]
+    },
+    "ExaminationRecord": {
+      "title": "ExaminationRecord",
+      "description": "Offline/manual examination schedule & release state.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "title": { "type": "string", "maxLength": 160 },
+        "classId": { "type": "string", "maxLength": 64 },
+        "batchId": { "type": "string", "maxLength": 64 },
+        "subjectId": { "type": "string", "maxLength": 64 },
+        "teacherId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "examDate": { "type": "string", "maxLength": 16 },
+        "startsAt": { "type": "string", "maxLength": 8 },
+        "endsAt": { "type": "string", "maxLength": 8 },
+        "maximumMarks": { "type": "number" },
+        "passingMarks": { "type": "number" },
+        "instructions": { "type": "string", "maxLength": 3000 },
+        "status": { "type": "string", "enum": ["draft", "published", "completed", "archived"] },
+        "resultsReleased": { "type": "boolean" },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "title", "classId", "batchId", "subjectId", "teacherId", "teacherUid", "examDate", "startsAt", "endsAt", "maximumMarks", "instructions", "status", "resultsReleased", "adminUids", "createdAt", "updatedAt"]
+    },
+    "ExaminationMarks": {
+      "title": "ExaminationMarks",
+      "description": "Student examination marks gated by resultsReleased.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "examinationId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "marksObtained": { "type": "number" },
+        "maximumMarks": { "type": "number" },
+        "percentage": { "type": "number" },
+        "resultStatus": { "type": "string", "enum": ["pass", "fail", "recorded"] },
+        "resultsReleased": { "type": "boolean" },
+        "enteredBy": { "type": "string", "maxLength": 64 },
+        "enteredAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" },
+        "releasedAt": { "type": "string", "format": "date-time" },
+        "corrected": { "type": "boolean" },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "examinationId", "studentId", "studentUid", "teacherUid", "marksObtained", "maximumMarks", "percentage", "resultStatus", "resultsReleased", "enteredBy", "enteredAt", "updatedAt", "adminUids"]
+    },
+    "MarksAuditEntry": {
+      "title": "MarksAuditEntry",
+      "description": "Immutable examination/homework review audit trail.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "examinationId": { "type": "string", "maxLength": 64 },
+        "marksRecordId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "actorId": { "type": "string", "maxLength": 64 },
+        "previousMarks": { "type": "number" },
+        "newMarks": { "type": "number" },
+        "reason": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "examinationId", "marksRecordId", "studentId", "actorId", "previousMarks", "newMarks", "reason", "adminUids", "timestamp"]
+    },
+    "UserNotification": {
+      "title": "UserNotification",
+      "description": "Deduplicated in-app notification document scoped strictly to recipientUid.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "recipientId": { "type": "string", "maxLength": 32 },
+        "recipientUid": { "type": "string", "maxLength": 128 },
+        "category": { "type": "string", "enum": ["attendance", "homework_tests", "exams_results", "fees_receipts"] },
+        "type": { "type": "string", "maxLength": 64 },
+        "relatedRecordId": { "type": "string", "maxLength": 64 },
+        "dedupeKey": { "type": "string", "maxLength": 128 },
+        "title": { "type": "string", "maxLength": 160 },
+        "message": { "type": "string", "maxLength": 600 },
+        "readAt": { "type": "string", "format": "date-time" },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "recipientId", "recipientUid", "category", "type", "relatedRecordId", "dedupeKey", "title", "message", "adminUids", "createdAt"]
+    },
+    "FeeConfiguration": {
+      "title": "FeeConfiguration",
+      "description": "Admin-managed common fee configuration (integer paise).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "amountPaise": { "type": "integer" },
+        "frequency": { "type": "string", "enum": ["monthly", "yearly"] },
+        "effectiveFrom": { "type": "string", "maxLength": 16 },
+        "dueDayOfMonth": { "type": "integer" },
+        "yearlyDueDate": { "type": "string", "maxLength": 16 },
+        "dueDateConfiguration": { "type": "string", "maxLength": 120 },
+        "reminderLeadDays": { "type": "integer" },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "note": { "type": "string", "maxLength": 300 },
+        "createdBy": { "type": "string", "maxLength": 64 },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "amountPaise", "frequency", "effectiveFrom", "dueDayOfMonth", "dueDateConfiguration", "reminderLeadDays", "status", "createdBy", "createdAt", "updatedAt"]
+    },
+    "UpiConfiguration": {
+      "title": "UpiConfiguration",
+      "description": "Direct centre UPI configuration for payment link preparation.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "upiId": { "type": "string", "maxLength": 120 },
+        "payeeName": { "type": "string", "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 200 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "updatedBy": { "type": "string", "maxLength": 64 },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "upiId", "payeeName", "status", "updatedBy", "updatedAt"]
+    },
+    "StudentFeeAccount": {
+      "title": "StudentFeeAccount",
+      "description": "Student fee ledger per period (balances modified only by trusted verification backend).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "feeConfigurationId": { "type": "string", "maxLength": 64 },
+        "feePeriod": { "type": "string", "maxLength": 24 },
+        "periodLabel": { "type": "string", "maxLength": 64 },
+        "frequency": { "type": "string", "enum": ["monthly", "yearly"] },
+        "amountDuePaise": { "type": "integer" },
+        "verifiedAmountPaidPaise": { "type": "integer" },
+        "remainingBalancePaise": { "type": "integer" },
+        "dueAt": { "type": "string", "maxLength": 16 },
+        "status": { "type": "string", "enum": ["unpaid", "partially_paid", "paid", "overdue", "verification_pending"] },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "studentId", "studentUid", "feeConfigurationId", "feePeriod", "periodLabel", "frequency", "amountDuePaise", "verifiedAmountPaidPaise", "remainingBalancePaise", "dueAt", "status", "adminUids", "createdAt", "updatedAt"]
+    },
+    "PreparedUpiPayment": {
+      "title": "PreparedUpiPayment",
+      "description": "Idempotent prepared UPI intent metadata before student submits UTR claim.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "paymentReference": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "feeAccountId": { "type": "string", "maxLength": 64 },
+        "feePeriod": { "type": "string", "maxLength": 24 },
+        "amountPaise": { "type": "integer" },
+        "upiId": { "type": "string", "maxLength": 120 },
+        "payeeName": { "type": "string", "maxLength": 120 },
+        "description": { "type": "string", "maxLength": 200 },
+        "upiUri": { "type": "string", "maxLength": 600 },
+        "paymentType": { "type": "string", "enum": ["partial", "full"] },
+        "status": { "type": "string", "enum": ["payment_prepared", "claim_submitted", "expired"] },
+        "idempotencyKey": { "type": "string", "maxLength": 120 },
+        "preparedAt": { "type": "string", "format": "date-time" },
+        "claimId": { "type": "string", "maxLength": 64 },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "paymentReference", "studentId", "studentUid", "feeAccountId", "feePeriod", "amountPaise", "upiId", "payeeName", "upiUri", "paymentType", "status", "idempotencyKey", "preparedAt", "adminUids"]
+    },
+    "PaymentClaim": {
+      "title": "PaymentClaim",
+      "description": "Student-submitted UTR payment claim (always starts verification_pending).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "paymentReference": { "type": "string", "maxLength": 64 },
+        "preparedPaymentId": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "feeAccountId": { "type": "string", "maxLength": 64 },
+        "feePeriod": { "type": "string", "maxLength": 24 },
+        "amountPaise": { "type": "integer" },
+        "transactionReference": { "type": "string", "maxLength": 80 },
+        "paymentDate": { "type": "string", "maxLength": 16 },
+        "studentNote": { "type": "string", "maxLength": 300 },
+        "status": { "type": "string", "enum": ["verification_pending", "verified", "rejected"] },
+        "duplicateTransactionFlag": { "type": "boolean" },
+        "submittedAt": { "type": "string", "format": "date-time" },
+        "verifiedBy": { "type": "string", "maxLength": 64 },
+        "verifiedAt": { "type": "string", "format": "date-time" },
+        "verificationNote": { "type": "string", "maxLength": 400 },
+        "rejectionReason": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "paymentReference", "studentId", "studentUid", "feeAccountId", "feePeriod", "amountPaise", "transactionReference", "paymentDate", "status", "duplicateTransactionFlag", "submittedAt", "adminUids"]
+    },
+    "FeeReceipt": {
+      "title": "FeeReceipt",
+      "description": "Immutable verified payment receipt (issued exclusively by Admin/backend verification).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "receiptNumber": { "type": "string", "maxLength": 32 },
+        "verifiedPaymentId": { "type": "string", "maxLength": 64 },
+        "paymentClaimId": { "type": "string", "maxLength": 64 },
+        "paymentReference": { "type": "string", "maxLength": 64 },
+        "transactionReference": { "type": "string", "maxLength": 80 },
+        "centreName": { "type": "string", "maxLength": 120 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "studentName": { "type": "string", "maxLength": 100 },
+        "className": { "type": "string", "maxLength": 100 },
+        "batchName": { "type": "string", "maxLength": 100 },
+        "feePeriod": { "type": "string", "maxLength": 24 },
+        "periodLabel": { "type": "string", "maxLength": 64 },
+        "paymentDate": { "type": "string", "maxLength": 16 },
+        "amountPaise": { "type": "integer" },
+        "totalFeeDuePaise": { "type": "integer" },
+        "totalAmountPaidAfterPaise": { "type": "integer" },
+        "remainingBalancePaise": { "type": "integer" },
+        "verificationStatus": { "type": "string", "enum": ["verified", "voided"] },
+        "issuedBy": { "type": "string", "maxLength": 64 },
+        "issuedAt": { "type": "string", "format": "date-time" },
+        "status": { "type": "string", "enum": ["issued", "voided"] },
+        "voidReason": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "receiptNumber", "verifiedPaymentId", "paymentClaimId", "paymentReference", "centreName", "studentId", "studentUid", "studentName", "feePeriod", "periodLabel", "paymentDate", "amountPaise", "totalFeeDuePaise", "totalAmountPaidAfterPaise", "remainingBalancePaise", "verificationStatus", "issuedBy", "issuedAt", "status", "adminUids"]
+    },
+    "TeacherSalaryConfiguration": {
+      "title": "TeacherSalaryConfiguration",
+      "description": "Teacher salary structure (Admin-writable; Teacher read-only for own record).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "teacherId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "salaryModel": { "type": "string", "enum": ["fixed_monthly", "per_session"] },
+        "monthlyAmountPaise": { "type": "integer" },
+        "perSessionAmountPaise": { "type": "integer" },
+        "effectiveFrom": { "type": "string", "maxLength": 16 },
+        "status": { "type": "string", "enum": ["active", "inactive"] },
+        "createdBy": { "type": "string", "maxLength": 64 },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "teacherId", "teacherUid", "salaryModel", "effectiveFrom", "status", "createdBy", "adminUids", "createdAt", "updatedAt"]
+    },
+    "TeacherSalaryPeriod": {
+      "title": "TeacherSalaryPeriod",
+      "description": "Monthly salary statement for a teacher (Admin-writable; Teacher read-only own).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "teacherId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "teacherName": { "type": "string", "maxLength": 100 },
+        "salaryConfigurationId": { "type": "string", "maxLength": 64 },
+        "period": { "type": "string", "maxLength": 16 },
+        "periodLabel": { "type": "string", "maxLength": 40 },
+        "salaryModel": { "type": "string", "enum": ["fixed_monthly", "per_session"] },
+        "ratePaise": { "type": "integer" },
+        "payableAmountPaise": { "type": "integer" },
+        "paidAmountPaise": { "type": "integer" },
+        "remainingAmountPaise": { "type": "integer" },
+        "status": { "type": "string", "enum": ["pending", "partially_paid", "paid", "on_hold"] },
+        "requiresAdminReview": { "type": "boolean" },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" },
+        "updatedAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "teacherId", "teacherUid", "salaryConfigurationId", "period", "salaryModel", "ratePaise", "payableAmountPaise", "paidAmountPaise", "remainingAmountPaise", "status", "requiresAdminReview", "adminUids", "createdAt", "updatedAt"]
+    },
+    "TeacherSalaryPayment": {
+      "title": "TeacherSalaryPayment",
+      "description": "Recorded salary payout entry (Admin-writable; Teacher read-only own).",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "teacherSalaryPeriodId": { "type": "string", "maxLength": 64 },
+        "teacherId": { "type": "string", "maxLength": 32 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "period": { "type": "string", "maxLength": 16 },
+        "amountPaise": { "type": "integer" },
+        "paymentDate": { "type": "string", "maxLength": 16 },
+        "paymentReference": { "type": "string", "maxLength": 80 },
+        "note": { "type": "string", "maxLength": 300 },
+        "recordedBy": { "type": "string", "maxLength": 64 },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "teacherSalaryPeriodId", "teacherId", "teacherUid", "period", "amountPaise", "paymentDate", "recordedBy", "adminUids", "createdAt"]
+    },
+    "FinancialAuditEntry": {
+      "title": "FinancialAuditEntry",
+      "description": "Immutable financial audit log entry.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "entityType": { "type": "string", "maxLength": 40 },
+        "entityId": { "type": "string", "maxLength": 64 },
+        "actorId": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "maxLength": 80 },
+        "previousValues": { "type": "string", "maxLength": 600 },
+        "newValues": { "type": "string", "maxLength": 600 },
+        "reason": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "entityType", "entityId", "actorId", "action", "adminUids", "timestamp"]
+    },
+    "VerifiedPayment": {
+      "title": "VerifiedPayment",
+      "description": "Confirmed student fee payment created exclusively after Admin manual verification.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "paymentClaimId": { "type": "string", "maxLength": 64 },
+        "paymentReference": { "type": "string", "maxLength": 64 },
+        "studentId": { "type": "string", "maxLength": 32 },
+        "studentUid": { "type": "string", "maxLength": 128 },
+        "feeAccountId": { "type": "string", "maxLength": 64 },
+        "feePeriod": { "type": "string", "maxLength": 24 },
+        "amountPaise": { "type": "integer" },
+        "transactionReference": { "type": "string", "maxLength": 80 },
+        "paymentDate": { "type": "string", "maxLength": 16 },
+        "verifiedBy": { "type": "string", "maxLength": 64 },
+        "verifiedAt": { "type": "string", "format": "date-time" },
+        "adminUids": { "type": "array" }
+      },
+      "required": ["id", "paymentClaimId", "paymentReference", "studentId", "studentUid", "feeAccountId", "feePeriod", "amountPaise", "transactionReference", "paymentDate", "verifiedBy", "verifiedAt", "adminUids"]
+    },
+    "PaymentVerificationAudit": {
+      "title": "PaymentVerificationAudit",
+      "description": "Immutable payment claim and verification audit trail.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "paymentClaimId": { "type": "string", "maxLength": 64 },
+        "verifiedPaymentId": { "type": "string", "maxLength": 64 },
+        "actorId": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "enum": ["claim_submitted", "payment_verified", "payment_rejected", "payment_corrected"] },
+        "reason": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "paymentClaimId", "actorId", "action", "adminUids", "timestamp"]
+    },
+    "AccountAuditEntry": {
+      "title": "AccountAuditEntry",
+      "description": "Immutable account provisioning, status, and reset audit log.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "accountId": { "type": "string", "maxLength": 32 },
+        "actorId": { "type": "string", "maxLength": 64 },
+        "action": { "type": "string", "maxLength": 80 },
+        "summary": { "type": "string", "maxLength": 400 },
+        "adminUids": { "type": "array" },
+        "createdAt": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorId", "action", "adminUids", "createdAt"]
+    },
+    "HomeworkAuditEntry": {
+      "title": "HomeworkAuditEntry",
+      "description": "Immutable homework review and correction audit log.",
+      "type": "object",
+      "properties": {
+        "id": { "type": "string", "maxLength": 64 },
+        "actorId": { "type": "string", "maxLength": 64 },
+        "teacherUid": { "type": "string", "maxLength": 128 },
+        "action": { "type": "string", "maxLength": 80 },
+        "adminUids": { "type": "array" },
+        "timestamp": { "type": "string", "format": "date-time" }
+      },
+      "required": ["id", "actorId", "action", "adminUids", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/test/connection": {
+      "schema": { "$ref": "#/entities/TestConnectionDoc" },
+      "description": "Server connection test document."
+    },
+    "/admins/{uid}": {
+      "schema": { "$ref": "#/entities/AdminRegistryEntry" },
+      "description": "Trusted administrator lookup registry."
+    },
+    "/authIdMappings/{loginId}": {
+      "schema": { "$ref": "#/entities/AuthIdMapping" },
+      "description": "Institutional ID to Firebase UID lookup mapping (backend/Admin only)."
+    },
+    "/users/{uid}": {
+      "schema": { "$ref": "#/entities/UserAccountProfile" },
+      "description": "Account profile documents keyed by Firebase Auth UID."
+    },
+    "/applicationSettings/{settingsId}": {
+      "schema": { "$ref": "#/entities/ApplicationSettings" },
+      "description": "Global tuition centre profile, branding, theme defaults, academic defaults, and notification preferences."
+    },
+    "/settingsAudit/{auditId}": {
+      "schema": { "$ref": "#/entities/SettingsAuditEntry" },
+      "description": "Immutable settings and branding audit history."
+    },
+    "/classes/{classId}": {
+      "schema": { "$ref": "#/entities/ClassRecord" },
+      "description": "Tuition classes / grades."
+    },
+    "/batches/{batchId}": {
+      "schema": { "$ref": "#/entities/BatchRecord" },
+      "description": "Cohorts / batches belonging to classes."
+    },
+    "/subjects/{subjectId}": {
+      "schema": { "$ref": "#/entities/SubjectRecord" },
+      "description": "Subjects mapped to classes."
+    },
+    "/enrolments/{enrolmentId}": {
+      "schema": { "$ref": "#/entities/StudentEnrolment" },
+      "description": "Student class/batch enrolment history."
+    },
+    "/teacherAssignments/{assignmentId}": {
+      "schema": { "$ref": "#/entities/TeacherAssignment" },
+      "description": "Authorizes teachers for specific subjects, classes, and batches."
+    },
+    "/timetableEntries/{entryId}": {
+      "schema": { "$ref": "#/entities/TimetableEntry" },
+      "description": "Weekly batch/teacher timetable entries."
+    },
+    "/announcements/{announcementId}": {
+      "schema": { "$ref": "#/entities/AnnouncementRecord" },
+      "description": "Text-only announcements scoped by audience."
+    },
+    "/attendanceSessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/AttendanceSession" },
+      "description": "Teacher attendance sessions."
+    },
+    "/attendanceRecords/{recordId}": {
+      "schema": { "$ref": "#/entities/AttendanceRecord" },
+      "description": "Individual student attendance marks."
+    },
+    "/attendanceAudit/{auditId}": {
+      "schema": { "$ref": "#/entities/AttendanceAuditEntry" },
+      "description": "Immutable attendance audit trail."
+    },
+    "/attendanceNotifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/AbsenceNotification" },
+      "description": "In-app student absence notifications."
+    },
+    "/homework/{homeworkId}": {
+      "schema": { "$ref": "#/entities/HomeworkRecord" },
+      "description": "Text-only homework assignments."
+    },
+    "/homeworkSubmissions/{submissionId}": {
+      "schema": { "$ref": "#/entities/HomeworkSubmission" },
+      "description": "Student text-only homework submissions and released feedback."
+    },
+    "/homeworkSubmissions/{submissionId}/private/teacherNote": {
+      "schema": { "$ref": "#/entities/HomeworkTeacherPrivateNote" },
+      "description": "Private teacher-only review note isolated from student reads."
+    },
+    "/objectiveTests/{testId}": {
+      "schema": { "$ref": "#/entities/ObjectiveTest" },
+      "description": "Online MCQ objective test metadata and questions without answer keys."
+    },
+    "/objectiveTests/{testId}/private/answerKey": {
+      "schema": { "$ref": "#/entities/ObjectiveTestAnswerKey" },
+      "description": "MCQ correctOptionId and explanation subcollection protected until authorized release."
+    },
+    "/testAttempts/{attemptId}": {
+      "schema": { "$ref": "#/entities/TestAttempt" },
+      "description": "Student test attempts and scores."
+    },
+    "/examinations/{examinationId}": {
+      "schema": { "$ref": "#/entities/ExaminationRecord" },
+      "description": "Offline examinations and release gates."
+    },
+    "/examinationMarks/{marksId}": {
+      "schema": { "$ref": "#/entities/ExaminationMarks" },
+      "description": "Student examination marks gated by resultsReleased."
+    },
+    "/marksAudit/{auditId}": {
+      "schema": { "$ref": "#/entities/MarksAuditEntry" },
+      "description": "Immutable marks correction audit trail."
+    },
+    "/notifications/{notificationId}": {
+      "schema": { "$ref": "#/entities/UserNotification" },
+      "description": "Unified per-user in-app assessment and financial notifications."
+    },
+    "/feeConfigurations/{configId}": {
+      "schema": { "$ref": "#/entities/FeeConfiguration" },
+      "description": "Global tuition fee configuration."
+    },
+    "/upiConfigurations/{upiConfigId}": {
+      "schema": { "$ref": "#/entities/UpiConfiguration" },
+      "description": "Direct UPI payee configuration."
+    },
+    "/studentFeeAccounts/{feeAccountId}": {
+      "schema": { "$ref": "#/entities/StudentFeeAccount" },
+      "description": "Student period fee accounts."
+    },
+    "/preparedUpiPayments/{preparedPaymentId}": {
+      "schema": { "$ref": "#/entities/PreparedUpiPayment" },
+      "description": "Idempotent UPI Pay Now link preparation records."
+    },
+    "/paymentClaims/{claimId}": {
+      "schema": { "$ref": "#/entities/PaymentClaim" },
+      "description": "Student-submitted UTR payment claims."
+    },
+    "/paymentReceipts/{receiptId}": {
+      "schema": { "$ref": "#/entities/FeeReceipt" },
+      "description": "Immutable verified fee receipts."
+    },
+    "/teacherSalaryConfigurations/{salaryConfigId}": {
+      "schema": { "$ref": "#/entities/TeacherSalaryConfiguration" },
+      "description": "Teacher monthly or per-session salary rules."
+    },
+    "/teacherSalaryPeriods/{salaryPeriodId}": {
+      "schema": { "$ref": "#/entities/TeacherSalaryPeriod" },
+      "description": "Monthly teacher salary statement periods."
+    },
+    "/teacherSalaryPayments/{salaryPaymentId}": {
+      "schema": { "$ref": "#/entities/TeacherSalaryPayment" },
+      "description": "Teacher salary disbursement records."
+    },
+    "/accountAudit/{auditId}": {
+      "schema": { "$ref": "#/entities/AccountAuditEntry" },
+      "description": "Immutable account provisioning, status, and reset audit ledger."
+    },
+    "/homeworkAudit/{auditId}": {
+      "schema": { "$ref": "#/entities/HomeworkAuditEntry" },
+      "description": "Immutable homework review and submission audit ledger."
+    },
+    "/verifiedPayments/{vpId}": {
+      "schema": { "$ref": "#/entities/VerifiedPayment" },
+      "description": "Confirmed student fee payments after Admin verification."
+    },
+    "/paymentVerificationAudit/{auditId}": {
+      "schema": { "$ref": "#/entities/PaymentVerificationAudit" },
+      "description": "Immutable payment verification decision audit ledger."
+    },
+    "/financialAudit/{auditId}": {
+      "schema": { "$ref": "#/entities/FinancialAuditEntry" },
+      "description": "Immutable financial verification, receipt, and salary audit ledger."
+    }
+  }
+}

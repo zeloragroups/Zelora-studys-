@@ -1,0 +1,1598 @@
+PHASE 6/10 — HOMEWORK, ONLINE TESTS, EXAMINATIONS & MARKS MANAGEMENT
+
+1. YOUR ROLE
+
+Act as a senior full-stack software engineer, software architect, database designer, security engineer, QA engineer and UI/UX specialist.
+
+You are continuing an existing Tuition Management System. You must implement Phase 6 inside the existing codebase.
+
+This is not a new project.
+
+Before changing anything:
+
+1. Inspect the complete existing project structure.
+2. Review the completed implementation of Phases 1, 2, 3, 4 and 5.
+3. Inspect existing account, authentication, academic, timetable, attendance and notification services.
+4. Inspect existing models, interfaces, service contracts, validation utilities and reusable UI components.
+5. Identify the existing local development data adapter and its limitations.
+6. Prepare an implementation plan.
+7. Implement Phase 6 without breaking completed functionality.
+
+Do not unnecessarily rewrite existing code. Extend the existing architecture.
+
+Implement only Phase 6. Do not begin Phase 7 or later phases.
+
+---
+
+2. PROJECT ARCHITECTURE — MUST REMAIN UNCHANGED
+
+The project contains exactly two web applications.
+
+Application A: Admin Portal
+
+This application contains:
+
+- Admin Website experience for desktop and laptop.
+- Responsive Admin Web App experience for mobile and tablet.
+- Admin dashboard and management modules.
+
+These are two interface experiences inside one Admin application, not two separate applications.
+
+Application B: Teacher & Student Portal
+
+This application contains:
+
+- One shared login page.
+- Automatic role detection after successful authentication.
+- Teacher dashboard and workspace.
+- Student dashboard and workspace.
+
+Parents use their child's Student login credentials. There must be no separate Parent login.
+
+Maintain the existing four interface shells and reuse them wherever appropriate.
+
+Do not create a third application.
+
+---
+
+3. CONFIRMED TECHNOLOGY STACK
+
+Preserve the existing stack:
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+
+Do not migrate to Next.js or another framework.
+
+Do not replace the current architecture.
+
+Do not introduce unnecessary libraries or dependencies.
+
+---
+
+4. STRICT BACKEND, API AND INTEGRATION RULES
+
+The user will personally connect Firebase.
+
+You must not:
+
+- Create a Firebase project.
+- Connect a Google account.
+- Request or access Firebase credentials.
+- Connect Firebase automatically.
+- Modify Firebase Console.
+- Connect Firebase Authentication.
+- Connect Firestore.
+- Connect Firebase Storage.
+- Deploy Firebase resources.
+
+Until the user manually connects Firebase, continue using the existing isolated local development adapter and mock/demo data.
+
+Clearly distinguish demo data from real production data.
+
+Absolutely no AI API
+
+Do not use:
+
+- Gemini API.
+- OpenAI API.
+- Any external AI model.
+- AI-based question generation.
+- AI-based grading.
+
+Other prohibited integrations
+
+Do not add:
+
+- PostgreSQL.
+- Another external database.
+- WhatsApp.
+- SMS.
+- Email services.
+- Payment gateways.
+- External analytics.
+- External question banks.
+- Third-party authentication.
+
+Do not introduce any external service without the user's explicit authorization.
+
+Do not expose credentials or secrets in frontend code.
+
+---
+
+5. PHASE 6 SCOPE
+
+Implement these modules:
+
+1. Teacher Homework Management.
+2. Student Homework Workspace.
+3. Teacher Homework Review.
+4. Online Objective Test Creation.
+5. Student Online Test Experience.
+6. Automatic Objective-Test Evaluation.
+7. Examination Management.
+8. Manual Marks Entry.
+9. Student Results and Performance.
+10. Admin Academic Assessment Overview.
+
+Use the existing Phase 3 accounts and Phase 4 academic relationships.
+
+Use Phase 5 attendance records only where relevant. Do not rewrite the attendance system.
+
+Do not implement fees, salaries, payment processing or financial reports. Those belong to later phases.
+
+---
+
+MODULE A — HOMEWORK MANAGEMENT
+
+6. TEACHER HOMEWORK CREATION
+
+Create a Homework Management section in the Teacher Portal.
+
+Teachers can create homework only for classes, batches and subjects assigned to them.
+
+Each homework record must contain:
+
+- Unique Homework ID.
+- Title.
+- Text-only instructions.
+- Class ID.
+- Batch ID.
+- Subject ID.
+- Assigned teacher ID.
+- Assigned date.
+- Due date and time.
+- Maximum marks, optional.
+- Publication status.
+- Created timestamp.
+- Updated timestamp.
+
+Homework status
+
+Support:
+
+- Draft.
+- Published.
+- Closed.
+- Archived.
+
+Teacher functionality
+
+Teachers must be able to:
+
+- Create homework.
+- Save drafts.
+- Preview homework.
+- Publish homework.
+- Edit homework.
+- Close homework.
+- Archive homework.
+- View assigned students.
+- View submission counts.
+- View submitted and pending work.
+- Search and filter homework.
+
+Display useful status indicators:
+
+- Published.
+- Draft.
+- Closing Soon.
+- Overdue.
+- Closed.
+
+Validation
+
+- Title is required.
+- Instructions cannot be empty.
+- Class, batch and subject must be valid.
+- Teacher must be assigned to the selected academic combination.
+- Due date must be valid.
+- Maximum marks, when provided, must be positive.
+- Prevent duplicate submission actions.
+- Confirm before publishing or closing.
+- Published homework must not be visible before its publication.
+
+Strict content restriction
+
+Homework must be TEXT ONLY.
+
+Do not implement:
+
+- PDF uploads.
+- Image uploads.
+- Audio uploads.
+- Video uploads.
+- File attachments.
+- Study-material libraries.
+- Document repositories.
+
+Do not create a library or file-management module.
+
+---
+
+7. STUDENT HOMEWORK WORKSPACE
+
+Add a Homework section to the Student Portal.
+
+Students can see only homework assigned to their active enrolment's class and batch.
+
+Display:
+
+- Homework title.
+- Subject.
+- Teacher.
+- Instructions.
+- Assigned date.
+- Due date.
+- Maximum marks, if applicable.
+- Submission status.
+- Marks after release.
+- Teacher feedback after release.
+
+Homework submission
+
+Students must be able to submit a text-only response.
+
+Submission fields:
+
+- Submission ID.
+- Homework ID.
+- Student ID.
+- Text response.
+- Submitted timestamp.
+- Submission status.
+- Teacher feedback.
+- Marks, where applicable.
+- Revision history where relevant.
+
+Support these statuses:
+
+- Assigned.
+- Submitted.
+- Late Submitted.
+- Reviewed.
+- Returned for Correction.
+
+Submission rules
+
+- Reject empty responses.
+- Record the submission timestamp.
+- Mark submissions after the deadline as Late Submitted.
+- Prevent duplicate final submissions.
+- Preserve previous submission versions when a teacher returns work for correction.
+- Allow resubmission only when the teacher has returned the work or explicitly reopened it.
+- Prevent editing after final review unless the teacher permits another submission.
+- Show students whether their submission was received.
+
+Do not allow file attachments.
+
+---
+
+8. TEACHER HOMEWORK REVIEW
+
+Create a submission-review interface for teachers.
+
+Teachers can review only submissions belonging to homework they are authorized to manage.
+
+Display:
+
+- Student name.
+- Student ID.
+- Homework title.
+- Submission date and time.
+- On-time or late status.
+- Student response.
+- Review status.
+- Maximum marks.
+- Marks awarded.
+- Feedback.
+
+Teachers must be able to:
+
+- Open a submission.
+- Read the response.
+- Add feedback.
+- Assign marks when maximum marks are configured.
+- Return work for correction.
+- Mark work as reviewed.
+- View previous submissions and review history.
+
+Review validation
+
+- Marks cannot be negative.
+- Marks cannot exceed maximum marks.
+- Feedback must be text-only.
+- Only the assigned teacher or authorized Admin can review the relevant submission.
+- Students must not see private teacher notes.
+- Students can see released feedback and marks only.
+
+---
+
+MODULE B — ONLINE OBJECTIVE TESTS
+
+9. TEACHER TEST CREATION
+
+Build an Online Objective Test Management module.
+
+Teachers must be able to create objective tests for their assigned classes, batches and subjects.
+
+Supported question type
+
+For this phase, support Multiple Choice Questions (MCQs) only.
+
+Each question must contain:
+
+- Unique question ID.
+- Question text.
+- Answer options.
+- Correct answer.
+- Marks.
+- Optional explanation.
+
+Requirements:
+
+- Minimum two answer options.
+- Configurable number of answer options.
+- Exactly one correct answer.
+- Positive marks.
+- No empty options.
+- No duplicate options.
+- Allow question reordering.
+- Allow editing drafts.
+- Validate the complete test before publication.
+
+Questions and options must be text-only.
+
+Do not add images, audio, videos or attachments to questions.
+
+Do not add AI question generation.
+
+Do not connect external question banks.
+
+---
+
+10. TEST CONFIGURATION
+
+Each test must contain:
+
+- Test ID.
+- Test title.
+- Instructions.
+- Subject.
+- Class.
+- Batch.
+- Assigned teacher.
+- Question list.
+- Total marks.
+- Duration in minutes.
+- Start date and time.
+- End date and time.
+- Maximum attempts.
+- Result release setting.
+- Publication status.
+- Created timestamp.
+- Updated timestamp.
+
+Support these statuses:
+
+- Draft.
+- Published.
+- Active.
+- Completed.
+- Archived.
+
+Configuration rules
+
+- Total marks must equal the sum of question marks.
+- Duration must be positive.
+- Maximum attempts must be at least one.
+- End time must be after start time.
+- Students must not start before the availability window.
+- Students must not start after the availability window closes.
+- Only eligible active students can attempt the test.
+- Only the assigned teacher or authorized Admin can manage the test.
+- Students must never access unpublished drafts.
+- Prevent publication if the test contains invalid questions.
+
+Provide a preview before publishing.
+
+---
+
+11. STUDENT ONLINE TEST EXPERIENCE
+
+Build a focused, easy-to-use test-taking interface.
+
+Available test list
+
+Display:
+
+- Test title.
+- Subject.
+- Teacher.
+- Duration.
+- Total marks.
+- Start time.
+- End time.
+- Attempt limit.
+- Attempts used.
+- Test status.
+
+Test-taking workflow
+
+When a student starts a test:
+
+1. Verify the student's identity and role.
+2. Verify active enrolment.
+3. Verify test eligibility.
+4. Verify the test availability period.
+5. Verify the maximum attempt limit.
+6. Create a unique attempt record.
+7. Display instructions.
+8. Start the countdown timer.
+9. Display questions and answer options.
+10. Allow answer selection.
+11. Allow navigation between questions.
+12. Display answered and unanswered counts.
+13. Display a review screen.
+14. Ask for confirmation before final submission.
+15. Submit answers.
+16. Evaluate the attempt through the service layer.
+17. Display a submission confirmation.
+
+Student interface requirements
+
+- Clear countdown timer.
+- Question navigation.
+- Answered/unanswered indicators.
+- Selected-answer highlighting.
+- Previous and Next controls.
+- Review All Questions option.
+- Final Submit button.
+- Confirmation before final submission.
+- Clear expired-test message.
+
+Attempt rules
+
+- Save answer progress during normal navigation.
+- Preserve local demo attempt state through normal page refreshes.
+- Prevent duplicate final submissions.
+- Prevent changing answers after final submission.
+- Prevent accessing another student's attempt.
+- Do not expose correct answers before results are released.
+- Enforce the configured maximum attempts in the local service.
+
+Important limitation
+
+The current local development adapter uses browser-side storage and timing. It cannot provide tamper-proof examination security.
+
+Do not claim that browser timers, local storage or client-side restrictions are secure production examination controls.
+
+Document that production enforcement requires trusted backend validation, server timestamps and server-side attempt authorization.
+
+---
+
+12. AUTOMATIC OBJECTIVE-TEST EVALUATION
+
+Implement deterministic evaluation logic in the service layer.
+
+No AI is needed.
+
+For each submitted attempt:
+
+- Compare each selected answer with the correct answer.
+- Award configured marks for a correct answer.
+- Award zero for an incorrect answer.
+- Award zero for an unanswered question.
+- Calculate total marks obtained.
+- Calculate percentage.
+- Preserve the submitted answers.
+- Preserve the evaluation result.
+
+Formula:
+
+Percentage = (Marks Obtained / Total Marks) × 100
+
+Reject tests with zero total marks.
+
+The student interface must not calculate or overwrite official results.
+
+The service layer must be responsible for evaluation.
+
+Result visibility
+
+Support these result-release options:
+
+- Release automatically after submission.
+- Release manually by the assigned teacher.
+- Keep results hidden until a configured release time.
+
+Before release, students may see a submission confirmation but must not see correct answers or marks.
+
+After release, show:
+
+- Marks obtained.
+- Maximum marks.
+- Percentage.
+- Correct answers, if the teacher enables this.
+- Explanations, if available.
+- Submission date.
+- Attempt number.
+
+Do not reveal private answer keys before results are released.
+
+---
+
+MODULE C — EXAMINATIONS
+
+13. EXAMINATION MANAGEMENT
+
+Create a separate Examination Management module.
+
+Teachers can create examination records for their assigned classes and subjects.
+
+Each examination must contain:
+
+- Examination ID.
+- Examination title.
+- Class.
+- Batch.
+- Subject.
+- Assigned teacher.
+- Examination date.
+- Start time.
+- End time.
+- Maximum marks.
+- Passing marks, optional.
+- Text-only instructions.
+- Status.
+- Created timestamp.
+- Updated timestamp.
+
+Support:
+
+- Draft.
+- Published.
+- Completed.
+- Archived.
+
+Requirements
+
+- Only authorized teachers and Admin can manage examinations.
+- Validate class, batch, subject and teacher assignment.
+- Validate date and time.
+- Maximum marks must be positive.
+- Passing marks cannot exceed maximum marks.
+- Prevent duplicate or invalid examination records.
+- Students can view only examinations relevant to their active enrolment.
+- Students must not see unpublished examinations.
+
+Do not implement question-paper uploads.
+
+Do not implement automated descriptive-answer evaluation.
+
+Do not introduce external examination services.
+
+The examination module is primarily for examination scheduling and marks management.
+
+---
+
+14. MANUAL MARKS ENTRY
+
+Create a Marks Entry module for Teachers.
+
+Workflow
+
+1. Teacher opens Marks Entry.
+2. Teacher selects an assigned examination.
+3. The system loads eligible enrolled students.
+4. Teacher enters marks for each student.
+5. The system validates the marks.
+6. Teacher reviews the complete list.
+7. Teacher confirms submission.
+8. The service saves the marks.
+9. Students can view released results.
+
+Marks record fields
+
+- Marks record ID.
+- Examination ID.
+- Student ID.
+- Marks obtained.
+- Maximum marks.
+- Percentage.
+- Result status.
+- Entered by.
+- Entered timestamp.
+- Updated timestamp.
+
+Validation
+
+- Marks cannot be negative.
+- Marks cannot exceed maximum marks.
+- Maximum marks must match the examination configuration.
+- Student must have an eligible enrolment.
+- Teacher must have the relevant assignment.
+- Prevent duplicate marks records for the same student and examination.
+- Prevent incomplete bulk submission.
+- Prevent unauthorized marks changes.
+
+Corrections
+
+Allow authorized corrections after submission.
+
+Every correction must require a reason.
+
+Maintain an audit record containing:
+
+- Previous marks.
+- New marks.
+- Reason.
+- Actor ID.
+- Timestamp.
+- Examination ID.
+- Student ID.
+
+Never silently overwrite submitted marks.
+
+---
+
+MODULE D — RESULTS AND PERFORMANCE
+
+15. STUDENT RESULTS DASHBOARD
+
+Create a Results and Performance section in the Student Portal.
+
+Display:
+
+- Examination results.
+- Objective-test results.
+- Homework marks where applicable.
+- Subject-wise performance.
+- Total marks.
+- Maximum marks.
+- Percentage.
+- Pass/fail status where passing marks are configured.
+- Result release date.
+- Examination or test date.
+
+Provide filters:
+
+- Subject.
+- Examination.
+- Test.
+- Date range.
+- Result status.
+
+Result calculations
+
+Percentage = (Marks Obtained / Maximum Marks) × 100
+
+Use the official marks stored by the service layer.
+
+Do not let the student edit marks or percentages.
+
+If no result exists, display a helpful empty state.
+
+Do not invent missing marks or show unverified results.
+
+Subject-wise performance
+
+Display a simple subject-wise summary.
+
+Use only available and released marks.
+
+Clearly distinguish:
+
+- No assessment yet.
+- Assessment pending.
+- Result not released.
+- Result available.
+
+Do not make misleading claims about a student's overall academic performance from incomplete data.
+
+Do not introduce AI-based performance predictions.
+
+---
+
+16. TEACHER RESULTS WORKSPACE
+
+Teachers must be able to view results for their assigned classes and subjects.
+
+Provide:
+
+- Test results.
+- Examination marks.
+- Homework review results.
+- Student-wise result details.
+- Subject-wise summary.
+- Submission status.
+- Unmarked or pending records.
+
+Teachers must not access other teachers' restricted assessment records.
+
+Allow authorized teachers to release results when configured.
+
+Confirm before releasing results.
+
+Once released, students should see the corresponding result in their portal.
+
+---
+
+17. ADMIN ACADEMIC ASSESSMENT OVERVIEW
+
+Add an Assessment Overview section to the Admin Portal.
+
+Admin must have an overview of the academic assessment system.
+
+Display useful summary metrics:
+
+- Total homework created.
+- Published homework.
+- Pending homework submissions.
+- Reviewed homework submissions.
+- Total objective tests.
+- Published tests.
+- Completed test attempts.
+- Upcoming examinations.
+- Completed examinations.
+- Pending marks entry.
+- Released results.
+
+Provide search and filters for:
+
+- Class.
+- Batch.
+- Subject.
+- Teacher.
+- Student.
+- Homework.
+- Test.
+- Examination.
+- Date.
+- Status.
+
+Admin may view relevant records and perform authorized administrative actions.
+
+Admin must not be allowed to silently alter marks or student submissions.
+
+Any Admin correction must use the same reason-required audit process.
+
+Do not implement financial dashboards or salary reports in this phase.
+
+---
+
+MODULE E — DATA ARCHITECTURE
+
+18. REQUIRED DATA MODELS
+
+Create properly typed TypeScript models and service contracts.
+
+Use unique IDs and consistent naming.
+
+Suggested record models:
+
+HomeworkRecord
+
+- id
+- title
+- instructions
+- classId
+- batchId
+- subjectId
+- teacherId
+- assignedAt
+- dueAt
+- maximumMarks
+- status
+- createdAt
+- updatedAt
+
+HomeworkSubmission
+
+- id
+- homeworkId
+- studentId
+- responseText
+- submittedAt
+- status
+- feedback
+- marksAwarded
+- reviewedBy
+- reviewedAt
+- revisionNumber
+
+HomeworkReviewAudit
+
+- id
+- submissionId
+- actorId
+- action
+- previousValues
+- newValues
+- reason, where applicable
+- timestamp
+
+ObjectiveTest
+
+- id
+- title
+- instructions
+- classId
+- batchId
+- subjectId
+- teacherId
+- questions
+- totalMarks
+- durationMinutes
+- startsAt
+- endsAt
+- maximumAttempts
+- resultReleaseMode
+- status
+- createdAt
+- updatedAt
+
+ObjectiveQuestion
+
+- id
+- questionText
+- options
+- correctOptionId
+- marks
+- explanation
+
+TestAttempt
+
+- id
+- testId
+- studentId
+- attemptNumber
+- startedAt
+- submittedAt
+- answers
+- status
+- marksObtained
+- totalMarks
+- percentage
+- evaluatedAt
+- resultReleasedAt
+
+ExaminationRecord
+
+- id
+- title
+- classId
+- batchId
+- subjectId
+- teacherId
+- examDate
+- startsAt
+- endsAt
+- maximumMarks
+- passingMarks
+- instructions
+- status
+- createdAt
+- updatedAt
+
+ExaminationMarks
+
+- id
+- examinationId
+- studentId
+- marksObtained
+- maximumMarks
+- percentage
+- resultStatus
+- enteredBy
+- enteredAt
+- updatedAt
+- releasedAt
+
+MarksAuditEntry
+
+- id
+- marksRecordId
+- actorId
+- previousMarks
+- newMarks
+- reason
+- timestamp
+
+AssessmentNotification
+
+- id
+- recipientStudentId
+- type
+- relatedRecordId
+- title
+- message
+- createdAt
+- readAt
+
+You may refine the exact schema after inspecting existing project conventions.
+
+Do not duplicate existing shared models unnecessarily.
+
+Use TypeScript types, validation schemas and service contracts consistently.
+
+---
+
+19. SERVICE ARCHITECTURE
+
+Keep UI components separate from business logic.
+
+Create or extend service contracts for:
+
+- HomeworkService.
+- HomeworkSubmissionService.
+- ObjectiveTestService.
+- TestAttemptService.
+- TestEvaluationService.
+- ExaminationService.
+- ExaminationMarksService.
+- AssessmentOverviewService.
+
+Implement local development versions using the existing local development architecture.
+
+Suggested naming:
+
+- LocalDevHomeworkService.
+- LocalDevTestService.
+- LocalDevExaminationService.
+- LocalDevAssessmentService.
+
+Reuse the existing LocalDevAccountService, LocalDevAcademicService and other shared services.
+
+Do not create a second authentication system.
+
+Do not bypass existing AuthContext or role guards.
+
+Use service-layer authorization checks.
+
+---
+
+20. DATA STORAGE AND DEMO DATA
+
+Use the existing isolated local development storage approach.
+
+If new storage keys are necessary, use clear names, such as:
+
+- tuition_ecosystem_dev_homework_v1
+- tuition_ecosystem_dev_tests_v1
+- tuition_ecosystem_dev_examinations_v1
+
+Follow existing project conventions rather than blindly duplicating storage.
+
+Rules:
+
+- Mark demo records clearly as DEMO DATA.
+- Do not mix test fixtures with real production records.
+- Do not store plaintext passwords.
+- Do not store credentials in assessment records.
+- Do not expose correct answers before results are released.
+- Do not store unnecessary personal information.
+- Do not use local storage as proof of production security.
+- Handle malformed or missing local data safely.
+- Prevent accidental data loss during normal operations.
+
+Any demo fixtures must be development/test-only and must never become production fallback data.
+
+---
+
+MODULE F — ROLE-BASED ACCESS AND SECURITY
+
+21. ADMIN PERMISSIONS
+
+Admin can:
+
+- View overall assessment records.
+- View homework and submissions.
+- View objective tests and attempts.
+- View examinations and marks.
+- Review assessment activity.
+- Perform authorized corrections with reasons.
+- Monitor publication and result-release status.
+
+Admin must not silently overwrite submitted marks or audit history.
+
+22. TEACHER PERMISSIONS
+
+Teacher can:
+
+- Create homework for assigned academic groups.
+- Review relevant homework submissions.
+- Create objective tests.
+- View relevant test attempts and results.
+- Create examinations.
+- Enter and correct marks for assigned examinations.
+- Release results where authorized.
+
+Teacher cannot:
+
+- Create accounts.
+- Change application-wide permissions.
+- Access unrelated classes.
+- Access unrelated teachers' restricted records.
+- View another student's private submission unless authorized by the service.
+- Change Admin settings.
+
+23. STUDENT PERMISSIONS
+
+Student can:
+
+- View their own homework.
+- Submit text-only responses.
+- View their own submission status.
+- Take eligible objective tests.
+- View their own released test results.
+- View relevant examinations.
+- View their own released marks.
+- Read relevant assessment notifications.
+
+Student cannot:
+
+- View another student's submissions.
+- View another student's marks.
+- Change official marks.
+- View unpublished tests.
+- View correct answers before result release.
+- Modify test configuration.
+- Access teacher or Admin routes.
+
+Parents using Student credentials must receive the same student-level access.
+
+Important security distinction
+
+Local development role checks are not production-grade security.
+
+Use service-layer checks now, and clearly document that production security must be enforced by trusted backend authorization after the user manually connects Firebase.
+
+---
+
+MODULE G — NOTIFICATIONS
+
+24. IN-APP ASSESSMENT NOTIFICATIONS
+
+Use the existing in-app notification approach where possible.
+
+Create relevant student notifications for:
+
+- New homework published.
+- Homework deadline approaching, where supported by the local implementation.
+- Homework reviewed.
+- Homework returned for correction.
+- New test published.
+- Test availability.
+- Test result released.
+- Examination published.
+- Examination schedule updated.
+- Examination marks released.
+
+Rules:
+
+- Notifications must target only the relevant student.
+- Do not send notifications for drafts.
+- Prevent duplicate notifications for the same event.
+- Allow read/unread status.
+- Keep notification content concise.
+- Do not send WhatsApp, SMS or email messages.
+- Do not introduce external notification services.
+
+If reliable scheduled reminders cannot be implemented in the local adapter, document that limitation instead of pretending background reminders are running.
+
+---
+
+MODULE H — USER INTERFACE AND EXPERIENCE
+
+25. UI DESIGN REQUIREMENTS
+
+Preserve the existing design system and established visual identity.
+
+Do not redesign the entire application in this phase.
+
+Use existing:
+
+- Colors and design tokens.
+- Typography.
+- Spacing.
+- Buttons.
+- Cards.
+- Tables.
+- Forms.
+- Modals.
+- Navigation.
+- Theme provider.
+- Loading components.
+- Responsive shells.
+
+The interface must look like a carefully designed human-made tuition management product, not a generic AI-generated dashboard.
+
+Prioritize:
+
+- Clear information hierarchy.
+- Easy navigation.
+- Readable text.
+- Consistent spacing.
+- Practical forms.
+- Helpful empty states.
+- Clear validation errors.
+- Accessible controls.
+- Purposeful animations.
+- Smooth responsive behavior.
+
+Maintain existing light and dark themes.
+
+Do not introduce excessive gradients, unnecessary decorative cards or distracting animations.
+
+Responsive requirements
+
+Test:
+
+- Mobile phone layout.
+- Tablet layout.
+- Desktop layout.
+- Laptop layout.
+
+Tables must remain usable on small screens through appropriate responsive cards, horizontal scrolling or other existing project patterns.
+
+Test-taking screens must be comfortable on mobile.
+
+Do not allow action buttons to become inaccessible on small screens.
+
+Loading and error states
+
+Add appropriate:
+
+- Loading states.
+- Empty states.
+- Error states.
+- Success confirmations.
+- Validation messages.
+- Confirmation dialogs.
+
+Avoid fake loading delays.
+
+Do not claim an operation succeeded until the local service confirms it.
+
+---
+
+MODULE I — TESTING AND VERIFICATION
+
+26. FUNCTIONAL TESTING
+
+Create dedicated Phase 6 tests.
+
+At minimum, test the following.
+
+Homework tests
+
+1. Teacher creates homework.
+2. Teacher saves a draft.
+3. Draft is not visible to students.
+4. Teacher publishes homework.
+5. Correct students can view published homework.
+6. Unrelated students cannot view it.
+7. Student submits a text response.
+8. Empty submission is rejected.
+9. Late submission is identified correctly.
+10. Teacher reviews a submission.
+11. Teacher adds feedback.
+12. Teacher assigns valid marks.
+13. Marks above maximum are rejected.
+14. Returned work supports revision history.
+15. Reviewed work cannot be silently edited.
+
+Objective-test tests
+
+1. Teacher creates a valid MCQ test.
+2. Invalid questions are rejected.
+3. Test total marks are calculated correctly.
+4. Draft tests remain private.
+5. Published tests are visible to eligible students.
+6. Ineligible students cannot access tests.
+7. Student starts an eligible test.
+8. Attempt count is enforced.
+9. Answers are saved.
+10. Student submits the test.
+11. Duplicate final submission is rejected.
+12. Correct answers are evaluated correctly.
+13. Incorrect answers receive zero.
+14. Unanswered questions receive zero.
+15. Percentage is calculated correctly.
+16. Results remain hidden when configured.
+17. Released results become visible to the correct student.
+18. Students cannot modify submitted answers.
+
+Examination tests
+
+1. Teacher creates an examination.
+2. Invalid dates are rejected.
+3. Invalid maximum marks are rejected.
+4. Passing marks cannot exceed maximum marks.
+5. Unassigned teachers cannot manage the examination.
+6. Correct students can view published examinations.
+
+Marks tests
+
+1. Teacher enters marks.
+2. Negative marks are rejected.
+3. Marks above maximum are rejected.
+4. Duplicate marks records are prevented.
+5. Unauthorized users cannot change marks.
+6. Corrections require a reason.
+7. Audit history records previous and new marks.
+8. Released marks appear in the correct student account.
+
+Role and access tests
+
+1. Admin access works.
+2. Teacher access works.
+3. Student access works.
+4. Cross-role route access is blocked.
+5. Students cannot access other students' records.
+6. Teachers cannot access unrelated restricted academic records.
+7. Unauthorized service operations are rejected.
+
+---
+
+27. REGRESSION TESTING
+
+Do not test Phase 6 in isolation only.
+
+Re-run all existing verification suites:
+
+- Phase 2 authentication and routing tests.
+- Phase 3 account-management tests.
+- Phase 4 academic-management tests.
+- Phase 5 attendance tests.
+- New Phase 6 tests.
+
+Ensure that:
+
+- Login still works.
+- Logout still works.
+- Session expiry still works.
+- Account creation still works.
+- ID generation still works.
+- Class and batch management still works.
+- Teacher assignments still work.
+- Timetable still works.
+- Announcements still work.
+- Attendance still works.
+- Absence notifications still work.
+- Existing role-based navigation still works.
+
+Do not remove or weaken existing tests to make the new tests pass.
+
+---
+
+28. BUILD AND CODE QUALITY
+
+Run the existing project checks.
+
+At minimum:
+
+- npm run build
+- npx tsc --noEmit
+- All available Phase 2–5 test suites.
+- New Phase 6 test suite.
+
+Fix errors introduced by Phase 6.
+
+Do not report a successful build unless the command actually succeeds.
+
+Do not report tests as passed unless they were executed.
+
+Clearly separate:
+
+- Passed.
+- Failed.
+- Not run.
+- Blocked by missing environment or tooling.
+
+---
+
+29. BROWSER AND VISUAL VERIFICATION
+
+If browser testing tools are available, test the real application.
+
+Verify:
+
+- Teacher homework creation.
+- Student homework submission.
+- Teacher submission review.
+- Test creation.
+- Student test attempt.
+- Objective evaluation.
+- Examination creation.
+- Marks entry.
+- Student result viewing.
+- Admin assessment overview.
+
+Check desktop and mobile layouts.
+
+Capture and inspect screenshots where possible.
+
+If browser automation or visual testing is unavailable, state this explicitly.
+
+Do not claim visual verification based only on successful compilation.
+
+---
+
+MODULE J — DOCUMENTATION AND PROJECT TRANSPARENCY
+
+30. REQUIRED DOCUMENTATION
+
+Update the project documentation.
+
+Create or update:
+
+- Phase 6 implementation report.
+- Phase 6 testing report.
+- Phase 6 data-model documentation.
+- Phase 6 service architecture documentation.
+- Phase 6 permission matrix.
+- Phase 6 known limitations.
+- Project roadmap.
+- Integration and dependency inventory.
+
+Explain every new file and major change.
+
+Mandatory technology and integration transparency
+
+Provide a table with:
+
+Component| Used for| Connection status| Data handled| Cost
+React| UI| Existing| Interface state| Existing project cost
+TypeScript| Type safety| Existing| Application types| No separate API charge
+Vite| Development/build| Existing| Build assets| No separate API charge
+Tailwind CSS| Styling| Existing| UI styles| No separate API charge
+Motion| Animations| Existing| UI transitions| No separate API charge
+Lucide React| Icons| Existing| Icon assets| No separate API charge
+Local development adapter| Demo persistence| Local only| Demo assessment records| No separate service charge
+Firebase| Future production backend| Not connected| Not currently handling data| Not applicable yet
+AI APIs| Not used| Not connected| None| None
+PostgreSQL| Not used| Not connected| None| None
+WhatsApp/SMS/email| Not used| Not connected| None| None
+
+Update the table to reflect the actual project state. Do not invent integrations or costs.
+
+Clearly explain:
+
+- What runs locally.
+- What is only a mock.
+- What is actually persisted.
+- Which data is stored in browser storage.
+- What Firebase will eventually need to handle.
+- Which security requirements remain unimplemented for production.
+- Any dependencies added or removed.
+- Any known limitations.
+
+Do not describe planned integrations as already connected.
+
+---
+
+MODULE K — SCOPE PROTECTION
+
+31. DO NOT IMPLEMENT THESE FEATURES
+
+The following are outside Phase 6:
+
+- Fees and payment management.
+- UPI integration.
+- Payment gateway integration.
+- Teacher salary management.
+- Financial dashboards.
+- Monthly/yearly financial reports.
+- WhatsApp notifications.
+- SMS notifications.
+- Email notifications.
+- AI-powered features.
+- AI-generated questions.
+- AI grading.
+- Study-material libraries.
+- PDF or image homework attachments.
+- Question-paper uploads.
+- Native Android applications.
+- Native iOS applications.
+- Automatic Firebase connection.
+- Production Firebase deployment.
+
+Do not begin Phase 7.
+
+Do not add features merely because they appear useful.
+
+If a feature is necessary but not specified, document it as a question or future consideration instead of silently expanding scope.
+
+---
+
+MODULE L — EXECUTION LIMITS AND CONTINUATION
+
+32. WORK MANAGEMENT
+
+Complete Phase 6 carefully.
+
+Prioritize:
+
+1. Correct architecture.
+2. Data integrity.
+3. Role permissions.
+4. Functional workflows.
+5. Validation.
+6. Automated tests.
+7. Responsive usability.
+8. Documentation.
+
+Do not sacrifice correctness to add unnecessary UI decoration.
+
+If you approach your available context, token, execution or task limits:
+
+1. Finish the current safe operation.
+2. Save all completed work.
+3. Avoid leaving files in a broken or partially written state.
+4. Update the implementation checklist.
+5. Record completed tasks.
+6. Record remaining tasks.
+7. Record modified and newly created files.
+8. Record the last successfully completed step.
+9. Provide one clear continuation instruction.
+
+Include a prominent continuation button or equivalent available UI action labelled:
+
+CONTINUE PHASE 6
+
+The continuation action must instruct the system to resume from the recorded unfinished task, inspect the existing code first, avoid repeating completed work, and continue Phase 6 only.
+
+If a literal interactive button is not supported by the environment, provide a clearly labelled copy-ready continuation prompt instead.
+
+Before declaring completion, verify the entire Phase 6 checklist.
+
+---
+
+MODULE M — FINAL COMPLETION REPORT
+
+33. REQUIRED FINAL REPORT FORMAT
+
+When Phase 6 is complete, provide a structured report containing:
+
+A. Completion status
+
+- Completed features.
+- Partially completed features.
+- Features not implemented.
+- Any blocked work.
+
+B. Homework
+
+- Teacher workflows.
+- Student workflows.
+- Submission and review.
+- Feedback and marks.
+
+C. Online tests
+
+- Test creation.
+- Test configuration.
+- Student attempts.
+- Timer and answer persistence.
+- Automatic evaluation.
+- Result release.
+
+D. Examinations
+
+- Examination creation.
+- Scheduling.
+- Marks entry.
+- Marks corrections.
+- Audit history.
+
+E. Student results
+
+- Result dashboard.
+- Subject-wise results.
+- Performance calculations.
+- Result visibility rules.
+
+F. Admin overview
+
+- Assessment KPIs.
+- Search and filters.
+- Administrative permissions.
+
+G. Technical changes
+
+- Files created.
+- Files modified.
+- Models and interfaces.
+- Services.
+- Local storage keys.
+- Dependencies added or removed.
+
+H. Verification
+
+Report the actual results of:
+
+- npm run build
+- npx tsc --noEmit
+- Phase 2 tests.
+- Phase 3 tests.
+- Phase 4 tests.
+- Phase 5 tests.
+- Phase 6 tests.
+- Browser tests, if available.
+
+I. Security and limitations
+
+Clearly list:
+
+- Local demo limitations.
+- Browser timer limitations.
+- Browser storage limitations.
+- Production backend requirements.
+- Authorization requirements.
+- Any known issues.
+
+J. Integration inventory
+
+List every API, database, external service and tool used or considered.
+
+Clearly identify which are:
+
+- Connected.
+- Disconnected.
+- Local only.
+- Planned.
+- Not used.
+
+K. Next phase
+
+State that Phase 7 is not implemented.
+
+Do not automatically begin Phase 7.
+
+---
+
+FINAL EXECUTION INSTRUCTION
+
+Start by inspecting the existing project and completed Phases 1–5.
+
+Then implement the complete Phase 6 scope in the existing codebase.
+
+Preserve the current architecture, existing working features, design system and role permissions.
+
+Do not connect Firebase or any external service.
+
+Do not use AI APIs.
+
+Do not introduce PostgreSQL.
+
+Do not skip tests or claim unverified results.
+
+If any requested feature cannot be completed, explain exactly why and report its status honestly.
+
+Implement Phase 6 only.

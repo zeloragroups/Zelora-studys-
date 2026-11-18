@@ -1,0 +1,1397 @@
+PHASE 6.5 — COMPLETE UI/UX TRANSFORMATION, ADVANCED THEME, NAVIGATION & RESPONSIVE EXPERIENCE
+
+1. ROLE AND OBJECTIVE
+
+Act as a world-class product designer, senior UI/UX engineer, frontend architect, interaction designer and accessibility specialist.
+
+You are continuing an existing Tuition Management System. Phases 1–6 have been implemented.
+
+Your task is to perform a dedicated UI/UX refinement across the entire existing application.
+
+This is Phase 6.5, a design and usability refinement phase between Phase 6 and Phase 7.
+
+This phase is exclusively for:
+
+- UI design.
+- Visual theme.
+- Navigation.
+- Layout improvements.
+- Responsive design.
+- Animations and transitions.
+- Typography.
+- Icons.
+- Cards and components.
+- Dashboard presentation.
+- Accessibility.
+- Visual consistency.
+- Browser-based visual testing.
+
+Do not implement Phase 7.
+
+Do not add fees, payments, UPI, salaries or financial functionality.
+
+Do not introduce new business modules.
+
+The objective is to make the existing tuition management system look and feel like a premium, professionally designed, advanced education-management product.
+
+Do not simply change colors. Refine the complete user experience while preserving every existing feature.
+
+---
+
+2. FIRST: AUDIT THE EXISTING PROJECT
+
+Before modifying anything, inspect the existing application thoroughly.
+
+Review:
+
+- Phase 1 foundation and design system.
+- Phase 2 authentication and role-based routing.
+- Phase 3 Admin account management.
+- Phase 4 academic management.
+- Phase 5 attendance management.
+- Phase 6 homework, tests, examinations and results.
+- All four existing interface shells.
+- Shared navigation configuration.
+- Existing responsive components.
+- Existing light/dark theme implementation.
+- Existing reusable components.
+- Existing routes and role guards.
+- Existing loading and empty states.
+
+Inspect the actual UI of every existing screen.
+
+Identify:
+
+1. Inconsistent layouts.
+2. Poor spacing.
+3. Unnecessary visual clutter.
+4. Outdated-looking components.
+5. Weak navigation hierarchy.
+6. Inconsistent icons.
+7. Poor mobile layouts.
+8. Inconsistent typography.
+9. Missing responsive behavior.
+10. Screens that do not feel like part of the same product.
+
+Create a UI/UX audit checklist before making changes.
+
+Do not assume that all four interface shells need the same layout.
+
+Design each role's experience according to its actual needs while maintaining one consistent design language.
+
+---
+
+3. APPLICATION ARCHITECTURE MUST NOT CHANGE
+
+Keep exactly two applications.
+
+Application A — Admin Portal
+
+Contains:
+
+- Desktop Admin Website experience.
+- Responsive Admin Web App experience.
+
+Both remain part of the same Admin application.
+
+Application B — Teacher & Student Portal
+
+Contains:
+
+- One shared login.
+- Automatic role detection.
+- Teacher dashboard.
+- Student dashboard.
+
+Parents continue using their child's Student credentials.
+
+Do not create another application or another login system.
+
+Maintain the existing four interface shells and improve them.
+
+---
+
+4. VISUAL DESIGN DIRECTION
+
+4.1 Overall design concept
+
+Create a premium, advanced, modern education-management interface.
+
+Use visual inspiration from high-quality fintech applications, premium productivity software and modern education dashboards.
+
+However, do not copy another product's interface.
+
+The result must feel original and specifically designed for a tuition management system.
+
+The desired visual character:
+
+- Premium.
+- Clean.
+- Modern.
+- Confident.
+- Professional.
+- Minimal but informative.
+- Advanced without unnecessary complexity.
+- Easy for students, teachers and Admin to understand.
+
+Avoid:
+
+- Generic AI-generated dashboard appearance.
+- Excessive gradients.
+- Too many floating cards.
+- Excessive rounded containers.
+- Oversized headings.
+- Random decorative elements.
+- Unnecessary glass effects.
+- Excessive shadows.
+- Inconsistent icon styles.
+- Overly bright colors.
+- Unnecessary animations.
+- Repeated identical dashboard layouts for every role.
+
+The design should look professionally crafted, not automatically generated.
+
+4.2 Primary visual palette
+
+Use a refined dark navy and electric-purple visual identity.
+
+Suggested starting palette:
+
+Role| Color| HEX
+Primary background| Deep navy| #101426
+Secondary background| Navy slate| #171D34
+Elevated surface| Dark indigo| #202844
+Primary accent| Electric purple| #8B5CF6
+Secondary accent| Soft violet| #A78BFA
+Highlight| Light lavender| #C4B5FD
+Main text| Soft white| #F8FAFC
+Secondary text| Muted slate| #A6B0C3
+Borders| Subtle navy grey| #303A55
+Success| Green| #22C58B
+Warning| Amber| #F5B942
+Error| Refined red| #F16B75
+
+These are starting design tokens, not permission to apply colors blindly.
+
+Evaluate the palette across real screens and adjust it for readability, hierarchy and contrast.
+
+Use a consistent 60-30-10 color distribution:
+
+- 60% dominant background and surface colors.
+- 30% secondary surfaces and supporting colors.
+- 10% accent and emphasis colors.
+
+Do not make every card purple.
+
+Purple should be used selectively for active navigation, important actions, selected states and meaningful highlights.
+
+4.3 Light theme
+
+The application must also have a premium light theme.
+
+Suggested starting palette:
+
+Role| Color| HEX
+Main background| Soft white| #F8F9FC
+Secondary background| Light lavender| #F1EEFA
+Cards| White| #FFFFFF
+Primary text| Deep navy| #17172B
+Secondary text| Slate| #687086
+Primary accent| Purple| #7552D9
+Secondary accent| Soft violet| #A78BFA
+Borders| Light grey| #E5E7EF
+Success| Green| #168A62
+Warning| Amber| #B7791F
+Error| Red| #D94C5C
+
+The light theme must not simply be a white version of the dark theme.
+
+Give it its own carefully balanced surfaces, borders, shadows and contrast.
+
+Both themes must feel equally polished.
+
+4.4 Theme behavior
+
+Preserve and improve the existing ThemeProvider.
+
+Requirements:
+
+- Light mode.
+- Dark mode.
+- Theme toggle.
+- Persisted user preference.
+- Correct initial theme rendering.
+- No unnecessary theme flashing.
+- Consistent theme across all routes.
+- Theme-aware modals, tables, charts, menus and inputs.
+- Correct theme behavior after login and logout.
+
+Do not break existing theme functionality.
+
+---
+
+5. ADVANCED BOTTOM NAVIGATION — MOST IMPORTANT REQUIREMENT
+
+Create a premium bottom navigation system for the mobile and tablet experiences.
+
+This is a major visual feature of Phase 6.5.
+
+Every role must have a clearly visible Home button positioned exactly in the middle of its bottom navigation.
+
+This applies separately to:
+
+1. Admin.
+2. Teacher.
+3. Student.
+
+Do not put Home at the left or right.
+
+Do not use a separate floating Home button that is disconnected from the navigation bar.
+
+The Home button must be the central item in the bottom navigation itself.
+
+5.1 Navigation structure
+
+Use five navigation positions.
+
+The Home item must always occupy position three.
+
+<escape>
+[ Item 1 ]   [ Item 2 ]   [ HOME ]   [ Item 4 ]   [ Item 5 ]
+</escape>Maintain balanced spacing on both sides.
+
+Use appropriate destinations for each role.
+
+Admin bottom navigation
+
+Recommended structure:
+
+1. Overview.
+2. Academics.
+3. Home.
+4. Assessments.
+5. Profile.
+
+Admin must still be able to access other existing management modules, such as Accounts, Attendance, Announcements and other existing sections, through a well-organized secondary navigation or appropriate navigation drawer.
+
+Do not remove access to any existing Admin feature merely to fit five items.
+
+Teacher bottom navigation
+
+Recommended structure:
+
+1. Classes.
+2. Attendance.
+3. Home.
+4. Homework.
+5. Profile.
+
+Teacher must retain access to existing:
+
+- Objective tests.
+- Examinations.
+- Marks entry.
+- Results.
+- Timetable.
+- Announcements.
+- Other existing authorized modules.
+
+Use a well-organized More menu, secondary navigation or appropriate module navigation to expose these features.
+
+Do not hide or remove functionality.
+
+Student bottom navigation
+
+Recommended structure:
+
+1. Learning.
+2. Attendance.
+3. Home.
+4. Tests.
+5. Profile.
+
+Students must retain access to existing:
+
+- Homework.
+- Test results.
+- Examination results.
+- Subject performance.
+- Timetable.
+- Announcements.
+- Notifications.
+- Other existing student features.
+
+Use secondary navigation or a well-organized More menu where required.
+
+5.2 Centre Home button design
+
+The Home button must be slightly more noticeable than the other navigation items.
+
+Create a subtle elevated centre-button treatment:
+
+- Slightly larger icon.
+- Slightly elevated position.
+- Distinct circular or softly rounded background.
+- Refined purple accent.
+- Subtle glow in dark mode.
+- Subtle shadow or elevation in light mode.
+- Clear Home label.
+- Smooth active-state animation.
+- Balanced size so it does not dominate the entire navigation bar.
+
+It must feel premium, not exaggerated.
+
+Do not use a huge floating action button.
+
+Do not make it cover the content.
+
+The central Home button should be immediately recognizable as the main navigation destination.
+
+5.3 Bottom navigation appearance
+
+Design the navigation bar with:
+
+- A clean, refined surface.
+- Subtle top border or shadow.
+- Appropriate rounded corners where suitable.
+- Equal spacing.
+- Consistent icon sizes.
+- Clear labels.
+- Proper active-state indicators.
+- Smooth transitions.
+- Adequate touch targets.
+- Safe-area padding for modern phones.
+
+In dark mode, use a deep navy navigation surface.
+
+In light mode, use a clean white or soft neutral surface.
+
+The navigation must remain readable and attractive in both themes.
+
+5.4 Navigation interactions
+
+Implement:
+
+- Animated active icon.
+- Subtle active-item indicator.
+- Smooth route transitions.
+- Correct navigation state after browser back/forward.
+- Correct selected item for nested routes.
+- Home always returns to the correct role-specific dashboard.
+- No navigation to another role's dashboard.
+- No broken links.
+- No duplicate navigation actions.
+
+The bottom navigation must not reset a user's authentication session.
+
+5.5 Bottom navigation responsive behavior
+
+Mobile:
+
+- Fixed to the bottom.
+- Five navigation positions.
+- Home in the exact centre.
+- Proper safe-area spacing.
+- No content hidden behind the navigation bar.
+
+Tablet:
+
+- Use a suitable responsive bottom navigation where it improves usability.
+- Preserve the same central Home principle when using bottom navigation.
+
+Desktop and laptop:
+
+- Preserve a professional desktop navigation system, normally the existing sidebar or an improved equivalent.
+- Keep Home prominently available in the primary navigation.
+- Do not force a mobile bottom navigation onto a large desktop screen if it harms usability.
+- Maintain consistent navigation names and destinations across screen sizes.
+
+---
+
+6. ADMIN PORTAL UI REFINEMENT
+
+Refine the entire Admin experience.
+
+The Admin interface must communicate control, organization and clarity.
+
+6.1 Admin dashboard
+
+Improve the existing dashboard with:
+
+- Refined welcome section.
+- Clear overview metrics.
+- Student count.
+- Teacher count.
+- Class and batch summaries.
+- Attendance overview.
+- Assessment overview.
+- Recent administrative activity.
+- Relevant notifications.
+- Quick access to frequently used actions.
+
+Use a carefully designed hierarchy.
+
+Do not overload the dashboard with every available statistic.
+
+6.2 Admin navigation
+
+Organize existing Admin modules into understandable sections.
+
+Possible groups:
+
+Overview
+
+- Dashboard.
+
+People
+
+- Teacher Accounts.
+- Student Accounts.
+
+Academics
+
+- Classes.
+- Batches.
+- Subjects.
+- Enrolments.
+- Teacher Assignments.
+- Timetable.
+- Announcements.
+
+Monitoring
+
+- Attendance.
+- Assessments.
+- Audit Logs.
+
+Settings
+
+- Existing application settings and profile-related options.
+
+Use actual existing routes and modules.
+
+Do not create new business functionality.
+
+6.3 Admin tables
+
+Improve:
+
+- Account lists.
+- Attendance records.
+- Homework and submission lists.
+- Test lists.
+- Examination lists.
+- Marks records.
+- Audit logs.
+
+Requirements:
+
+- Consistent table styling.
+- Clear headers.
+- Appropriate row spacing.
+- Readable typography.
+- Refined status indicators.
+- Search and filters.
+- Empty states.
+- Responsive presentation.
+- Clear action menus.
+
+Do not remove existing search or filter functionality.
+
+For mobile, convert dense tables into carefully designed record cards or other usable layouts.
+
+6.4 Admin details and forms
+
+Refine existing:
+
+- Create account forms.
+- Edit account forms.
+- Account details modals.
+- Academic management forms.
+- Attendance correction dialogs.
+- Marks correction dialogs.
+- Announcement forms.
+- Assessment inspection modals.
+
+Use consistent form layouts and validation presentation.
+
+Preserve all existing form fields and validation rules.
+
+---
+
+7. TEACHER PORTAL UI REFINEMENT
+
+The Teacher Portal must prioritize speed and everyday usability.
+
+Teachers should be able to perform common actions quickly.
+
+7.1 Teacher dashboard
+
+Improve the dashboard with:
+
+- Welcome section.
+- Assigned classes.
+- Assigned batches.
+- Assigned subjects.
+- Today's timetable.
+- Attendance quick access.
+- Homework overview.
+- Upcoming tests and examinations.
+- Pending submissions to review.
+- Recent results and activity.
+- Relevant announcements.
+
+Only show data the authenticated teacher is authorized to access.
+
+7.2 Teacher navigation
+
+Organize existing features clearly:
+
+Daily Work
+
+- Dashboard.
+- Attendance.
+- Timetable.
+
+Academic Work
+
+- Classes.
+- Homework.
+- Homework Review.
+- Tests.
+- Examinations.
+- Marks Entry.
+- Results.
+
+Communication
+
+- Announcements.
+- Notifications.
+
+Account
+
+- Profile.
+- Settings.
+- Logout.
+
+Do not create duplicate pages if existing modules already provide the functionality.
+
+7.3 Teacher attendance UI
+
+Refine the attendance-taking experience.
+
+Make it:
+
+- Fast.
+- Easy to understand.
+- Mobile-friendly.
+- Clear for large student lists.
+
+Improve:
+
+- Student list.
+- Attendance status controls.
+- Present/Absent/Late/Excused indicators.
+- Live counts.
+- Unmarked student warnings.
+- Review and submit flow.
+- Confirmation dialogs.
+- Attendance history.
+
+Preserve existing validation and correction rules.
+
+7.4 Teacher homework UI
+
+Refine:
+
+- Homework creation.
+- Draft list.
+- Published homework.
+- Submission list.
+- Submission details.
+- Review interface.
+- Marks and feedback forms.
+
+Make student responses easy to read.
+
+Use clear submission status labels.
+
+7.5 Teacher tests and examinations UI
+
+Refine:
+
+- Test builder.
+- Question editor.
+- Question ordering controls.
+- Test preview.
+- Published test list.
+- Examination scheduling.
+- Marks entry.
+- Results view.
+
+Make the MCQ editor clean and easy to use.
+
+Do not change the evaluation rules.
+
+Do not add question types or new assessment features.
+
+---
+
+8. STUDENT PORTAL UI REFINEMENT
+
+The Student Portal should feel friendly, motivating, modern and easy to navigate.
+
+Avoid making it look like an Admin dashboard.
+
+8.1 Student dashboard
+
+Improve the dashboard with:
+
+- Welcome section.
+- Class and batch.
+- Attendance percentage.
+- Upcoming timetable.
+- Homework due soon.
+- Available tests.
+- Recent results.
+- Subject-wise performance.
+- Relevant announcements.
+- Notifications.
+
+Use visually clear summaries.
+
+Do not display fabricated academic statistics.
+
+Show honest empty states when information is unavailable.
+
+8.2 Student navigation
+
+Organize existing student features into:
+
+Learning
+
+- Homework.
+- Tests.
+- Examinations.
+- Results.
+
+My Progress
+
+- Attendance.
+- Subject Performance.
+- Academic History.
+
+Information
+
+- Timetable.
+- Announcements.
+- Notifications.
+
+Account
+
+- Profile.
+- Settings.
+- Logout.
+
+Maintain the five-item bottom navigation with the Home item in the exact centre.
+
+8.3 Student homework UI
+
+Improve:
+
+- Homework list.
+- Due date indicators.
+- Homework details.
+- Text response editor.
+- Submission confirmation.
+- Submission history.
+- Teacher feedback.
+- Released marks.
+
+Make deadlines easy to understand.
+
+Do not add file attachments.
+
+8.4 Student test-taking UI
+
+Give the existing test-taking screen special attention.
+
+Improve:
+
+- Test instructions.
+- Timer visibility.
+- Question navigation.
+- Selected answers.
+- Answered/unanswered indicators.
+- Previous/Next controls.
+- Review screen.
+- Submit confirmation.
+- Submission confirmation state.
+
+The test interface should remain focused and distraction-free.
+
+Do not change test timing, scoring, attempt limits or answer-release rules.
+
+8.5 Student results UI
+
+Improve:
+
+- Results cards.
+- Subject-wise summaries.
+- Marks presentation.
+- Percentage indicators.
+- Pass/fail status.
+- Assessment history.
+- Empty and unreleased result states.
+
+Use charts or progress visualizations only when they improve understanding.
+
+Do not display unreleased marks or private information.
+
+---
+
+9. ADVANCED DASHBOARD COMPONENTS
+
+Refine the visual presentation of existing dashboard components.
+
+Use appropriate combinations of:
+
+- Metric cards.
+- Progress indicators.
+- Charts.
+- Timeline components.
+- Activity lists.
+- Status badges.
+- Quick action buttons.
+- Empty-state illustrations or icons.
+- Section headers.
+- Search controls.
+- Filter controls.
+
+Do not turn every section into a card.
+
+Use whitespace and layout hierarchy effectively.
+
+Charts must use actual available data.
+
+Do not fabricate values to make dashboards look populated.
+
+Keep numbers readable and aligned.
+
+---
+
+10. TYPOGRAPHY AND ICON SYSTEM
+
+Create a consistent typography hierarchy.
+
+Preserve existing fonts if they are already configured appropriately.
+
+Improve:
+
+- Page titles.
+- Section titles.
+- Card titles.
+- Body text.
+- Supporting text.
+- Form labels.
+- Table text.
+- Numeric values.
+- Status labels.
+
+Use consistent font weights and line heights.
+
+Ensure:
+
+- Good readability on mobile.
+- No clipped text.
+- No excessive uppercase labels.
+- Consistent spacing between text elements.
+
+Use Lucide React consistently.
+
+Do not mix unrelated icon styles.
+
+Use recognizable icons for:
+
+- Home.
+- Academics.
+- Attendance.
+- Homework.
+- Tests.
+- Results.
+- Timetable.
+- Notifications.
+- Profile.
+- Settings.
+
+Avoid icons without clear meaning.
+
+---
+
+11. ADVANCED ANIMATIONS AND INTERACTIONS
+
+Introduce purposeful motion throughout the application.
+
+The goal is to make the application feel polished and responsive, not distracting.
+
+Use the existing Motion library.
+
+Examples:
+
+Navigation
+
+- Smooth active-item transitions.
+- Subtle Home button elevation.
+- Gentle icon animation.
+- Smooth drawer transitions.
+
+Cards
+
+- Subtle hover states on desktop.
+- Small entrance transitions where appropriate.
+- Refined press feedback.
+
+Modals
+
+- Smooth opening and closing.
+- Background overlay transitions.
+- Appropriate focus behavior.
+
+Page transitions
+
+- Subtle transitions between screens.
+- Avoid long animations that slow navigation.
+
+Loading states
+
+- Refine existing loading indicators.
+- Preserve the existing startup loading experience.
+- Avoid artificial waiting periods.
+
+Reduced motion
+
+Respect the user's reduced-motion preference.
+
+Do not use animations that make text difficult to read.
+
+Do not add continuous animation to ordinary dashboard cards.
+
+---
+
+12. RESPONSIVE DESIGN
+
+Every existing screen must be checked at:
+
+- Small mobile phones.
+- Large mobile phones.
+- Tablets.
+- Laptops.
+- Desktop screens.
+
+Pay particular attention to:
+
+- Bottom navigation.
+- Central Home button.
+- Forms.
+- Tables.
+- Modals.
+- Test-taking screens.
+- Student lists.
+- Attendance lists.
+- Dashboard grids.
+- Sidebars.
+- Search and filter controls.
+
+Requirements:
+
+- No horizontal overflow caused by layout mistakes.
+- No overlapping buttons.
+- No clipped headings.
+- No hidden form controls.
+- No content hidden behind bottom navigation.
+- No inaccessible modal buttons.
+- No unusably narrow table columns.
+- No broken navigation drawers.
+
+Use existing responsive breakpoints where appropriate.
+
+Do not make the entire interface mobile-only.
+
+---
+
+13. ACCESSIBILITY AND USABILITY
+
+Improve accessibility without changing the application's functionality.
+
+Ensure:
+
+- Clear keyboard focus indicators.
+- Keyboard-accessible navigation.
+- Accessible button names.
+- Proper form labels.
+- Readable color contrast.
+- Appropriate touch target sizes.
+- Correct modal focus handling.
+- Clear error messages.
+- Status information not conveyed by color alone.
+
+Check the color contrast of both themes.
+
+Use WCAG AA contrast as the target for ordinary text wherever practical.
+
+---
+
+14. PRESERVE ALL EXISTING FUNCTIONALITY
+
+This is a visual and navigation refinement phase.
+
+You must not break or remove any working feature from Phases 1–6.
+
+Preserve:
+
+Authentication
+
+- Admin login.
+- Teacher login.
+- Student login.
+- Automatic role detection.
+- Session management.
+- Logout.
+- Route guards.
+- Existing forgot-password behavior.
+
+Accounts
+
+- Teacher creation.
+- Student creation.
+- ID generation.
+- Account editing.
+- Deactivation/reactivation.
+- Password reset simulation.
+
+Academics
+
+- Classes.
+- Batches.
+- Subjects.
+- Enrolments.
+- Teacher assignments.
+- Timetable.
+- Announcements.
+
+Attendance
+
+- Regular attendance.
+- Examination attendance.
+- Attendance history.
+- Corrections.
+- Audit logs.
+- In-app absence notifications.
+
+Homework
+
+- Teacher creation.
+- Draft and publish.
+- Student submissions.
+- Late submissions.
+- Teacher review.
+- Feedback.
+- Marks.
+- Revision history.
+
+Tests
+
+- MCQ test creation.
+- Test configuration.
+- Student attempts.
+- Timers.
+- Answer persistence.
+- Automatic evaluation.
+- Result release.
+
+Examinations and results
+
+- Examination scheduling.
+- Manual marks entry.
+- Marks corrections.
+- Audit history.
+- Result release.
+- Subject performance.
+- Student results.
+- Admin assessment overview.
+
+All existing routes and actions must continue to work.
+
+If navigation changes, update the existing navigation configuration consistently rather than duplicating routes.
+
+Do not rewrite business logic merely to change the appearance.
+
+---
+
+15. TECHNICAL IMPLEMENTATION RULES
+
+Preserve the current technology stack:
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+
+Do not migrate frameworks.
+
+Do not introduce PostgreSQL.
+
+Do not connect Firebase.
+
+Do not add AI APIs.
+
+Do not add payment services.
+
+Do not add WhatsApp, SMS or email integrations.
+
+Do not add new databases.
+
+Do not add new backend services.
+
+Do not modify Firebase configuration.
+
+Do not introduce new business logic or data models unless strictly required for a presentation-only concern.
+
+Keep existing service contracts intact.
+
+Keep role-based permissions intact.
+
+Keep local development adapters intact.
+
+Avoid unnecessary dependencies.
+
+---
+
+16. COMPONENT REFACTORING
+
+You may refactor UI components where necessary.
+
+Prefer reusable components for:
+
+- Bottom navigation.
+- Central Home navigation item.
+- Desktop sidebar.
+- Navigation drawer.
+- Page headers.
+- Dashboard metric cards.
+- Section headers.
+- Status badges.
+- Data tables.
+- Responsive record cards.
+- Modals.
+- Empty states.
+- Loading states.
+- Form layouts.
+- Theme-aware components.
+
+Do not create unnecessary duplicate components for Admin, Teacher and Student.
+
+Where components are genuinely shared, reuse them.
+
+Where the roles require different behavior or layouts, keep role-specific components.
+
+Maintain clear TypeScript types.
+
+Avoid giant components containing the entire interface.
+
+Avoid unnecessary state duplication.
+
+---
+
+17. BROWSER-BASED VISUAL TESTING — MANDATORY
+
+Earlier phases passed automated build and logic checks, but full browser screenshot and DOM visual testing was not performed.
+
+This phase must address that gap.
+
+If browser automation or visual testing tools are available, use them.
+
+Do not rely only on code inspection or successful compilation.
+
+Required visual test routes
+
+Inspect the actual running application.
+
+At minimum, inspect:
+
+Admin
+
+- Login.
+- Dashboard.
+- Account Management.
+- Academic Management.
+- Attendance.
+- Assessment Overview.
+- Audit views.
+
+Teacher
+
+- Dashboard.
+- Attendance.
+- Timetable.
+- Homework.
+- Submission Review.
+- Tests.
+- Examinations.
+- Marks Entry.
+- Results.
+
+Student
+
+- Dashboard.
+- Attendance.
+- Homework.
+- Test list.
+- Test-taking screen.
+- Results.
+- Timetable.
+- Announcements.
+
+Required screen sizes
+
+Test representative viewports:
+
+- 360 × 800 mobile.
+- 390 × 844 mobile.
+- 768 × 1024 tablet.
+- 1024 × 768 laptop/tablet landscape.
+- 1366 × 768 desktop.
+- 1920 × 1080 desktop.
+
+Required theme testing
+
+Test both:
+
+- Dark theme.
+- Light theme.
+
+Required navigation testing
+
+Verify:
+
+- Home is exactly in the centre of each mobile bottom navigation.
+- Home is slightly elevated and noticeable.
+- Other navigation items are evenly spaced.
+- Active state is correct.
+- Every navigation item works.
+- Back and forward navigation work.
+- Nested routes select the correct active item.
+- No feature has become inaccessible.
+- Navigation does not break authentication.
+
+Required visual checks
+
+Inspect for:
+
+- Text overflow.
+- Layout overflow.
+- Broken spacing.
+- Incorrect theme colors.
+- Missing icons.
+- Misaligned elements.
+- Overlapping controls.
+- Hidden buttons.
+- Bottom navigation covering content.
+- Broken modal layouts.
+- Poor table responsiveness.
+- Unreadable contrast.
+
+Capture screenshots where possible.
+
+Fix the actual visual problems found.
+
+If browser testing tools are unavailable, explicitly report which visual checks could not be executed. Never claim visual testing passed if it was not performed.
+
+---
+
+18. REGRESSION TESTING
+
+After the UI changes, rerun:
+
+- npm run build
+- npx tsc --noEmit
+- Phase 2 authentication tests.
+- Phase 3 account-management tests.
+- Phase 4 academic-management tests.
+- Phase 5 attendance tests.
+- Phase 6 assessment tests.
+
+Also verify that key user workflows still work through the interface.
+
+Do not remove tests or weaken assertions.
+
+Do not claim success without running the relevant checks.
+
+---
+
+19. PROJECT DOCUMENTATION
+
+Update the documentation to include:
+
+- Phase 6.5 implementation summary.
+- New theme tokens.
+- Dark theme palette.
+- Light theme palette.
+- Bottom navigation structure.
+- Central Home button behavior.
+- Desktop navigation behavior.
+- Mobile navigation behavior.
+- Shared UI components.
+- Updated responsive breakpoints, if changed.
+- Accessibility improvements.
+- Animation behavior.
+- Browser testing results.
+- Screenshots, if available.
+- Known UI limitations.
+
+Clearly state that Phase 6.5 is a UI/UX refinement phase.
+
+Do not mark Phase 7 as started or completed.
+
+---
+
+20. EXECUTION AND CONTINUATION RULES
+
+Work systematically.
+
+Suggested order:
+
+1. Audit existing UI.
+2. Establish visual design tokens.
+3. Refine ThemeProvider.
+4. Refine shared navigation architecture.
+5. Implement the central Home bottom navigation.
+6. Refine Admin Portal.
+7. Refine Teacher Portal.
+8. Refine Student Portal.
+9. Refine shared components.
+10. Improve responsive layouts.
+11. Add purposeful animations.
+12. Test light and dark themes.
+13. Run browser visual tests.
+14. Run regression tests.
+15. Update documentation.
+
+If you approach your execution or context limits:
+
+- Save completed changes.
+- Avoid leaving incomplete files.
+- Record the completed checklist.
+- Record remaining tasks.
+- Record changed files.
+- Record the last successful operation.
+- Provide a clear continuation instruction.
+
+Provide a continuation action labelled:
+
+CONTINUE PHASE 6.5
+
+The continuation must resume the unfinished UI/UX task only, inspect the existing code first and avoid repeating completed work.
+
+If a literal interactive button is unavailable, provide a copy-ready continuation prompt.
+
+---
+
+21. FINAL COMPLETION REPORT
+
+When Phase 6.5 is finished, provide:
+
+A. Overall UI status
+
+- Completed improvements.
+- Partially completed improvements.
+- Unfinished improvements.
+
+B. Theme
+
+- Final dark theme colors.
+- Final light theme colors.
+- Theme toggle behavior.
+- Persistence behavior.
+
+C. Navigation
+
+- Admin navigation.
+- Teacher navigation.
+- Student navigation.
+- Central Home button implementation.
+- Mobile and tablet behavior.
+- Desktop behavior.
+
+D. Interface improvements
+
+- Admin screens.
+- Teacher screens.
+- Student screens.
+- Shared components.
+- Dashboard changes.
+- Forms, tables and modals.
+
+E. Responsive testing
+
+List tested viewport sizes and actual results.
+
+F. Browser visual testing
+
+List actual screens inspected and any remaining issues.
+
+G. Animation and accessibility
+
+Describe implemented motion, reduced-motion support and accessibility improvements.
+
+H. Technical changes
+
+- Files created.
+- Files modified.
+- Components refactored.
+- Dependencies added or removed.
+
+I. Regression testing
+
+Report actual results of:
+
+- npm run build.
+- npx tsc --noEmit.
+- Phase 2 tests.
+- Phase 3 tests.
+- Phase 4 tests.
+- Phase 5 tests.
+- Phase 6 tests.
+
+J. Scope confirmation
+
+Explicitly confirm:
+
+- Existing Phases 1–6 functionality preserved.
+- No new business modules added.
+- No Firebase connection performed.
+- No AI APIs connected.
+- No PostgreSQL introduced.
+- No payment gateways added.
+- No WhatsApp/SMS/email integrations added.
+- No Phase 7 features implemented.
+
+---
+
+FINAL EXECUTION INSTRUCTION
+
+Perform a complete professional UI/UX refinement of the existing Tuition Management System.
+
+The most important visual requirement is that Admin, Teacher and Student mobile bottom navigation must each have a slightly elevated, noticeable Home button exactly in the centre.
+
+Use a premium dark navy and electric-purple visual direction with an equally polished light theme.
+
+Make the entire application feel advanced, consistent, responsive and professionally designed.
+
+Preserve every working feature from Phases 1–6.
+
+This is Phase 6.5 only.
+
+Do not start Phase 7. Do not add any Phase 7 functionality.

@@ -1,0 +1,1215 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // 1. Global Safety Net — default deny catch-all
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // Hardened Global Identity & Validation Primitives (Eight Pillars)
+    // =========================================================================
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedEmail() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function isBootstrappedAdminEmail() {
+      return isVerifiedEmail() && request.auth.token.email == 'toutionacademy@gmail.com';
+    }
+
+    function hasActiveUserDoc() {
+      return isVerifiedEmail()
+        && exists(/databases/$(database)/documents/users/$(request.auth.uid))
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'active';
+    }
+
+    function isAdmin() {
+      return isBootstrappedAdminEmail()
+        || (isVerifiedEmail()
+          && exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+          && get(/databases/$(database)/documents/admins/$(request.auth.uid)).data.status == 'active');
+    }
+
+    function isActiveTeacher() {
+      return hasActiveUserDoc()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'teacher';
+    }
+
+    function isActiveStudent() {
+      return hasActiveUserDoc()
+        && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'student';
+    }
+
+    function isNonEmptyBoundedString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isBoundedString(val, maxLen) {
+      return val is string && val.size() <= maxLen;
+    }
+
+    function isAdminListedInDoc(data) {
+      return isBootstrappedAdminEmail()
+        || ('adminUids' in data && data.adminUids is list && data.adminUids.size() <= 10 && request.auth.uid in data.adminUids);
+    }
+
+    function isValidAdminUidsList(data) {
+      return 'adminUids' in data && data.adminUids is list && data.adminUids.size() >= 1 && data.adminUids.size() <= 10;
+    }
+
+    // =========================================================================
+    // Entity Validation Blueprints (Aligned 1:1 with TypeScript Domain Models)
+    // =========================================================================
+    function isValidAdminRecord(data, uid) {
+      return data.keys().hasAll(['uid', 'accountId', 'status', 'createdAt'])
+        && data.keys().hasOnly(['uid', 'accountId', 'email', 'status', 'createdAt', 'updatedAt'])
+        && data.uid == uid
+        && isValidId(data.uid)
+        && isNonEmptyBoundedString(data.accountId, 4, 32)
+        && (!('email' in data) || isBoundedString(data.email, 160))
+        && data.status in ['active', 'deactivated']
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidAuthIdMapping(data, loginId) {
+      return data.keys().hasAll(['loginId', 'uid', 'authEmail', 'role', 'status', 'createdAt'])
+        && data.keys().hasOnly(['loginId', 'uid', 'authEmail', 'role', 'status', 'createdAt', 'updatedAt'])
+        && data.loginId == loginId
+        && isValidId(data.uid)
+        && isNonEmptyBoundedString(data.authEmail, 6, 160)
+        && data.role in ['admin', 'teacher', 'student']
+        && data.status in ['active', 'deactivated']
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidUserAccountProfile(data, targetUid) {
+      return data.keys().hasAll(['uid', 'accountId', 'role', 'name', 'phone', 'status', 'adminUids', 'createdAt'])
+        && data.keys().hasOnly([
+          'uid', 'accountId', 'role', 'name', 'phone', 'email', 'status',
+          'classId', 'className', 'batchId', 'batchName', 'sharedWithParent',
+          'adminUids', 'createdAt', 'updatedAt'
+        ])
+        && data.uid == targetUid
+        && isValidId(data.uid)
+        && isNonEmptyBoundedString(data.accountId, 4, 32)
+        && data.role in ['admin', 'teacher', 'student']
+        && isNonEmptyBoundedString(data.name, 2, 100)
+        && isBoundedString(data.phone, 24)
+        && (!('email' in data) || isBoundedString(data.email, 160))
+        && data.status in ['active', 'deactivated']
+        && (!('classId' in data) || isBoundedString(data.classId, 64))
+        && (!('className' in data) || isBoundedString(data.className, 120))
+        && (!('batchId' in data) || isBoundedString(data.batchId, 64))
+        && (!('batchName' in data) || isBoundedString(data.batchName, 120))
+        && (!('sharedWithParent' in data) || data.sharedWithParent is bool)
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidApplicationSettings(data) {
+      return data.keys().hasAll([
+          'id', 'centreProfile', 'applicationBranding', 'appearanceDefaults',
+          'academicDefaults', 'notificationPreferences', 'updatedBy', 'updatedAt', 'schemaVersion'
+        ])
+        && data.keys().hasOnly([
+          'id', 'centreProfile', 'applicationBranding', 'appearanceDefaults',
+          'academicDefaults', 'notificationPreferences', 'updatedBy', 'updatedAt',
+          'schemaVersion', 'environmentMode'
+        ])
+        && data.id == 'APP-SETTINGS-001'
+        && data.centreProfile is map
+        && data.applicationBranding is map
+        && data.appearanceDefaults is map
+        && data.academicDefaults is map
+        && data.notificationPreferences is map
+        && isNonEmptyBoundedString(data.updatedBy, 2, 64)
+        && isNonEmptyBoundedString(data.updatedAt, 10, 40)
+        && data.schemaVersion is int
+        && (!('environmentMode' in data) || data.environmentMode in ['local_demo_adapter', 'firebase_connected']);
+    }
+
+    function isValidAuditEntry(data, id) {
+      return data.keys().hasAll(['id', 'actorId', 'action', 'adminUids'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.actorId, 2, 64)
+        && isNonEmptyBoundedString(data.action, 2, 120)
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidClassRecord(data, id) {
+      return data.keys().hasAll(['id', 'classId', 'name', 'status', 'createdAt'])
+        && data.keys().hasOnly(['id', 'classId', 'name', 'description', 'status', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.classId)
+        && isNonEmptyBoundedString(data.name, 2, 100)
+        && (!('description' in data) || isBoundedString(data.description, 300))
+        && data.status in ['active', 'inactive']
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidBatchRecord(data, id) {
+      return data.keys().hasAll(['id', 'batchId', 'name', 'classId', 'status', 'createdAt'])
+        && data.keys().hasOnly(['id', 'batchId', 'name', 'classId', 'description', 'status', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.batchId)
+        && isNonEmptyBoundedString(data.name, 2, 100)
+        && isValidId(data.classId)
+        && (!('description' in data) || isBoundedString(data.description, 300))
+        && data.status in ['active', 'inactive']
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidSubjectRecord(data, id) {
+      return data.keys().hasAll(['id', 'subjectId', 'name', 'classIds', 'status', 'createdAt'])
+        && data.keys().hasOnly(['id', 'subjectId', 'name', 'code', 'classIds', 'status', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.subjectId)
+        && isNonEmptyBoundedString(data.name, 2, 100)
+        && (!('code' in data) || isBoundedString(data.code, 24))
+        && data.classIds is list && data.classIds.size() <= 50
+        && (data.classIds.size() == 0 || data.classIds[0] is string)
+        && data.status in ['active', 'inactive']
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidEnrolment(data, id) {
+      return data.keys().hasAll(['id', 'enrolmentId', 'studentAccountId', 'studentUid', 'classId', 'batchId', 'enrolmentDate', 'status', 'adminUids', 'createdAt'])
+        && data.keys().hasOnly(['id', 'enrolmentId', 'studentAccountId', 'studentUid', 'studentName', 'classId', 'batchId', 'enrolmentDate', 'status', 'adminUids', 'teacherUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.enrolmentId)
+        && isValidId(data.studentAccountId)
+        && isValidId(data.studentUid)
+        && isValidId(data.classId)
+        && isValidId(data.batchId)
+        && isNonEmptyBoundedString(data.enrolmentDate, 8, 20)
+        && data.status in ['active', 'inactive']
+        && isValidAdminUidsList(data)
+        && (!('teacherUids' in data) || (data.teacherUids is list && data.teacherUids.size() <= 25 && (data.teacherUids.size() == 0 || data.teacherUids[0] is string)))
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidTeacherAssignment(data, id) {
+      return data.keys().hasAll(['id', 'assignmentId', 'teacherAccountId', 'teacherUid', 'subjectId', 'classId', 'batchId', 'status', 'adminUids', 'createdAt'])
+        && data.keys().hasOnly(['id', 'assignmentId', 'teacherAccountId', 'teacherUid', 'subjectId', 'classId', 'batchId', 'status', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.assignmentId)
+        && isValidId(data.teacherAccountId)
+        && isValidId(data.teacherUid)
+        && isValidId(data.subjectId)
+        && isValidId(data.classId)
+        && isValidId(data.batchId)
+        && data.status in ['active', 'inactive']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidTimetableEntry(data, id) {
+      return data.keys().hasAll(['id', 'entryId', 'classId', 'batchId', 'subjectId', 'teacherAccountId', 'teacherUid', 'dayOfWeek', 'startTime', 'endTime', 'status', 'createdAt'])
+        && data.keys().hasOnly(['id', 'entryId', 'classId', 'batchId', 'subjectId', 'teacherAccountId', 'teacherUid', 'dayOfWeek', 'startTime', 'endTime', 'room', 'status', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.entryId)
+        && isValidId(data.teacherUid)
+        && isNonEmptyBoundedString(data.dayOfWeek, 3, 20)
+        && isNonEmptyBoundedString(data.startTime, 4, 8)
+        && isNonEmptyBoundedString(data.endTime, 4, 8)
+        && (!('room' in data) || isBoundedString(data.room, 60))
+        && data.status in ['active', 'cancelled']
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidAnnouncement(data, id) {
+      return data.keys().hasAll(['id', 'announcementId', 'title', 'content', 'audience', 'publicationStatus', 'publishedByAdminId', 'adminUids', 'createdAt'])
+        && data.keys().hasOnly(['id', 'announcementId', 'title', 'content', 'audience', 'targetClassId', 'targetBatchId', 'publicationStatus', 'publishedByAdminId', 'adminUids', 'createdAt', 'updatedAt', 'publishedAt'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.title, 2, 160)
+        && isNonEmptyBoundedString(data.content, 2, 3000)
+        && data.audience in ['all', 'teachers', 'students', 'class', 'batch']
+        && data.publicationStatus in ['draft', 'published', 'unpublished', 'archived']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40)
+        && (!('updatedAt' in data) || isNonEmptyBoundedString(data.updatedAt, 10, 40));
+    }
+
+    function isValidAttendanceSession(data, id) {
+      return data.keys().hasAll(['id', 'sessionDate', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'sessionType', 'status', 'adminUids', 'createdAt'])
+        && data.keys().hasOnly(['id', 'sessionDate', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'sessionType', 'timetableEntryId', 'examTitle', 'status', 'submittedAt', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.sessionDate, 8, 16)
+        && isValidId(data.classId)
+        && isValidId(data.batchId)
+        && isValidId(data.subjectId)
+        && isValidId(data.teacherId)
+        && isValidId(data.teacherUid)
+        && data.sessionType in ['regular', 'examination']
+        && data.status in ['draft', 'submitted', 'corrected']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidAttendanceRecord(data, id) {
+      return data.keys().hasAll(['id', 'attendanceSessionId', 'studentId', 'studentUid', 'teacherUid', 'status', 'markedBy', 'markedAt', 'adminUids'])
+        && data.keys().hasOnly(['id', 'attendanceSessionId', 'studentId', 'studentUid', 'teacherUid', 'status', 'remarks', 'markedBy', 'markedAt', 'updatedAt', 'corrected', 'adminUids'])
+        && data.id == id
+        && isValidId(data.attendanceSessionId)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && isValidId(data.teacherUid)
+        && data.status in ['present', 'absent', 'late', 'excused']
+        && (!('remarks' in data) || isBoundedString(data.remarks, 300))
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidAttendanceNotification(data, id) {
+      return data.keys().hasAll(['id', 'attendanceSessionId', 'attendanceRecordId', 'studentId', 'studentUid', 'absenceDate', 'classId', 'batchId', 'subjectId', 'attendanceType', 'readByStudent', 'readByAdmin', 'resolutionStatus', 'adminUids', 'createdAt'])
+        && data.keys().hasOnly(['id', 'attendanceSessionId', 'attendanceRecordId', 'studentId', 'studentUid', 'studentName', 'absenceDate', 'classId', 'className', 'batchId', 'batchName', 'subjectId', 'subjectName', 'attendanceType', 'examTitle', 'createdAt', 'updatedAt', 'readByStudent', 'readByStudentAt', 'readByAdmin', 'readByAdminAt', 'resolutionStatus', 'correctionNote', 'adminUids'])
+        && data.id == id
+        && isValidId(data.attendanceSessionId)
+        && isValidId(data.attendanceRecordId)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && data.readByStudent is bool
+        && data.readByAdmin is bool
+        && data.resolutionStatus in ['active_absence', 'corrected_not_absent']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidHomework(data, id) {
+      return data.keys().hasAll(['id', 'title', 'instructions', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'assignedAt', 'dueAt', 'status', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'instructions', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'assignedAt', 'dueAt', 'maximumMarks', 'status', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.title, 2, 160)
+        && isNonEmptyBoundedString(data.instructions, 2, 6000)
+        && isValidId(data.classId)
+        && isValidId(data.batchId)
+        && isValidId(data.subjectId)
+        && isValidId(data.teacherUid)
+        && data.status in ['draft', 'published', 'closed', 'archived']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidHomeworkSubmission(data, id) {
+      return data.keys().hasAll(['id', 'homeworkId', 'studentId', 'studentUid', 'teacherUid', 'responseText', 'submittedAt', 'status', 'revisionNumber', 'revisionHistory', 'adminUids'])
+        && data.keys().hasOnly(['id', 'homeworkId', 'studentId', 'studentUid', 'teacherUid', 'responseText', 'submittedAt', 'status', 'feedback', 'marksAwarded', 'reviewedBy', 'reviewedAt', 'reopenedByTeacher', 'revisionNumber', 'revisionHistory', 'adminUids'])
+        && data.id == id
+        && isValidId(data.homeworkId)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && isValidId(data.teacherUid)
+        && isNonEmptyBoundedString(data.responseText, 2, 12000)
+        && data.status in ['submitted', 'late_submitted', 'reviewed', 'returned_for_correction']
+        && data.revisionNumber is int && data.revisionNumber >= 1 && data.revisionNumber <= 20
+        && data.revisionHistory is list && data.revisionHistory.size() >= 1 && data.revisionHistory.size() <= 20
+        && (!('feedback' in data) || isBoundedString(data.feedback, 2000))
+        && (!('marksAwarded' in data) || (data.marksAwarded is number && data.marksAwarded >= 0 && data.marksAwarded <= 1000))
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidTeacherPrivateNote(data) {
+      return data.keys().hasAll(['submissionId', 'teacherUid', 'privateTeacherNote', 'updatedAt'])
+        && data.keys().hasOnly(['submissionId', 'teacherUid', 'privateTeacherNote', 'updatedAt'])
+        && isValidId(data.submissionId)
+        && isValidId(data.teacherUid)
+        && isBoundedString(data.privateTeacherNote, 2000)
+        && isNonEmptyBoundedString(data.updatedAt, 10, 40);
+    }
+
+    function isValidObjectiveTest(data, id) {
+      return data.keys().hasAll(['id', 'title', 'instructions', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'durationMinutes', 'totalMarks', 'startsAt', 'endsAt', 'maximumAttempts', 'resultReleaseMode', 'showCorrectAnswersOnRelease', 'status', 'questions', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'instructions', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'durationMinutes', 'totalMarks', 'startsAt', 'endsAt', 'maximumAttempts', 'resultReleaseMode', 'scheduledReleaseAt', 'showCorrectAnswersOnRelease', 'manualResultsReleased', 'status', 'questions', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.title, 2, 160)
+        && isValidId(data.teacherUid)
+        && data.durationMinutes is int && data.durationMinutes > 0 && data.durationMinutes <= 360
+        && data.totalMarks is number && data.totalMarks > 0 && data.totalMarks <= 10000
+        && data.status in ['draft', 'published', 'active', 'completed', 'archived']
+        && data.showCorrectAnswersOnRelease is bool
+        && data.questions is list && data.questions.size() >= 1 && data.questions.size() <= 150
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidTestAnswerKey(data, testId) {
+      return data.keys().hasAll(['testId', 'teacherUid', 'answers', 'updatedAt'])
+        && data.keys().hasOnly(['testId', 'teacherUid', 'answers', 'updatedAt'])
+        && data.testId == testId
+        && isValidId(data.teacherUid)
+        && data.answers is list && data.answers.size() <= 150
+        && isNonEmptyBoundedString(data.updatedAt, 10, 40);
+    }
+
+    function isValidTestAttempt(data, id) {
+      return data.keys().hasAll(['id', 'testId', 'studentId', 'studentUid', 'teacherUid', 'attemptNumber', 'startedAt', 'expiresAt', 'status', 'answers', 'totalMarks', 'adminUids'])
+        && data.keys().hasOnly(['id', 'testId', 'studentId', 'studentUid', 'teacherUid', 'attemptNumber', 'startedAt', 'expiresAt', 'submittedAt', 'status', 'answers', 'marksObtained', 'totalMarks', 'percentage', 'evaluatedAt', 'resultReleasedAt', 'adminUids'])
+        && data.id == id
+        && isValidId(data.testId)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && isValidId(data.teacherUid)
+        && data.attemptNumber is int && data.attemptNumber >= 1
+        && data.status in ['in_progress', 'submitted', 'evaluated']
+        && data.answers is map
+        && data.totalMarks is number && data.totalMarks > 0
+        && (!('marksObtained' in data) || (data.marksObtained is number && data.marksObtained >= 0 && data.marksObtained <= 10000))
+        && (!('percentage' in data) || (data.percentage is number && data.percentage >= 0 && data.percentage <= 100))
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidExamination(data, id) {
+      return data.keys().hasAll(['id', 'title', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'examDate', 'startsAt', 'endsAt', 'maximumMarks', 'instructions', 'status', 'resultsReleased', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.keys().hasOnly(['id', 'title', 'classId', 'batchId', 'subjectId', 'teacherId', 'teacherUid', 'examDate', 'startsAt', 'endsAt', 'maximumMarks', 'passingMarks', 'instructions', 'status', 'resultsReleased', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.title, 2, 160)
+        && isValidId(data.teacherUid)
+        && data.maximumMarks is number && data.maximumMarks > 0 && data.maximumMarks <= 10000
+        && data.status in ['draft', 'published', 'completed', 'archived']
+        && data.resultsReleased is bool
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidExaminationMarks(data, id) {
+      return data.keys().hasAll(['id', 'examinationId', 'studentId', 'studentUid', 'teacherUid', 'marksObtained', 'maximumMarks', 'percentage', 'resultStatus', 'resultsReleased', 'enteredBy', 'enteredAt', 'updatedAt', 'adminUids'])
+        && data.keys().hasOnly(['id', 'examinationId', 'studentId', 'studentUid', 'teacherUid', 'marksObtained', 'maximumMarks', 'percentage', 'resultStatus', 'resultsReleased', 'enteredBy', 'enteredAt', 'updatedAt', 'releasedAt', 'corrected', 'adminUids'])
+        && data.id == id
+        && isValidId(data.examinationId)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && isValidId(data.teacherUid)
+        && data.maximumMarks is number && data.maximumMarks > 0 && data.maximumMarks <= 10000
+        && data.marksObtained is number && data.marksObtained >= 0 && data.marksObtained <= data.maximumMarks
+        && data.percentage is number && data.percentage >= 0 && data.percentage <= 100
+        && data.resultStatus in ['pass', 'fail', 'recorded']
+        && data.resultsReleased is bool
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidNotificationRecord(data, id) {
+      return data.keys().hasAll(['id', 'recipientId', 'recipientUid', 'recipientRole', 'type', 'relatedRecordId', 'dedupeKey', 'title', 'message', 'adminUids', 'createdAt'])
+        && data.keys().hasOnly(['id', 'recipientId', 'recipientUid', 'recipientRole', 'category', 'type', 'relatedRecordId', 'dedupeKey', 'title', 'message', 'readAt', 'adminUids', 'createdAt'])
+        && data.id == id
+        && isValidId(data.recipientUid)
+        && data.recipientRole in ['admin', 'teacher', 'student']
+        && isNonEmptyBoundedString(data.title, 2, 160)
+        && isNonEmptyBoundedString(data.message, 2, 1000)
+        && (!('readAt' in data) || isBoundedString(data.readAt, 40))
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidFeeConfiguration(data, id) {
+      return data.keys().hasAll(['id', 'amountPaise', 'frequency', 'effectiveFrom', 'dueDayOfMonth', 'dueDateConfiguration', 'reminderLeadDays', 'status', 'createdBy', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && data.amountPaise is int && data.amountPaise > 0
+        && data.frequency in ['monthly', 'yearly']
+        && data.status in ['active', 'inactive']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidUpiConfiguration(data, id) {
+      return data.keys().hasAll(['id', 'upiId', 'payeeName', 'status', 'updatedBy', 'updatedAt', 'adminUids'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.payeeName, 2, 120)
+        && isNonEmptyBoundedString(data.upiId, 5, 100)
+        && data.status in ['active', 'inactive']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.updatedAt, 10, 40);
+    }
+
+    function isValidStudentFeeAccount(data, id) {
+      return data.keys().hasAll(['id', 'studentId', 'studentUid', 'feeConfigurationId', 'feePeriod', 'periodLabel', 'frequency', 'amountDuePaise', 'verifiedAmountPaidPaise', 'remainingBalancePaise', 'dueAt', 'status', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && data.amountDuePaise is int && data.amountDuePaise >= 0
+        && data.verifiedAmountPaidPaise is int && data.verifiedAmountPaidPaise >= 0
+        && data.remainingBalancePaise is int && data.remainingBalancePaise >= 0
+        && data.status in ['unpaid', 'partially_paid', 'paid', 'overdue', 'verification_pending']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidPreparedUpiPayment(data, id) {
+      return data.keys().hasAll(['id', 'paymentReference', 'studentId', 'studentUid', 'feeAccountId', 'feePeriod', 'amountPaise', 'upiId', 'payeeName', 'upiUri', 'paymentType', 'status', 'idempotencyKey', 'preparedAt', 'adminUids'])
+        && data.id == id
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && isValidId(data.feeAccountId)
+        && data.amountPaise is int && data.amountPaise > 0
+        && data.status in ['payment_prepared', 'claim_submitted', 'expired']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.preparedAt, 10, 40);
+    }
+
+    function isValidPaymentClaim(data, id) {
+      return data.keys().hasAll([
+          'id', 'paymentReference', 'studentId', 'studentUid', 'feeAccountId',
+          'feePeriod', 'amountPaise', 'transactionReference', 'paymentDate',
+          'status', 'duplicateTransactionFlag', 'submittedAt', 'adminUids'
+        ])
+        && data.keys().hasOnly([
+          'id', 'paymentReference', 'preparedPaymentId', 'studentId', 'studentUid',
+          'feeAccountId', 'feePeriod', 'amountPaise', 'transactionReference',
+          'paymentDate', 'studentNote', 'status', 'duplicateTransactionFlag',
+          'duplicateOfClaimIds', 'submittedAt', 'verifiedBy', 'verifiedAt',
+          'verificationNote', 'rejectionReason', 'adminUids'
+        ])
+        && data.id == id
+        && isNonEmptyBoundedString(data.paymentReference, 4, 64)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && isValidId(data.feeAccountId)
+        && isNonEmptyBoundedString(data.feePeriod, 4, 24)
+        && data.amountPaise is int && data.amountPaise > 0
+        && isNonEmptyBoundedString(data.transactionReference, 6, 80)
+        && isNonEmptyBoundedString(data.paymentDate, 8, 16)
+        && (!('studentNote' in data) || isBoundedString(data.studentNote, 500))
+        && (!('verificationNote' in data) || isBoundedString(data.verificationNote, 500))
+        && (!('rejectionReason' in data) || isBoundedString(data.rejectionReason, 500))
+        && data.status in ['verification_pending', 'verified', 'rejected']
+        && data.duplicateTransactionFlag is bool
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidVerifiedPayment(data, id) {
+      return data.keys().hasAll(['id', 'paymentClaimId', 'paymentReference', 'studentId', 'studentUid', 'feeAccountId', 'feePeriod', 'amountPaise', 'transactionReference', 'paymentDate', 'verifiedBy', 'verifiedAt', 'adminUids'])
+        && data.id == id
+        && isValidId(data.paymentClaimId)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && data.amountPaise is int && data.amountPaise >= 0
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidPaymentReceipt(data, id) {
+      return data.keys().hasAll(['id', 'receiptNumber', 'verifiedPaymentId', 'paymentClaimId', 'paymentReference', 'centreName', 'studentId', 'studentUid', 'studentName', 'feePeriod', 'periodLabel', 'paymentDate', 'amountPaise', 'totalFeeDuePaise', 'totalAmountPaidAfterPaise', 'remainingBalancePaise', 'verificationStatus', 'issuedBy', 'issuedAt', 'status', 'adminUids'])
+        && data.id == id
+        && isNonEmptyBoundedString(data.receiptNumber, 4, 64)
+        && isValidId(data.verifiedPaymentId)
+        && isValidId(data.paymentClaimId)
+        && isValidId(data.studentId)
+        && isValidId(data.studentUid)
+        && data.amountPaise is int && data.amountPaise > 0
+        && data.status in ['issued', 'voided']
+        && isValidAdminUidsList(data);
+    }
+
+    function isValidSalaryConfig(data, id) {
+      return data.keys().hasAll(['id', 'teacherId', 'teacherUid', 'salaryModel', 'effectiveFrom', 'status', 'createdBy', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.teacherId)
+        && isValidId(data.teacherUid)
+        && data.salaryModel in ['fixed_monthly', 'per_session']
+        && data.status in ['active', 'inactive']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidSalaryPeriod(data, id) {
+      return data.keys().hasAll(['id', 'teacherId', 'teacherUid', 'teacherName', 'salaryConfigurationId', 'period', 'periodLabel', 'salaryModel', 'ratePaise', 'eligibleSessionIds', 'eligibleSessionsSummary', 'requiresAdminReview', 'payableAmountPaise', 'paidAmountPaise', 'remainingAmountPaise', 'status', 'adminUids', 'createdAt', 'updatedAt'])
+        && data.id == id
+        && isValidId(data.teacherId)
+        && isValidId(data.teacherUid)
+        && data.payableAmountPaise is int && data.payableAmountPaise >= 0
+        && data.paidAmountPaise is int && data.paidAmountPaise >= 0
+        && data.remainingAmountPaise is int && data.remainingAmountPaise >= 0
+        && data.status in ['pending', 'partially_paid', 'paid', 'on_hold']
+        && isValidAdminUidsList(data)
+        && isNonEmptyBoundedString(data.createdAt, 10, 40);
+    }
+
+    function isValidSalaryPayment(data, id) {
+      return data.keys().hasAll(['id', 'teacherSalaryPeriodId', 'teacherId', 'teacherUid', 'period', 'amountPaise', 'paymentDate', 'recordedBy', 'adminUids', 'createdAt'])
+        && data.id == id
+        && isValidId(data.teacherSalaryPeriodId)
+        && isValidId(data.teacherId)
+        && isValidId(data.teacherUid)
+        && data.amountPaise is int && data.amountPaise > 0
+        && isValidAdminUidsList(data);
+    }
+
+    // =========================================================================
+    // System & Identity Collections
+    // =========================================================================
+    match /test/connection {
+      allow get: if true;
+      allow list, write: if false;
+    }
+
+    match /admins/{uid} {
+      allow get: if isSignedIn() && isValidId(uid) && (request.auth.uid == uid || isAdmin());
+      allow list: if isBootstrappedAdminEmail();
+      allow create, update: if isBootstrappedAdminEmail() && isValidId(uid) && isValidAdminRecord(incoming(), uid);
+      allow delete: if false;
+    }
+
+    match /authIdMappings/{loginId} {
+      allow get: if isAdmin() && isValidId(loginId);
+      allow list: if isBootstrappedAdminEmail();
+      allow create: if isAdmin() && isValidId(loginId) && isValidAuthIdMapping(incoming(), loginId);
+      allow update: if isAdmin()
+        && isValidId(loginId)
+        && isValidAuthIdMapping(incoming(), loginId)
+        && incoming().uid == existing().uid
+        && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /users/{uid} {
+      allow get: if isVerifiedEmail() && isValidId(uid) && (request.auth.uid == uid || isAdmin());
+      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
+      allow create: if isAdmin() && isValidId(uid) && isValidUserAccountProfile(incoming(), uid);
+      allow update: if isAdmin()
+        && isValidId(uid)
+        && isValidUserAccountProfile(incoming(), uid)
+        && incoming().uid == existing().uid
+        && incoming().accountId == existing().accountId
+        && incoming().role == existing().role
+        && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /accountAudit/{auditId} {
+      allow get: if isAdmin() && isValidId(auditId);
+      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
+      allow create: if isAdmin() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId);
+      allow update, delete: if false;
+    }
+
+    // =========================================================================
+    // Phase 9 Settings & Audit
+    // =========================================================================
+    match /applicationSettings/{settingsId} {
+      allow get: if settingsId == 'APP-SETTINGS-001';
+      allow list: if false;
+      allow create, update: if isAdmin() && settingsId == 'APP-SETTINGS-001' && isValidApplicationSettings(incoming());
+      allow delete: if false;
+    }
+
+    match /settingsAudit/{auditId} {
+      allow get: if isAdmin() && isValidId(auditId);
+      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
+      allow create: if isAdmin() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId);
+      allow update, delete: if false;
+    }
+
+    // =========================================================================
+    // Phase 4 Academic Collections
+    // =========================================================================
+    match /classes/{classId} {
+      allow get: if isVerifiedEmail() && isValidId(classId);
+      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow create: if isAdmin() && isValidId(classId) && isValidClassRecord(incoming(), classId);
+      allow update: if isAdmin() && isValidId(classId) && isValidClassRecord(incoming(), classId) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /batches/{batchId} {
+      allow get: if isVerifiedEmail() && isValidId(batchId);
+      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow create: if isAdmin()
+        && isValidId(batchId)
+        && isValidBatchRecord(incoming(), batchId)
+        && exists(/databases/$(database)/documents/classes/$(incoming().classId));
+      allow update: if isAdmin()
+        && isValidId(batchId)
+        && isValidBatchRecord(incoming(), batchId)
+        && incoming().createdAt == existing().createdAt
+        && exists(/databases/$(database)/documents/classes/$(incoming().classId));
+      allow delete: if false;
+    }
+
+    match /subjects/{subjectId} {
+      allow get: if isVerifiedEmail() && isValidId(subjectId);
+      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow create: if isAdmin() && isValidId(subjectId) && isValidSubjectRecord(incoming(), subjectId);
+      allow update: if isAdmin() && isValidId(subjectId) && isValidSubjectRecord(incoming(), subjectId) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /enrolments/{enrolmentId} {
+      allow get: if isVerifiedEmail() && isValidId(enrolmentId) && (
+        isAdmin() || existing().studentUid == request.auth.uid || (isActiveTeacher() && 'teacherUids' in existing() && existing().teacherUids is list && request.auth.uid in existing().teacherUids)
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing())
+        || existing().studentUid == request.auth.uid
+        || ('teacherUids' in existing() && existing().teacherUids is list && request.auth.uid in existing().teacherUids)
+      );
+      allow create: if isAdmin()
+        && isValidId(enrolmentId)
+        && isValidEnrolment(incoming(), enrolmentId)
+        && exists(/databases/$(database)/documents/classes/$(incoming().classId))
+        && exists(/databases/$(database)/documents/batches/$(incoming().batchId));
+      allow update: if isAdmin() && isValidId(enrolmentId) && isValidEnrolment(incoming(), enrolmentId) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /teacherAssignments/{assignmentId} {
+      allow get: if isVerifiedEmail() && isValidId(assignmentId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      );
+      allow create: if isAdmin()
+        && isValidId(assignmentId)
+        && isValidTeacherAssignment(incoming(), assignmentId)
+        && exists(/databases/$(database)/documents/classes/$(incoming().classId))
+        && exists(/databases/$(database)/documents/batches/$(incoming().batchId))
+        && exists(/databases/$(database)/documents/subjects/$(incoming().subjectId));
+      allow update: if isAdmin() && isValidId(assignmentId) && isValidTeacherAssignment(incoming(), assignmentId) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /timetableEntries/{entryId} {
+      allow get: if isVerifiedEmail() && isValidId(entryId);
+      allow list: if isVerifiedEmail() && existing().status in ['active', 'cancelled'];
+      allow create: if isAdmin() && isValidId(entryId) && isValidTimetableEntry(incoming(), entryId);
+      allow update: if isAdmin() && isValidId(entryId) && isValidTimetableEntry(incoming(), entryId) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /announcements/{announcementId} {
+      allow get: if isVerifiedEmail() && isValidId(announcementId) && (
+        isAdmin() || existing().publicationStatus == 'published'
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().publicationStatus == 'published'
+      );
+      allow create: if isAdmin() && isValidId(announcementId) && isValidAnnouncement(incoming(), announcementId);
+      allow update: if isAdmin() && isValidId(announcementId) && isValidAnnouncement(incoming(), announcementId) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    // =========================================================================
+    // Phase 5 Attendance Collections
+    // =========================================================================
+    match /attendanceSessions/{sessionId} {
+      allow get: if isVerifiedEmail() && isValidId(sessionId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      );
+      allow create: if isVerifiedEmail()
+        && isValidId(sessionId)
+        && isValidAttendanceSession(incoming(), sessionId)
+        && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
+      allow update: if isVerifiedEmail()
+        && isValidId(sessionId)
+        && isValidAttendanceSession(incoming(), sessionId)
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && incoming().teacherUid == existing().teacherUid
+            && existing().status == 'draft'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'submittedAt', 'updatedAt']))
+        );
+      allow delete: if false;
+    }
+
+    match /attendanceRecords/{recordId} {
+      allow get: if isVerifiedEmail() && isValidId(recordId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing())
+        || existing().teacherUid == request.auth.uid
+        || existing().studentUid == request.auth.uid
+      );
+      allow create: if isVerifiedEmail()
+        && isValidId(recordId)
+        && isValidAttendanceRecord(incoming(), recordId)
+        && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid))
+        && exists(/databases/$(database)/documents/attendanceSessions/$(incoming().attendanceSessionId));
+      allow update: if isVerifiedEmail()
+        && isValidId(recordId)
+        && isValidAttendanceRecord(incoming(), recordId)
+        && incoming().studentUid == existing().studentUid
+        && incoming().attendanceSessionId == existing().attendanceSessionId
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'remarks', 'markedBy', 'markedAt', 'updatedAt', 'corrected']))
+        );
+      allow delete: if false;
+    }
+
+    match /attendanceAudit/{auditId} {
+      allow get: if isAdmin() && isValidId(auditId);
+      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
+      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
+      allow update, delete: if false;
+    }
+
+    match /attendanceNotifications/{notificationId} {
+      allow get: if isVerifiedEmail() && isValidId(notificationId) && (
+        isAdmin() || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
+      );
+      allow create: if isVerifiedEmail() && isValidId(notificationId) && isValidAttendanceNotification(incoming(), notificationId) && (isAdmin() || isActiveTeacher());
+      allow update: if isVerifiedEmail()
+        && isValidId(notificationId)
+        && isValidAttendanceNotification(incoming(), notificationId)
+        && incoming().studentUid == existing().studentUid
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin()
+          || (isActiveStudent()
+            && existing().studentUid == request.auth.uid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['readByStudent', 'readByStudentAt'])
+            && incoming().readByStudent == true)
+        );
+      allow delete: if false;
+    }
+
+    // =========================================================================
+    // Phase 6 Homework, Tests, Examinations & Marks
+    // =========================================================================
+    match /homework/{homeworkId} {
+      allow get: if isVerifiedEmail() && isValidId(homeworkId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid || existing().status == 'published'
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid || existing().status == 'published'
+      );
+      allow create: if isVerifiedEmail()
+        && isValidId(homeworkId)
+        && isValidHomework(incoming(), homeworkId)
+        && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
+      allow update: if isVerifiedEmail()
+        && isValidId(homeworkId)
+        && isValidHomework(incoming(), homeworkId)
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && incoming().teacherUid == existing().teacherUid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'instructions', 'dueAt', 'maximumMarks', 'status', 'updatedAt']))
+        );
+      allow delete: if false;
+    }
+
+    match /homeworkSubmissions/{submissionId} {
+      allow get: if isVerifiedEmail() && isValidId(submissionId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing())
+        || existing().teacherUid == request.auth.uid
+        || existing().studentUid == request.auth.uid
+      );
+      allow create: if isActiveStudent()
+        && isValidId(submissionId)
+        && isValidHomeworkSubmission(incoming(), submissionId)
+        && incoming().studentUid == request.auth.uid
+        && incoming().status in ['submitted', 'late_submitted']
+        && incoming().revisionNumber == 1
+        && incoming().revisionHistory.size() == 1
+        && exists(/databases/$(database)/documents/homework/$(incoming().homeworkId));
+      allow update: if isVerifiedEmail()
+        && isValidId(submissionId)
+        && isValidHomeworkSubmission(incoming(), submissionId)
+        && incoming().studentUid == existing().studentUid
+        && incoming().homeworkId == existing().homeworkId
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'feedback', 'marksAwarded', 'reviewedBy', 'reviewedAt', 'reopenedByTeacher', 'revisionHistory']))
+          || (isActiveStudent()
+            && existing().studentUid == request.auth.uid
+            && existing().status == 'returned_for_correction'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['responseText', 'submittedAt', 'status', 'revisionNumber', 'revisionHistory', 'reopenedByTeacher'])
+            && incoming().status in ['submitted', 'late_submitted'])
+        );
+      allow delete: if false;
+
+      match /private/{docId} {
+        allow get: if isVerifiedEmail() && docId == 'teacherNote' && (
+          isAdmin() || (isActiveTeacher() && existing().teacherUid == request.auth.uid)
+        );
+        allow list, delete: if false;
+        allow create, update: if isVerifiedEmail()
+          && docId == 'teacherNote'
+          && isValidTeacherPrivateNote(incoming())
+          && incoming().submissionId == submissionId
+          && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
+      }
+    }
+
+    match /homeworkAudit/{auditId} {
+      allow get: if isAdmin() && isValidId(auditId);
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      );
+      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
+      allow update, delete: if false;
+    }
+
+    match /objectiveTests/{testId} {
+      allow get: if isVerifiedEmail() && isValidId(testId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid || existing().status in ['published', 'active', 'completed']
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid || existing().status in ['published', 'active', 'completed']
+      );
+      allow create: if isVerifiedEmail()
+        && isValidId(testId)
+        && isValidObjectiveTest(incoming(), testId)
+        && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
+      allow update: if isVerifiedEmail()
+        && isValidId(testId)
+        && isValidObjectiveTest(incoming(), testId)
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && incoming().teacherUid == existing().teacherUid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'instructions', 'durationMinutes', 'totalMarks', 'startsAt', 'endsAt', 'maximumAttempts', 'resultReleaseMode', 'scheduledReleaseAt', 'status', 'manualResultsReleased', 'showCorrectAnswersOnRelease', 'questions', 'updatedAt']))
+        );
+      allow delete: if false;
+
+      match /private/{docId} {
+        allow get: if isVerifiedEmail() && docId == 'answerKey' && (
+          isAdmin()
+          || (isActiveTeacher() && existing().teacherUid == request.auth.uid)
+          || (isActiveStudent()
+            && get(/databases/$(database)/documents/objectiveTests/$(testId)).data.manualResultsReleased == true
+            && get(/databases/$(database)/documents/objectiveTests/$(testId)).data.showCorrectAnswersOnRelease == true)
+        );
+        allow list, delete: if false;
+        allow create, update: if isVerifiedEmail()
+          && docId == 'answerKey'
+          && isValidTestAnswerKey(incoming(), testId)
+          && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
+      }
+    }
+
+    match /testAttempts/{attemptId} {
+      allow get: if isVerifiedEmail() && isValidId(attemptId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing())
+        || existing().teacherUid == request.auth.uid
+        || existing().studentUid == request.auth.uid
+      );
+      allow create: if isActiveStudent()
+        && isValidId(attemptId)
+        && isValidTestAttempt(incoming(), attemptId)
+        && incoming().studentUid == request.auth.uid
+        && incoming().status == 'in_progress'
+        && exists(/databases/$(database)/documents/objectiveTests/$(incoming().testId));
+      allow update: if isVerifiedEmail()
+        && isValidId(attemptId)
+        && isValidTestAttempt(incoming(), attemptId)
+        && incoming().studentUid == existing().studentUid
+        && incoming().testId == existing().testId
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['resultReleasedAt', 'status'])
+            && incoming().status == 'evaluated')
+          || (isActiveStudent()
+            && existing().studentUid == request.auth.uid
+            && existing().status == 'in_progress'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['answers', 'submittedAt', 'status', 'marksObtained', 'percentage', 'evaluatedAt', 'resultReleasedAt'])
+            && incoming().status in ['submitted', 'evaluated'])
+        );
+      allow delete: if false;
+    }
+
+    match /examinations/{examinationId} {
+      allow get: if isVerifiedEmail() && isValidId(examinationId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid || existing().status in ['published', 'completed']
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid || existing().status in ['published', 'completed']
+      );
+      allow create: if isVerifiedEmail()
+        && isValidId(examinationId)
+        && isValidExamination(incoming(), examinationId)
+        && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
+      allow update: if isVerifiedEmail()
+        && isValidId(examinationId)
+        && isValidExamination(incoming(), examinationId)
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && incoming().teacherUid == existing().teacherUid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['title', 'instructions', 'examDate', 'startsAt', 'endsAt', 'maximumMarks', 'passingMarks', 'status', 'resultsReleased', 'updatedAt']))
+        );
+      allow delete: if false;
+    }
+
+    match /examinationMarks/{marksId} {
+      allow get: if isVerifiedEmail() && isValidId(marksId) && (
+        isAdmin()
+        || existing().teacherUid == request.auth.uid
+        || (existing().studentUid == request.auth.uid && existing().resultsReleased == true)
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing())
+        || existing().teacherUid == request.auth.uid
+        || (existing().studentUid == request.auth.uid && existing().resultsReleased == true)
+      );
+      allow create: if isVerifiedEmail()
+        && isValidId(marksId)
+        && isValidExaminationMarks(incoming(), marksId)
+        && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid))
+        && exists(/databases/$(database)/documents/examinations/$(incoming().examinationId));
+      allow update: if isVerifiedEmail()
+        && isValidId(marksId)
+        && isValidExaminationMarks(incoming(), marksId)
+        && incoming().examinationId == existing().examinationId
+        && incoming().studentUid == existing().studentUid
+        && (
+          isAdmin()
+          || (isActiveTeacher()
+            && existing().teacherUid == request.auth.uid
+            && (existing().resultsReleased == false || incoming().resultsReleased == true)
+            && incoming().diff(existing()).affectedKeys().hasOnly(['marksObtained', 'percentage', 'resultStatus', 'resultsReleased', 'releasedAt', 'enteredBy', 'enteredAt', 'updatedAt', 'corrected']))
+        );
+      allow delete: if false;
+    }
+
+    match /marksAudit/{auditId} {
+      allow get: if isAdmin() && isValidId(auditId);
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      );
+      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
+      allow update, delete: if false;
+    }
+
+    match /notifications/{notificationId} {
+      allow get: if isVerifiedEmail() && isValidId(notificationId) && (
+        isAdmin() || existing().recipientUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().recipientUid == request.auth.uid
+      );
+      allow create: if isVerifiedEmail() && isValidId(notificationId) && isValidNotificationRecord(incoming(), notificationId) && (isAdmin() || isActiveTeacher() || isActiveStudent());
+      allow update: if isVerifiedEmail()
+        && isValidId(notificationId)
+        && isValidNotificationRecord(incoming(), notificationId)
+        && incoming().recipientUid == existing().recipientUid
+        && incoming().createdAt == existing().createdAt
+        && (
+          isAdmin()
+          || (existing().recipientUid == request.auth.uid
+            && incoming().diff(existing()).affectedKeys().hasOnly(['readAt']))
+        );
+      allow delete: if false;
+    }
+
+    // =========================================================================
+    // Phase 7 Finance, UPI Claims, Verified Payments, Receipts & Teacher Salaries
+    // =========================================================================
+    match /feeConfigurations/{configId} {
+      allow get: if isVerifiedEmail() && isValidId(configId);
+      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow create: if isAdmin() && isValidId(configId) && isValidFeeConfiguration(incoming(), configId);
+      allow update: if isAdmin() && isValidId(configId) && isValidFeeConfiguration(incoming(), configId) && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /upiConfigurations/{upiConfigId} {
+      allow get: if isVerifiedEmail() && isValidId(upiConfigId);
+      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow create, update: if isAdmin() && isValidId(upiConfigId) && isValidUpiConfiguration(incoming(), upiConfigId);
+      allow delete: if false;
+    }
+
+    match /studentFeeAccounts/{feeAccountId} {
+      allow get: if isVerifiedEmail() && isValidId(feeAccountId) && (
+        isAdmin() || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
+      );
+      allow create: if isAdmin() && isValidId(feeAccountId) && isValidStudentFeeAccount(incoming(), feeAccountId);
+      allow update: if isAdmin() && isValidId(feeAccountId) && isValidStudentFeeAccount(incoming(), feeAccountId) && incoming().studentUid == existing().studentUid && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /preparedUpiPayments/{preparedPaymentId} {
+      allow get: if isVerifiedEmail() && isValidId(preparedPaymentId) && (
+        isAdmin() || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
+      );
+      allow create: if isActiveStudent()
+        && isValidId(preparedPaymentId)
+        && isValidPreparedUpiPayment(incoming(), preparedPaymentId)
+        && incoming().studentUid == request.auth.uid
+        && incoming().status == 'payment_prepared'
+        && exists(/databases/$(database)/documents/studentFeeAccounts/$(incoming().feeAccountId));
+      allow update: if isVerifiedEmail()
+        && isValidId(preparedPaymentId)
+        && isValidPreparedUpiPayment(incoming(), preparedPaymentId)
+        && incoming().studentUid == existing().studentUid
+        && incoming().preparedAt == existing().preparedAt
+        && (
+          isAdmin()
+          || (isActiveStudent()
+            && existing().studentUid == request.auth.uid
+            && existing().status == 'payment_prepared'
+            && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'claimId'])
+            && incoming().status == 'claim_submitted')
+        );
+      allow delete: if false;
+    }
+
+    match /paymentClaims/{claimId} {
+      allow get: if isVerifiedEmail() && isValidId(claimId) && (
+        isAdmin() || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
+      );
+      allow create: if isActiveStudent()
+        && isValidId(claimId)
+        && isValidPaymentClaim(incoming(), claimId)
+        && incoming().studentUid == request.auth.uid
+        && incoming().status == 'verification_pending'
+        && exists(/databases/$(database)/documents/studentFeeAccounts/$(incoming().feeAccountId));
+      allow update: if isAdmin()
+        && isValidId(claimId)
+        && isValidPaymentClaim(incoming(), claimId)
+        && incoming().studentUid == existing().studentUid
+        && incoming().submittedAt == existing().submittedAt;
+      allow delete: if false;
+    }
+
+    match /verifiedPayments/{vpId} {
+      allow get: if isVerifiedEmail() && isValidId(vpId) && (
+        isAdmin() || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
+      );
+      allow create: if isAdmin() && isValidId(vpId) && isValidVerifiedPayment(incoming(), vpId);
+      allow update: if isAdmin() && isValidId(vpId) && isValidVerifiedPayment(incoming(), vpId) && incoming().studentUid == existing().studentUid;
+      allow delete: if false;
+    }
+
+    match /paymentVerificationAudit/{auditId} {
+      allow get: if isAdmin() && isValidId(auditId);
+      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
+      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveStudent());
+      allow update, delete: if false;
+    }
+
+    match /paymentReceipts/{receiptId} {
+      allow get: if isVerifiedEmail() && isValidId(receiptId) && (
+        isAdmin() || existing().studentUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
+      );
+      allow create: if isAdmin()
+        && isValidId(receiptId)
+        && isValidPaymentReceipt(incoming(), receiptId)
+        && exists(/databases/$(database)/documents/paymentClaims/$(incoming().paymentClaimId));
+      allow update: if isAdmin()
+        && isValidId(receiptId)
+        && isValidPaymentReceipt(incoming(), receiptId)
+        && incoming().receiptNumber == existing().receiptNumber
+        && incoming().issuedAt == existing().issuedAt;
+      allow delete: if false;
+    }
+
+    match /teacherSalaryConfigurations/{salaryConfigId} {
+      allow get: if isVerifiedEmail() && isValidId(salaryConfigId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      );
+      allow create: if isAdmin() && isValidId(salaryConfigId) && isValidSalaryConfig(incoming(), salaryConfigId);
+      allow update: if isAdmin() && isValidId(salaryConfigId) && isValidSalaryConfig(incoming(), salaryConfigId) && incoming().teacherUid == existing().teacherUid && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /teacherSalaryPeriods/{salaryPeriodId} {
+      allow get: if isVerifiedEmail() && isValidId(salaryPeriodId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      );
+      allow create: if isAdmin() && isValidId(salaryPeriodId) && isValidSalaryPeriod(incoming(), salaryPeriodId);
+      allow update: if isAdmin() && isValidId(salaryPeriodId) && isValidSalaryPeriod(incoming(), salaryPeriodId) && incoming().teacherUid == existing().teacherUid && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /teacherSalaryPayments/{salaryPaymentId} {
+      allow get: if isVerifiedEmail() && isValidId(salaryPaymentId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid
+      );
+      allow list: if isVerifiedEmail() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      );
+      allow create: if isAdmin()
+        && isValidId(salaryPaymentId)
+        && isValidSalaryPayment(incoming(), salaryPaymentId)
+        && exists(/databases/$(database)/documents/teacherSalaryPeriods/$(incoming().teacherSalaryPeriodId));
+      allow update: if isAdmin()
+        && isValidId(salaryPaymentId)
+        && isValidSalaryPayment(incoming(), salaryPaymentId)
+        && incoming().teacherUid == existing().teacherUid
+        && incoming().createdAt == existing().createdAt;
+      allow delete: if false;
+    }
+
+    match /financialAudit/{auditId} {
+      allow get: if isAdmin() && isValidId(auditId);
+      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
+      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveStudent());
+      allow update, delete: if false;
+    }
+  }
+}

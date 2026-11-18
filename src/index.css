@@ -1,0 +1,116 @@
+@import "tailwindcss";
+@custom-variant dark (&:where(.dark, .dark *));
+
+@layer base {
+  :root {
+    --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+    --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
+    --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
+
+    /* Light Theme Tokens */
+    --bg-canvas: #F8F9FC;
+    --bg-secondary: #F1EEFA;
+    --bg-surface: #FFFFFF;
+    --bg-elevated: #F1EEFA;
+    --border-subtle: #E5E7EF;
+    --text-main: #17172B;
+    --text-secondary: #434960;
+    --text-muted: #687086;
+
+    --accent: #7552D9;
+    --accent-hover: #6441C8;
+    --accent-soft: #A78BFA;
+    --accent-tint: rgba(117, 82, 217, 0.10);
+
+    --status-success: #168A62;
+    --status-warning: #B7791F;
+    --status-error: #D94C5C;
+  }
+
+  .dark {
+    /* Dark Navy + Electric Purple Tokens */
+    --bg-canvas: #101426;
+    --bg-secondary: #171D34;
+    --bg-surface: #171D34;
+    --bg-elevated: #202844;
+    --border-subtle: #303A55;
+    --text-main: #F8FAFC;
+    --text-secondary: #D4DCEB;
+    --text-muted: #A6B0C3;
+
+    --accent: #8B5CF6;
+    --accent-hover: #7C3AED;
+    --accent-soft: #A78BFA;
+    --accent-tint: rgba(139, 92, 246, 0.16);
+
+    --status-success: #22C58B;
+    --status-warning: #F5B942;
+    --status-error: #F16B75;
+  }
+
+  html {
+    font-family: var(--font-sans);
+    background-color: var(--bg-canvas);
+    color: var(--text-main);
+    scroll-behavior: smooth;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    background-color: var(--bg-canvas);
+    color: var(--text-main);
+    min-height: 100dvh;
+  }
+
+  h1, h2, h3, h4, .font-display {
+    font-family: var(--font-display);
+  }
+
+  .font-mono {
+    font-family: var(--font-mono);
+  }
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+.text-balance {
+  text-wrap: balance;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+@media print {
+  .no-print,
+  aside,
+  header,
+  nav[aria-label="Mobile quick navigation"] {
+    display: none !important;
+  }
+
+  body {
+    background: #FFFFFF !important;
+    color: #17172B !important;
+  }
+
+  main {
+    padding: 0 !important;
+    max-width: 100% !important;
+  }
+
+  .print-surface {
+    border: 1px solid #D1D5DB !important;
+    box-shadow: none !important;
+    background: #FFFFFF !important;
+    color: #17172B !important;
+  }
+}
+

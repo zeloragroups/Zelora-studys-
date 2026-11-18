@@ -1,0 +1,42 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+    // Global default deny
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+
+    function isSignedIn() {
+      return request.auth != null && request.auth.token.email_verified == true;
+    }
+
+    function isBootstrappedAdmin() {
+      return isSignedIn() && request.auth.token.email == 'toutionacademy@gmail.com';
+    }
+
+    function isAdminUser() {
+      return isBootstrappedAdmin()
+        || (isSignedIn() && request.auth.token.role == 'admin')
+        || (isSignedIn()
+          && firestore.exists(/databases/ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470/documents/admins/$(request.auth.uid))
+          && firestore.get(/databases/ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470/documents/admins/$(request.auth.uid)).data.status == 'active');
+    }
+
+    function isAllowedImageAsset() {
+      return request.resource != null
+        && request.resource.size > 0
+        && request.resource.size <= 2 * 1024 * 1024
+        && request.resource.contentType in ['image/png', 'image/jpeg', 'image/webp'];
+    }
+
+    // Branding & institutional logo assets (publicly readable on login screens; Admin-only write/delete)
+    match /branding/{assetFolder}/{fileName} {
+      allow get: if assetFolder == 'centre-logo';
+      allow list: if isAdminUser();
+      allow write: if isAdminUser()
+        && assetFolder == 'centre-logo'
+        && (request.resource == null || isAllowedImageAsset());
+    }
+  }
+}

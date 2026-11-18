@@ -1,0 +1,1439 @@
+PHASE 7/10 — FEE MANAGEMENT, UPI PAYMENT PREPARATION, MANUAL PAYMENT VERIFICATION, DIGITAL RECEIPTS & TEACHER SALARY MANAGEMENT
+
+1. ROLE AND EXECUTION INSTRUCTIONS
+
+Act as a senior full-stack engineer, software architect, financial-management system designer, security engineer, QA engineer and UI/UX specialist.
+
+Continue the existing Tuition Centre Management Ecosystem. Implement Phase 7 inside the existing codebase.
+
+This is not a new project.
+
+Before coding:
+
+1. Inspect the complete project structure.
+2. Review Phases 1–6.5.
+3. Review authentication, accounts, academics, attendance, assessments and the existing UI system.
+4. Inspect existing service contracts, local development adapters, models and role permissions.
+5. Inspect the current three role-based interface experiences.
+6. Prepare an implementation plan.
+7. Implement Phase 7 only.
+
+Do not unnecessarily rewrite existing functionality.
+
+Do not begin Phase 8 or any later phase.
+
+2. UPDATED APPLICATION ARCHITECTURE — IMPORTANT
+
+The project must use responsive web-app experiences only.
+
+There must be no separate Admin Website experience.
+
+Maintain these three role-based experiences:
+
+1. Admin Web App.
+2. Teacher Web App.
+3. Student Web App.
+
+All three must work across:
+
+- Mobile phones.
+- Tablets.
+- Laptops.
+- Desktop screens.
+
+Use the existing shared project architecture, authentication and role-based routing. Do not create unnecessary separate deployments or duplicate applications.
+
+The Admin interface must remain a responsive web app, not a separate desktop website.
+
+Preserve the Phase 6.5 visual system:
+
+- Premium navy and electric-purple dark theme.
+- Premium light theme.
+- Five-slot mobile bottom navigation.
+- Central, slightly elevated Home button.
+- Responsive layouts.
+- Consistent components.
+- Purposeful animations.
+
+Do not redesign the entire application again.
+
+3. CONFIRMED TECHNOLOGY STACK
+
+Preserve:
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+
+Do not migrate frameworks.
+
+Do not introduce PostgreSQL or another database.
+
+Do not add unnecessary dependencies.
+
+4. STRICT BACKEND AND INTEGRATION RULES
+
+The user personally connects Firebase.
+
+Do not:
+
+- Create a Firebase project.
+- Connect a Google account.
+- Request or access Firebase credentials.
+- Connect Firebase automatically.
+- Modify Firebase Console.
+- Connect Firebase Auth, Firestore or Storage without manual user authorization.
+- Deploy Firebase resources.
+
+Until Firebase is manually connected, use the existing isolated local development adapters and clearly labelled DEMO DATA.
+
+No AI APIs:
+
+- No Gemini API.
+- No OpenAI API.
+- No other external AI models.
+
+Do not introduce:
+
+- Payment gateways.
+- Bank-account integrations.
+- Automatic bank verification.
+- WhatsApp.
+- SMS.
+- Email services.
+- External analytics.
+- PostgreSQL.
+- Other external services without explicit authorization.
+
+The UPI feature in this phase must only prepare a payment request and open a compatible UPI app where the device supports it. It must not claim that money has been transferred or received.
+
+5. PHASE 7 SCOPE
+
+Implement:
+
+1. Fee Structure Configuration.
+2. Student Fee Accounts.
+3. Fee Payment Preparation through UPI.
+4. Manual Admin Payment Verification.
+5. Partial and Full Payment Management.
+6. Fee Receipts.
+7. Payment History.
+8. Fee Due Dates and In-App Reminders.
+9. Teacher Salary Configuration.
+10. Teacher Salary Records and Payment Tracking.
+11. Financial Dashboard.
+12. Monthly and Yearly Financial Reports.
+13. Financial Audit History.
+
+Do not implement unrelated financial features.
+
+---
+
+MODULE A — FEE STRUCTURE CONFIGURATION
+
+6. ADMIN FEE CONFIGURATION
+
+Create a Fee Management section in the Admin Web App.
+
+The tuition centre uses a common fixed fee amount for all students, with an Admin-selectable payment structure.
+
+Support:
+
+- Monthly fee structure.
+- Yearly fee structure.
+
+Admin must be able to:
+
+- Set the common fee amount.
+- Select Monthly or Yearly.
+- Edit the fee amount.
+- Change the fee structure.
+- Configure applicable fee periods.
+- Set due dates.
+- Configure fee reminders.
+- View the current active fee configuration.
+- View previous fee configurations.
+
+Fee configuration fields
+
+- Configuration ID.
+- Fee amount.
+- Fee frequency: Monthly or Yearly.
+- Effective date.
+- Due-day or due-date configuration.
+- Active/inactive status.
+- Created by.
+- Created timestamp.
+- Updated timestamp.
+
+Rules
+
+- Amount must be positive.
+- Currency is INR.
+- Prevent invalid fee configurations.
+- Keep historical configuration records.
+- Do not silently change already-recorded payments.
+- Do not silently rewrite previous fee periods.
+- Changes must have a clear effective date.
+- Existing student balances must remain accurate.
+- Clearly define how a new fee configuration applies to existing students.
+
+Do not add arbitrary fee categories, discounts, penalties or scholarships unless they already exist in the project requirements. If any are necessary for correctness, document them as future decisions rather than inventing business rules.
+
+7. STUDENT FEE ACCOUNTS
+
+Create a fee account for every eligible student.
+
+Display:
+
+- Student name.
+- Student ID.
+- Class.
+- Batch.
+- Fee frequency.
+- Total fee due.
+- Amount paid.
+- Remaining balance.
+- Next due date.
+- Payment status.
+- Payment history.
+
+Support:
+
+- Unpaid.
+- Partially Paid.
+- Paid.
+- Overdue.
+- Verification Pending.
+
+Use actual fee and payment records.
+
+Do not fabricate amounts.
+
+A student must see only their own fee account.
+
+Admin must be able to search and filter student fee accounts.
+
+---
+
+MODULE B — UPI PAYMENT PREPARATION
+
+8. ADMIN UPI CONFIGURATION
+
+Allow Admin to configure the tuition centre's UPI details.
+
+Fields:
+
+- UPI ID.
+- Payee or tuition centre name.
+- Optional payment description.
+- Active/inactive status.
+- Updated by.
+- Updated timestamp.
+
+Validate UPI ID format before saving.
+
+Show the currently configured UPI ID clearly to students.
+
+Do not expose any private credentials or payment secrets.
+
+Do not store bank passwords, UPI PINs or other sensitive authentication information.
+
+9. STUDENT PAY NOW EXPERIENCE
+
+Create a Pay Now option inside the Student Fee section.
+
+When the student chooses to pay:
+
+1. Load the current outstanding balance.
+2. Allow a partial payment or full outstanding payment.
+3. Validate the requested amount.
+4. Display the configured UPI ID.
+5. Display the payee name.
+6. Display the amount.
+7. Show a clear payment summary.
+8. Allow the student to continue to a compatible UPI app.
+
+Where supported, prepare a standard UPI payment URI using the configured payee and requested amount.
+
+The UPI URI must be generated from validated application data.
+
+Do not hardcode the UPI ID or amount.
+
+Do not claim that opening a UPI app means payment succeeded.
+
+Payment preparation rules
+
+- Amount must be greater than zero.
+- Amount cannot exceed the outstanding balance.
+- Prevent duplicate payment-request records from accidental repeated clicks.
+- Use a unique payment reference for each request.
+- Display a clear status after returning to the app.
+- If no compatible UPI app is available, display the UPI ID and payment details for manual use.
+- Do not collect the student's UPI PIN.
+- Do not ask for banking credentials.
+- Do not pretend that the application can read a bank transaction automatically.
+
+10. PAYMENT SUBMISSION
+
+After attempting payment through a UPI app, the student may submit a payment claim.
+
+Fields:
+
+- Payment reference ID.
+- Student ID.
+- Fee period.
+- Amount claimed.
+- UPI transaction reference or UTR, where available.
+- Payment date.
+- Optional student note.
+- Submitted timestamp.
+- Verification status.
+
+Use a unique internal payment reference.
+
+Clearly distinguish:
+
+- Payment prepared.
+- Payment claim submitted.
+- Verification pending.
+- Verified.
+- Rejected.
+
+A student-submitted claim is not a confirmed payment.
+
+Do not mark the fee balance as paid when a student merely opens a UPI app or submits a payment claim.
+
+---
+
+MODULE C — MANUAL ADMIN PAYMENT VERIFICATION
+
+11. ADMIN PAYMENT VERIFICATION DASHBOARD
+
+Create an Admin Payment Verification section.
+
+Display:
+
+- Pending payment claims.
+- Student name and ID.
+- Claimed amount.
+- Fee period.
+- UTR or transaction reference.
+- Payment date.
+- Submission date.
+- Current verification status.
+
+Admin must be able to:
+
+- Inspect a payment claim.
+- Compare the claim with independently checked payment information.
+- Verify a payment.
+- Reject a payment.
+- Add an internal verification note.
+- View verification history.
+
+Critical payment-security rule
+
+A screenshot alone must never be sufficient proof of payment.
+
+A screenshot may be supporting evidence, but Admin must independently confirm the transaction using an authorized source outside this application before marking it verified.
+
+This phase does not provide automatic bank verification.
+
+Do not invent a bank integration.
+
+Do not claim that a transaction reference is genuine merely because it is entered by a student.
+
+Verification requirements
+
+- Only Admin can verify or reject payment claims.
+- Verification requires an explicit confirmation.
+- Rejection requires a reason.
+- Verification must record the Admin actor and timestamp.
+- Duplicate transaction references must be flagged for investigation.
+- Prevent the same payment claim from being verified twice.
+- Prevent verified payment records from being silently edited.
+- Corrections require an audit entry and reason.
+
+When verified:
+
+1. Create a confirmed payment record.
+2. Update the relevant fee-period balance.
+3. Update the student's total paid amount.
+4. Update the remaining balance.
+5. Update payment status.
+6. Create a receipt record.
+7. Notify the student inside the app.
+
+When rejected:
+
+- Keep the payment out of confirmed collections.
+- Preserve the rejected claim.
+- Record the rejection reason.
+- Notify the student inside the app.
+- Allow a new payment claim where appropriate.
+
+---
+
+MODULE D — PARTIAL AND FULL PAYMENTS
+
+12. PAYMENT CALCULATIONS
+
+Support both partial and full fee payments.
+
+For each fee period:
+
+Remaining Balance = Fee Due − Verified Payments
+
+Rules:
+
+- Only verified payments reduce the balance.
+- Pending claims do not reduce the balance.
+- Rejected claims do not reduce the balance.
+- Partial payments must remain visible in payment history.
+- Multiple verified payments may contribute to one fee period.
+- Prevent overpayment beyond the outstanding balance unless a clearly documented future policy is approved.
+- Do not silently move payments between students or fee periods.
+
+Display:
+
+- Total fee.
+- Verified amount paid.
+- Pending claims.
+- Remaining amount.
+- Due date.
+- Payment status.
+
+Use INR formatting consistently.
+
+Avoid floating-point calculation errors. Use integer paise or another safe currency representation internally, and format the result for display in rupees.
+
+---
+
+MODULE E — DIGITAL RECEIPTS
+
+13. RECEIPT GENERATION
+
+After Admin verifies a payment, generate a digital receipt.
+
+The receipt must be generated immediately where possible and made available within 24 hours of successful verification.
+
+Receipt fields:
+
+- Unique receipt number.
+- Tuition centre name.
+- Student name.
+- Student ID.
+- Class and batch.
+- Fee period.
+- Payment date.
+- Verified payment amount.
+- Payment reference.
+- Transaction reference, where available.
+- Total fee due.
+- Amount paid.
+- Remaining balance.
+- Verification status.
+- Receipt creation timestamp.
+
+Requirements:
+
+- Receipt must correspond to a verified payment only.
+- A pending or rejected payment must not generate a valid paid receipt.
+- Prevent duplicate receipts for the same verified payment.
+- Preserve issued receipt history.
+- Allow students to view receipts in their Student Web App.
+- Allow Admin to view and retrieve receipts.
+- Provide a printable, clean receipt layout.
+- Provide PDF export if the existing application environment supports it reliably without adding an unnecessary external service.
+
+Do not claim a PDF was created unless it was actually generated successfully.
+
+A receipt must clearly distinguish the payment amount from the total fee and remaining balance.
+
+---
+
+MODULE F — PAYMENT HISTORY AND FEE REMINDERS
+
+14. STUDENT PAYMENT HISTORY
+
+Create a payment-history section.
+
+Display:
+
+- Date.
+- Amount.
+- Fee period.
+- Payment reference.
+- Verification status.
+- Receipt availability.
+- Remaining balance after verification.
+
+Allow students to open verified receipts.
+
+Students must not be able to edit payment history.
+
+15. ADMIN FEE HISTORY
+
+Admin must be able to:
+
+- View all student fee accounts.
+- Search by Student ID or name.
+- Filter by class, batch, period and status.
+- View payment claims.
+- View verified payments.
+- View rejected payments.
+- View outstanding balances.
+- View fee configuration history.
+
+16. IN-APP FEE REMINDERS
+
+Support in-app reminders for:
+
+- Upcoming fee due date.
+- Fee due today.
+- Overdue fee.
+- Payment claim received.
+- Payment verified.
+- Payment rejected.
+- Receipt issued.
+
+Rules:
+
+- Notifications must target the correct student.
+- Prevent duplicate notifications.
+- Maintain read/unread status.
+- Do not send WhatsApp, SMS or email.
+- Do not claim scheduled background reminders are running if the local adapter cannot execute them.
+
+For the local implementation, reminders may be generated when relevant screens or workflows are opened, provided the limitation is documented.
+
+Production scheduled reminders can be considered later after Firebase is connected and authorized.
+
+---
+
+MODULE G — TEACHER SALARY MANAGEMENT
+
+17. ADMIN SALARY CONFIGURATION
+
+Create a Teacher Salary Management module in the Admin Web App.
+
+Support two salary models:
+
+1. Fixed Monthly Salary.
+2. Per Class or Session.
+
+Fixed monthly salary
+
+Admin configures:
+
+- Teacher ID.
+- Salary model.
+- Monthly amount.
+- Effective date.
+- Active status.
+
+Per class/session salary
+
+Admin configures:
+
+- Teacher ID.
+- Rate per class/session.
+- Effective date.
+- Active status.
+
+Use actual scheduled and completed class/session information where it is available and appropriate.
+
+Do not invent completed sessions.
+
+If attendance or session records are insufficient to determine a payable amount, show the record as requiring Admin review.
+
+Salary configuration rules
+
+- Amounts must be positive.
+- Preserve historical salary configurations.
+- Effective dates must be clear.
+- Do not rewrite previous salary records when rates change.
+- Only authorized Admin can configure salaries.
+- Record who created or changed each salary configuration.
+
+18. SALARY PERIODS AND PAYABLE AMOUNTS
+
+Create monthly salary periods.
+
+For each teacher, display:
+
+- Teacher ID.
+- Teacher name.
+- Salary model.
+- Applicable rate.
+- Payable amount.
+- Amount paid.
+- Remaining payable amount.
+- Salary period.
+- Payment status.
+
+Support:
+
+- Pending.
+- Partially Paid.
+- Paid.
+- On Hold, where an Admin explicitly applies it.
+
+For fixed monthly salary:
+
+- Use the configured monthly amount for the applicable salary period.
+
+For per-class/session salary:
+
+- Calculate from eligible completed sessions multiplied by the configured rate.
+- Prevent duplicate session counting.
+- Clearly display the sessions included in the calculation.
+- Require Admin review where source data is incomplete.
+
+Do not silently calculate salary from cancelled or uncompleted sessions.
+
+19. SALARY PAYMENT RECORDS
+
+Admin must be able to record teacher salary payments manually.
+
+Fields:
+
+- Salary payment ID.
+- Teacher ID.
+- Salary period.
+- Amount paid.
+- Payment date.
+- Payment reference, optional.
+- Payment note.
+- Recorded by.
+- Created timestamp.
+
+Support partial and full salary payments.
+
+Rules:
+
+- Payment amount must be positive.
+- Amount cannot exceed the remaining payable amount without an explicitly approved adjustment process.
+- Prevent duplicate payment records.
+- Preserve payment history.
+- Require a reason for corrections.
+- Record the actor and timestamp for every correction.
+
+This is a tracking and record-keeping system.
+
+Do not connect a salary bank-transfer gateway.
+
+Do not initiate bank payments.
+
+Do not claim that a salary has been transferred merely because Admin records it as paid.
+
+20. TEACHER SALARY VIEW
+
+Teachers may view their own salary information in the Teacher Web App.
+
+Display:
+
+- Current salary model.
+- Applicable salary rate.
+- Monthly payable amount or completed eligible sessions.
+- Salary period.
+- Amount paid.
+- Remaining amount.
+- Payment history.
+- Payment status.
+
+Teachers must not see other teachers' salary records.
+
+Teachers cannot edit salary configuration or mark their own salary as paid.
+
+---
+
+MODULE H — FINANCIAL DASHBOARD AND REPORTS
+
+21. ADMIN FINANCIAL DASHBOARD
+
+Create a Financial Overview section in the Admin Web App.
+
+Display useful metrics:
+
+- Total verified fee collections.
+- Total outstanding student fees.
+- Pending payment claims.
+- Verified payments.
+- Rejected payment claims.
+- Monthly fee collections.
+- Yearly fee collections.
+- Total teacher salary expense.
+- Pending teacher salary.
+- Paid teacher salary.
+- Net recorded balance, where the underlying figures support a clearly defined calculation.
+
+Never include pending payment claims in verified collections.
+
+Never include unrecorded or unverified salary payments as paid expenses.
+
+Use clear labels so Admin can distinguish confirmed amounts from pending amounts.
+
+22. MONTHLY AND YEARLY REPORTS
+
+Implement monthly and yearly financial summaries.
+
+Fee reports:
+
+- Total fee expected.
+- Total verified collections.
+- Outstanding balance.
+- Partial payments.
+- Pending verification.
+- Rejected claims.
+- Student-wise payment summaries.
+
+Salary reports:
+
+- Total salary payable.
+- Total salary recorded as paid.
+- Pending salary.
+- Teacher-wise salary summary.
+- Salary-period history.
+
+Provide:
+
+- Date filters.
+- Month selector.
+- Year selector.
+- Class and batch filters where relevant.
+- Teacher filters for salary reports.
+
+Use accurate calculations.
+
+Do not include unrelated estimates in confirmed totals.
+
+If export is available through the existing environment, support a practical report export. Otherwise provide a clear print-friendly report and document the limitation.
+
+---
+
+MODULE I — DATA MODELS AND SERVICE ARCHITECTURE
+
+23. REQUIRED DATA MODELS
+
+Inspect existing project conventions before defining models.
+
+Create or extend typed models for:
+
+FeeConfiguration
+
+- id
+- amountPaise
+- frequency
+- effectiveFrom
+- dueDateConfiguration
+- status
+- createdBy
+- createdAt
+- updatedAt
+
+StudentFeeAccount
+
+- id
+- studentId
+- feeConfigurationId
+- feePeriod
+- amountDuePaise
+- verifiedAmountPaidPaise
+- remainingBalancePaise
+- dueAt
+- status
+- createdAt
+- updatedAt
+
+PaymentClaim
+
+- id
+- paymentReference
+- studentId
+- feeAccountId
+- amountPaise
+- transactionReference
+- paymentDate
+- studentNote
+- status
+- submittedAt
+- verifiedBy
+- verifiedAt
+- rejectionReason
+
+VerifiedPayment
+
+- id
+- paymentClaimId
+- studentId
+- feeAccountId
+- amountPaise
+- transactionReference
+- paymentDate
+- verifiedBy
+- verifiedAt
+
+PaymentVerificationAudit
+
+- id
+- paymentClaimId
+- actorId
+- action
+- previousValues
+- newValues
+- reason
+- timestamp
+
+FeeReceipt
+
+- id
+- receiptNumber
+- verifiedPaymentId
+- studentId
+- feePeriod
+- amountPaise
+- remainingBalancePaise
+- issuedAt
+- status
+
+TeacherSalaryConfiguration
+
+- id
+- teacherId
+- salaryModel
+- monthlyAmountPaise
+- perSessionAmountPaise
+- effectiveFrom
+- status
+- createdBy
+- createdAt
+- updatedAt
+
+TeacherSalaryPeriod
+
+- id
+- teacherId
+- period
+- salaryModel
+- payableAmountPaise
+- paidAmountPaise
+- remainingAmountPaise
+- status
+- createdAt
+- updatedAt
+
+TeacherSalaryPayment
+
+- id
+- teacherSalaryPeriodId
+- teacherId
+- amountPaise
+- paymentDate
+- paymentReference
+- note
+- recordedBy
+- createdAt
+
+FinancialAuditEntry
+
+- id
+- entityType
+- entityId
+- actorId
+- action
+- previousValues
+- newValues
+- reason
+- timestamp
+
+FinancialNotification
+
+- id
+- recipientId
+- notificationType
+- relatedRecordId
+- title
+- message
+- createdAt
+- readAt
+
+These are suggested structures. Refine them to fit the existing architecture and avoid duplicate models.
+
+Use safe currency representations internally.
+
+24. SERVICE CONTRACTS
+
+Keep UI separate from business logic.
+
+Create or extend contracts for:
+
+- FeeConfigurationService.
+- StudentFeeService.
+- PaymentClaimService.
+- PaymentVerificationService.
+- ReceiptService.
+- TeacherSalaryService.
+- FinancialReportService.
+- FinancialNotificationService.
+
+Use existing authorization patterns and typed service errors.
+
+Create local development implementations using the existing local adapter architecture.
+
+Suggested implementations:
+
+- LocalDevFeeService.
+- LocalDevPaymentService.
+- LocalDevReceiptService.
+- LocalDevSalaryService.
+- LocalDevFinancialReportService.
+
+Do not create a second authentication system.
+
+Do not bypass AuthContext or existing role guards.
+
+---
+
+MODULE J — AUTHORIZATION AND DATA INTEGRITY
+
+25. ROLE PERMISSIONS
+
+Admin
+
+Admin can:
+
+- Configure fees.
+- View student fee accounts.
+- Configure UPI details.
+- Review payment claims.
+- Verify or reject payment claims.
+- Issue and retrieve receipts.
+- Configure teacher salaries.
+- Record salary payments.
+- View financial reports.
+- Perform audited corrections.
+
+Teacher
+
+Teacher can:
+
+- View their own salary information.
+- View their own salary history.
+
+Teacher cannot:
+
+- View other teachers' salaries.
+- Configure salary rates.
+- Verify student fee payments.
+- Access Admin financial controls.
+- Modify financial records.
+
+Student
+
+Student can:
+
+- View their own fee account.
+- Prepare a UPI payment.
+- Submit a payment claim.
+- View payment status.
+- View their own verified receipts.
+- View their own fee history.
+
+Student cannot:
+
+- View another student's financial information.
+- Verify payments.
+- Edit confirmed payments.
+- Edit fee configuration.
+- View teacher salary records.
+
+Parents
+
+Parents continue using the Student credentials and receive only that student's permitted financial access.
+
+26. FINANCIAL AUDIT REQUIREMENTS
+
+Financial records require stronger auditability.
+
+For sensitive operations, record:
+
+- Actor ID.
+- Action.
+- Entity ID.
+- Previous values where relevant.
+- New values where relevant.
+- Reason where required.
+- Timestamp.
+
+Audit:
+
+- Fee configuration changes.
+- UPI configuration changes.
+- Payment verification.
+- Payment rejection.
+- Payment corrections.
+- Receipt issuance or voiding.
+- Salary configuration changes.
+- Salary payment recording.
+- Salary corrections.
+
+Never silently overwrite a financial record.
+
+Use append-only audit behavior in the local service design where practical.
+
+Clearly document that production audit integrity requires trusted backend enforcement after Firebase is connected.
+
+---
+
+MODULE K — UI AND USER EXPERIENCE
+
+27. ADMIN WEB APP
+
+Add a Financial Management section to the Admin Web App.
+
+Organize existing functionality into:
+
+- Financial Overview.
+- Fee Configuration.
+- Student Fee Accounts.
+- Payment Verification.
+- UPI Configuration.
+- Receipts.
+- Teacher Salaries.
+- Financial Reports.
+- Financial Audit History.
+
+Do not make a separate Admin Website.
+
+Use the existing responsive Admin Web App for mobile, tablet, laptop and desktop.
+
+Admin dashboard requirements
+
+Use clear financial summaries.
+
+Separate:
+
+- Verified collections.
+- Pending claims.
+- Outstanding balances.
+- Salary payable.
+- Salary paid.
+
+Use appropriate charts only where they improve understanding.
+
+Verification interface
+
+Make pending payment claims easy to inspect.
+
+Display transaction references and the verification status clearly.
+
+Use a confirmation dialog for verification and a mandatory reason for rejection.
+
+Do not make a single click silently mark a payment as verified.
+
+28. STUDENT WEB APP
+
+Add a Fee section to the Student Web App.
+
+Display:
+
+- Fee summary.
+- Current balance.
+- Due date.
+- Payment history.
+- Pay Now action.
+- UPI details.
+- Payment-claim submission.
+- Verification status.
+- Digital receipts.
+
+The payment experience must be clear and trustworthy.
+
+Students must understand that submitting a claim does not mean payment has been verified.
+
+29. TEACHER WEB APP
+
+Add a Salary section.
+
+Display:
+
+- Salary model.
+- Salary period.
+- Payable amount.
+- Paid amount.
+- Remaining amount.
+- Payment history.
+
+Do not show Admin-only financial configuration controls.
+
+30. DESIGN SYSTEM
+
+Preserve the Phase 6.5 visual design.
+
+Dark theme:
+
+- Deep navy.
+- Electric purple.
+- Refined elevated surfaces.
+
+Light theme:
+
+- Soft white.
+- Lavender secondary surfaces.
+- Purple accents.
+
+Preserve:
+
+- Existing typography.
+- Five-slot mobile navigation.
+- Central elevated Home button.
+- Responsive design.
+- Consistent cards and tables.
+- Touch-friendly controls.
+- Accessible contrast.
+- Purposeful animations.
+
+Do not introduce a separate desktop website design.
+
+All roles remain responsive web apps.
+
+---
+
+MODULE L — TESTING
+
+31. FEE AND PAYMENT TESTS
+
+Test:
+
+1. Admin creates a valid fee configuration.
+2. Invalid fee amounts are rejected.
+3. Monthly fee configuration works.
+4. Yearly fee configuration works.
+5. Configuration changes preserve historical periods.
+6. Student sees only their fee account.
+7. Admin can search fee accounts.
+8. Partial payment claims are supported.
+9. Full payment claims are supported.
+10. Overpayment is rejected.
+11. UPI details validate correctly.
+12. Pay Now prepares the correct amount and payee.
+13. Opening a UPI app does not mark payment verified.
+14. Submitting a claim does not reduce the balance.
+15. Pending claims do not appear in confirmed collections.
+16. Admin can verify a valid claim.
+17. Admin can reject a claim with a reason.
+18. Duplicate transaction references are flagged.
+19. Verified payments update the correct fee balance.
+20. Duplicate verification is prevented.
+21. Rejected claims do not reduce the balance.
+22. A verified payment creates a receipt.
+23. A pending claim cannot produce a valid paid receipt.
+24. Student can view only their own receipts.
+
+32. SALARY TESTS
+
+Test:
+
+1. Admin configures monthly salary.
+2. Admin configures per-session salary.
+3. Invalid rates are rejected.
+4. Salary configuration history is preserved.
+5. Per-session calculations use eligible completed sessions.
+6. Duplicate sessions are not counted twice.
+7. Cancelled sessions are excluded.
+8. Incomplete source data is flagged.
+9. Partial salary payments work.
+10. Full salary payments work.
+11. Overpayment is rejected.
+12. Teacher can view only their own salary.
+13. Teacher cannot change salary configuration.
+14. Corrections require a reason.
+15. Salary audit history is preserved.
+
+33. REPORT TESTS
+
+Test:
+
+- Monthly fee collection totals.
+- Yearly fee collection totals.
+- Outstanding balance totals.
+- Pending payment totals.
+- Rejected claim totals.
+- Salary payable totals.
+- Salary paid totals.
+- Teacher-wise salary summaries.
+- Filters.
+- Empty report states.
+
+Ensure pending and rejected claims never appear as verified collections.
+
+34. REGRESSION TESTS
+
+Re-run all existing suites:
+
+- Phase 2 authentication.
+- Phase 3 accounts.
+- Phase 4 academics.
+- Phase 5 attendance.
+- Phase 6 assessments.
+
+Verify existing workflows still work.
+
+Do not remove or weaken earlier tests.
+
+---
+
+MODULE M — BUILD, DOCUMENTATION AND LIMITATIONS
+
+35. BUILD AND TYPE CHECKS
+
+Run:
+
+- npm run build
+- npx tsc --noEmit
+- All available Phase 2–6 tests.
+- New Phase 7 tests.
+
+Report actual results.
+
+Do not claim success without running commands.
+
+36. DOCUMENTATION
+
+Update:
+
+- Architecture and roadmap.
+- Phase 7 implementation report.
+- Financial data model documentation.
+- Payment verification workflow.
+- Receipt workflow.
+- Salary calculation documentation.
+- Financial permission matrix.
+- Financial audit documentation.
+- Integration inventory.
+- Known limitations.
+
+Integration transparency
+
+Document every tool, service, database and API used.
+
+Clearly distinguish:
+
+- Connected.
+- Disconnected.
+- Local only.
+- Planned.
+- Not used.
+
+At minimum, document:
+
+Component| Purpose| Status
+React| User interface| Existing
+TypeScript| Type safety| Existing
+Vite| Build system| Existing
+Tailwind CSS| Styling| Existing
+Motion| Animations| Existing
+Lucide React| Icons| Existing
+Local development adapters| Demo persistence| Local only
+UPI payment URI| Prepare payment request| Local feature; no gateway
+Firebase Auth| Future authentication backend| Not connected
+Cloud Firestore| Future database| Not connected
+Cloud Functions| Future trusted financial enforcement| Not connected
+Payment gateway| Not included| Not connected
+Bank verification API| Not included| Not connected
+AI APIs| Not used| Not connected
+PostgreSQL| Not used| Not connected
+WhatsApp/SMS/email| Not used| Not connected
+
+Update this inventory according to actual implementation.
+
+Production limitations
+
+Clearly state:
+
+- Local storage is not a production financial database.
+- Local authorization is not production-grade.
+- UPI app opening is not payment confirmation.
+- Student-submitted transaction references are unverified claims.
+- Admin must independently verify payments.
+- Production verification requires trusted backend controls and an authorized verification process.
+- Financial audit integrity requires backend enforcement.
+- Receipt issuance requires reliable payment records.
+- Scheduled reminders require a future trusted backend scheduler.
+
+Do not claim these production capabilities are already implemented.
+
+---
+
+MODULE N — SCOPE PROTECTION
+
+37. DO NOT IMPLEMENT
+
+Do not implement:
+
+- Firebase connection.
+- Firebase deployment.
+- AI APIs.
+- PostgreSQL.
+- Payment gateway integration.
+- Automatic bank-account access.
+- Automatic bank transaction verification.
+- WhatsApp.
+- SMS.
+- Email services.
+- Native Android applications.
+- Native iOS applications.
+- Separate Admin Website.
+- Unrequested financial products.
+- Phase 8 or later features.
+
+Do not expand scope without authorization.
+
+---
+
+MODULE O — EXECUTION LIMITS AND FINAL REPORT
+
+38. CONTINUATION RULES
+
+If approaching execution or context limits:
+
+1. Save completed work.
+2. Avoid leaving files in a broken state.
+3. Record completed tasks.
+4. Record unfinished tasks.
+5. Record files created and modified.
+6. Record the last successful operation.
+7. Provide a clear continuation prompt.
+
+Provide a continuation action labelled:
+
+CONTINUE PHASE 7
+
+If an interactive button is unavailable, provide a copy-ready continuation prompt.
+
+The continuation must resume Phase 7 only, inspect the existing project and avoid repeating completed work.
+
+39. REQUIRED COMPLETION REPORT
+
+When finished, report:
+
+A. Overall status
+
+- Completed.
+- Partially completed.
+- Not implemented.
+- Blocked.
+
+B. Fee management
+
+- Configuration.
+- Student fee accounts.
+- Monthly/yearly structures.
+- Due dates.
+- Partial and full payments.
+
+C. UPI workflow
+
+- UPI configuration.
+- Pay Now preparation.
+- Payment claims.
+- Manual verification.
+- Rejection handling.
+- Duplicate detection.
+
+D. Receipts
+
+- Receipt creation.
+- Receipt numbering.
+- Student access.
+- Admin access.
+- Print/PDF functionality.
+
+E. Teacher salaries
+
+- Salary models.
+- Period calculations.
+- Payment records.
+- Partial/full payments.
+- Teacher visibility.
+
+F. Financial reports
+
+- Monthly reports.
+- Yearly reports.
+- Collections.
+- Outstanding balances.
+- Salary expenses.
+
+G. Audit and permissions
+
+- Financial audit entries.
+- Admin permissions.
+- Teacher permissions.
+- Student permissions.
+
+H. Technical changes
+
+- Files created.
+- Files modified.
+- Models.
+- Services.
+- Local storage keys.
+- Dependencies.
+
+I. Testing
+
+- Build.
+- TypeScript.
+- Phase 2–6 regression tests.
+- Phase 7 tests.
+- Browser testing, if available.
+
+J. Integration inventory
+
+List all APIs, databases, external services and tools used, including connection status.
+
+K. Known limitations
+
+List all remaining demo and production limitations.
+
+L. Next phase
+
+State that Phase 8 has not been implemented.
+
+---
+
+FINAL EXECUTION INSTRUCTION
+
+Inspect the existing project and completed Phases 1–6.5.
+
+Implement Phase 7 only.
+
+Build a reliable fee-management, UPI payment-preparation, manual verification, digital-receipt and teacher-salary tracking system.
+
+Preserve the existing three responsive role-based web-app experiences:
+
+- Admin.
+- Teacher.
+- Student.
+
+Do not recreate a separate Admin Website.
+
+Preserve the Phase 6.5 theme and central Home navigation design.
+
+Do not connect Firebase or external services.
+
+Do not use AI APIs.
+
+Do not claim payments are verified automatically.
+
+Do not mark payments successful based on screenshots or payment-app launch.
+
+Do not start Phase 8.
+
+Implement Phase 7 only.

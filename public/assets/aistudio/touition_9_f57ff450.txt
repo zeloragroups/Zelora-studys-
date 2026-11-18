@@ -1,0 +1,1104 @@
+PHASE 9/10 — APPLICATION BRANDING, ADMIN SETTINGS, TUITION CENTRE CONFIGURATION & SYSTEM-WIDE MANAGEMENT
+
+1. ROLE AND EXECUTION INSTRUCTIONS
+
+Act as a senior full-stack engineer, software architect, product designer, security engineer, QA engineer and system administrator.
+
+Continue the existing Tuition Centre Management Ecosystem.
+
+This is an existing project with Phases 1–8 completed. Do not create a new application.
+
+Before coding:
+
+1. Inspect the entire existing project structure.
+2. Review Phases 1–8 and the current architecture roadmap.
+3. Inspect the Admin, Teacher and Student Web Apps.
+4. Review existing authentication, role permissions, account management, academics, attendance, assessments, finance and notification services.
+5. Inspect the current theme provider, design tokens, navigation and branding-related components.
+6. Identify existing settings and configuration mechanisms.
+7. Identify incomplete or duplicated settings functionality.
+8. Prepare an implementation plan.
+9. Implement Phase 9 only.
+
+Do not unnecessarily rewrite completed modules.
+
+Do not delete existing records or reset local development data.
+
+Do not begin Phase 10.
+
+2. UPDATED APPLICATION ARCHITECTURE — MANDATORY
+
+Maintain exactly three responsive role-based Web App experiences:
+
+1. Admin Web App.
+2. Teacher Web App.
+3. Student Web App.
+
+There must be no separate Admin Website.
+
+All three experiences must support:
+
+- Mobile.
+- Tablet.
+- Laptop.
+- Desktop.
+
+The Admin Web App must remain the single Admin experience across all screen sizes.
+
+Do not recreate a separate desktop-only website.
+
+Preserve:
+
+- Existing authentication and role-based routing.
+- Phase 6.5 light and dark themes.
+- Five-slot mobile bottom navigation.
+- Central, slightly elevated Home button.
+- Responsive desktop navigation.
+- Existing role-specific navigation.
+
+Do not create duplicate applications or authentication systems.
+
+3. CONFIRMED TECHNOLOGY STACK
+
+Preserve:
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+
+Do not migrate frameworks.
+
+Do not introduce PostgreSQL or another database.
+
+Do not install unnecessary packages.
+
+4. BACKEND AND INTEGRATION RULES
+
+The user personally connects Firebase.
+
+Do not:
+
+- Connect Firebase.
+- Create Firebase projects.
+- Modify Firebase Console.
+- Request Firebase credentials.
+- Deploy Firebase resources.
+- Connect external services without explicit authorization.
+
+Continue using the existing isolated local development adapters.
+
+All local data must remain clearly identified as DEMO DATA.
+
+Do not introduce:
+
+- Gemini API.
+- OpenAI API.
+- Other AI APIs.
+- Payment gateways.
+- Bank verification APIs.
+- WhatsApp.
+- SMS.
+- Email services.
+- External analytics.
+- PostgreSQL.
+- Unapproved third-party integrations.
+
+Phase 10 is reserved for the separately authorized production-backend integration and final production-readiness work.
+
+---
+
+MODULE A — CENTRALIZED APPLICATION SETTINGS
+
+5. ADMIN SETTINGS CENTRE
+
+Create a centralized Settings section inside the Admin Web App.
+
+The settings centre should organize configuration into understandable sections:
+
+1. Tuition Centre Profile.
+2. Application Branding.
+3. Theme and Appearance.
+4. Academic Configuration.
+5. Notification Preferences.
+6. Fee and Payment Configuration shortcuts.
+7. Account and Security Settings.
+8. Data and Demo Environment Information.
+9. About Application.
+
+Do not duplicate existing fee, academic or account management systems.
+
+Where a setting already exists, connect to its existing service and provide a suitable shortcut or configuration interface.
+
+The settings centre must become the main place where Admin can understand and manage permitted application-wide configuration.
+
+6. SETTINGS PERMISSIONS
+
+Only Admin can change application-wide settings.
+
+Teachers and Students may view only information explicitly intended for their role.
+
+Teachers and Students must not gain access to:
+
+- Admin configuration forms.
+- UPI configuration controls.
+- Financial settings.
+- Account management.
+- Security settings.
+- Application-wide branding controls.
+
+Validate permissions inside service methods, not only through hidden UI elements.
+
+---
+
+MODULE B — TUITION CENTRE PROFILE
+
+7. CENTRE INFORMATION
+
+Allow Admin to configure the tuition centre's identity.
+
+Fields:
+
+- Tuition centre name.
+- Short name.
+- Tagline.
+- Primary contact number.
+- Secondary contact number, optional.
+- Public contact email, optional.
+- Address.
+- City.
+- State.
+- PIN code.
+- Country.
+- Website URL, optional.
+
+The centre name should be configurable rather than permanently hardcoded into application screens.
+
+Validate all fields appropriately.
+
+Rules
+
+- Centre name is required.
+- Contact fields must use appropriate validation.
+- Optional fields must remain optional.
+- Do not invent contact information.
+- Do not create public contact details without Admin input.
+- Do not use these details to send messages through external services.
+
+8. CENTRE INFORMATION DISPLAY
+
+Use configured centre information consistently in relevant places:
+
+- Admin application header.
+- Teacher application header.
+- Student application header.
+- Login screens.
+- Receipt headers.
+- Printable reports.
+- Application About section.
+
+Preserve existing layout and branding if the Admin has not configured custom values.
+
+Avoid duplicated hardcoded names across components.
+
+Create one reliable source of truth.
+
+---
+
+MODULE C — APPLICATION BRANDING
+
+9. APPLICATION NAME CONFIGURATION
+
+Allow Admin to configure:
+
+- Application display name.
+- Short application name.
+- Application tagline.
+- Login-screen welcome heading.
+- Login-screen supporting description.
+
+These settings must affect all three role-based Web Apps where appropriate.
+
+Do not change internal project identifiers, route names, account IDs or database keys when the display name changes.
+
+Changing branding must not break authentication or navigation.
+
+10. LOGO MANAGEMENT
+
+Provide an application-logo configuration interface.
+
+Where the existing environment supports local image selection and preview:
+
+- Allow Admin to select a logo.
+- Display a preview before applying.
+- Validate file type and size.
+- Provide a remove/reset option.
+- Preserve the existing logo when no replacement is selected.
+- Display a sensible fallback if no logo exists.
+
+Do not assume that local browser file selection creates a permanently synchronized logo across devices.
+
+Until Firebase Storage or another explicitly authorized storage service is connected, clearly identify any locally stored logo as device-local demo configuration.
+
+Do not add an external image-hosting service.
+
+If persistent binary storage is not supported reliably by the current local architecture, implement the configuration interface with an honest placeholder and document the limitation rather than pretending that the logo is permanently uploaded.
+
+11. BRANDING PREVIEW
+
+Create a live preview for Admin.
+
+Show how the selected settings affect:
+
+- Application header.
+- Login screen.
+- Centre identity section.
+- Navigation branding.
+- Printable receipt header, where applicable.
+
+Allow Admin to:
+
+- Preview changes.
+- Apply changes.
+- Cancel changes.
+- Restore default branding.
+
+Preview changes must not modify saved settings until explicitly applied.
+
+Preserve existing functionality during branding changes.
+
+---
+
+MODULE D — THEME AND APPEARANCE SETTINGS
+
+12. THEME CONFIGURATION
+
+Preserve the existing Phase 6.5 light and dark themes.
+
+Allow Admin to configure the default application theme:
+
+- Light.
+- Dark.
+
+Provide an option for users to select their own theme preference if the existing ThemeProvider supports it.
+
+Important behavior
+
+Distinguish between:
+
+1. Admin-configured default theme.
+2. Individual user's selected theme.
+
+An Admin default-theme change must not unexpectedly overwrite a user's explicitly selected personal theme unless the application already has an approved policy for that behavior.
+
+Preserve existing theme persistence.
+
+Do not introduce a third theme unless there is a clear requirement.
+
+13. DESIGN TOKEN PRESERVATION
+
+Keep the approved design system.
+
+Dark theme:
+
+- Deep navy surfaces.
+- Electric-purple accents.
+- Clear elevated cards.
+- Readable text and semantic statuses.
+
+Light theme:
+
+- Soft white surfaces.
+- Lavender secondary surfaces.
+- Purple accents.
+- Readable text and semantic statuses.
+
+Preserve:
+
+- Existing typography.
+- Existing component styles.
+- Existing semantic colors.
+- Accessible contrast.
+- Reduced-motion behavior.
+- Existing responsive navigation.
+
+Do not redesign the entire project.
+
+---
+
+MODULE E — ACADEMIC CONFIGURATION
+
+14. ACADEMIC SETTINGS
+
+Create a controlled Admin settings section for academic defaults.
+
+Inspect existing Phase 4 academic services before implementing.
+
+Support only settings that have a meaningful effect on existing workflows, such as:
+
+- Academic year display.
+- Default timetable display preferences.
+- Default academic period, if supported.
+- Academic calendar labels, if already supported by the data model.
+
+Do not invent a new academic calendar or rewrite existing timetable records.
+
+Do not add an automatic promotion system.
+
+Do not introduce attendance policies that conflict with Phase 5.
+
+Do not change existing examination, homework or test release rules.
+
+15. ACADEMIC CONFIGURATION VALIDATION
+
+Validate settings before saving.
+
+When a change could affect existing records:
+
+- Show an explanation.
+- Require confirmation.
+- Preserve historical records.
+- Avoid silent changes to existing attendance, examinations or results.
+
+If a proposed setting cannot be supported safely by the current architecture, document it as a future enhancement instead of adding incomplete functionality.
+
+---
+
+MODULE F — NOTIFICATION PREFERENCES
+
+16. IN-APP NOTIFICATION SETTINGS
+
+Create an Admin configuration section for in-app notification preferences.
+
+Inspect existing notification services before implementing.
+
+Allow Admin to manage appropriate application-wide defaults, such as:
+
+- Enable or disable selected in-app notification categories.
+- Default notification visibility.
+- Notification retention preference, only if existing storage supports it.
+- Default unread notification display behavior.
+
+Preserve the existing notification categories:
+
+- Attendance.
+- Homework and tests.
+- Examinations and results.
+- Fees and receipts.
+
+Important restrictions
+
+Do not add:
+
+- WhatsApp.
+- SMS.
+- Email.
+- Push notification providers.
+- External notification APIs.
+
+Do not claim that scheduled background notifications are running.
+
+Local browser notifications and persisted in-app notifications must be distinguished clearly.
+
+Admin configuration must not allow one student to read another student's notifications.
+
+---
+
+MODULE G — EXISTING MODULE CONFIGURATION SHORTCUTS
+
+17. CENTRALIZED MANAGEMENT ACCESS
+
+The Settings Centre should provide organized shortcuts to existing Admin modules.
+
+Include:
+
+- Account Management.
+- Classes and Batches.
+- Subjects and Enrolments.
+- Teacher Assignments.
+- Timetable.
+- Announcements.
+- Attendance Monitoring.
+- Homework and Assessments.
+- Fee Management.
+- Payment Verification.
+- UPI Configuration.
+- Digital Receipts.
+- Teacher Salary Management.
+- Financial Reports.
+
+These must navigate to existing screens.
+
+Do not duplicate these modules inside Settings.
+
+Do not create separate data stores for the same settings.
+
+18. MODULE STATUS OVERVIEW
+
+Provide a useful system overview showing:
+
+- Number of active teachers.
+- Number of active students.
+- Number of configured classes.
+- Number of configured batches.
+- Current fee configuration status.
+- Current UPI configuration status.
+- Current academic timetable status.
+
+Use actual existing services.
+
+Do not fabricate counts.
+
+Do not expose private financial or account information to unauthorized roles.
+
+---
+
+MODULE H — ACCOUNT AND SECURITY SETTINGS
+
+19. ADMIN ACCOUNT SETTINGS
+
+Create a clear Admin account settings area.
+
+Display:
+
+- Admin ID.
+- Account status.
+- Current session information where available.
+- Theme preference.
+- Logout action.
+
+Do not expose:
+
+- Passwords.
+- Password hashes.
+- Authentication tokens.
+- Private credentials.
+
+If a secure password-change workflow is not supported by the existing local authentication service, do not simulate a production password reset.
+
+Clearly state that account recovery is Admin-managed within the current demo architecture.
+
+20. SESSION INFORMATION
+
+Display only information actually available from the existing authentication service.
+
+If the local session expires after its configured duration, preserve that behavior.
+
+Do not invent device tracking or login history.
+
+Do not claim that active sessions are synchronized between devices.
+
+21. ROLE SECURITY
+
+Ensure:
+
+- Only Admin can change global settings.
+- Teachers cannot access Admin settings routes.
+- Students cannot access Admin settings routes.
+- Unauthenticated users cannot access protected settings.
+- Direct service calls enforce permissions.
+
+Test all three roles.
+
+---
+
+MODULE I — APPLICATION INFORMATION AND DEMO ENVIRONMENT
+
+22. ABOUT APPLICATION
+
+Create an About section showing:
+
+- Configured application name.
+- Tuition centre name.
+- Application version, if available from the project.
+- Current environment.
+- Current backend mode.
+- Technology stack summary.
+- Feature modules implemented.
+- Integration status.
+
+Do not invent version numbers.
+
+Read the version from the existing project configuration where appropriate.
+
+23. DEMO DATA TRANSPARENCY
+
+Display a clear indication when the application is using local development/demo storage.
+
+For example:
+
+"DEMO ENVIRONMENT — Data is stored locally in this browser. Firebase is not connected."
+
+Show the status of:
+
+- Local development adapter.
+- Firebase Authentication.
+- Cloud Firestore.
+- Cloud Functions.
+- Payment gateways.
+- AI APIs.
+- External messaging services.
+
+The status must reflect the actual application configuration.
+
+Do not show a green connected indicator for a disconnected service.
+
+24. DATA RESET SAFETY
+
+Do not add a destructive reset button casually.
+
+If a demo-data reset feature already exists, inspect it and document its behavior.
+
+If adding a reset feature is necessary:
+
+- Restrict it to Admin.
+- Clearly explain what will be deleted.
+- Require explicit confirmation.
+- Never reset only some dependent records while leaving inconsistent references.
+- Never reset financial or audit records without an explicit, well-defined operation.
+
+Prefer not adding a global reset feature in this phase.
+
+---
+
+MODULE J — SETTINGS DATA MODEL AND SERVICES
+
+25. REQUIRED SETTINGS MODEL
+
+Inspect existing project models before defining new structures.
+
+A suitable typed configuration model may include:
+
+ApplicationSettings
+
+- id
+- centreProfile
+- applicationBranding
+- appearanceDefaults
+- academicDefaults
+- notificationPreferences
+- updatedBy
+- updatedAt
+- schemaVersion
+
+CentreProfile
+
+- centreName
+- shortName
+- tagline
+- contactNumber
+- secondaryContactNumber
+- publicEmail
+- address
+- city
+- state
+- pinCode
+- country
+- websiteUrl
+
+ApplicationBranding
+
+- displayName
+- shortName
+- tagline
+- loginWelcomeHeading
+- loginDescription
+- logoConfiguration
+
+AppearanceDefaults
+
+- defaultTheme
+- allowPersonalThemePreference
+
+AcademicDefaults
+
+Only include settings that are genuinely supported by existing academic services.
+
+NotificationPreferences
+
+Only include supported in-app notification preferences.
+
+Do not create duplicate fee, UPI, salary, account or academic records inside ApplicationSettings.
+
+Use existing module-specific configuration services as the source of truth.
+
+26. SETTINGS SERVICE CONTRACT
+
+Create or extend a typed settings service contract.
+
+Possible operations:
+
+- getApplicationSettings
+- updateCentreProfile
+- updateApplicationBranding
+- updateAppearanceDefaults
+- updateAcademicDefaults
+- updateNotificationPreferences
+- resetBrandingToDefaults
+- getApplicationIntegrationStatus
+
+These are suggested names; follow the existing architecture.
+
+All write operations must:
+
+- Validate the authenticated principal.
+- Require Admin permissions.
+- Validate inputs.
+- Preserve existing settings.
+- Record the actor and timestamp.
+- Return typed errors.
+
+27. LOCAL DEVELOPMENT ADAPTER
+
+Implement a local settings adapter using the existing project conventions.
+
+Suggested storage key:
+
+tuition_ecosystem_dev_app_settings_v1
+
+Requirements:
+
+- Clearly label all records as DEMO DATA.
+- Persist supported settings locally.
+- Preserve settings across normal reloads.
+- Handle missing or malformed data safely.
+- Provide defaults when no settings exist.
+- Do not overwrite unrelated local storage.
+- Include schema versioning where appropriate.
+- Keep user-specific theme preferences separate from global settings.
+
+Do not claim cross-device synchronization.
+
+---
+
+MODULE K — SETTINGS AUDIT HISTORY
+
+28. SETTINGS AUDIT
+
+Record important configuration changes.
+
+Audit:
+
+- Centre profile changes.
+- Application branding changes.
+- Theme default changes.
+- Academic default changes.
+- Notification preference changes.
+
+Each audit entry should contain:
+
+- Unique ID.
+- Actor ID.
+- Action.
+- Setting category.
+- Previous values where appropriate.
+- New values where appropriate.
+- Timestamp.
+
+Do not store passwords, authentication secrets or other sensitive information in audit entries.
+
+Use append-only behavior where practical in the local adapter.
+
+Document that local browser audit history is not tamper-proof and requires trusted backend enforcement in production.
+
+29. SETTINGS HISTORY
+
+Allow Admin to inspect:
+
+- Change date.
+- Changed setting category.
+- Actor.
+- Change summary.
+
+Do not display unnecessary private data.
+
+Do not permit silent deletion or editing of previous audit entries.
+
+---
+
+MODULE L — UI AND RESPONSIVE EXPERIENCE
+
+30. ADMIN SETTINGS UI
+
+Create a polished but simple Settings Centre.
+
+Use:
+
+- Clear section navigation.
+- Consistent settings cards.
+- Proper labels.
+- Helpful descriptions.
+- Validation messages.
+- Save and Cancel actions.
+- Confirmation dialogs for meaningful changes.
+- Loading states.
+- Success and error states.
+
+Avoid placing every setting on one enormous screen.
+
+Group related settings logically.
+
+31. LIVE PREVIEW AND SAVE BEHAVIOR
+
+For branding and appearance:
+
+- Show unsaved changes clearly.
+- Allow preview.
+- Allow cancel.
+- Save only after explicit confirmation.
+- Show the saved state.
+- Restore defaults only after confirmation.
+
+Do not let preview changes unexpectedly modify other users' settings.
+
+32. RESPONSIVE DESIGN
+
+Test the Admin Settings Centre across:
+
+- 360px mobile.
+- 390px mobile.
+- 768px tablet.
+- 1280px laptop.
+- 1440px desktop.
+
+Ensure:
+
+- No horizontal overflow.
+- Forms are easy to use.
+- Save controls remain accessible.
+- Preview layouts adapt correctly.
+- Settings navigation works on mobile.
+- Desktop navigation remains suitable for larger screens.
+
+Maintain the existing five-slot mobile navigation with Home exactly in the centre.
+
+Do not create a separate Admin Website.
+
+33. TEACHER AND STUDENT EXPERIENCE
+
+Do not add Admin configuration controls to Teacher or Student Web Apps.
+
+Ensure centre branding changes appear consistently across all three role experiences where appropriate.
+
+Do not disrupt existing Teacher or Student navigation.
+
+Do not modify student or teacher records as a side effect of branding changes.
+
+---
+
+MODULE M — TESTING AND REGRESSION
+
+34. SETTINGS TESTS
+
+Test:
+
+1. Admin can load application settings.
+2. Admin can update centre name.
+3. Admin can update contact details.
+4. Invalid contact data is rejected.
+5. Admin can update application display name.
+6. Branding preview works.
+7. Cancel discards unsaved changes.
+8. Apply persists supported changes.
+9. Default branding can be restored.
+10. Existing routes remain unchanged.
+11. Existing student and teacher data remain unchanged.
+12. Default theme changes work as intended.
+13. Personal theme preferences remain respected.
+14. Notification preference changes work.
+15. Unsupported notification integrations remain disconnected.
+16. Settings history records changes.
+17. Audit entries do not expose secrets.
+18. Missing or malformed local settings recover safely.
+19. Existing settings survive normal reloads.
+20. DEMO DATA status is displayed honestly.
+
+35. ROLE SECURITY TESTS
+
+Test:
+
+- Admin can access settings.
+- Teacher cannot access Admin settings.
+- Student cannot access Admin settings.
+- Unauthenticated user cannot access protected settings.
+- Direct service calls reject unauthorized writes.
+- Teachers and students cannot modify global branding.
+
+36. REGRESSION TESTS
+
+Run all existing test suites:
+
+- Phase 2 authentication.
+- Phase 3 account management.
+- Phase 4 academic management.
+- Phase 5 attendance.
+- Phase 6 assessments.
+- Phase 7 finance.
+- Phase 8 student portal.
+
+Do not remove or weaken existing tests.
+
+Add Phase 9 settings tests.
+
+37. BUILD VALIDATION
+
+Run:
+
+- npm run build
+- npx tsc --noEmit
+- All available Phase 2–8 regression tests.
+- New Phase 9 tests.
+
+Report actual results.
+
+Do not claim successful execution if commands were not run.
+
+If browser automation is unavailable, document that limitation and provide a manual visual testing checklist.
+
+---
+
+MODULE N — DOCUMENTATION AND INTEGRATION TRANSPARENCY
+
+38. DOCUMENTATION
+
+Update:
+
+- docs/ARCHITECTURE_AND_ROADMAP.md
+- Application settings architecture.
+- Branding configuration documentation.
+- Settings permission matrix.
+- Settings data model.
+- Settings audit behavior.
+- Local persistence documentation.
+- Integration inventory.
+- Phase 9 completion report.
+
+39. COMPLETE SERVICE INVENTORY
+
+Document every tool, API, database and service actually used.
+
+At minimum:
+
+Component| Purpose| Status
+React 19| User interface| Existing
+TypeScript| Type safety| Existing
+Vite 8| Build system| Existing
+Tailwind CSS v4| Styling| Existing
+Motion| Animations| Existing
+Lucide React| Icons| Existing
+Local development adapters| Demo settings persistence| Local only
+Firebase Authentication| Future production authentication| Not connected
+Cloud Firestore| Future production database| Not connected
+Cloud Functions| Future trusted backend| Not connected
+Firebase Storage| Future authorized asset storage| Not connected
+Payment gateway| Not included| Not connected
+AI APIs| Not used| Not connected
+WhatsApp/SMS/email| Not used| Not connected
+PostgreSQL| Not used| Not connected
+
+Update the table based on actual implementation.
+
+Distinguish:
+
+- Existing.
+- Connected.
+- Disconnected.
+- Local only.
+- Planned.
+- Not used.
+
+Do not invent costs, integrations or capabilities.
+
+40. PRODUCTION LIMITATIONS
+
+Clearly document:
+
+- Settings are local demo configuration until a production backend is connected.
+- Local storage is not secure cross-device storage.
+- Local audit entries are not tamper-proof.
+- Logo persistence may be device-local if no authorized storage backend exists.
+- Production settings authorization requires trusted backend enforcement.
+- Firebase remains disconnected.
+- Phase 10 has not started.
+
+Do not claim production readiness.
+
+---
+
+MODULE O — STRICT SCOPE PROTECTION
+
+41. DO NOT IMPLEMENT
+
+Do not implement:
+
+- Phase 10.
+- Firebase connection.
+- Firebase deployment.
+- Firebase Storage connection.
+- AI APIs.
+- Payment gateways.
+- Bank verification APIs.
+- WhatsApp.
+- SMS.
+- Email services.
+- PostgreSQL.
+- Native Android or iOS applications.
+- Separate Admin Website.
+- Separate Student Website.
+- New public registration.
+- Separate Parent login.
+- New academic modules.
+- Duplicate financial systems.
+- Duplicate account management.
+- Unrequested features.
+
+Do not connect external services.
+
+Do not begin production migration.
+
+---
+
+MODULE P — EXECUTION LIMITS AND CONTINUATION
+
+42. CONTINUATION RULES
+
+If approaching AI Studio execution or context limits:
+
+1. Save completed work.
+2. Avoid leaving the project in a broken state.
+3. Record completed tasks.
+4. Record unfinished tasks.
+5. Record files created and modified.
+6. Record the last successful operation.
+7. Provide a clear continuation prompt.
+
+Provide an action labelled:
+
+CONTINUE PHASE 9
+
+If an interactive continuation button is unavailable, provide a copy-ready continuation prompt.
+
+Continuation must resume Phase 9 only.
+
+Do not repeat completed work unnecessarily.
+
+---
+
+MODULE Q — REQUIRED COMPLETION REPORT
+
+43. FINAL REPORT FORMAT
+
+When finished, provide:
+
+A. Overall status
+
+- Completed.
+- Partially completed.
+- Not implemented.
+- Blocked.
+
+B. Tuition centre profile
+
+- Configurable fields.
+- Validation.
+- Where details appear.
+
+C. Application branding
+
+- Application name.
+- Tagline.
+- Login welcome text.
+- Logo selection and persistence behavior.
+- Live preview.
+- Reset behavior.
+
+D. Theme and appearance
+
+- Default theme.
+- Personal theme behavior.
+- Design-token preservation.
+
+E. Academic settings
+
+- Supported settings.
+- Validation.
+- Historical data protection.
+
+F. Notification preferences
+
+- Supported categories.
+- Preference behavior.
+- External notification status.
+
+G. Central settings centre
+
+- Sections implemented.
+- Existing module shortcuts.
+- System status overview.
+
+H. Account and security
+
+- Admin settings permissions.
+- Teacher and Student restrictions.
+- Session information.
+
+I. Settings audit
+
+- Recorded actions.
+- Audit fields.
+- History interface.
+
+J. Technical changes
+
+- Files created.
+- Files modified.
+- Models.
+- Service contracts.
+- Local storage keys.
+- Dependencies.
+
+K. Testing
+
+- Build.
+- TypeScript.
+- Phase 2–8 regression tests.
+- Phase 9 tests.
+- Browser testing, if available.
+
+L. Integration inventory
+
+List every database, API, external service and tool used, with connection status.
+
+M. Known limitations
+
+List remaining issues and production limitations.
+
+N. Next phase
+
+Explicitly state that Phase 10 has not been implemented.
+
+---
+
+FINAL EXECUTION INSTRUCTION
+
+Inspect the existing project and completed Phases 1–8.
+
+Implement Phase 9 only.
+
+Create a centralized, reliable Admin Settings Centre for tuition centre information, application branding, theme defaults, supported academic defaults, notification preferences and system configuration.
+
+Keep the three responsive Web App experiences.
+
+Preserve all existing functionality.
+
+Do not create a separate Admin Website.
+
+Do not connect Firebase.
+
+Do not introduce AI APIs or external services.
+
+Do not begin Phase 10.
+
+Implement Phase 9 only.

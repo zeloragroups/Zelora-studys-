@@ -1,0 +1,1299 @@
+PHASE 10/10 — FIREBASE PRODUCTION INTEGRATION, DATA MIGRATION, SECURITY HARDENING & FINAL QUALITY ASSURANCE
+
+1. YOUR ROLE
+
+Act as a senior Firebase architect, full-stack engineer, security engineer, database designer, migration specialist and QA engineer.
+
+You are continuing an existing Tuition Centre Management Ecosystem.
+
+Phases 1–9 are complete. Phase 10 is the final integration phase.
+
+This is not a new project. Preserve the existing application and its functionality.
+
+Before making changes, inspect the complete project, current service contracts, local development adapters, authentication, authorization, all data models, settings, audit systems and documentation.
+
+Create an implementation plan before modifying files.
+
+Implement Phase 10 in controlled stages. Verify each stage before proceeding.
+
+Do not replace working functionality with incomplete Firebase placeholders.
+
+2. CONFIRMED APPLICATION ARCHITECTURE
+
+There are exactly three responsive Web App experiences:
+
+1. Admin Web App.
+2. Teacher Web App.
+3. Student Web App.
+
+There is no separate Admin Website.
+
+All three experiences must work on:
+
+- Android mobile browsers.
+- Tablets.
+- Laptops.
+- Desktop browsers.
+
+Preserve the existing React 19, TypeScript, Vite 8, Tailwind CSS v4, Motion and Lucide React stack.
+
+Do not migrate to Next.js or another framework.
+
+Preserve all existing:
+
+- UI and design tokens.
+- Light and dark themes.
+- Five-slot mobile bottom navigation with Home in the centre.
+- Branding and logo configuration.
+- Application settings.
+- Academic modules.
+- Attendance.
+- Homework and assessments.
+- Fees and UPI payment preparation.
+- Receipts.
+- Teacher salary management.
+- Financial reports.
+- Notifications.
+- Role-based navigation.
+
+Do not redesign the application unnecessarily.
+
+3. FIREBASE PROJECT CONFIGURATION
+
+Use the Firebase project supplied by the user.
+
+Project details:
+
+- Project ID: academy-0007
+- Auth domain: academy-0007.firebaseapp.com
+- Storage bucket: academy-0007.firebasestorage.app
+- Messaging sender ID: 123258533376
+- Firebase App ID: 1:123258533376:web:7995a1487a239015b44ae5
+- Measurement ID: G-4P37NTXP0R
+
+Use the following client configuration values supplied by the user:
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAAt6XAwe3W3FPPe19h3ECuJNW2-A4uPxM",
+  authDomain: "academy-0007.firebaseapp.com",
+  projectId: "academy-0007",
+  storageBucket: "academy-0007.firebasestorage.app",
+  messagingSenderId: "123258533376",
+  appId: "1:123258533376:web:7995a1487a239015b44ae5",
+  measurementId: "G-4P37NTXP0R"
+};
+
+Important:
+
+- Use the supplied project configuration.
+- Do not create a new Firebase project.
+- Do not silently substitute another project.
+- Do not expose service-account credentials.
+- Do not put private keys or Admin SDK credentials in frontend code.
+- Do not commit private secrets to GitHub.
+- Use environment variables for configuration where appropriate.
+- Document which configuration values are public client configuration and which credentials must remain private.
+- If the provided configuration does not match the connected Firebase project, stop and report the mismatch instead of guessing.
+
+Firebase Analytics is optional. Do not enable or initialize it unless the user has explicitly approved analytics.
+
+4. FIREBASE SERVICES
+
+Use only the Firebase services required for this application.
+
+Firebase service| Purpose
+Firebase Authentication| Secure user authentication
+Cloud Firestore| Application database
+Firebase Storage| Application logos and authorized assets
+Cloud Functions| Trusted administrative operations and server-side validation
+
+Do not assume every service is already enabled.
+
+Check the configuration and project setup first.
+
+If a service is not enabled or cannot be configured through the available environment, explain exactly what the user must enable or do in Firebase Console.
+
+Do not falsely report that a service is connected.
+
+Do not introduce PostgreSQL, Supabase or another database.
+
+5. FIREBASE INITIALIZATION
+
+Create a centralized Firebase initialization module.
+
+Suggested structure:
+
+- src/lib/firebase/config.ts
+- src/lib/firebase/app.ts
+- src/lib/firebase/auth.ts
+- src/lib/firebase/firestore.ts
+- src/lib/firebase/storage.ts
+
+Adapt the file structure to the existing project.
+
+Requirements:
+
+1. Initialize Firebase only once.
+2. Avoid duplicate Firebase app initialization.
+3. Export typed Firebase service instances.
+4. Handle missing configuration safely.
+5. Separate development and production configuration.
+6. Prevent Firebase initialization errors from crashing the entire application.
+7. Provide a clear connection status.
+8. Never silently fall back to demo data in production.
+
+Use modular Firebase SDK imports.
+
+Install only the necessary official Firebase packages.
+
+Do not initialize Analytics automatically.
+
+6. ENVIRONMENT AND CONNECTION MODES
+
+Clearly distinguish:
+
+- LOCAL_DEMO.
+- FIREBASE_CONNECTED.
+- FIREBASE_CONFIGURATION_ERROR.
+
+When Firebase is not configured, the application must display a clear setup message.
+
+Production must never silently use local demo accounts or local demo records.
+
+Do not mix demo and production records.
+
+Provide a visible environment indicator in the Admin application.
+
+Do not claim cross-device synchronization until Firestore operations have been tested successfully.
+
+---
+
+MODULE A — AUTHENTICATION
+
+7. PRESERVE EXISTING LOGIN EXPERIENCE
+
+Preserve the existing login screens and user experience.
+
+Admin:
+
+- Admin ID.
+- Password.
+
+Teacher:
+
+- Teacher ID.
+- Password.
+
+Student:
+
+- Student ID.
+- Password.
+
+There must be no public registration.
+
+Admin creates teacher and student accounts.
+
+Parents continue using the student's credentials. Do not create a separate parent login.
+
+Preserve the existing role-based route structure.
+
+8. FIREBASE AUTHENTICATION ARCHITECTURE
+
+Inspect the existing ID/password authentication service before implementation.
+
+Firebase Authentication must become the trusted authentication provider.
+
+The user-facing login identifier must remain the existing Admin ID, Teacher ID or Student ID.
+
+Firebase Authentication normally uses email/password or custom authentication tokens. Do not pretend that arbitrary IDs can be passed directly to Firebase's email/password sign-in method.
+
+Design and implement a secure ID-based login adapter.
+
+Preferred approach:
+
+- Use a trusted server-side account creation workflow.
+- Maintain a secure mapping between application login IDs and Firebase Auth UIDs.
+- Use Firebase Authentication for actual password verification.
+- Use a controlled internal authentication identifier where required.
+- Do not expose account mapping collections to public users.
+- Do not allow users to choose or change their role.
+- Do not allow client-side assignment of Admin privileges.
+
+If using an internal email alias for Firebase Authentication, derive and manage it consistently through a documented backend strategy. Do not rely on real user email addresses that the user has not supplied.
+
+Do not store plaintext passwords in Firestore, localStorage or browser state beyond the minimum time needed for authentication.
+
+Do not store password hashes in application account documents.
+
+9. ACCOUNT CREATION
+
+Preserve the existing Admin account management workflow.
+
+When Admin creates a Teacher or Student:
+
+1. Validate account details.
+2. Generate a unique application ID.
+3. Create the Firebase Authentication account through a trusted backend.
+4. Assign the appropriate role securely.
+5. Create the Firestore profile.
+6. Record the creation event.
+7. Return the generated application ID to Admin.
+8. Display the initial credential only through the intended secure workflow.
+9. Never store the initial password in an ordinary Firestore profile or audit log.
+
+Do not create duplicate Auth users if the operation is retried.
+
+Use idempotency and appropriate failure recovery.
+
+If Authentication account creation succeeds but Firestore profile creation fails, handle the incomplete operation safely and provide a recoverable status.
+
+10. ROLE AUTHORIZATION
+
+Use trusted role claims or an equally secure server-validated role mechanism.
+
+Expected roles:
+
+- admin
+- teacher
+- student
+
+Do not trust role information supplied by the browser.
+
+Do not rely only on frontend route guards.
+
+The backend must verify the authenticated user's role and account status.
+
+Deactivated accounts must not continue to access protected resources.
+
+Do not allow Teachers or Students to become Admins by changing local state, browser storage or request payloads.
+
+11. PASSWORD RECOVERY
+
+Inspect the existing account recovery workflow.
+
+Implement a secure, practical recovery approach.
+
+Do not expose existing passwords to Admin.
+
+Do not store plaintext passwords.
+
+If email-based recovery requires real email addresses and the current account model does not contain verified addresses, do not invent them.
+
+Where necessary, implement Admin-mediated password reset through a trusted backend.
+
+A password reset must:
+
+- Verify the acting Admin.
+- Verify the target account.
+- Require confirmation.
+- Avoid exposing the old password.
+- Record an appropriate audit event.
+- Revoke or invalidate sessions when supported.
+
+---
+
+MODULE B — CLOUD FIRESTORE DATABASE
+
+12. DATABASE DESIGN
+
+Inspect every existing local data model and service before designing Firestore collections.
+
+Create a documented Firestore data architecture.
+
+At minimum, cover:
+
+- users
+- businesses or tuition centre profile, only if the existing model requires it
+- applicationSettings
+- classes
+- batches
+- subjects
+- enrolments
+- teacherAssignments
+- timetableEntries
+- announcements
+- attendanceSessions
+- attendanceRecords
+- attendanceAudit
+- homework
+- homeworkSubmissions
+- objectiveTests
+- testAttempts
+- examinations
+- examinationMarks
+- marksAudit
+- notifications
+- feeConfigurations
+- studentFeeAccounts
+- paymentClaims
+- paymentReceipts
+- teacherSalaryConfigurations
+- teacherSalaryPayments
+- financialAudit
+- settingsAudit
+
+Adapt collection names and document structures to existing TypeScript types.
+
+Do not create duplicate collections for data already represented by a different existing service.
+
+Document:
+
+- Collection name.
+- Document ID strategy.
+- Fields.
+- Field types.
+- Relationships.
+- Ownership.
+- Role access.
+- Query patterns.
+- Required indexes.
+
+13. DATA INTEGRITY
+
+Preserve existing business rules.
+
+Use:
+
+- Firestore transactions.
+- Batched writes.
+- Idempotency keys.
+- Server timestamps.
+- Referential validation.
+- Atomic updates where required.
+
+Prevent:
+
+- Duplicate attendance submissions.
+- Duplicate payment verification.
+- Duplicate receipts.
+- Duplicate account creation.
+- Duplicate test submissions.
+- Duplicate salary payouts.
+- Invalid student enrolments.
+- Invalid teacher assignments.
+
+Do not use client-side calculations as the sole authority for financial or security-sensitive operations.
+
+14. DATA ACCESS LAYER
+
+Preserve the existing service contracts.
+
+Implement production Firebase-backed service implementations.
+
+Suggested organization:
+
+- src/services/firebase/auth/
+- src/services/firebase/accounts/
+- src/services/firebase/academics/
+- src/services/firebase/attendance/
+- src/services/firebase/assessments/
+- src/services/firebase/finance/
+- src/services/firebase/settings/
+- src/services/firebase/student/
+- src/services/firebase/notifications/
+
+The existing UI should continue calling service interfaces rather than directly accessing Firestore everywhere.
+
+Keep LocalDev adapters separate.
+
+Do not remove local adapters if they remain useful for isolated development and testing.
+
+Select the correct adapter explicitly based on environment configuration.
+
+Never allow production to silently switch to LocalDev services.
+
+---
+
+MODULE C — FIRESTORE SECURITY RULES
+
+15. SECURITY RULES ARE MANDATORY
+
+Create complete Firestore Security Rules.
+
+Do not deploy permissive rules such as:
+
+allow read, write: if true;
+
+Do not use temporary open rules.
+
+Do not depend exclusively on frontend authorization.
+
+Rules must validate:
+
+- Authentication.
+- Role.
+- Account status.
+- Resource ownership.
+- Teacher assignments.
+- Student enrolments.
+- Admin-only operations.
+- Immutable records.
+- Allowed field updates.
+
+16. ADMIN PERMISSIONS
+
+Admin may manage authorized application data.
+
+Admin operations include:
+
+- Account creation and management.
+- Academic configuration.
+- Teacher assignments.
+- Attendance oversight.
+- Attendance corrections.
+- Assessment oversight.
+- Marks release and authorized corrections.
+- Fee configuration.
+- Payment claim verification.
+- Receipt management.
+- Teacher salary management.
+- Application settings and branding.
+
+Important:
+Admin authority must be granted by trusted backend configuration, never by client input.
+
+17. TEACHER PERMISSIONS
+
+Teachers may access only their assigned classes, batches and subjects.
+
+Teachers may:
+
+- View assigned student rosters.
+- Mark attendance for authorized sessions.
+- Manage authorized homework.
+- Create authorized tests and examinations.
+- Enter marks.
+- View relevant results and academic information.
+
+Teachers must not:
+
+- Create Admin accounts.
+- Change global branding.
+- Change application settings.
+- Access other teachers' private data.
+- Change fee configurations.
+- Verify payments.
+- Modify salary payouts.
+- Read unrelated student records.
+
+18. STUDENT PERMISSIONS
+
+Students may access only their own authorized data.
+
+Students may:
+
+- View their own profile.
+- View attendance.
+- View homework.
+- Submit homework.
+- Take authorized tests.
+- View released marks.
+- View announcements.
+- View their own fee records.
+- Submit payment claims.
+- View verified receipts.
+- View their own notifications.
+
+Students must not:
+
+- Read another student's records.
+- View unreleased marks.
+- Read test answer keys before release.
+- Modify attendance.
+- Modify payment verification status.
+- Modify fee configuration.
+- Modify teacher salary information.
+- Modify application settings.
+
+19. IMMUTABLE AND SENSITIVE RECORDS
+
+Protect:
+
+- Financial audit records.
+- Attendance correction history.
+- Marks correction history.
+- Settings audit history.
+- Verified payment records.
+- Issued receipt history.
+
+Use trusted server-side functions for operations that must be immutable or require elevated authority.
+
+Do not rely on a frontend-only append-only implementation.
+
+Create automated security-rule tests where the environment supports the Firebase Emulator Suite.
+
+---
+
+MODULE D — CLOUD FUNCTIONS AND TRUSTED OPERATIONS
+
+20. TRUSTED BACKEND OPERATIONS
+
+Use Cloud Functions when a trusted server-side operation is required.
+
+Potential operations:
+
+- Create application accounts.
+- Assign trusted role claims.
+- Resolve ID-based login.
+- Reset passwords.
+- Verify account status.
+- Submit trusted attendance records.
+- Perform authorized attendance corrections.
+- Release marks.
+- Verify payment claims.
+- Issue receipts.
+- Process salary payments.
+- Record protected audit events.
+- Validate sensitive financial calculations.
+
+Do not put Firebase Admin SDK code in the browser.
+
+Do not expose service-account keys.
+
+Do not assume that Cloud Functions are deployed simply because source code exists.
+
+21. FUNCTION SECURITY
+
+Every privileged function must:
+
+- Authenticate the caller.
+- Verify role claims.
+- Verify account status.
+- Validate all inputs.
+- Validate resource ownership.
+- Reject unauthorized requests.
+- Use server timestamps.
+- Prevent duplicate requests.
+- Return safe error messages.
+- Avoid logging passwords, tokens or sensitive personal data.
+
+Use appropriate rate limits or abuse protections where supported.
+
+Do not allow unauthenticated callers to execute Admin operations.
+
+22. DEPLOYMENT LIMITATIONS
+
+If the available environment cannot deploy Cloud Functions:
+
+- Create the complete function source.
+- Create configuration and deployment documentation.
+- Clearly identify required setup.
+- Do not claim the functions are deployed.
+- Do not replace secure backend operations with insecure frontend shortcuts.
+
+List every required manual action in Firebase Console or CLI.
+
+---
+
+MODULE E — CLOUD STORAGE AND BRANDING
+
+23. FIREBASE STORAGE
+
+Connect Firebase Storage for authorized application assets if the service is enabled.
+
+Migrate the Phase 9 custom logo configuration to durable storage.
+
+Requirements:
+
+- Preserve PNG, JPEG and WebP support.
+- Validate file type.
+- Enforce a reasonable file-size limit.
+- Prevent unauthorized uploads.
+- Restrict writes to Admin.
+- Restrict access to authorized application assets.
+- Use secure storage paths.
+- Avoid publicly writable storage.
+
+Do not upload passwords or private account data.
+
+Do not claim assets are synchronized until upload and retrieval are verified.
+
+If Firebase Storage is unavailable, retain a clearly labelled fallback and report the missing setup.
+
+24. STORAGE SECURITY RULES
+
+Create Storage Rules.
+
+Only authorized Admin operations may upload or replace global application branding assets.
+
+Teachers and Students may read only assets intended for their application experience.
+
+Do not allow unrestricted uploads.
+
+---
+
+MODULE F — FINANCE AND PAYMENT SECURITY
+
+25. UPI PAYMENT WORKFLOW
+
+Preserve the existing direct UPI payment workflow.
+
+Do not integrate Razorpay or another payment gateway.
+
+Do not connect bank APIs.
+
+Do not claim automated UPI payment verification.
+
+The existing flow must remain:
+
+1. Student chooses full or partial payment.
+2. Application prepares a UPI payment link.
+3. Student pays through an external UPI application.
+4. Student submits transaction reference/UTR.
+5. Claim remains pending.
+6. Admin independently checks the payment.
+7. Admin confirms or rejects the claim.
+8. Only a confirmed payment changes the verified paid balance.
+9. Receipt is generated only after verification.
+
+A screenshot alone must never mark a payment as successful.
+
+26. PAYMENT SECURITY
+
+Move sensitive verification operations to trusted backend functions.
+
+Validate:
+
+- Payment claim ownership.
+- Transaction reference.
+- Duplicate UTRs.
+- Payment amount.
+- Student fee account.
+- Current payment status.
+- Admin authorization.
+
+Use Firestore transactions to prevent duplicate verification and balance corruption.
+
+A rejected or pending claim must not reduce the student's outstanding balance.
+
+27. RECEIPTS
+
+Preserve existing receipt format and branding.
+
+Receipt generation must be based on verified payment records.
+
+Use unique receipt IDs.
+
+Prevent duplicate issuance.
+
+Preserve historical receipts.
+
+If a verified payment is corrected or reversed, follow an explicit audited correction workflow.
+
+Do not silently edit historical receipt records.
+
+28. TEACHER SALARY
+
+Preserve existing monthly and per-session salary models.
+
+Validate eligible attendance sessions on the trusted backend.
+
+Prevent:
+
+- Duplicate payouts.
+- Overpayment.
+- Unauthorized changes.
+- Payouts for ineligible sessions.
+
+Keep salary information Admin-only, with each teacher able to view only their own permitted salary records.
+
+---
+
+MODULE G — DATA MIGRATION
+
+29. LOCAL DEMO DATA MIGRATION
+
+Inspect all existing localStorage-based stores.
+
+Identify:
+
+- Existing demo accounts.
+- Academic records.
+- Attendance.
+- Homework.
+- Tests.
+- Examination marks.
+- Notifications.
+- Financial records.
+- Settings.
+- Branding.
+- Audit records.
+
+Do not automatically upload all demo records into production.
+
+Clearly distinguish demo records from real tuition-centre records.
+
+30. SAFE MIGRATION PROCESS
+
+Implement a controlled migration process.
+
+Before migration:
+
+1. Display the source data inventory.
+2. Show record counts.
+3. Identify demo accounts and sample records.
+4. Identify incomplete or inconsistent records.
+5. Identify duplicate IDs.
+6. Identify unsupported fields.
+7. Provide a migration preview.
+8. Explain what will be uploaded.
+9. Require explicit Admin confirmation.
+
+Do not migrate sample credentials as real production accounts.
+
+Do not migrate passwords or local password verifiers.
+
+Production accounts must be created through the secure Firebase Authentication account workflow.
+
+Preserve relationships between:
+
+- Classes and batches.
+- Students and enrolments.
+- Teachers and assignments.
+- Attendance sessions and records.
+- Homework and submissions.
+- Tests and attempts.
+- Examinations and marks.
+- Students and fee accounts.
+- Verified payments and receipts.
+- Teachers and salary records.
+
+31. MIGRATION SAFETY
+
+Use:
+
+- Batch processing.
+- Progress indicators.
+- Duplicate detection.
+- Idempotent migration identifiers.
+- Error reports.
+- Recovery instructions.
+
+Do not delete local source records automatically after migration.
+
+If migration fails, preserve the original local data.
+
+Provide a migration summary with:
+
+- Successfully migrated.
+- Skipped.
+- Failed.
+- Duplicate.
+- Requires manual review.
+
+---
+
+MODULE H — REAL-TIME DATA AND SYNCHRONIZATION
+
+32. CROSS-DEVICE SYNCHRONIZATION
+
+After Firebase is connected, verify that changes are synchronized between authorized devices.
+
+Examples:
+
+- Admin creates a teacher; teacher can sign in from another device.
+- Admin creates a student; student can sign in from another device.
+- Teacher marks attendance; Admin and Student views update appropriately.
+- Teacher publishes homework; relevant students can see it.
+- Teacher releases marks; the correct students can view them.
+- Admin verifies payment; student balance and receipt update.
+- Admin changes branding; all three Web Apps display the updated branding.
+
+Use Firestore listeners selectively.
+
+Avoid unnecessary listeners that increase costs.
+
+Unsubscribe from listeners when components unmount or access changes.
+
+Handle offline and reconnect behavior honestly.
+
+Do not display stale data as confirmed current data.
+
+---
+
+MODULE I — SETTINGS AND AUDIT MIGRATION
+
+33. PHASE 9 SETTINGS
+
+Connect the existing application settings service to Firestore.
+
+Preserve:
+
+- Centre profile.
+- Application name.
+- Tagline.
+- Login text.
+- Logo.
+- Default theme.
+- Academic defaults.
+- Notification preferences.
+
+Admin remains the only role allowed to modify global settings.
+
+Preserve personal theme overrides separately from institutional defaults.
+
+34. AUDIT SECURITY
+
+Move protected audit operations to trusted backend services.
+
+Preserve audit history where migration is authorized.
+
+Do not allow ordinary clients to edit or delete historical audit records.
+
+Use server-generated timestamps.
+
+Ensure audit entries never contain passwords, tokens or authentication secrets.
+
+---
+
+MODULE J — FIREBASE STORAGE AND COST CONTROL
+
+35. FREE TIER AND COST TRANSPARENCY
+
+Before deploying or enabling services, explain the Firebase plan requirements.
+
+Check the current Firebase pricing and plan restrictions using official documentation if internet research is available.
+
+Do not assume that all Firebase services are available at zero cost.
+
+Clearly distinguish:
+
+- Free quota.
+- Paid usage.
+- Required billing plan.
+- Potential usage charges.
+- Features that require a billing account.
+
+Do not activate paid resources without user authorization.
+
+Do not create unnecessary listeners, functions, storage uploads or database operations.
+
+Use pagination for large records.
+
+Avoid reading entire collections unnecessarily.
+
+Do not claim that the application will remain free regardless of usage.
+
+36. COST-EFFICIENT DESIGN
+
+Use:
+
+- Indexed queries.
+- Pagination.
+- Appropriate document sizes.
+- Selective listeners.
+- Minimal repeated reads.
+- Efficient transactions.
+- Storage size validation.
+
+Document expected usage patterns and potential cost drivers.
+
+Do not invent exact monthly costs without sufficient usage assumptions.
+
+---
+
+MODULE K — TESTING AND SECURITY VALIDATION
+
+37. FIREBASE EMULATOR TESTING
+
+Where available, use the Firebase Emulator Suite for:
+
+- Authentication.
+- Firestore.
+- Storage.
+- Cloud Functions.
+- Security Rules.
+
+Test both permitted and denied operations.
+
+Do not use production student data for testing.
+
+Do not weaken production rules to make tests pass.
+
+38. AUTHENTICATION TESTS
+
+Test:
+
+- Valid Admin login.
+- Valid Teacher login.
+- Valid Student login.
+- Incorrect passwords.
+- Unknown IDs.
+- Deactivated accounts.
+- Session expiry.
+- Logout.
+- Password reset.
+- Role claim validation.
+- Unauthorized direct access.
+
+39. DATABASE SECURITY TESTS
+
+Test:
+
+- Admin reads and writes authorized resources.
+- Teacher accesses assigned resources only.
+- Student accesses own resources only.
+- Cross-student access is rejected.
+- Cross-teacher access is rejected.
+- Unauthorized settings changes are rejected.
+- Unreleased marks are protected.
+- Answer keys remain hidden until authorized release.
+- Payment status cannot be changed by students.
+- Salary information remains protected.
+- Audit history cannot be modified by unauthorized clients.
+
+40. FINANCIAL TESTS
+
+Test:
+
+- Full payment.
+- Partial payment.
+- Pending claim.
+- Rejected claim.
+- Duplicate UTR.
+- Duplicate verification.
+- Verified payment.
+- Receipt generation.
+- Historical receipt preservation.
+- Balance calculation.
+- Salary calculation.
+- Partial salary payment.
+- Full salary payment.
+- Overpayment prevention.
+
+Use integer paise for all INR calculations.
+
+41. REGRESSION TESTS
+
+Preserve and run existing tests:
+
+- Phase 2 authentication.
+- Phase 3 account management.
+- Phase 4 academics.
+- Phase 5 attendance.
+- Phase 6 assessments.
+- Phase 7 finance.
+- Phase 8 student portal.
+- Phase 9 settings.
+
+Add Firebase-specific tests.
+
+Run:
+
+- npm run build
+- npx tsc --noEmit
+- All available automated tests.
+
+Report actual results.
+
+42. BROWSER TESTING
+
+Manually or automatically verify:
+
+- 360px mobile.
+- 390px mobile.
+- 768px tablet.
+- 1280px laptop.
+- 1440px desktop.
+
+Test all three Web Apps.
+
+Verify:
+
+- Login.
+- Navigation.
+- Data loading.
+- Data updates.
+- Settings.
+- Branding.
+- Theme.
+- Attendance.
+- Assessments.
+- Fees.
+- Receipts.
+- Salary visibility.
+- Notifications.
+
+If browser automation is unavailable, document the limitation honestly.
+
+---
+
+MODULE L — PRODUCTION SAFETY
+
+43. NO DEMO FALLBACK IN PRODUCTION
+
+Production must not use:
+
+- Demo credentials.
+- Demo authentication.
+- Local fake accounts.
+- Local-only finance records.
+- Fake Firebase connection indicators.
+- Fake synchronization indicators.
+
+If Firebase fails, display a clear error and safe recovery action.
+
+Never silently display demo data as production data.
+
+44. ERROR HANDLING
+
+Provide clear user-facing errors for:
+
+- Authentication failures.
+- Permission denied.
+- Network unavailable.
+- Firebase configuration errors.
+- Missing records.
+- Validation failures.
+- Transaction failures.
+- Storage upload failures.
+
+Do not reveal internal stack traces or private data.
+
+45. SECURITY REVIEW
+
+Check:
+
+- No service-account keys in frontend.
+- No private credentials in GitHub.
+- No unrestricted Firestore rules.
+- No unrestricted Storage rules.
+- No client-controlled Admin roles.
+- No plaintext passwords in Firestore.
+- No secrets in audit logs.
+- No unauthorized financial updates.
+- No cross-student data access.
+- No cross-teacher data access.
+
+---
+
+MODULE M — DOCUMENTATION
+
+46. REQUIRED DOCUMENTATION
+
+Create or update:
+
+- Firebase project configuration guide.
+- Firebase Authentication setup.
+- Firestore database schema.
+- Firestore indexes.
+- Firestore Security Rules.
+- Firebase Storage Rules.
+- Cloud Functions setup.
+- Environment variable guide.
+- Data migration guide.
+- Security model.
+- Backup and recovery guide.
+- Deployment guide.
+- Testing guide.
+- Cost and quota notes.
+- Integration inventory.
+- Final architecture diagram.
+- Phase 10 completion report.
+
+47. MANUAL SETUP CHECKLIST
+
+If manual action is required, provide exact instructions.
+
+For each action specify:
+
+- Firebase Console section.
+- Exact setting or service.
+- What value or option is required.
+- Why it is needed.
+- How to verify completion.
+
+Do not ask the user to paste private service-account keys into ChatGPT.
+
+Do not ask the user to publish private credentials in Google AI Studio prompts or source files.
+
+---
+
+MODULE N — EXECUTION AND CONTINUATION
+
+48. CONTROLLED IMPLEMENTATION
+
+Implement in this order:
+
+1. Project inspection and Firebase readiness.
+2. Firebase initialization.
+3. Authentication.
+4. Trusted account creation and role authorization.
+5. Firestore schema and data services.
+6. Firestore Security Rules.
+7. Cloud Functions.
+8. Firebase Storage.
+9. Settings and branding migration.
+10. Academic and attendance migration.
+11. Assessments and student portal integration.
+12. Finance and salary integration.
+13. Notification integration.
+14. Controlled demo-data migration.
+15. Security and regression testing.
+16. Documentation and final report.
+
+Do not skip security work to make the application appear connected sooner.
+
+If the project or available environment cannot complete a step, stop at a safe checkpoint and explain the blocker.
+
+49. EXECUTION LIMITS
+
+If approaching AI Studio execution or context limits:
+
+- Save completed work.
+- Avoid leaving the application broken.
+- Record completed steps.
+- Record unfinished steps.
+- List modified files.
+- Record deployment status.
+- Record the last successful verification.
+- Provide a copy-ready continuation prompt.
+
+Provide a continuation action labelled:
+
+CONTINUE PHASE 10
+
+Do not repeat completed work unnecessarily.
+
+---
+
+MODULE O — FINAL COMPLETION REPORT
+
+50. REQUIRED REPORT
+
+When Phase 10 is finished, provide:
+
+A. Overall status
+
+- Fully completed.
+- Partially completed.
+- Blocked.
+- Not implemented.
+
+B. Firebase connection
+
+- Project ID.
+- Services connected.
+- Services not connected.
+- Configuration status.
+
+C. Authentication
+
+- Login implementation.
+- ID-to-UID mapping approach.
+- Role authorization.
+- Account creation.
+- Password recovery.
+- Session handling.
+
+D. Firestore
+
+- Collections.
+- Document structure.
+- Indexes.
+- Service implementations.
+- Query behavior.
+
+E. Security
+
+- Firestore Rules.
+- Storage Rules.
+- Cloud Functions authorization.
+- Role permissions.
+- Security tests.
+
+F. Data migration
+
+- Source records.
+- Migrated records.
+- Skipped records.
+- Failed records.
+- Manual review requirements.
+
+G. Application modules
+
+Report the actual Firebase integration status of:
+
+- Accounts.
+- Academics.
+- Attendance.
+- Assessments.
+- Student portal.
+- Fees.
+- UPI claims.
+- Receipts.
+- Teacher salary.
+- Reports.
+- Notifications.
+- Branding and settings.
+
+H. Storage
+
+- Logo upload.
+- Access rules.
+- Asset retrieval.
+- Cross-device verification.
+
+I. Testing
+
+- Build.
+- TypeScript.
+- Phase 2–9 regression tests.
+- Firebase emulator tests.
+- Security tests.
+- Browser testing.
+
+J. Files and architecture
+
+- Files created.
+- Files modified.
+- Dependencies added.
+- Environment variables.
+- Database and service architecture.
+
+K. Costs and deployment
+
+- Firebase plan requirements.
+- Required billing setup.
+- Usage limitations.
+- Deployment status.
+
+L. Remaining limitations
+
+List anything that still needs manual configuration or verification.
+
+M. Production readiness
+
+Give an honest conclusion:
+
+- Production ready.
+- Ready after specified manual steps.
+- Not production ready.
+
+Do not claim production readiness merely because the build passes.
+
+---
+
+FINAL EXECUTION INSTRUCTION
+
+Inspect the existing completed application.
+
+Use the user's existing Firebase project:
+
+academy-0007
+
+Integrate Firebase into the existing three responsive Web Apps.
+
+Preserve every completed phase and existing business rule.
+
+Implement trusted authentication, database services, authorization, Security Rules, Storage where required, safe migration and complete regression testing.
+
+Do not introduce PostgreSQL, AI APIs, payment gateways, WhatsApp, SMS or email integrations.
+
+Do not expose private credentials.
+
+Do not automatically migrate demo data into production.
+
+Do not silently use local demo services in production.
+
+Implement Phase 10 only. This is the final phase of the project.

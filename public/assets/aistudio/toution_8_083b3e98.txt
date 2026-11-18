@@ -1,0 +1,1327 @@
+PHASE 8/10 — COMPLETE STUDENT WEB APP, LEARNING EXPERIENCE & STUDENT WORKSPACE INTEGRATION
+
+1. ROLE AND EXECUTION INSTRUCTIONS
+
+Act as a senior full-stack engineer, software architect, student-experience designer, security engineer, QA engineer and UI/UX specialist.
+
+Continue the existing Tuition Centre Management Ecosystem.
+
+This is an existing application. Do not create a new project.
+
+Before implementing anything:
+
+1. Inspect the existing project structure.
+2. Review Phases 1–7 and Phase 6.5.
+3. Inspect all existing Student Web App screens.
+4. Inspect authentication, student profiles, enrolments, attendance, homework, tests, examinations, marks, announcements, notifications, fees and receipts.
+5. Inspect the existing service contracts and local development adapters.
+6. Identify incomplete student workflows, disconnected screens, inconsistent navigation and missing information.
+7. Prepare an implementation plan.
+8. Implement Phase 8 only.
+
+Do not unnecessarily rewrite completed modules.
+
+Do not delete working functionality.
+
+Do not start Phase 9 or Phase 10.
+
+2. UPDATED APPLICATION ARCHITECTURE — MANDATORY
+
+The application has exactly three role-based responsive Web App experiences:
+
+1. Admin Web App.
+2. Teacher Web App.
+3. Student Web App.
+
+There must be no separate Admin Website, Student Website or desktop-only website experience.
+
+All three Web Apps must support:
+
+- Android and other mobile browsers.
+- Tablets.
+- Laptops.
+- Desktop browsers.
+
+Keep the existing shared authentication and routing architecture.
+
+The Student Web App must be a role-specific experience, not a separate unrelated application.
+
+Parents continue accessing their child's information through the student's credentials. Do not create a separate parent login.
+
+Preserve all existing Admin and Teacher functionality.
+
+3. CONFIRMED TECHNOLOGY STACK
+
+Keep:
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+
+Do not migrate frameworks.
+
+Do not introduce PostgreSQL.
+
+Do not add unnecessary dependencies.
+
+4. BACKEND AND INTEGRATION RULES
+
+The user personally connects Firebase.
+
+Do not connect Firebase or create Firebase resources automatically.
+
+Until Firebase is manually connected:
+
+- Use the existing isolated local development adapters.
+- Clearly label sample information as DEMO DATA.
+- Preserve the service contracts intended for future Firebase integration.
+- Do not claim local demo data is synchronized between devices.
+
+Do not introduce:
+
+- Gemini API.
+- OpenAI API.
+- Other AI APIs.
+- Payment gateways.
+- Bank verification APIs.
+- WhatsApp.
+- SMS.
+- Email services.
+- External analytics.
+- PostgreSQL.
+- Unapproved third-party integrations.
+
+No AI features are required in this phase.
+
+5. PHASE 8 OBJECTIVE
+
+Complete and refine the Student Web App into one coherent learning and tuition-management experience.
+
+The student should be able to understand their academic progress, upcoming activities, attendance, homework, tests, examination results, announcements, notifications and financial information without navigating confusing or disconnected screens.
+
+Integrate existing functionality rather than creating duplicate modules.
+
+---
+
+MODULE A — STUDENT DASHBOARD
+
+6. STUDENT HOME DASHBOARD
+
+Create or refine the main Student Dashboard.
+
+The dashboard must display meaningful information from existing services.
+
+Dashboard summary
+
+Display:
+
+- Student name.
+- Student ID.
+- Class.
+- Batch.
+- Overall attendance percentage.
+- Upcoming homework deadlines.
+- Upcoming tests.
+- Upcoming examinations.
+- Recently released results.
+- Current fee balance.
+- Next fee due date.
+- Unread notifications.
+
+Use actual available records.
+
+Do not generate fake marks, attendance percentages, payment records or deadlines.
+
+When data is unavailable, show a clear empty state instead of displaying invented values.
+
+Quick actions
+
+Provide convenient access to:
+
+- My Attendance.
+- Homework.
+- Online Tests.
+- Examination Results.
+- Timetable.
+- Announcements.
+- Fees & Receipts.
+- Notifications.
+- My Profile.
+
+Dashboard activity
+
+Add a recent activity section showing relevant events such as:
+
+- Homework published.
+- Homework reviewed.
+- Test scheduled.
+- Test submitted.
+- Result released.
+- Attendance notification received.
+- Fee payment verified.
+- Receipt issued.
+
+Use actual notification and activity records.
+
+Avoid duplicate activity entries.
+
+7. DASHBOARD PERSONALIZATION
+
+The dashboard should prioritize relevant upcoming information.
+
+Examples:
+
+- An upcoming homework deadline should be visible.
+- An upcoming test should be easy to find.
+- An unreleased examination result must not display marks.
+- An outstanding fee should be clearly visible without misleading payment status.
+
+Use a sensible priority order.
+
+Do not make the dashboard unnecessarily crowded.
+
+---
+
+MODULE B — STUDENT PROFILE
+
+8. MY PROFILE
+
+Create a clean student profile section.
+
+Display existing account and enrolment information:
+
+- Student name.
+- Student ID.
+- Class.
+- Batch.
+- Enrolment status.
+- Registered phone number, where available.
+- Account status.
+
+The Student ID must remain unique and immutable.
+
+Students must not be able to change:
+
+- Student ID.
+- Assigned class.
+- Assigned batch.
+- Enrolment status.
+- Administrative account information.
+
+If profile editing is already supported, preserve the existing permission rules.
+
+Do not introduce public registration.
+
+Do not expose passwords, password hashes or authentication secrets.
+
+Provide a secure logout action.
+
+9. PROFILE INFORMATION ACCURACY
+
+Use the existing student account and enrolment services as the source of truth.
+
+Do not create separate duplicate student profiles.
+
+If the account exists but the student has no active enrolment, show a clear message explaining that academic information is not yet available.
+
+---
+
+MODULE C — ATTENDANCE EXPERIENCE
+
+10. MY ATTENDANCE
+
+Integrate the existing Phase 5 attendance module into the Student Web App.
+
+Display:
+
+- Overall attendance percentage.
+- Present count.
+- Absent count.
+- Late count.
+- Excused count.
+- Attendance history.
+- Examination attendance history, where available.
+
+Use the existing calculation:
+
+Attendance Percentage = (Present + Late) / (Present + Absent + Late) × 100
+
+Excused records are excluded from the denominator.
+
+If the denominator is zero, show N/A.
+
+Do not implement a new conflicting attendance formula.
+
+11. ATTENDANCE HISTORY
+
+Provide:
+
+- Date filters.
+- Subject filters where applicable.
+- Attendance type filters.
+- Regular class attendance.
+- Examination attendance.
+
+Clearly identify:
+
+- Present.
+- Absent.
+- Late.
+- Excused.
+
+Students must not be able to edit their attendance records.
+
+12. ABSENCE NOTIFICATIONS
+
+Display absence notifications already generated by Phase 5.
+
+Show:
+
+- Student name.
+- Date.
+- Class or subject, where available.
+- Regular or examination absence type.
+- Notification timestamp.
+- Read/unread state.
+
+Do not send WhatsApp, SMS or email.
+
+Do not generate duplicate absence notifications.
+
+Parents using the student's credentials must see the same permitted attendance notifications.
+
+---
+
+MODULE D — HOMEWORK EXPERIENCE
+
+13. MY HOMEWORK
+
+Integrate the existing Phase 6 homework module.
+
+Organize homework into:
+
+- All.
+- Upcoming.
+- Due Today.
+- Overdue.
+- Submitted.
+- Reviewed.
+- Returned for Revision.
+
+Display:
+
+- Homework title.
+- Subject.
+- Teacher.
+- Description.
+- Published date.
+- Due date.
+- Submission status.
+- Review status.
+
+Students must see only homework applicable to their active enrolment and permitted audience.
+
+14. HOMEWORK DETAILS
+
+Provide a readable homework detail screen.
+
+Display the complete text-only assignment.
+
+Do not introduce a study-material library.
+
+Do not add PDF, image or other file-upload functionality.
+
+Keep homework text-only.
+
+15. HOMEWORK SUBMISSION
+
+Preserve the existing Phase 6 submission workflow.
+
+Students must be able to:
+
+- Submit text answers.
+- Review their answer before submission.
+- See the submission timestamp.
+- See whether the submission is late.
+- View submission history.
+- Revise and resubmit when the teacher has returned or reopened the homework.
+
+Rules:
+
+- Prevent accidental duplicate submissions.
+- Preserve revision history.
+- Do not silently overwrite previous submissions.
+- Clearly indicate whether editing is allowed.
+- Show the correct submission status.
+- Do not expose private teacher notes.
+
+16. HOMEWORK FEEDBACK
+
+When a teacher reviews homework, show:
+
+- Review status.
+- Marks, if provided.
+- Teacher's student-facing feedback.
+- Review date.
+- Revision instructions, where applicable.
+
+Do not show private teacher-only notes.
+
+---
+
+MODULE E — ONLINE TESTS
+
+17. MY ONLINE TESTS
+
+Integrate the existing Phase 6 objective-test functionality.
+
+Organize:
+
+- Upcoming tests.
+- Available tests.
+- In-progress tests.
+- Submitted tests.
+- Results available.
+- Closed tests.
+
+Display:
+
+- Test title.
+- Subject.
+- Teacher.
+- Start date and time.
+- End date and time.
+- Duration.
+- Maximum marks.
+- Attempt allowance.
+- Current attempt status.
+
+Do not show answer keys or correct options before the configured release conditions.
+
+18. TEST INSTRUCTIONS AND START
+
+Before starting a test, show:
+
+- Test title.
+- Subject.
+- Duration.
+- Total marks.
+- Number of questions.
+- Attempt rules.
+- Test availability window.
+- Important instructions.
+
+Require an explicit Start Test action.
+
+Do not silently begin an attempt when a student opens the test details.
+
+19. TEST RUNNER
+
+Preserve the existing Phase 6 test engine.
+
+Provide:
+
+- Question navigation.
+- Answer selection.
+- Question status indicators.
+- Countdown timer.
+- Previous and Next actions.
+- Question navigator grid.
+- Review before submission.
+- Explicit final submission confirmation.
+
+Preserve partial answers according to the existing attempt persistence behavior.
+
+Do not change the existing scoring rules.
+
+Do not reveal correct answers during an active attempt.
+
+Do not allow students to modify submitted attempts unless an existing authorized workflow explicitly permits it.
+
+20. TEST SUBMISSION AND RESULTS
+
+After submission:
+
+- Display a clear submission confirmation.
+- Display the attempt status.
+- Show results only when release rules permit.
+- Show marks and maximum marks when released.
+- Show explanations or answer review only when permitted by the configured release mode.
+
+Clearly distinguish:
+
+- Submitted.
+- Evaluated.
+- Result not released.
+- Result available.
+
+Do not claim a test has been auto-scored until the existing scoring service confirms it.
+
+---
+
+MODULE F — EXAMINATIONS AND ACADEMIC RESULTS
+
+21. MY EXAMINATIONS
+
+Integrate existing Phase 6 examination scheduling.
+
+Display:
+
+- Examination title.
+- Subject.
+- Date.
+- Time, where configured.
+- Instructions.
+- Examination status.
+- Marks-release status.
+
+Show only examinations applicable to the student.
+
+Do not expose private Admin or Teacher information.
+
+22. MY RESULTS
+
+Create a clear academic results section.
+
+Integrate the existing:
+
+- Objective-test results.
+- Examination marks.
+- Homework marks, where applicable.
+- Subject performance summaries.
+- Unified results ledger.
+
+Display:
+
+- Assessment title.
+- Subject.
+- Assessment type.
+- Maximum marks.
+- Marks obtained.
+- Percentage.
+- Result status.
+- Release date.
+
+Never display unreleased marks.
+
+Never calculate missing marks as zero.
+
+Preserve the existing honest subject-performance states:
+
+1. no_assessment_yet
+2. assessment_pending
+3. result_not_released
+4. result_available
+
+Do not replace these states with misleading percentages.
+
+23. SUBJECT-WISE PERFORMANCE
+
+Create a useful subject-wise performance view.
+
+Display:
+
+- Subject name.
+- Available assessment count.
+- Released results.
+- Average percentage where mathematically valid.
+- Latest assessment.
+- Latest released marks.
+- Pending assessment information.
+
+Only use released and valid results for student-visible calculations.
+
+Clearly explain the calculation used for any displayed average.
+
+Do not invent rankings or compare students unless an explicitly authorized ranking feature already exists.
+
+24. PERFORMANCE HISTORY
+
+Provide chronological assessment history.
+
+Allow filtering by:
+
+- Subject.
+- Assessment type.
+- Month.
+- Year.
+
+Use readable tables on large screens and responsive cards on mobile.
+
+---
+
+MODULE G — TIMETABLE
+
+25. MY TIMETABLE
+
+Integrate the existing Phase 4 timetable.
+
+Display the student's applicable timetable based on their active class and batch.
+
+Support:
+
+- Weekly timetable.
+- Day-wise schedule.
+- Subject.
+- Teacher.
+- Start time.
+- End time.
+- Room or location if already configured.
+
+Do not invent room numbers or teacher assignments.
+
+Show a clear empty state if the Admin has not configured a timetable.
+
+26. TIMETABLE RESPONSIVENESS
+
+On mobile:
+
+- Use readable day selectors.
+- Display sessions as cards.
+- Avoid horizontally overflowing tables.
+
+On desktop:
+
+- Use a clear weekly timetable layout.
+
+Preserve existing schedule and conflict rules.
+
+---
+
+MODULE H — ANNOUNCEMENTS
+
+27. MY ANNOUNCEMENTS
+
+Integrate the existing Phase 4 Admin announcement system.
+
+Students must see only published announcements relevant to:
+
+- Their class.
+- Their batch.
+- All students.
+
+Display:
+
+- Announcement title.
+- Message.
+- Published date.
+- Audience, where appropriate.
+
+Organize announcements into:
+
+- Latest.
+- Unread.
+- Previously viewed.
+
+Students must not be able to create, publish, edit or delete Admin announcements.
+
+Teachers must not gain announcement-publishing permissions through this phase.
+
+---
+
+MODULE I — NOTIFICATION CENTRE
+
+28. STUDENT NOTIFICATIONS
+
+Create or refine a centralized Notification Centre.
+
+Integrate existing notifications from:
+
+- Attendance.
+- Homework.
+- Homework feedback.
+- Test publication.
+- Test result release.
+- Examination schedule.
+- Examination result release.
+- Fee due reminders.
+- Payment claim submission.
+- Payment verification.
+- Payment rejection.
+- Receipt issuance.
+
+Display:
+
+- Notification title.
+- Description.
+- Category.
+- Created date and time.
+- Read/unread status.
+- Related module.
+- Relevant navigation action.
+
+29. NOTIFICATION MANAGEMENT
+
+Students must be able to:
+
+- Open a notification.
+- Navigate to the relevant record.
+- Mark a notification as read.
+- Mark all notifications as read.
+- Filter by category.
+- View unread notification count.
+
+Rules:
+
+- Do not duplicate notifications.
+- Do not expose notifications belonging to other students.
+- Preserve read state.
+- Do not claim external notifications were sent.
+- Use the existing notification services and models wherever possible.
+
+---
+
+MODULE J — FEES AND RECEIPTS
+
+30. MY FEES
+
+Integrate the existing Phase 7 Student Fees Module.
+
+Do not create another fee system.
+
+Display:
+
+- Total fee due.
+- Verified amount paid.
+- Remaining balance.
+- Fee frequency.
+- Fee period.
+- Due date.
+- Payment status.
+- Pending verification claims.
+
+Preserve integer-paise calculations.
+
+Do not calculate currency using unsafe floating-point arithmetic.
+
+31. PAYMENT EXPERIENCE
+
+Preserve the existing UPI payment-preparation workflow.
+
+Students must be able to:
+
+- View configured UPI details.
+- Prepare partial or full payment.
+- Open a compatible UPI application where supported.
+- Copy the UPI ID and payment reference.
+- Submit a payment claim.
+- View verification status.
+
+Display a clear disclaimer:
+
+"Opening a UPI application or submitting a payment claim does not confirm that the tuition centre has received your payment. Your payment is recorded as paid only after Admin verification."
+
+Do not add a payment gateway.
+
+Do not introduce automatic payment verification.
+
+32. MY RECEIPTS
+
+Integrate the existing verified digital receipt system.
+
+Students must be able to:
+
+- View issued receipts.
+- Open receipt details.
+- Print receipts.
+- Save as PDF through browser print functionality where supported.
+
+Only verified payments may have valid paid receipts.
+
+Never display a pending payment claim as a paid receipt.
+
+---
+
+MODULE K — STUDENT SEARCH, NAVIGATION AND EXPERIENCE
+
+33. STUDENT NAVIGATION
+
+Refine the existing Student Web App navigation without breaking current routes.
+
+The five-slot mobile bottom navigation must retain Home exactly in the centre.
+
+Use a suitable role-specific arrangement based on existing navigation, for example:
+
+- Learning.
+- Attendance.
+- Home.
+- Tests.
+- Profile.
+
+Ensure all other features remain accessible through appropriate secondary navigation.
+
+Do not hide:
+
+- Homework.
+- Examinations.
+- Results.
+- Timetable.
+- Announcements.
+- Notifications.
+- Fees.
+- Receipts.
+
+On desktop and laptop, use a responsive navigation layout suitable for larger screens.
+
+Do not force mobile bottom navigation onto desktop if it reduces usability.
+
+34. NAVIGATION CONSISTENCY
+
+Every navigation action must work.
+
+Requirements:
+
+- No dead buttons.
+- No duplicate navigation entries.
+- No broken routes.
+- Correct active navigation states.
+- Browser back navigation must work.
+- Protected routes must remain protected.
+- Logout must work.
+- Unauthorized users must not access Student-only information.
+
+Do not create duplicate dashboards or redundant shells.
+
+---
+
+MODULE L — STUDENT WEB APP DESIGN
+
+35. PRESERVE PHASE 6.5 DESIGN SYSTEM
+
+Do not redesign the entire project.
+
+Preserve the existing light and dark themes, including the approved navy and electric-purple design.
+
+Preserve:
+
+- Existing typography.
+- Existing color tokens.
+- Existing cards.
+- Existing buttons.
+- Existing status indicators.
+- Existing responsive tables.
+- Existing loading components.
+- Existing navigation patterns.
+- Central elevated Home navigation item.
+
+Use consistent visual language across Admin, Teacher and Student Web Apps.
+
+36. USER EXPERIENCE PRINCIPLES
+
+The Student Web App must feel:
+
+- Simple.
+- Natural.
+- Organized.
+- Easy to understand.
+- Fast to navigate.
+- Consistent.
+- Suitable for students and parents.
+
+Avoid:
+
+- Excessive dashboard cards.
+- Unnecessary decorative charts.
+- Overly complicated menus.
+- AI-looking generic layouts.
+- Unnecessary uppercase micro-labels.
+- Excessive animations.
+- Tiny mobile text.
+- Horizontal overflow.
+- Unclear financial or academic statuses.
+
+Use purposeful animations only.
+
+Respect reduced-motion preferences.
+
+Maintain accessible color contrast.
+
+37. RESPONSIVE TESTING
+
+Check at minimum:
+
+- Small mobile viewport.
+- Standard mobile viewport.
+- Tablet viewport.
+- Laptop viewport.
+- Large desktop viewport.
+
+Verify:
+
+- Dashboard layout.
+- Bottom navigation.
+- Secondary navigation.
+- Attendance history.
+- Homework submission.
+- Test runner.
+- Examination results.
+- Timetable.
+- Notifications.
+- Fee account.
+- Receipt preview.
+
+If browser automation is unavailable, do not claim that visual testing passed. Provide manual testing instructions and clearly document the limitation.
+
+---
+
+MODULE M — DATA SECURITY AND ROLE ISOLATION
+
+38. STUDENT DATA ISOLATION
+
+Use the authenticated student's identity as the source of authorization.
+
+A student must never be able to access another student's:
+
+- Profile.
+- Attendance.
+- Homework submissions.
+- Test attempts.
+- Examination marks.
+- Results.
+- Notifications.
+- Fee accounts.
+- Payment claims.
+- Receipts.
+
+Do not rely solely on hidden UI components.
+
+Validate access in service methods.
+
+Preserve existing authorization patterns.
+
+39. PRIVATE DATA PROTECTION
+
+Never expose:
+
+- Passwords.
+- Password hashes.
+- Authentication secrets.
+- Correct answers before release.
+- Private teacher notes.
+- Admin-only audit information.
+- Other students' records.
+- Other teachers' salary records.
+
+Preserve the existing student-safe response models from Phase 6.
+
+Do not weaken existing security checks.
+
+40. STUDENT ACCOUNT STATUS
+
+Handle:
+
+- Active students.
+- Inactive students.
+- Students without an active enrolment.
+- Students with archived or completed enrolments.
+
+Do not grant access to academic information merely because a user has a valid ID.
+
+Follow the existing account and enrolment status rules.
+
+---
+
+MODULE N — SERVICE AND ARCHITECTURE INTEGRATION
+
+41. REUSE EXISTING SERVICES
+
+Reuse existing contracts and adapters wherever possible.
+
+Inspect:
+
+- Authentication services.
+- Account services.
+- Academic services.
+- Attendance services.
+- Assessment services.
+- Financial services.
+- Notification services.
+
+Do not create duplicate sources of truth.
+
+Create new student-specific service methods only where the current contracts cannot safely support the required workflows.
+
+Possible additions include:
+
+- getMyStudentDashboard
+- getMyStudentProfile
+- getMyStudentAcademicSummary
+- getMyStudentNotifications
+- getMyStudentUpcomingActivities
+
+These are examples, not mandatory names.
+
+All methods must derive access from the authenticated principal.
+
+42. LOCAL DEVELOPMENT PERSISTENCE
+
+Preserve existing local data keys and storage formats.
+
+Do not reset existing demo data.
+
+Do not silently delete financial, attendance, academic or assessment records.
+
+If a migration is required:
+
+- Make it explicit.
+- Preserve existing records.
+- Handle older local data safely.
+- Document migration behavior.
+- Test migration and failure scenarios.
+
+Clearly label demo data.
+
+---
+
+MODULE O — TESTING AND QUALITY ASSURANCE
+
+43. STUDENT DASHBOARD TESTS
+
+Test:
+
+- Correct student profile.
+- Correct class and batch.
+- Accurate attendance percentage.
+- Upcoming homework.
+- Upcoming tests.
+- Upcoming examinations.
+- Released results.
+- Fee balance.
+- Due dates.
+- Unread notifications.
+- Empty states.
+
+44. ACADEMIC TESTS
+
+Test:
+
+- Student sees only relevant homework.
+- Student can submit text-only homework.
+- Submission history is preserved.
+- Returned homework can be revised where permitted.
+- Private teacher notes are hidden.
+- Upcoming tests are displayed correctly.
+- Test availability rules are respected.
+- Test answers remain hidden.
+- Test submission works.
+- Unreleased marks remain hidden.
+- Released marks display correctly.
+- Subject performance states remain accurate.
+- Timetable matches active enrolment.
+- Announcements respect audience targeting.
+
+45. NOTIFICATION TESTS
+
+Test:
+
+- Attendance notifications.
+- Homework notifications.
+- Test notifications.
+- Examination notifications.
+- Fee notifications.
+- Receipt notifications.
+- Read/unread state.
+- Mark-all-as-read.
+- Notification navigation.
+- Duplicate prevention.
+- Student isolation.
+
+46. FINANCIAL REGRESSION TESTS
+
+Test:
+
+- Existing fee account values remain unchanged.
+- Partial payment claims remain correct.
+- Verified payments remain verified.
+- Pending claims remain pending.
+- Rejected claims remain rejected.
+- Receipts remain accessible.
+- Students cannot access another student's financial records.
+- UPI disclaimers remain visible.
+
+47. REGRESSION TESTS
+
+Run all available previous test suites:
+
+- Phase 2 authentication.
+- Phase 3 accounts.
+- Phase 4 academics.
+- Phase 5 attendance.
+- Phase 6 assessments.
+- Phase 7 finance.
+
+Do not remove or weaken previous tests.
+
+Add Phase 8 tests.
+
+48. BUILD VALIDATION
+
+Run:
+
+- npm run build
+- npx tsc --noEmit
+- Existing Phase 2–7 test suites.
+- New Phase 8 test suite.
+
+Report actual results.
+
+Do not claim successful testing unless commands were actually executed.
+
+---
+
+MODULE P — DOCUMENTATION AND INTEGRATION TRANSPARENCY
+
+49. DOCUMENTATION
+
+Update:
+
+- docs/ARCHITECTURE_AND_ROADMAP.md
+- Student Web App architecture documentation.
+- Student navigation documentation.
+- Student permission matrix.
+- Student notification integration documentation.
+- Student data isolation documentation.
+- Phase 8 completion report.
+- Known limitations.
+
+50. COMPLETE SERVICE INVENTORY
+
+Document all services and their actual status.
+
+At minimum:
+
+Service| Purpose| Status
+React| User interface| Existing
+TypeScript| Type safety| Existing
+Vite| Build system| Existing
+Tailwind CSS| Styling| Existing
+Motion| Animations| Existing
+Lucide React| Icons| Existing
+Local adapters| Demo persistence| Local only
+Firebase Authentication| Future authentication backend| Not connected
+Cloud Firestore| Future database| Not connected
+Cloud Functions| Future trusted backend| Not connected
+Payment gateway| Not included| Not connected
+AI APIs| Not used| Not connected
+WhatsApp/SMS/email| Not used| Not connected
+PostgreSQL| Not used| Not connected
+
+Update the inventory to reflect actual implementation.
+
+Clearly distinguish:
+
+- Connected.
+- Disconnected.
+- Local only.
+- Planned.
+- Not used.
+
+Do not invent integrations or costs.
+
+51. PRODUCTION LIMITATIONS
+
+Document that:
+
+- Local demo data is not production data.
+- Browser storage is not a secure production database.
+- Production role enforcement requires trusted backend authorization.
+- Firebase remains disconnected.
+- Scheduled background notifications are not guaranteed by a local browser adapter.
+- Student data synchronization between devices is not available until an authorized backend is connected.
+
+Do not claim production readiness.
+
+---
+
+MODULE Q — STRICT SCOPE BOUNDARIES
+
+52. DO NOT IMPLEMENT
+
+Do not implement:
+
+- Phase 9.
+- Phase 10.
+- Firebase connection.
+- Firebase deployment.
+- Native Android applications.
+- Native iOS applications.
+- AI APIs.
+- AI tutoring or chatbot features.
+- Study-material libraries.
+- Homework file uploads.
+- Payment gateways.
+- Automatic bank verification.
+- WhatsApp or SMS integrations.
+- Email services.
+- Public student registration.
+- Separate parent login.
+- Separate Student Website.
+- Separate Admin Website.
+- Unrequested features.
+
+Preserve the existing three responsive Web App architecture.
+
+---
+
+MODULE R — EXECUTION LIMITS AND CONTINUATION
+
+53. CONTINUATION RULES
+
+If approaching AI Studio execution or context limits:
+
+1. Save all completed work.
+2. Do not leave the application broken.
+3. Record completed tasks.
+4. Record unfinished tasks.
+5. Record files created and modified.
+6. Record the last successful operation.
+7. Provide a clear continuation prompt.
+
+Provide an action labelled:
+
+CONTINUE PHASE 8
+
+If an interactive continuation button is unavailable, provide a copy-ready continuation prompt.
+
+Continuation must resume Phase 8 only.
+
+Do not repeat completed work unnecessarily.
+
+---
+
+MODULE S — REQUIRED COMPLETION REPORT
+
+54. FINAL REPORT FORMAT
+
+When Phase 8 is complete, provide:
+
+A. Overall status
+
+- Completed.
+- Partially completed.
+- Not implemented.
+- Blocked.
+
+B. Student dashboard
+
+- Information displayed.
+- Data sources.
+- Quick actions.
+- Empty states.
+
+C. Student profile
+
+- Profile information.
+- Account status.
+- Editing permissions.
+
+D. Attendance
+
+- Attendance summary.
+- History.
+- Absence notifications.
+
+E. Homework
+
+- Homework list.
+- Text submissions.
+- Revisions.
+- Feedback.
+
+F. Online tests
+
+- Test list.
+- Test runner.
+- Submission.
+- Results visibility.
+
+G. Examinations and results
+
+- Examination schedule.
+- Released results.
+- Subject performance.
+
+H. Timetable and announcements
+
+- Weekly timetable.
+- Audience filtering.
+- Announcement visibility.
+
+I. Notifications
+
+- Categories.
+- Read/unread state.
+- Navigation.
+- Duplicate prevention.
+
+J. Fees and receipts
+
+- Student fee accounts.
+- UPI preparation.
+- Payment claims.
+- Verification status.
+- Receipt access.
+
+K. Technical changes
+
+- Files created.
+- Files modified.
+- Services reused.
+- New service methods.
+- Data models.
+- Dependencies.
+
+L. Security
+
+- Student data isolation.
+- Private data protection.
+- Role permissions.
+
+M. Testing
+
+- Build.
+- TypeScript.
+- Phase 2–7 regression tests.
+- Phase 8 tests.
+- Browser testing, if available.
+
+N. Integration inventory
+
+List every database, API, external service and tool used, including connection status.
+
+O. Known limitations
+
+List all outstanding issues and production limitations.
+
+P. Next phase
+
+Explicitly state that Phase 9 has not been implemented.
+
+---
+
+FINAL EXECUTION INSTRUCTION
+
+Inspect the existing application and completed Phases 1–7.
+
+Implement Phase 8 only.
+
+Deliver a complete, consistent and easy-to-use Student Web App.
+
+Preserve existing Admin and Teacher Web Apps.
+
+Maintain the responsive three-Web-App architecture.
+
+Preserve all existing attendance, homework, tests, examinations, results, announcements, notifications, fees and receipts.
+
+Do not connect Firebase.
+
+Do not introduce AI APIs or external integrations.
+
+Do not create a separate website.
+
+Do not start Phase 9.
+
+Implement Phase 8 only.

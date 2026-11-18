@@ -1,0 +1,75 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <title>Tuition Centre Management Ecosystem</title>
+    <meta
+      name="description"
+      content="Four-interface tuition centre management ecosystem covering Admin Website, Admin Web App, Teacher Web App, and Student Web App."
+    />
+    <meta property="og:title" content="Tuition Centre Management Ecosystem" />
+    <meta
+      property="og:description"
+      content="Four-interface tuition centre management ecosystem covering Admin Website, Admin Web App, Teacher Web App, and Student Web App."
+    />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <script>
+      (function () {
+        try {
+          var personalKey = 'tuition_ecosystem_theme_v1';
+          var settingsKey = 'tuition_ecosystem_dev_app_settings_v1';
+          var saved = window.localStorage.getItem(personalKey);
+          var allowPersonal = true;
+          var adminDefault = null;
+          var rawSettings = window.localStorage.getItem(settingsKey);
+          if (rawSettings) {
+            try {
+              var parsed = JSON.parse(rawSettings);
+              var ap = parsed && parsed.settings && parsed.settings.appearanceDefaults;
+              if (ap) {
+                if (ap.defaultTheme === 'light' || ap.defaultTheme === 'dark') {
+                  adminDefault = ap.defaultTheme;
+                }
+                if (typeof ap.allowPersonalThemePreference === 'boolean') {
+                  allowPersonal = ap.allowPersonalThemePreference;
+                }
+              }
+            } catch (err) {}
+          }
+          var prefersDark =
+            window.matchMedia &&
+            window.matchMedia('(prefers-color-scheme: dark)').matches;
+          var theme;
+          if (allowPersonal && (saved === 'light' || saved === 'dark')) {
+            theme = saved;
+          } else if (adminDefault) {
+            theme = adminDefault;
+          } else if (saved === 'light' || saved === 'dark') {
+            theme = saved;
+          } else {
+            theme = prefersDark ? 'dark' : 'light';
+          }
+          var root = document.documentElement;
+          if (theme === 'dark') {
+            root.classList.add('dark');
+          } else {
+            root.classList.remove('dark');
+          }
+          root.style.colorScheme = theme;
+        } catch (e) {}
+      })();
+    </script>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400..700;1,9..40,400..700&family=JetBrains+Mono:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;600;700&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="antialiased selection:bg-[#7552D9]/15 selection:text-[#17172B] dark:selection:bg-[#8B5CF6]/25 dark:selection:text-[#F8FAFC]">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

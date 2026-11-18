@@ -1,0 +1,6 @@
+{
+  "name": "Tuition Centre Management Ecosystem",
+  "description": "Four-interface tuition centre management architecture (Admin Website, Admin Web App, Teacher Web App, Student Web App) — Phase 1 Foundation & Design System.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
