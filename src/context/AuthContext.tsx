@@ -31,6 +31,7 @@ interface AuthContextValue {
   signIn: (credentials: LoginCredentials) => Promise<AuthSession>;
   signInAdminWithGoogle: () => Promise<AuthSession>;
   signOut: () => Promise<void>;
+  changeMyPassword: (currentPassword: string, newPassword: string) => Promise<void>;
   requestForgotPassword: (input: {
     loginId: string;
     portalScope: PortalScope;
@@ -135,6 +136,20 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setAuthNotice('You have signed out cleanly.');
   }, []);
 
+  const changeMyPassword = useCallback(
+    async (currentPassword: string, newPassword: string): Promise<void> => {
+      if (!authService.changeMyPassword) {
+        throw new AuthServiceException({
+          code: 'UNEXPECTED_ERROR',
+          message: 'Password change is not supported in the active authentication adapter.',
+          field: 'form',
+        });
+      }
+      await authService.changeMyPassword(currentPassword, newPassword);
+    },
+    []
+  );
+
   const requestForgotPassword = useCallback(
     async (input: {
       loginId: string;
@@ -160,6 +175,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         signIn,
         signInAdminWithGoogle,
         signOut,
+        changeMyPassword,
         requestForgotPassword,
         validateActiveSession,
       }}

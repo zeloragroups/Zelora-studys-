@@ -3,17 +3,15 @@ import { ArrowLeft, CheckCircle2 } from 'lucide-react';
 import { useAuth, AuthServiceException } from '../../context/AuthContext';
 import { useInterface } from '../../context/InterfaceContext';
 import { ROUTES, type AppRoutePath } from '../../router/routes';
-import type { PortalScope } from '../../types';
 import { LoginShell } from '../../components/auth/LoginShell';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 
 interface ForgotPasswordPageProps {
-  portalScope: PortalScope;
   onNavigate: (to: AppRoutePath) => void;
 }
 
-export function ForgotPasswordPage({ portalScope, onNavigate }: ForgotPasswordPageProps) {
+export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
   const { branding, publicSettings } = useInterface();
   const { requestForgotPassword } = useAuth();
 
@@ -21,9 +19,6 @@ export function ForgotPasswordPage({ portalScope, onNavigate }: ForgotPasswordPa
   const [submitting, setSubmitting] = useState(false);
   const [idError, setIdError] = useState<string | undefined>();
   const [confirmationMessage, setConfirmationMessage] = useState<string | null>(null);
-
-  const isAdminPortal = portalScope === 'admin_portal';
-  const backRoute = isAdminPortal ? ROUTES.ADMIN_LOGIN : ROUTES.PORTAL_LOGIN;
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -39,7 +34,7 @@ export function ForgotPasswordPage({ portalScope, onNavigate }: ForgotPasswordPa
     try {
       const result = await requestForgotPassword({
         loginId: loginId.trim(),
-        portalScope,
+        portalScope: 'member_portal',
       });
       setConfirmationMessage(result.message);
     } catch (err) {
@@ -57,18 +52,14 @@ export function ForgotPasswordPage({ portalScope, onNavigate }: ForgotPasswordPa
     <LoginShell
       branding={branding}
       logoConfiguration={publicSettings.applicationBranding.logoConfiguration}
-      portalLabel={isAdminPortal ? 'Admin Portal' : 'Teacher & Student Portal'}
+      portalLabel="Teacher & Student Portal"
       heading="Password Recovery"
-      subtitle={
-        isAdminPortal
-          ? 'Administrator accounts require authorized owner recovery once Firebase Authentication is connected.'
-          : 'Password resets are processed securely through your authorized centre administrator. No unverified SMS, email, or WhatsApp reset links are sent.'
-      }
+      subtitle="Password resets are processed securely through your authorized centre administrator. No unverified SMS, email, or WhatsApp reset links are sent."
       onNavigateHome={() => onNavigate(ROUTES.HOME)}
       footerLink={
         <button
           type="button"
-          onClick={() => onNavigate(backRoute)}
+          onClick={() => onNavigate(ROUTES.PORTAL_LOGIN)}
           className="inline-flex items-center gap-1.5 font-medium text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
@@ -88,7 +79,7 @@ export function ForgotPasswordPage({ portalScope, onNavigate }: ForgotPasswordPa
           <Button
             variant="secondary"
             className="w-full"
-            onClick={() => onNavigate(backRoute)}
+            onClick={() => onNavigate(ROUTES.PORTAL_LOGIN)}
           >
             Return to Sign In
           </Button>
@@ -96,7 +87,7 @@ export function ForgotPasswordPage({ portalScope, onNavigate }: ForgotPasswordPa
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4" noValidate>
           <Input
-            label={isAdminPortal ? 'Admin ID' : 'Teacher ID or Student ID'}
+            label="Teacher ID or Student ID"
             name="loginId"
             type="text"
             autoCapitalize="characters"
@@ -106,7 +97,7 @@ export function ForgotPasswordPage({ portalScope, onNavigate }: ForgotPasswordPa
               setLoginId(e.target.value);
               setIdError(undefined);
             }}
-            placeholder={isAdminPortal ? 'ADM-0001' : 'TCH-0001 or STU-0001'}
+            placeholder="TCH-0001 or STU-0001"
             className="font-mono"
             error={idError}
           />

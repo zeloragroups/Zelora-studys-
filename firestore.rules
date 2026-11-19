@@ -32,11 +32,14 @@ service cloud.firestore {
     }
 
     function isBootstrappedAdminEmail() {
-      return isVerifiedEmail() && request.auth.token.email == 'toutionacademy@gmail.com';
+      return isVerifiedEmail()
+        && request.auth.token.email == '07alphabro@gmail.com'
+        && 'firebase' in request.auth.token
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
     }
 
     function hasActiveUserDoc() {
-      return isVerifiedEmail()
+      return isSignedIn()
         && exists(/databases/$(database)/documents/users/$(request.auth.uid))
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.status == 'active';
     }
@@ -56,6 +59,12 @@ service cloud.firestore {
     function isActiveStudent() {
       return hasActiveUserDoc()
         && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role == 'student';
+    }
+
+    function isAuthorizedMemberOrAdmin() {
+      return isAdmin()
+        || (hasActiveUserDoc()
+          && get(/databases/$(database)/documents/users/$(request.auth.uid)).data.role in ['teacher', 'student']);
     }
 
     function isNonEmptyBoundedString(val, minLen, maxLen) {
@@ -585,7 +594,7 @@ service cloud.firestore {
     }
 
     match /users/{uid} {
-      allow get: if isVerifiedEmail() && isValidId(uid) && (request.auth.uid == uid || isAdmin());
+      allow get: if isSignedIn() && isValidId(uid) && (request.auth.uid == uid || isAdmin());
       allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
       allow create: if isAdmin() && isValidId(uid) && isValidUserAccountProfile(incoming(), uid);
       allow update: if isAdmin()
@@ -626,16 +635,16 @@ service cloud.firestore {
     // Phase 4 Academic Collections
     // =========================================================================
     match /classes/{classId} {
-      allow get: if isVerifiedEmail() && isValidId(classId);
-      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(classId);
+      allow list: if isAuthorizedMemberOrAdmin() && (isBootstrappedAdminEmail() || existing().status in ['active', 'inactive']);
       allow create: if isAdmin() && isValidId(classId) && isValidClassRecord(incoming(), classId);
       allow update: if isAdmin() && isValidId(classId) && isValidClassRecord(incoming(), classId) && incoming().createdAt == existing().createdAt;
       allow delete: if false;
     }
 
     match /batches/{batchId} {
-      allow get: if isVerifiedEmail() && isValidId(batchId);
-      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(batchId);
+      allow list: if isAuthorizedMemberOrAdmin() && (isBootstrappedAdminEmail() || existing().status in ['active', 'inactive']);
       allow create: if isAdmin()
         && isValidId(batchId)
         && isValidBatchRecord(incoming(), batchId)
@@ -649,21 +658,21 @@ service cloud.firestore {
     }
 
     match /subjects/{subjectId} {
-      allow get: if isVerifiedEmail() && isValidId(subjectId);
-      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(subjectId);
+      allow list: if isAuthorizedMemberOrAdmin() && (isBootstrappedAdminEmail() || existing().status in ['active', 'inactive']);
       allow create: if isAdmin() && isValidId(subjectId) && isValidSubjectRecord(incoming(), subjectId);
       allow update: if isAdmin() && isValidId(subjectId) && isValidSubjectRecord(incoming(), subjectId) && incoming().createdAt == existing().createdAt;
       allow delete: if false;
     }
 
     match /enrolments/{enrolmentId} {
-      allow get: if isVerifiedEmail() && isValidId(enrolmentId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(enrolmentId) && (
         isAdmin() || existing().studentUid == request.auth.uid || (isActiveTeacher() && 'teacherUids' in existing() && existing().teacherUids is list && request.auth.uid in existing().teacherUids)
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing())
         || existing().studentUid == request.auth.uid
-        || ('teacherUids' in existing() && existing().teacherUids is list && request.auth.uid in existing().teacherUids)
+        || request.auth.uid in existing().teacherUids
       );
       allow create: if isAdmin()
         && isValidId(enrolmentId)
@@ -675,10 +684,10 @@ service cloud.firestore {
     }
 
     match /teacherAssignments/{assignmentId} {
-      allow get: if isVerifiedEmail() && isValidId(assignmentId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(assignmentId) && (
         isAdmin() || existing().teacherUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
       );
       allow create: if isAdmin()
@@ -692,18 +701,18 @@ service cloud.firestore {
     }
 
     match /timetableEntries/{entryId} {
-      allow get: if isVerifiedEmail() && isValidId(entryId);
-      allow list: if isVerifiedEmail() && existing().status in ['active', 'cancelled'];
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(entryId);
+      allow list: if isAuthorizedMemberOrAdmin() && (isBootstrappedAdminEmail() || existing().status in ['active', 'cancelled']);
       allow create: if isAdmin() && isValidId(entryId) && isValidTimetableEntry(incoming(), entryId);
       allow update: if isAdmin() && isValidId(entryId) && isValidTimetableEntry(incoming(), entryId) && incoming().createdAt == existing().createdAt;
       allow delete: if false;
     }
 
     match /announcements/{announcementId} {
-      allow get: if isVerifiedEmail() && isValidId(announcementId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(announcementId) && (
         isAdmin() || existing().publicationStatus == 'published'
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().publicationStatus == 'published'
       );
       allow create: if isAdmin() && isValidId(announcementId) && isValidAnnouncement(incoming(), announcementId);
@@ -715,17 +724,17 @@ service cloud.firestore {
     // Phase 5 Attendance Collections
     // =========================================================================
     match /attendanceSessions/{sessionId} {
-      allow get: if isVerifiedEmail() && isValidId(sessionId) && (
-        isAdmin() || existing().teacherUid == request.auth.uid
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(sessionId) && (
+        isAdmin() || existing().teacherUid == request.auth.uid || (isActiveStudent() && existing().status in ['submitted', 'corrected'])
       );
-      allow list: if isVerifiedEmail() && (
-        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
+      allow list: if isAuthorizedMemberOrAdmin() && (
+        isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid || existing().status in ['submitted', 'corrected']
       );
-      allow create: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin()
         && isValidId(sessionId)
         && isValidAttendanceSession(incoming(), sessionId)
         && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(sessionId)
         && isValidAttendanceSession(incoming(), sessionId)
         && incoming().createdAt == existing().createdAt
@@ -741,20 +750,20 @@ service cloud.firestore {
     }
 
     match /attendanceRecords/{recordId} {
-      allow get: if isVerifiedEmail() && isValidId(recordId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(recordId) && (
         isAdmin() || existing().teacherUid == request.auth.uid || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing())
         || existing().teacherUid == request.auth.uid
         || existing().studentUid == request.auth.uid
       );
-      allow create: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin()
         && isValidId(recordId)
         && isValidAttendanceRecord(incoming(), recordId)
         && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid))
         && exists(/databases/$(database)/documents/attendanceSessions/$(incoming().attendanceSessionId));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(recordId)
         && isValidAttendanceRecord(incoming(), recordId)
         && incoming().studentUid == existing().studentUid
@@ -770,20 +779,20 @@ service cloud.firestore {
 
     match /attendanceAudit/{auditId} {
       allow get: if isAdmin() && isValidId(auditId);
-      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
-      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
+      allow list: if isAuthorizedMemberOrAdmin() && isAdminListedInDoc(existing());
+      allow create: if isAuthorizedMemberOrAdmin() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
       allow update, delete: if false;
     }
 
     match /attendanceNotifications/{notificationId} {
-      allow get: if isVerifiedEmail() && isValidId(notificationId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(notificationId) && (
         isAdmin() || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
       );
-      allow create: if isVerifiedEmail() && isValidId(notificationId) && isValidAttendanceNotification(incoming(), notificationId) && (isAdmin() || isActiveTeacher());
-      allow update: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin() && isValidId(notificationId) && isValidAttendanceNotification(incoming(), notificationId) && (isAdmin() || isActiveTeacher());
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(notificationId)
         && isValidAttendanceNotification(incoming(), notificationId)
         && incoming().studentUid == existing().studentUid
@@ -802,17 +811,17 @@ service cloud.firestore {
     // Phase 6 Homework, Tests, Examinations & Marks
     // =========================================================================
     match /homework/{homeworkId} {
-      allow get: if isVerifiedEmail() && isValidId(homeworkId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(homeworkId) && (
         isAdmin() || existing().teacherUid == request.auth.uid || existing().status == 'published'
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid || existing().status == 'published'
       );
-      allow create: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin()
         && isValidId(homeworkId)
         && isValidHomework(incoming(), homeworkId)
         && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(homeworkId)
         && isValidHomework(incoming(), homeworkId)
         && incoming().createdAt == existing().createdAt
@@ -827,10 +836,10 @@ service cloud.firestore {
     }
 
     match /homeworkSubmissions/{submissionId} {
-      allow get: if isVerifiedEmail() && isValidId(submissionId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(submissionId) && (
         isAdmin() || existing().teacherUid == request.auth.uid || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing())
         || existing().teacherUid == request.auth.uid
         || existing().studentUid == request.auth.uid
@@ -843,7 +852,7 @@ service cloud.firestore {
         && incoming().revisionNumber == 1
         && incoming().revisionHistory.size() == 1
         && exists(/databases/$(database)/documents/homework/$(incoming().homeworkId));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(submissionId)
         && isValidHomeworkSubmission(incoming(), submissionId)
         && incoming().studentUid == existing().studentUid
@@ -862,11 +871,11 @@ service cloud.firestore {
       allow delete: if false;
 
       match /private/{docId} {
-        allow get: if isVerifiedEmail() && docId == 'teacherNote' && (
+        allow get: if isAuthorizedMemberOrAdmin() && docId == 'teacherNote' && (
           isAdmin() || (isActiveTeacher() && existing().teacherUid == request.auth.uid)
         );
         allow list, delete: if false;
-        allow create, update: if isVerifiedEmail()
+        allow create, update: if isAuthorizedMemberOrAdmin()
           && docId == 'teacherNote'
           && isValidTeacherPrivateNote(incoming())
           && incoming().submissionId == submissionId
@@ -876,25 +885,25 @@ service cloud.firestore {
 
     match /homeworkAudit/{auditId} {
       allow get: if isAdmin() && isValidId(auditId);
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
       );
-      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
+      allow create: if isAuthorizedMemberOrAdmin() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
       allow update, delete: if false;
     }
 
     match /objectiveTests/{testId} {
-      allow get: if isVerifiedEmail() && isValidId(testId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(testId) && (
         isAdmin() || existing().teacherUid == request.auth.uid || existing().status in ['published', 'active', 'completed']
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid || existing().status in ['published', 'active', 'completed']
       );
-      allow create: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin()
         && isValidId(testId)
         && isValidObjectiveTest(incoming(), testId)
         && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(testId)
         && isValidObjectiveTest(incoming(), testId)
         && incoming().createdAt == existing().createdAt
@@ -908,7 +917,7 @@ service cloud.firestore {
       allow delete: if false;
 
       match /private/{docId} {
-        allow get: if isVerifiedEmail() && docId == 'answerKey' && (
+        allow get: if isAuthorizedMemberOrAdmin() && docId == 'answerKey' && (
           isAdmin()
           || (isActiveTeacher() && existing().teacherUid == request.auth.uid)
           || (isActiveStudent()
@@ -916,7 +925,7 @@ service cloud.firestore {
             && get(/databases/$(database)/documents/objectiveTests/$(testId)).data.showCorrectAnswersOnRelease == true)
         );
         allow list, delete: if false;
-        allow create, update: if isVerifiedEmail()
+        allow create, update: if isAuthorizedMemberOrAdmin()
           && docId == 'answerKey'
           && isValidTestAnswerKey(incoming(), testId)
           && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
@@ -924,10 +933,10 @@ service cloud.firestore {
     }
 
     match /testAttempts/{attemptId} {
-      allow get: if isVerifiedEmail() && isValidId(attemptId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(attemptId) && (
         isAdmin() || existing().teacherUid == request.auth.uid || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing())
         || existing().teacherUid == request.auth.uid
         || existing().studentUid == request.auth.uid
@@ -938,7 +947,7 @@ service cloud.firestore {
         && incoming().studentUid == request.auth.uid
         && incoming().status == 'in_progress'
         && exists(/databases/$(database)/documents/objectiveTests/$(incoming().testId));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(attemptId)
         && isValidTestAttempt(incoming(), attemptId)
         && incoming().studentUid == existing().studentUid
@@ -959,17 +968,17 @@ service cloud.firestore {
     }
 
     match /examinations/{examinationId} {
-      allow get: if isVerifiedEmail() && isValidId(examinationId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(examinationId) && (
         isAdmin() || existing().teacherUid == request.auth.uid || existing().status in ['published', 'completed']
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid || existing().status in ['published', 'completed']
       );
-      allow create: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin()
         && isValidId(examinationId)
         && isValidExamination(incoming(), examinationId)
         && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(examinationId)
         && isValidExamination(incoming(), examinationId)
         && incoming().createdAt == existing().createdAt
@@ -984,22 +993,22 @@ service cloud.firestore {
     }
 
     match /examinationMarks/{marksId} {
-      allow get: if isVerifiedEmail() && isValidId(marksId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(marksId) && (
         isAdmin()
         || existing().teacherUid == request.auth.uid
         || (existing().studentUid == request.auth.uid && existing().resultsReleased == true)
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing())
         || existing().teacherUid == request.auth.uid
         || (existing().studentUid == request.auth.uid && existing().resultsReleased == true)
       );
-      allow create: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin()
         && isValidId(marksId)
         && isValidExaminationMarks(incoming(), marksId)
         && (isAdmin() || (isActiveTeacher() && incoming().teacherUid == request.auth.uid))
         && exists(/databases/$(database)/documents/examinations/$(incoming().examinationId));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(marksId)
         && isValidExaminationMarks(incoming(), marksId)
         && incoming().examinationId == existing().examinationId
@@ -1016,22 +1025,22 @@ service cloud.firestore {
 
     match /marksAudit/{auditId} {
       allow get: if isAdmin() && isValidId(auditId);
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
       );
-      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
+      allow create: if isAuthorizedMemberOrAdmin() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveTeacher());
       allow update, delete: if false;
     }
 
     match /notifications/{notificationId} {
-      allow get: if isVerifiedEmail() && isValidId(notificationId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(notificationId) && (
         isAdmin() || existing().recipientUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().recipientUid == request.auth.uid
       );
-      allow create: if isVerifiedEmail() && isValidId(notificationId) && isValidNotificationRecord(incoming(), notificationId) && (isAdmin() || isActiveTeacher() || isActiveStudent());
-      allow update: if isVerifiedEmail()
+      allow create: if isAuthorizedMemberOrAdmin() && isValidId(notificationId) && isValidNotificationRecord(incoming(), notificationId) && (isAdmin() || isActiveTeacher() || isActiveStudent());
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(notificationId)
         && isValidNotificationRecord(incoming(), notificationId)
         && incoming().recipientUid == existing().recipientUid
@@ -1048,25 +1057,25 @@ service cloud.firestore {
     // Phase 7 Finance, UPI Claims, Verified Payments, Receipts & Teacher Salaries
     // =========================================================================
     match /feeConfigurations/{configId} {
-      allow get: if isVerifiedEmail() && isValidId(configId);
-      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(configId);
+      allow list: if isAuthorizedMemberOrAdmin() && (isBootstrappedAdminEmail() || existing().status in ['active', 'inactive']);
       allow create: if isAdmin() && isValidId(configId) && isValidFeeConfiguration(incoming(), configId);
       allow update: if isAdmin() && isValidId(configId) && isValidFeeConfiguration(incoming(), configId) && incoming().createdAt == existing().createdAt;
       allow delete: if false;
     }
 
     match /upiConfigurations/{upiConfigId} {
-      allow get: if isVerifiedEmail() && isValidId(upiConfigId);
-      allow list: if isVerifiedEmail() && existing().status in ['active', 'inactive'];
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(upiConfigId);
+      allow list: if isAuthorizedMemberOrAdmin() && (isBootstrappedAdminEmail() || existing().status in ['active', 'inactive']);
       allow create, update: if isAdmin() && isValidId(upiConfigId) && isValidUpiConfiguration(incoming(), upiConfigId);
       allow delete: if false;
     }
 
     match /studentFeeAccounts/{feeAccountId} {
-      allow get: if isVerifiedEmail() && isValidId(feeAccountId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(feeAccountId) && (
         isAdmin() || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
       );
       allow create: if isAdmin() && isValidId(feeAccountId) && isValidStudentFeeAccount(incoming(), feeAccountId);
@@ -1075,10 +1084,10 @@ service cloud.firestore {
     }
 
     match /preparedUpiPayments/{preparedPaymentId} {
-      allow get: if isVerifiedEmail() && isValidId(preparedPaymentId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(preparedPaymentId) && (
         isAdmin() || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
       );
       allow create: if isActiveStudent()
@@ -1087,7 +1096,7 @@ service cloud.firestore {
         && incoming().studentUid == request.auth.uid
         && incoming().status == 'payment_prepared'
         && exists(/databases/$(database)/documents/studentFeeAccounts/$(incoming().feeAccountId));
-      allow update: if isVerifiedEmail()
+      allow update: if isAuthorizedMemberOrAdmin()
         && isValidId(preparedPaymentId)
         && isValidPreparedUpiPayment(incoming(), preparedPaymentId)
         && incoming().studentUid == existing().studentUid
@@ -1104,10 +1113,10 @@ service cloud.firestore {
     }
 
     match /paymentClaims/{claimId} {
-      allow get: if isVerifiedEmail() && isValidId(claimId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(claimId) && (
         isAdmin() || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
       );
       allow create: if isActiveStudent()
@@ -1125,10 +1134,10 @@ service cloud.firestore {
     }
 
     match /verifiedPayments/{vpId} {
-      allow get: if isVerifiedEmail() && isValidId(vpId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(vpId) && (
         isAdmin() || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
       );
       allow create: if isAdmin() && isValidId(vpId) && isValidVerifiedPayment(incoming(), vpId);
@@ -1138,16 +1147,16 @@ service cloud.firestore {
 
     match /paymentVerificationAudit/{auditId} {
       allow get: if isAdmin() && isValidId(auditId);
-      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
-      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveStudent());
+      allow list: if isAuthorizedMemberOrAdmin() && isAdminListedInDoc(existing());
+      allow create: if isAuthorizedMemberOrAdmin() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveStudent());
       allow update, delete: if false;
     }
 
     match /paymentReceipts/{receiptId} {
-      allow get: if isVerifiedEmail() && isValidId(receiptId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(receiptId) && (
         isAdmin() || existing().studentUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().studentUid == request.auth.uid
       );
       allow create: if isAdmin()
@@ -1163,10 +1172,10 @@ service cloud.firestore {
     }
 
     match /teacherSalaryConfigurations/{salaryConfigId} {
-      allow get: if isVerifiedEmail() && isValidId(salaryConfigId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(salaryConfigId) && (
         isAdmin() || existing().teacherUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
       );
       allow create: if isAdmin() && isValidId(salaryConfigId) && isValidSalaryConfig(incoming(), salaryConfigId);
@@ -1175,10 +1184,10 @@ service cloud.firestore {
     }
 
     match /teacherSalaryPeriods/{salaryPeriodId} {
-      allow get: if isVerifiedEmail() && isValidId(salaryPeriodId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(salaryPeriodId) && (
         isAdmin() || existing().teacherUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
       );
       allow create: if isAdmin() && isValidId(salaryPeriodId) && isValidSalaryPeriod(incoming(), salaryPeriodId);
@@ -1187,10 +1196,10 @@ service cloud.firestore {
     }
 
     match /teacherSalaryPayments/{salaryPaymentId} {
-      allow get: if isVerifiedEmail() && isValidId(salaryPaymentId) && (
+      allow get: if isAuthorizedMemberOrAdmin() && isValidId(salaryPaymentId) && (
         isAdmin() || existing().teacherUid == request.auth.uid
       );
-      allow list: if isVerifiedEmail() && (
+      allow list: if isAuthorizedMemberOrAdmin() && (
         isAdminListedInDoc(existing()) || existing().teacherUid == request.auth.uid
       );
       allow create: if isAdmin()
@@ -1207,8 +1216,8 @@ service cloud.firestore {
 
     match /financialAudit/{auditId} {
       allow get: if isAdmin() && isValidId(auditId);
-      allow list: if isVerifiedEmail() && isAdminListedInDoc(existing());
-      allow create: if isVerifiedEmail() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveStudent());
+      allow list: if isAuthorizedMemberOrAdmin() && isAdminListedInDoc(existing());
+      allow create: if isAuthorizedMemberOrAdmin() && isValidId(auditId) && isValidAuditEntry(incoming(), auditId) && (isAdmin() || isActiveStudent());
       allow update, delete: if false;
     }
   }

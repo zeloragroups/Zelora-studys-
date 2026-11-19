@@ -140,7 +140,7 @@ export function AccountDetailsModal({
             onClick={() => onInitiateReset(account)}
             iconLeft={<KeyRound className="w-3.5 h-3.5" />}
           >
-            Reset Password (Demo)
+            {isFirebaseConnectedMode() ? 'Reset Password' : 'Reset Password (Demo)'}
           </Button>
           <Button
             variant={account.status === 'active' ? 'danger' : 'primary'}

@@ -8,7 +8,7 @@ initializeApp();
 const FIRESTORE_DATABASE_ID =
   process.env.FIRESTORE_DATABASE_ID ||
   'ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470';
-const BOOTSTRAPPED_ADMIN_EMAIL = 'toutionacademy@gmail.com';
+const BOOTSTRAPPED_ADMIN_EMAIL = '07alphabro@gmail.com';
 const INTERNAL_AUTH_EMAIL_DOMAIN = 'auth.academy-0007.internal';
 
 const db = getFirestore(FIRESTORE_DATABASE_ID);
@@ -53,7 +53,12 @@ async function requireActiveRole(
 ): Promise<CallerContext> {
   const caller = requireVerifiedCaller(request);
 
-  if (caller.email === BOOTSTRAPPED_ADMIN_EMAIL && allowedRoles.includes('admin')) {
+  const signInProvider = request.auth?.token?.firebase?.sign_in_provider;
+  if (
+    caller.email === BOOTSTRAPPED_ADMIN_EMAIL &&
+    signInProvider === 'google.com' &&
+    allowedRoles.includes('admin')
+  ) {
     const adminSnap = await db.collection('admins').doc(caller.uid).get();
     const accountId =
       (adminSnap.exists ? (adminSnap.data()?.accountId as string | undefined) : undefined) ||
@@ -98,12 +103,16 @@ async function listActiveAdminUids(): Promise<string[]> {
 }
 
 // ============================================================================
-// 1. Bootstrap Initial Admin (toutionacademy@gmail.com)
+// 1. Bootstrap Initial Admin (07alphabro@gmail.com via Google Sign-In)
 // ============================================================================
 export const bootstrapInitialAdmin = onCall(async (request) => {
   const caller = requireVerifiedCaller(request);
-  if (caller.email !== BOOTSTRAPPED_ADMIN_EMAIL) {
-    throw new HttpsError('permission-denied', 'Only the designated project operator may bootstrap.');
+  const signInProvider = request.auth?.token?.firebase?.sign_in_provider;
+  if (caller.email !== BOOTSTRAPPED_ADMIN_EMAIL || signInProvider !== 'google.com') {
+    throw new HttpsError(
+      'permission-denied',
+      'Only Google Sign-In for the authorized Admin Gmail is permitted to bootstrap.'
+    );
   }
 
   const nowIso = new Date().toISOString();

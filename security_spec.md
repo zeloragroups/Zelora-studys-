@@ -24,7 +24,7 @@
 4. **Student Financial Balance Forgery**: Student A calls `UPDATE /studentFeeAccounts/{ownFeeAccountId}` with `{ remainingBalancePaise: 0, verifiedAmountPaidPaise: 500000 }`.
 5. **Payment Claim Auto-Verify Bypass**: Student A creates `/paymentClaims/{id}` with `{ status: 'verified', verifiedBy: studentUid }`.
 6. **Shadow Field Injection on Homework Submission**: Student A submits `/homeworkSubmissions/{id}` adding ghost field `{ marksAwarded: 100, status: 'reviewed' }`.
-7. **Unverified Email Spoofing**: Caller token carries `email: 'toutionacademy@gmail.com'` with `email_verified: false` attempting Admin write.
+7. **Unverified Email Spoofing**: Caller token carries `email: '07alphabro@gmail.com'` with `email_verified: false` attempting Admin write.
 8. **ID Poisoning / Denial of Wallet**: Caller sends document ID or `title` exceeding max bounds (`> 128` char ID or `1MB` string).
 9. **Teacher Cross-Teacher Salary Read**: Teacher A calls `GET /teacherSalaryPeriods/{teacherBPeriodId}`.
 10. **Student Answer Key Peek Before Release**: Student A calls `GET /objectiveTests/{testId}/private/answerKey` while `manualResultsReleased == false`.

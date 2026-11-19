@@ -1,0 +1,187 @@
+Firebase Configuration Correction & Admin Google Authentication Verification
+
+Objective
+
+Fix the Firebase API-key error in the existing Scholars Academy application without rebuilding, redesigning, or damaging any existing functionality.
+
+Current browser error:
+
+"Firebase: Error (auth/api-key-not-valid.-please-pass-a-valid-api-key.)"
+
+Use the following Firebase Web App configuration as the authoritative configuration supplied by the project owner.
+
+1. Authoritative Firebase Configuration
+
+const firebaseConfig = {
+  apiKey: "AIzaSyAAt6XAwe3W3FPPe19h3ECuJNW2-A4uPxM",
+  authDomain: "academy-0007.firebaseapp.com",
+  projectId: "academy-0007",
+  storageBucket: "academy-0007.firebasestorage.app",
+  messagingSenderId: "123258533376",
+  appId: "1:123258533376:web:7995a1487a239015b44ae5",
+  measurementId: "G-4P37NTXP0R"
+};
+
+Use this configuration consistently across the Firebase initialization layer.
+
+Do not:
+
+- Invent a new API key.
+- Substitute another Firebase project.
+- Mix configurations from different projects.
+- Use placeholder values in production.
+- silently fall back to local demo data.
+
+2. Investigate the Actual Root Cause
+
+Inspect these files and configuration locations:
+
+- "firebase-applet-config.json"
+- "src/lib/firebase/config.ts"
+- "src/lib/firebase/app.ts"
+- "src/lib/firebase/auth.ts"
+- "validateAndResolveFirebaseConfig()"
+- Environment variable declarations and runtime configuration.
+- Any duplicate Firebase initialization.
+
+Check:
+
+1. Whether the API key matches the supplied configuration.
+2. Whether "VITE_FIREBASE_API_KEY" or another environment variable overrides the correct key.
+3. Whether environment variables are actually available during the Vite build.
+4. Whether the Firebase initialization uses the correct project ID and Auth domain.
+5. Whether multiple Firebase app instances are initialized incorrectly.
+6. Whether Firebase Authentication is enabled in project "academy-0007".
+7. Whether the Google authentication provider is enabled.
+8. Whether the API key is valid and its Google Cloud restrictions permit the required Firebase Authentication requests.
+9. Whether the current website domain is authorized in Firebase Authentication.
+
+If the supplied key is rejected by Firebase, identify the exact cause and explain which Firebase Console setting needs correction. Do not pretend the key is valid without testing.
+
+3. Firebase Initialization
+
+Use a single, centralized Firebase initialization system.
+
+- Initialize Firebase only once.
+- Reuse the existing Firebase app instance.
+- Initialize Authentication, Firestore, Storage and Functions from the same project configuration.
+- Preserve the existing named Firestore database:
+  "ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470".
+- Keep the existing Storage bucket.
+- Initialize Analytics only if it is actually needed and supported by the current browser environment.
+
+Never silently switch to another Firebase project or local demo mode in production.
+
+4. Environment Variables
+
+Check and correct these variables:
+
+- "VITE_APP_DATA_MODE"
+- "VITE_FIREBASE_FUNCTIONS_ENABLED"
+- "VITE_FIREBASE_API_KEY"
+- "VITE_FIREBASE_AUTH_DOMAIN"
+- "VITE_FIREBASE_PROJECT_ID"
+- "VITE_FIREBASE_STORAGE_BUCKET"
+- "VITE_FIREBASE_MESSAGING_SENDER_ID"
+- "VITE_FIREBASE_APP_ID"
+- "VITE_FIREBASE_MEASUREMENT_ID" (optional)
+
+Ensure the variable names match the code exactly.
+
+Do not allow missing or incorrect variables to silently override the authoritative configuration.
+
+Important security distinction:
+Firebase Web configuration and its API key are client-side configuration, not Firebase Admin SDK secrets. Never put service-account private keys, private tokens or backend secrets in "VITE_" variables or frontend code.
+
+5. Admin Authentication — Strict Requirement
+
+Create and preserve exactly one separate Admin Login page.
+
+Authentication method:
+
+- Google Sign-In only.
+- Authorized Admin Gmail: "07alphabro@gmail.com".
+- Successful authentication using this account must open the Admin Dashboard.
+- Every other Google account must be denied Admin access.
+
+Enforce authorization on the trusted backend. Never rely only on frontend email checks or hiding UI elements.
+
+Remove the old bootstrap authorization for "toutionacademy@gmail.com" completely from the authentication and authorization paths.
+
+Do not add ID/password authentication to the Admin Login page.
+
+6. Student and Teacher Authentication
+
+Keep the existing separate shared Student and Teacher login page.
+
+- Student: ID + Password.
+- Teacher: ID + Password.
+- Automatically identify the account role.
+- Redirect each account to its correct dashboard.
+- No Admin login option on this page.
+- No Google login for Teachers or Students.
+- No public registration.
+
+Preserve the existing institutional ID-to-UID mapping and trusted account provisioning.
+
+7. Security and Privacy
+
+Maintain and strengthen existing protections:
+
+- Firebase Security Rules must deny access by default.
+- Strict Admin, Teacher and Student data isolation.
+- Verify authenticated identity and active account status.
+- Protect personal information and financial records.
+- Prevent unauthorized changes to Admin settings.
+- Keep privileged operations on trusted backend services.
+- Never expose passwords, private tokens, service-account keys or backend secrets.
+- Protect against brute-force login attempts and common web attacks.
+- Preserve immutable audit records.
+- Never weaken existing Firestore or Storage Rules to make authentication work.
+
+8. Verification Requirements
+
+After implementation:
+
+1. Verify Firebase initialization.
+2. Verify the resolved Firebase project ID is "academy-0007".
+3. Verify the supplied API key is the one used at runtime.
+4. Verify Google Sign-In initialization.
+5. Verify the authorized Admin account.
+6. Verify another Google account is rejected.
+7. Verify Student and Teacher ID/password login.
+8. Verify role-based dashboard routing.
+9. Verify Firestore and Storage access restrictions.
+10. Run TypeScript, build and existing automated tests.
+
+If a test cannot be executed, explicitly report that it was not executed. Do not claim success based on code inspection alone.
+
+9. Preserve the Existing Application
+
+This is a targeted correction, not a rebuild.
+
+Do not:
+
+- Delete existing modules.
+- Change the existing UI theme.
+- Change application branding.
+- Remove existing data.
+- Replace Firebase with another database.
+- Introduce PostgreSQL.
+- Add unnecessary AI APIs or third-party integrations.
+- Weaken security to bypass configuration errors.
+
+10. Final Completion Report
+
+Provide:
+
+1. Actual root cause of the API-key error.
+2. Files inspected and changed.
+3. Exact Firebase configuration source used.
+4. Environment variable corrections.
+5. Admin Google authentication verification results.
+6. Security checks performed.
+7. Build and test results.
+8. Remaining manual Firebase Console steps, if any.
+
+Do not claim the problem is fixed until the Admin Google Sign-In flow has been tested successfully.

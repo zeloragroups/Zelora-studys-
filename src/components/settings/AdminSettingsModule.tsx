@@ -1627,7 +1627,7 @@ export function AdminSettingsModule({
                     </p>
                     <p className="text-xs text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
                       {isFirebaseConnectedMode()
-                        ? 'Connected directly to Firebase project academy-0007 (Auth, Cloud Firestore, restricted Storage, and optional Cloud Functions) with strict role-scoped security rules.'
+                        ? 'Connected directly to Firebase project academy-0007 (Authentication & Cloud Firestore on Spark Free Plan; Cloud Functions disabled) with strict role-scoped security rules.'
                         : 'Explicit LOCAL_DEMO development mode active inside this browser.'}
                     </p>
                   </div>

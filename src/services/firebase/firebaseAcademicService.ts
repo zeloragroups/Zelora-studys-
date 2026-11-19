@@ -172,7 +172,9 @@ export class FirebaseAcademicService implements IAcademicManagementService {
     this.ensureAnySignedIn(actor);
     const db = requireFirestoreDb();
     return withFirestoreErrorHandling(OperationType.LIST, 'classes', async () => {
-      const snap = await getDocs(collection(db, 'classes'));
+      const snap = await getDocs(
+        query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))
+      );
       let list = snap.docs.map((d) => d.data() as ClassRecord);
       const q = searchQuery?.trim().toLowerCase();
       if (q) {
@@ -304,7 +306,9 @@ export class FirebaseAcademicService implements IAcademicManagementService {
     this.ensureAnySignedIn(actor);
     const db = requireFirestoreDb();
     return withFirestoreErrorHandling(OperationType.LIST, 'batches', async () => {
-      const snap = await getDocs(collection(db, 'batches'));
+      const snap = await getDocs(
+        query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))
+      );
       let list = snap.docs.map((d) => d.data() as BatchRecord);
       if (filter?.classId) {
         list = list.filter((b) => b.classId === filter.classId);
@@ -440,7 +444,9 @@ export class FirebaseAcademicService implements IAcademicManagementService {
     this.ensureAnySignedIn(actor);
     const db = requireFirestoreDb();
     return withFirestoreErrorHandling(OperationType.LIST, 'subjects', async () => {
-      const snap = await getDocs(collection(db, 'subjects'));
+      const snap = await getDocs(
+        query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))
+      );
       let list = snap.docs.map((d) => d.data() as SubjectRecord);
       if (filter?.classId) {
         list = list.filter((s) => s.classIds.includes(filter.classId!));
@@ -891,7 +897,9 @@ export class FirebaseAcademicService implements IAcademicManagementService {
     this.ensureAnySignedIn(actor);
     const db = requireFirestoreDb();
     return withFirestoreErrorHandling(OperationType.LIST, 'timetableEntries', async () => {
-      const snap = await getDocs(collection(db, 'timetableEntries'));
+      const snap = await getDocs(
+        query(collection(db, 'timetableEntries'), where('status', 'in', ['active', 'cancelled']))
+      );
       let list = snap.docs.map((d) => d.data() as TimetableEntry);
       if (filter?.classId) list = list.filter((e) => e.classId === filter.classId);
       if (filter?.batchId) list = list.filter((e) => e.batchId === filter.batchId);
@@ -1218,10 +1226,10 @@ export class FirebaseAcademicService implements IAcademicManagementService {
               where('status', '==', 'active')
             )
           ),
-          getDocs(collection(db, 'classes')),
-          getDocs(collection(db, 'batches')),
-          getDocs(collection(db, 'subjects')),
-          getDocs(collection(db, 'timetableEntries')),
+          getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+          getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+          getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
+          getDocs(query(collection(db, 'timetableEntries'), where('status', 'in', ['active', 'cancelled']))),
           getDocs(
             query(
               collection(db, 'announcements'),
@@ -1298,10 +1306,10 @@ export class FirebaseAcademicService implements IAcademicManagementService {
               where('status', '==', 'active')
             )
           ),
-          getDocs(collection(db, 'classes')),
-          getDocs(collection(db, 'batches')),
-          getDocs(collection(db, 'subjects')),
-          getDocs(collection(db, 'timetableEntries')),
+          getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+          getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+          getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
+          getDocs(query(collection(db, 'timetableEntries'), where('status', 'in', ['active', 'cancelled']))),
           getDocs(
             query(
               collection(db, 'announcements'),

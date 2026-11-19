@@ -1,12 +1,14 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type FormEvent } from 'react';
 import {
   ArrowRight,
   Banknote,
   BookOpen,
   CalendarCheck2,
+  CheckCircle2,
   FileSpreadsheet,
   GraduationCap,
   IndianRupee,
+  KeyRound,
   LogOut,
   Megaphone,
   Moon,
@@ -26,6 +28,7 @@ import type { TeacherWorkspaceData } from '../../types';
 import { cn } from '../../utils/cn';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Input } from '../ui/Input';
 import { PageHeader } from '../ui/PageHeader';
 import { StatusText } from '../ui/StatusText';
 
@@ -44,7 +47,7 @@ export function RoleProfileView({
   onSelectNav,
   onSignOut,
 }: RoleProfileViewProps) {
-  const { principal, session } = useAuth();
+  const { principal, session, changeMyPassword } = useAuth();
   const { branding } = useInterface();
   const {
     theme,
@@ -57,6 +60,13 @@ export function RoleProfileView({
 
   const [studentProfile, setStudentProfile] = useState<StudentProfileSummary | null>(null);
   const [teacherWs, setTeacherWs] = useState<TeacherWorkspaceData | null>(null);
+
+  const [currentPassword, setCurrentPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
+  const [confirmNewPassword, setConfirmNewPassword] = useState('');
+  const [pwSaving, setPwSaving] = useState(false);
+  const [pwError, setPwError] = useState<string | null>(null);
+  const [pwSuccess, setPwSuccess] = useState<string | null>(null);
 
   useEffect(() => {
     let cancelled = false;
@@ -82,6 +92,42 @@ export function RoleProfileView({
   }, [principal]);
 
   if (!principal) return null;
+
+  const handlePasswordChange = async (e: FormEvent) => {
+    e.preventDefault();
+    setPwError(null);
+    setPwSuccess(null);
+
+    if (!currentPassword) {
+      setPwError('Please enter your current password.');
+      return;
+    }
+    if (newPassword.length < 8) {
+      setPwError('New password must be at least 8 characters long.');
+      return;
+    }
+    if (newPassword !== confirmNewPassword) {
+      setPwError('New password and confirmation do not match.');
+      return;
+    }
+    if (newPassword === currentPassword) {
+      setPwError('New password must differ from your current password.');
+      return;
+    }
+
+    setPwSaving(true);
+    try {
+      await changeMyPassword(currentPassword, newPassword);
+      setCurrentPassword('');
+      setNewPassword('');
+      setConfirmNewPassword('');
+      setPwSuccess('Your password has been updated cleanly.');
+    } catch (err) {
+      setPwError(err instanceof Error ? err.message : 'Unable to update password right now.');
+    } finally {
+      setPwSaving(false);
+    }
+  };
 
   const shortcuts =
     principal.role === 'admin'
@@ -297,7 +343,7 @@ export function RoleProfileView({
               <p className="text-[11px] font-mono text-[#687086] dark:text-[#A6B0C3] pt-1">
                 Session:{' '}
                 {session.dataSourceMode === 'firebase_connected'
-                  ? 'Firebase Production Connected (academy-0007)'
+                  ? 'Firebase Production Connected (academy-0007 · Spark Free Plan)'
                   : session.dataSourceMode === 'local_demo_adapter'
                     ? 'Local Development Adapter'
                     : 'Firebase Configuration Error'}
@@ -410,6 +456,70 @@ export function RoleProfileView({
         </Card>
       </div>
 
+      {/* Self-service Password Change for Teacher & Student */}
+      {(principal.role === 'teacher' || principal.role === 'student') && (
+        <Card
+          title="Change Password"
+          subtitle="Update your own sign-in password securely after verifying your current password."
+        >
+          <form onSubmit={handlePasswordChange} className="space-y-4" noValidate>
+            {pwError && (
+              <div
+                role="alert"
+                className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 px-3.5 py-2.5 text-xs font-medium text-red-700 dark:text-red-400"
+              >
+                {pwError}
+              </div>
+            )}
+            {pwSuccess && (
+              <div
+                role="status"
+                className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 px-3.5 py-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200 flex items-center gap-2"
+              >
+                <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
+                <span>{pwSuccess}</span>
+              </div>
+            )}
+            <div className="grid gap-4 sm:grid-cols-3">
+              <Input
+                label="Current Password"
+                type="password"
+                autoComplete="current-password"
+                value={currentPassword}
+                onChange={(e) => setCurrentPassword(e.target.value)}
+                placeholder="Enter current password"
+              />
+              <Input
+                label="New Password"
+                type="password"
+                autoComplete="new-password"
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                placeholder="Minimum 8 characters"
+              />
+              <Input
+                label="Confirm New Password"
+                type="password"
+                autoComplete="new-password"
+                value={confirmNewPassword}
+                onChange={(e) => setConfirmNewPassword(e.target.value)}
+                placeholder="Re-enter new password"
+              />
+            </div>
+            <div className="flex justify-end">
+              <Button
+                type="submit"
+                size="sm"
+                loading={pwSaving}
+                iconLeft={<KeyRound className="w-3.5 h-3.5" aria-hidden="true" />}
+              >
+                Update Password
+              </Button>
+            </div>
+          </form>
+        </Card>
+      )}
+
       {/* Quick Navigation Shortcuts */}
       <Card
         title="Quick Workspace Shortcuts"
@@ -450,3 +560,4 @@ export function RoleProfileView({
     </div>
   );
 }
+

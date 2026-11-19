@@ -9,9 +9,7 @@ import {
   where,
   writeBatch,
 } from 'firebase/firestore';
-import { isCloudFunctionsEnabled } from '../../lib/firebase/config';
 import { OperationType } from '../../lib/firebase/firestore';
-import { invokeCloudCallable } from '../../lib/firebase/functions';
 import {
   AssessmentServiceError,
   type AdminAssessmentFilter,
@@ -172,9 +170,9 @@ export class FirebaseHomeworkService implements IHomeworkService {
                 where('status', '==', 'active')
               )
             ),
-        getDocs(collection(db, 'classes')),
-        getDocs(collection(db, 'batches')),
-        getDocs(collection(db, 'subjects')),
+        getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
       ]);
       const assignments = asgSnap.docs.map((d) => d.data() as TeacherAssignment);
       const clsIds = new Set(assignments.map((a) => a.classId));
@@ -207,10 +205,14 @@ export class FirebaseHomeworkService implements IHomeworkService {
         teacher.role === 'admin'
           ? getDocs(collection(db, 'homework'))
           : getDocs(query(collection(db, 'homework'), where('teacherUid', '==', teacher.uid))),
-        getDocs(collection(db, 'classes')),
-        getDocs(collection(db, 'batches')),
-        getDocs(collection(db, 'subjects')),
-        getDocs(query(collection(db, 'enrolments'), where('status', '==', 'active'))),
+        getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
+        teacher.role === 'admin'
+          ? getDocs(query(collection(db, 'enrolments'), where('status', '==', 'active')))
+          : getDocs(
+              query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', teacher.uid))
+            ),
         teacher.role === 'admin'
           ? getDocs(collection(db, 'homeworkSubmissions'))
           : getDocs(
@@ -221,7 +223,7 @@ export class FirebaseHomeworkService implements IHomeworkService {
       const clsMap = new Map(clsSnap.docs.map((d) => [d.id, d.data().name as string]));
       const batMap = new Map(batSnap.docs.map((d) => [d.id, d.data().name as string]));
       const subMap = new Map(subSnap.docs.map((d) => [d.id, d.data().name as string]));
-      const enrolments = enrSnap.docs.map((d) => d.data());
+      const enrolments = enrSnap.docs.map((d) => d.data()).filter((e) => e.status === 'active');
       const submissions = submsSnap.docs.map((d) => d.data() as HomeworkSubmission);
 
       let items = hwSnap.docs.map((d) => {
@@ -297,7 +299,7 @@ export class FirebaseHomeworkService implements IHomeworkService {
     await withFirestoreErrorHandling(OperationType.CREATE, `homework/${id}`, async () => {
       await setDoc(doc(db, 'homework', id), stripUndefinedFields({ ...record }));
       if (status === 'published') {
-        await this.notifyBatchStudents(db, record, adminUids);
+        await this.notifyBatchStudents(db, record, adminUids, teacher.role);
       }
     });
     return record;
@@ -305,21 +307,29 @@ export class FirebaseHomeworkService implements IHomeworkService {
 
   private async notifyBatchStudents(
     db: ReturnType<typeof requireFirestoreDb>,
-    hw: HomeworkRecord,
-    adminUids: string[]
+    hw: HomeworkRecord & { teacherUid?: string },
+    adminUids: string[],
+    actorRole: AuthPrincipal['role']
   ): Promise<void> {
     const enrSnap = await getDocs(
-      query(
-        collection(db, 'enrolments'),
-        where('batchId', '==', hw.batchId),
-        where('status', '==', 'active')
-      )
+      actorRole === 'admin'
+        ? query(
+            collection(db, 'enrolments'),
+            where('batchId', '==', hw.batchId),
+            where('status', '==', 'active')
+          )
+        : query(
+            collection(db, 'enrolments'),
+            where('teacherUids', 'array-contains', hw.teacherUid || '')
+          )
     );
     const batch = writeBatch(db);
     const nowIso = new Date().toISOString();
     for (const d of enrSnap.docs) {
       const e = d.data();
-      if (e.classId !== hw.classId || !e.studentUid) continue;
+      if (e.status !== 'active' || e.batchId !== hw.batchId || e.classId !== hw.classId || !e.studentUid) {
+        continue;
+      }
       const nid = `ANF-${hw.id}-${e.studentAccountId}`;
       batch.set(doc(db, 'notifications', nid), {
         id: nid,
@@ -383,7 +393,7 @@ export class FirebaseHomeworkService implements IHomeworkService {
     await updateDoc(ref, { status, updatedAt: nowIso });
     if (status === 'published' && existing.status !== 'published') {
       const adminUids = await getActiveAdminUids(db);
-      await this.notifyBatchStudents(db, { ...existing, status }, adminUids);
+      await this.notifyBatchStudents(db, { ...existing, status }, adminUids, teacher.role);
     }
     return { ...existing, status, updatedAt: nowIso };
   }
@@ -409,21 +419,34 @@ export class FirebaseHomeworkService implements IHomeworkService {
 
     const [enrSnap, subSnap, audSnap] = await Promise.all([
       getDocs(
-        query(
-          collection(db, 'enrolments'),
-          where('batchId', '==', homework.batchId),
-          where('status', '==', 'active')
-        )
+        teacher.role === 'admin'
+          ? query(
+              collection(db, 'enrolments'),
+              where('batchId', '==', homework.batchId),
+              where('status', '==', 'active')
+            )
+          : query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', teacher.uid))
       ),
-      getDocs(query(collection(db, 'homeworkSubmissions'), where('homeworkId', '==', homeworkId))),
-      getDocs(query(collection(db, 'homeworkAudit'), where('homeworkId', '==', homeworkId))).catch(
-        () => null
+      getDocs(
+        teacher.role === 'admin'
+          ? query(collection(db, 'homeworkSubmissions'), where('homeworkId', '==', homeworkId))
+          : query(collection(db, 'homeworkSubmissions'), where('teacherUid', '==', teacher.uid))
       ),
+      getDocs(
+        teacher.role === 'admin'
+          ? query(collection(db, 'homeworkAudit'), where('homeworkId', '==', homeworkId))
+          : query(collection(db, 'homeworkAudit'), where('teacherUid', '==', teacher.uid))
+      ).catch(() => null),
     ]);
 
     const assignedStudents: TeacherEligibleStudent[] = enrSnap.docs
       .map((d) => d.data())
-      .filter((e) => e.classId === homework.classId)
+      .filter(
+        (e) =>
+          e.status === 'active' &&
+          e.batchId === homework.batchId &&
+          e.classId === homework.classId
+      )
       .map((e) => ({
         studentId: String(e.studentAccountId),
         studentName: String(e.studentName || e.studentAccountId),
@@ -431,11 +454,14 @@ export class FirebaseHomeworkService implements IHomeworkService {
       }));
 
     const nameMap = new Map(assignedStudents.map((s) => [s.studentId, s.studentName]));
+    const matchingSubs = subSnap.docs
+      .map((d) => d.data() as HomeworkSubmission)
+      .filter((s) => s.homeworkId === homeworkId);
+
     const submissions: TeacherSubmissionViewItem[] = await Promise.all(
-      subSnap.docs.map(async (d) => {
-        const sub = d.data() as HomeworkSubmission;
+      matchingSubs.map(async (sub) => {
         const privSnap = await getDoc(
-          doc(db, 'homeworkSubmissions', d.id, 'private', 'teacherNote')
+          doc(db, 'homeworkSubmissions', sub.id, 'private', 'teacherNote')
         ).catch(() => null);
         const privateTeacherNote = privSnap?.exists()
           ? String(privSnap.data().privateTeacherNote || '')
@@ -453,6 +479,7 @@ export class FirebaseHomeworkService implements IHomeworkService {
     const pendingStudents = assignedStudents.filter((s) => !submittedIds.has(s.studentId));
     const auditEntries = (audSnap?.docs ?? [])
       .map((d) => d.data() as HomeworkReviewAudit)
+      .filter((a) => a.homeworkId === homeworkId)
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 
     return { homework, assignedStudents, submissions, pendingStudents, auditEntries };
@@ -483,9 +510,9 @@ export class FirebaseHomeworkSubmissionService implements IHomeworkSubmissionSer
           )
         ),
         getDocs(query(collection(db, 'homeworkSubmissions'), where('studentUid', '==', student.uid))),
-        getDocs(collection(db, 'classes')),
-        getDocs(collection(db, 'batches')),
-        getDocs(collection(db, 'subjects')),
+        getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
       ]);
 
       const clsMap = new Map(clsSnap.docs.map((d) => [d.id, d.data().name as string]));
@@ -721,9 +748,9 @@ export class FirebaseObjectiveTestService implements IObjectiveTestService {
       teacher.role === 'admin'
         ? getDocs(collection(db, 'objectiveTests'))
         : getDocs(query(collection(db, 'objectiveTests'), where('teacherUid', '==', teacher.uid))),
-      getDocs(collection(db, 'classes')),
-      getDocs(collection(db, 'batches')),
-      getDocs(collection(db, 'subjects')),
+      getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
       teacher.role === 'admin'
         ? getDocs(collection(db, 'testAttempts'))
         : getDocs(query(collection(db, 'testAttempts'), where('teacherUid', '==', teacher.uid))),
@@ -904,12 +931,17 @@ export class FirebaseObjectiveTestService implements IObjectiveTestService {
     }>;
 
     const nowIso = new Date().toISOString();
-    const attSnap = await getDocs(query(collection(db, 'testAttempts'), where('testId', '==', testId)));
+    const attSnap = await getDocs(
+      teacher.role === 'admin'
+        ? query(collection(db, 'testAttempts'), where('testId', '==', testId))
+        : query(collection(db, 'testAttempts'), where('teacherUid', '==', teacher.uid))
+    );
     const batch = writeBatch(db);
     batch.update(ref, { manualResultsReleased: true, updatedAt: nowIso });
 
     for (const d of attSnap.docs) {
       const att = d.data() as TestAttempt & { studentUid: string };
+      if (att.testId !== testId) continue;
       let marksObtained = att.marksObtained;
       let percentage = att.percentage;
       if (att.status === 'submitted' && answerKeyList.length > 0) {
@@ -964,7 +996,11 @@ export class FirebaseObjectiveTestService implements IObjectiveTestService {
               where('teacherUid', '==', teacher.uid)
             )
       ),
-      getDocs(collection(db, 'enrolments')),
+      teacher.role === 'admin'
+        ? getDocs(collection(db, 'enrolments'))
+        : getDocs(
+            query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', teacher.uid))
+          ),
     ]);
     const nameMap = new Map(
       enrSnap.docs.map((d) => [String(d.data().studentAccountId), String(d.data().studentName || '')])
@@ -995,11 +1031,13 @@ export class FirebaseTestAttemptService implements ITestAttemptService, ITestEva
     const enr = enrSnap.docs[0].data();
 
     const [testSnap, attSnap, clsSnap, batSnap, subSnap] = await Promise.all([
-      getDocs(query(collection(db, 'objectiveTests'), where('batchId', '==', enr.batchId))),
+      getDocs(
+        query(collection(db, 'objectiveTests'), where('status', 'in', ['published', 'active', 'completed']))
+      ),
       getDocs(query(collection(db, 'testAttempts'), where('studentUid', '==', student.uid))),
-      getDocs(collection(db, 'classes')),
-      getDocs(collection(db, 'batches')),
-      getDocs(collection(db, 'subjects')),
+      getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
     ]);
 
     const clsMap = new Map(clsSnap.docs.map((d) => [d.id, d.data().name as string]));
@@ -1011,6 +1049,7 @@ export class FirebaseTestAttemptService implements ITestAttemptService, ITestEva
       .map((d) => d.data() as ObjectiveTest)
       .filter(
         (t) =>
+          t.batchId === enr.batchId &&
           t.classId === enr.classId &&
           (t.status === 'published' || t.status === 'active' || t.status === 'completed')
       )
@@ -1212,19 +1251,6 @@ export class FirebaseTestAttemptService implements ITestAttemptService, ITestEva
       throw new AssessmentServiceError('ALREADY_SUBMITTED', 'Attempt already submitted.');
     }
 
-    if (isCloudFunctionsEnabled()) {
-      await invokeCloudCallable('submitAndEvaluateTestAttempt', { attemptId });
-      const updatedSnap = await getDoc(ref);
-      const updated = updatedSnap.data() as TestAttempt;
-      const testSnap = await getDoc(doc(db, 'objectiveTests', existing.testId));
-      const test = testSnap.data() as ObjectiveTest;
-      const visible = isTestResultsReleased(test);
-      return {
-        attempt: toSafeAttempt(updated, visible),
-        questions: await this.toStudentQuestions(db, test, visible),
-      };
-    }
-
     const testSnap = await getDoc(doc(db, 'objectiveTests', existing.testId));
     const test = testSnap.data() as ObjectiveTest;
     const visible = isTestResultsReleased(test);
@@ -1285,10 +1311,14 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
       teacher.role === 'admin'
         ? getDocs(collection(db, 'examinations'))
         : getDocs(query(collection(db, 'examinations'), where('teacherUid', '==', teacher.uid))),
-      getDocs(collection(db, 'classes')),
-      getDocs(collection(db, 'batches')),
-      getDocs(collection(db, 'subjects')),
-      getDocs(query(collection(db, 'enrolments'), where('status', '==', 'active'))),
+      getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
+      teacher.role === 'admin'
+        ? getDocs(query(collection(db, 'enrolments'), where('status', '==', 'active')))
+        : getDocs(
+            query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', teacher.uid))
+          ),
       teacher.role === 'admin'
         ? getDocs(collection(db, 'examinationMarks'))
         : getDocs(query(collection(db, 'examinationMarks'), where('teacherUid', '==', teacher.uid))),
@@ -1297,7 +1327,7 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
     const clsMap = new Map(clsSnap.docs.map((d) => [d.id, d.data().name as string]));
     const batMap = new Map(batSnap.docs.map((d) => [d.id, d.data().name as string]));
     const subMap = new Map(subSnap.docs.map((d) => [d.id, d.data().name as string]));
-    const enrolments = enrSnap.docs.map((d) => d.data());
+    const enrolments = enrSnap.docs.map((d) => d.data()).filter((e) => e.status === 'active');
     const marks = mrkSnap.docs.map((d) => d.data() as ExaminationMarks);
 
     return exSnap.docs
@@ -1418,7 +1448,7 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
     const enr = enrSnap.docs[0].data();
 
     const [exSnap, mrkSnap, clsSnap, batSnap, subSnap] = await Promise.all([
-      getDocs(query(collection(db, 'examinations'), where('batchId', '==', enr.batchId))),
+      getDocs(query(collection(db, 'examinations'), where('status', 'in', ['published', 'completed']))),
       getDocs(
         query(
           collection(db, 'examinationMarks'),
@@ -1426,9 +1456,9 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
           where('resultsReleased', '==', true)
         )
       ),
-      getDocs(collection(db, 'classes')),
-      getDocs(collection(db, 'batches')),
-      getDocs(collection(db, 'subjects')),
+      getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
     ]);
 
     const clsMap = new Map(clsSnap.docs.map((d) => [d.id, d.data().name as string]));
@@ -1445,6 +1475,7 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
       .map((d) => d.data() as ExaminationRecord)
       .filter(
         (ex) =>
+          ex.batchId === enr.batchId &&
           ex.classId === enr.classId &&
           (ex.status === 'published' || ex.status === 'completed')
       )
@@ -1485,23 +1516,34 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
 
     const [enrSnap, mrkSnap, audSnap] = await Promise.all([
       getDocs(
-        query(
-          collection(db, 'enrolments'),
-          where('batchId', '==', examination.batchId),
-          where('status', '==', 'active')
-        )
+        teacher.role === 'admin'
+          ? query(
+              collection(db, 'enrolments'),
+              where('batchId', '==', examination.batchId),
+              where('status', '==', 'active')
+            )
+          : query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', teacher.uid))
       ),
       getDocs(
-        query(collection(db, 'examinationMarks'), where('examinationId', '==', examinationId))
+        teacher.role === 'admin'
+          ? query(collection(db, 'examinationMarks'), where('examinationId', '==', examinationId))
+          : query(collection(db, 'examinationMarks'), where('teacherUid', '==', teacher.uid))
       ),
-      getDocs(query(collection(db, 'marksAudit'), where('examinationId', '==', examinationId))).catch(
-        () => null
-      ),
+      getDocs(
+        teacher.role === 'admin'
+          ? query(collection(db, 'marksAudit'), where('examinationId', '==', examinationId))
+          : query(collection(db, 'marksAudit'), where('teacherUid', '==', teacher.uid))
+      ).catch(() => null),
     ]);
 
     const eligibleStudents: TeacherEligibleStudent[] = enrSnap.docs
       .map((d) => d.data())
-      .filter((e) => e.classId === examination.classId)
+      .filter(
+        (e) =>
+          e.status === 'active' &&
+          e.batchId === examination.batchId &&
+          e.classId === examination.classId
+      )
       .map((e) => ({
         studentId: String(e.studentAccountId),
         studentName: String(e.studentName || e.studentAccountId),
@@ -1509,12 +1551,13 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
       }));
 
     const nameMap = new Map(eligibleStudents.map((s) => [s.studentId, s.studentName]));
-    const marks = mrkSnap.docs.map((d) => {
-      const m = d.data() as ExaminationMarks;
-      return { ...m, studentName: nameMap.get(m.studentId) || m.studentId };
-    });
+    const marks = mrkSnap.docs
+      .map((d) => d.data() as ExaminationMarks)
+      .filter((m) => m.examinationId === examinationId)
+      .map((m) => ({ ...m, studentName: nameMap.get(m.studentId) || m.studentId }));
     const auditEntries = (audSnap?.docs ?? [])
       .map((d) => d.data() as MarksAuditEntry)
+      .filter((a) => a.examinationId === examinationId)
       .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
 
     return { examination, eligibleStudents, marks, auditEntries };
@@ -1534,15 +1577,18 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
     }
 
     const enrSnap = await getDocs(
-      query(
-        collection(db, 'enrolments'),
-        where('batchId', '==', ex.batchId),
-        where('status', '==', 'active')
-      )
+      teacher.role === 'admin'
+        ? query(
+            collection(db, 'enrolments'),
+            where('batchId', '==', ex.batchId),
+            where('status', '==', 'active')
+          )
+        : query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', teacher.uid))
     );
     const uidMap = new Map<string, string>();
     for (const d of enrSnap.docs) {
       const e = d.data();
+      if (e.status !== 'active' || e.batchId !== ex.batchId) continue;
       uidMap.set(String(e.studentAccountId).toUpperCase(), String(e.studentUid || ''));
     }
 
@@ -1707,13 +1753,16 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
     }
 
     const mrkSnap = await getDocs(
-      query(collection(db, 'examinationMarks'), where('examinationId', '==', examinationId))
+      teacher.role === 'admin'
+        ? query(collection(db, 'examinationMarks'), where('examinationId', '==', examinationId))
+        : query(collection(db, 'examinationMarks'), where('teacherUid', '==', teacher.uid))
     );
     const nowIso = new Date().toISOString();
     const batch = writeBatch(db);
     batch.update(exRef, { resultsReleased: true, status: 'completed', updatedAt: nowIso });
     for (const d of mrkSnap.docs) {
       const m = d.data() as ExaminationMarks & { studentUid: string };
+      if (m.examinationId !== examinationId) continue;
       batch.update(d.ref, { resultsReleased: true, releasedAt: nowIso, updatedAt: nowIso });
       const nid = `ANF-EREL-${examinationId}-${m.studentId}`;
       batch.set(doc(db, 'notifications', nid), {
@@ -1752,16 +1801,18 @@ export class FirebaseAssessmentOverviewService implements IAssessmentOverviewSer
       await Promise.all([
         this.examSvc.listStudentExaminations(actor),
         getDocs(query(collection(db, 'homeworkSubmissions'), where('studentUid', '==', student.uid))),
-        getDocs(collection(db, 'objectiveTests')),
+        getDocs(
+          query(collection(db, 'objectiveTests'), where('status', 'in', ['published', 'active', 'completed']))
+        ),
         getDocs(query(collection(db, 'testAttempts'), where('studentUid', '==', student.uid))),
-        getDocs(collection(db, 'homework')),
+        getDocs(query(collection(db, 'homework'), where('status', '==', 'published'))),
         getDocs(
           query(
             collection(db, 'notifications'),
             where('recipientUid', '==', student.uid)
           )
         ),
-        getDocs(collection(db, 'subjects')),
+        getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
       ]);
 
     const subMap = new Map(subjectsSnap.docs.map((d) => [d.id, d.data().name as string]));

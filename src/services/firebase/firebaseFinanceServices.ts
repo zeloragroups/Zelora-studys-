@@ -9,9 +9,7 @@ import {
   updateDoc,
   where,
 } from 'firebase/firestore';
-import { isCloudFunctionsEnabled } from '../../lib/firebase/config';
 import { OperationType } from '../../lib/firebase/firestore';
-import { invokeCloudCallable } from '../../lib/firebase/functions';
 import type {
   AdminFinancialDashboardData,
   AttendanceSession,
@@ -622,7 +620,9 @@ export class FirebaseFeeService
     ensureRole(actor, ['admin', 'teacher', 'student']);
     const db = requireFirestoreDb();
     return withFirestoreErrorHandling(OperationType.LIST, 'upiConfigurations', async () => {
-      const snap = await getDocs(collection(db, 'upiConfigurations'));
+      const snap = await getDocs(
+        query(collection(db, 'upiConfigurations'), where('status', 'in', ['active', 'inactive']))
+      );
       if (snap.empty) return null;
       const list = snap.docs
         .map((d) => d.data() as UpiConfiguration)
@@ -1516,42 +1516,6 @@ export class FirebasePaymentService implements IPaymentClaimService, IPaymentVer
     }
 
     const db = requireFirestoreDb();
-
-    if (isCloudFunctionsEnabled()) {
-      const res = await invokeCloudCallable<
-        Record<string, unknown>,
-        { claimId: string; verifiedPaymentId: string; receiptId: string }
-      >('verifyPaymentClaim', {
-        claimId: input.claimId,
-        confirmIndependentCheck: true,
-        verificationNote: input.verificationNote?.trim() || '',
-      });
-
-      const [claimSnap, vpSnap, recSnap, accSnap] = await Promise.all([
-        getDoc(doc(db, 'paymentClaims', res.claimId)),
-        getDoc(doc(db, 'verifiedPayments', res.verifiedPaymentId)),
-        getDoc(doc(db, 'paymentReceipts', res.receiptId)),
-        getDoc(doc(db, 'paymentClaims', res.claimId)).then((c) =>
-          c.exists() ? getDoc(doc(db, 'studentFeeAccounts', String(c.data().feeAccountId))) : null
-        ),
-      ]);
-      const claim = claimSnap.data() as FirestorePaymentClaimDoc;
-      const verifiedPayment = vpSnap.data() as FirestoreVerifiedPaymentDoc;
-      const receipt = recSnap.data() as FirestoreReceiptDoc;
-      const placement = await loadPlacementForSingleStudent(db, claim.studentUid, claim.studentId);
-      return {
-        claim: toClaimDetailView(
-          claim,
-          placement,
-          accSnap?.exists() ? (accSnap.data() as StudentFeeAccount) : undefined,
-          [verifiedPayment],
-          [receipt]
-        ),
-        verifiedPayment,
-        receipt,
-      };
-    }
-
     const adminUids = await getActiveAdminUids(db);
     const centreName = await resolveCentreName(db);
     const nowIso = new Date().toISOString();
@@ -2677,27 +2641,6 @@ export class FirebaseSalaryService implements ITeacherSalaryService {
     }
 
     const db = requireFirestoreDb();
-    if (isCloudFunctionsEnabled()) {
-      const res = await invokeCloudCallable<Record<string, unknown>, { paymentId: string }>(
-        'recordTeacherSalaryPayment',
-        {
-          teacherSalaryPeriodId: input.teacherSalaryPeriodId,
-          amountPaise,
-          paymentDate: input.paymentDate.trim(),
-          paymentReference: input.paymentReference?.trim() || undefined,
-          note: input.note?.trim() || undefined,
-        }
-      );
-      const [paySnap, perSnap] = await Promise.all([
-        getDoc(doc(db, 'teacherSalaryPayments', res.paymentId)),
-        getDoc(doc(db, 'teacherSalaryPeriods', input.teacherSalaryPeriodId)),
-      ]);
-      return {
-        payment: paySnap.data() as TeacherSalaryPayment,
-        period: perSnap.data() as TeacherSalaryPeriod,
-      };
-    }
-
     const adminUids = await getActiveAdminUids(db);
     const nowIso = new Date().toISOString();
     const refTrimmed = input.paymentReference?.trim() || undefined;

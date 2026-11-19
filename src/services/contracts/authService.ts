@@ -17,6 +17,7 @@ export interface IAuthService {
   getCurrentSession(): Promise<AuthSession>;
   signInWithId(credentials: LoginCredentials): Promise<AuthSession>;
   signOut(): Promise<void>;
+  changeMyPassword?(currentPassword: string, newPassword: string): Promise<void>;
 
   /**
    * Forgot-password intake UX (Phase 2).

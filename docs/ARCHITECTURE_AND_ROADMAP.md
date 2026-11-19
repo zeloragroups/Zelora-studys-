@@ -187,7 +187,25 @@
   - **Non-Tamper-Proof Client Audit Logs**: Browser-stored `SettingsAuditEntry` records are convenience demo audit data only; trusted server-side audit logging and immutable Cloud Firestore rules are mandatory in production.
   - **Firebase & Storage Disconnected**: Firebase Authentication, Cloud Firestore, Cloud Functions, and Firebase Storage remain disconnected; trusted backend authorization and cross-device logo asset hosting await Phase 10.
   - **Client-Side Visual / Browser Verification**: Headless Chromium / Playwright is not installed in the current workspace container; manual responsive verification across 360px, 390px, 768px, 1280px, and 1440px viewports is required by the operator.
-  - **Phase 10 Status**: Phase 10 (Production Firebase Integration & Security Hardening) has **not** started.
+  - **Phase 10 Status**: Completed (see Phase 10 section below).
+
+## Phase 10 — Firebase Production Integration, Data Migration & Security Hardening Architecture
+- **Provisioned Firebase Target (`firebase-applet-config.json`, `src/lib/firebase/*`)**:
+  - Bound to Firebase Project **`academy-0007`** with named Cloud Firestore database **`ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470`** and Firebase Storage bucket **`academy-0007.firebasestorage.app`**.
+  - Explicit 3-state runtime resolution (`LOCAL_DEMO`, `FIREBASE_CONNECTED`, `FIREBASE_CONFIGURATION_ERROR`) via `src/services/index.ts`. Production builds (`import.meta.env.PROD`) strictly forbid silent fallback to local demo adapters, surfacing `FirebaseConfigErrorScreen` + React `ErrorBoundary` on misconfiguration or Firestore failures.
+- **Authentication & Role Authorization (`src/services/firebase/firebaseAuthService.ts`, `src/pages/auth/AdminLoginPage.tsx`)**:
+  - Dedicated `/admin/login` offers **Continue with Google** exclusively, strictly authorizing `07alphabro@gmail.com` (and explicitly Admin-created active `admins/{uid}` accounts) and rejecting all other Google accounts.
+  - Separate `/portal/login` provides Teacher & Student ID + Password sign-in (`TCH-xxxx`, `STU-xxxx`) mapped deterministically to `@auth.academy-0007.internal` with zero role selectors and zero Admin login options.
+  - Authorizes principals by verified email + active Firestore role document (or Cloud Function custom role claims when functions are deployed).
+- **Complete Firebase Service Layer (`src/services/firebase/*`)**:
+  - Implements every Phase 2–9 contract: `firebaseAuthService`, `firebaseAccountService`, `firebaseAcademicService`, `firebaseAttendanceService`, `firebaseAssessmentServices` (homework, private teacher notes subcollection, objective tests + private `answerKey` subcollection, examinations & marks), `firebaseStudentPortalService`, `firebaseFinanceServices` (fees, UPI link prep, payment claims, Admin verification + atomic receipt numbering, teacher salary periods & payouts, reports), `firebaseSettingsService`, `firebaseStorageService`, and `firebaseMigrationService`.
+  - Selective `onSnapshot` subscriptions strictly for Auth state and `applicationSettings/APP-SETTINGS-001` branding/theme updates with clean unmount cleanup.
+- **Security Rules, Cloud Functions & Storage (`/firestore.rules`, `/storage.rules`, `/functions/src/index.ts`)**:
+  - `/firestore.rules` enforces default deny, PII isolation (`users`, `authIdMappings`), private subcollections (`private/teacherNote`, `private/answerKey`), unreleased marks protection, financial claim/balance integrity, immutable audit collections, and schema/bounds checks synced with `/firebase-blueprint.json`. Lint-clean (`npx eslint firestore.rules`) and deployed live to `academy-0007`.
+  - `/storage.rules` restricts branding logo writes (`branding/centre-logo/*`, PNG/JPEG/WebP <= 2 MB) exclusively to active Admins against the named database.
+  - `/functions/src/index.ts` provides trusted server-side Admin SDK callables (`bootstrapInitialAdmin`, `createInstitutionalAccount`, `resolveInstitutionalLogin`, `setInstitutionalAccountStatus`, `verifyStudentPaymentClaim`, `recordTeacherSalaryPayment`, `submitAttendanceSession`, `releaseAssessmentResults`) ready for Blaze-plan CLI deployment.
+- **Controlled Data Migration (`src/services/firebase/firebaseMigrationService.ts`, `src/components/settings/AdminMigrationSection.tsx`)**:
+  - Admin-only `Firebase & Migration` tab previews `tuition_ecosystem_dev_*` keys, separates built-in demo fixtures (excluded by default) from custom records, strips password/secret keys and oversized base64 logos, detects Firestore duplicates, flags unprovisioned accounts for manual Admin Auth creation, batches up to 400 docs/batch, and leaves local browser data untouched for safety.
 
 ## Integration Inventory
 | Service / Tool | Role / Purpose | Status |
@@ -198,14 +216,14 @@
 | Tailwind CSS v4 | Styling & Phase 6.5 responsive design tokens | Existing |
 | Motion | Purposeful reduced-motion-safe UI transitions | Existing |
 | Lucide React | Consistent vector iconography across Admin, Teacher & Student Web Apps | Existing |
-| Local Adapters (`tuition_ecosystem_dev_*`) | In-browser demo persistence (`accounts`, `academics`, `attendance`, `homework`, `tests`, `examinations`, `finance`, `student_views`, `app_settings`) labeled `DEMO DATA` | Local only |
-| Device-Local Logo Data URLs (`BrandLogoMark`) | Optional Admin-uploaded PNG/JPEG/WebP logo (<= 256 KB) stored in browser `localStorage` | Local only |
-| UPI Deep Link URI (`upi://pay?...`) & Browser Print (`window.print()`) | Client-side UPI Pay Now link prep & single-page printable verified receipts/reports (`RCP-YYYY-XXXX`) | Local only (Client-side) |
-| Firebase Authentication | Future production credential authentication & password reset | Not connected |
-| Cloud Firestore | Future production persistent database & security-rules-enforced isolation | Not connected |
-| Cloud Functions / Scheduled Jobs | Future trusted backend triggers, timers, receipt counters & scheduled reminders | Not connected |
-| Firebase Storage | Future authorized cross-device logo & asset storage | Not connected |
+| Firebase Authentication | Dedicated Google Sign-In (`07alphabro@gmail.com`) for Admin & ID + Password (`@auth.academy-0007.internal`) for Teachers/Students | Connected (Email/Password toggle in Console) |
+| Cloud Firestore (`academy-0007`) | Persistent production database (`ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470`) + live deployed `/firestore.rules` | Connected & Rules Deployed |
+| Firebase Storage | Cross-device Admin logo asset hosting (`academy-0007.firebasestorage.app`, `/storage.rules`) | Integrated (Requires Console Storage init + rules deploy) |
+| Cloud Functions (`/functions`) | Trusted backend Admin SDK user management, payment verification, receipts & salary payouts | Source Complete (Requires Blaze Plan + CLI deploy) |
+| Local Adapters (`tuition_ecosystem_dev_*`) | Explicit `VITE_APP_DATA_MODE=local_demo` development-only fallback & migration source | Dev-Only (Disabled in PROD) |
+| UPI Deep Link URI (`upi://pay?...`) & Browser Print (`window.print()`) | Client-side UPI Pay Now link prep & single-page printable verified receipts/reports (`RCP-YYYY-XXXX`) | Preserved (Client-side) |
 | Payment Gateway / Bank Verification APIs | Automated payment confirmation or bank reconciliation | Not used |
 | AI APIs (Gemini / OpenAI / Others) | Any AI generation, tutoring, or assistant features | Not used |
 | WhatsApp / SMS / Email Services | External notifications or messaging | Not used |
 | PostgreSQL / External RDBMS | Relational SQL database backend | Not used |
+

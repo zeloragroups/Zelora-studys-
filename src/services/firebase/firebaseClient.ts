@@ -75,12 +75,12 @@ export function getFirebaseClientDescriptor(): FirebaseClientDescriptor {
     functionsEnabled: validation.functionsEnabled,
     firestoreState: firestoreSnapshot.state,
     servicesActive: [
-      'Firebase Authentication',
+      'Firebase Authentication (Google Admin + Secondary-App Spark Provisioning)',
       `Cloud Firestore (${validation.config.firestoreDatabaseId})`,
-      `Firebase Storage (${validation.config.storageBucket})`,
+      `Firebase Storage (${validation.config.storageBucket} — optional; checked at runtime)`,
       validation.functionsEnabled
         ? 'Cloud Functions (Enabled)'
-        : 'Cloud Functions (Callable Disabled — Client Transaction Fallback)',
+        : 'Spark Free Plan Active (Zero Cloud Functions / Zero Blaze Billing)',
     ],
     isInitialized: true,
     message: `Connected to Firebase project "${validation.config.projectId}" (${firestoreSnapshot.message}).`,

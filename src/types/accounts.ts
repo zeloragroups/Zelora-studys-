@@ -60,12 +60,16 @@ export interface AccountListFilter {
   searchQuery?: string;
 }
 
+export type AccountProvisioningMode = 'spark_secondary_auth' | 'manual_console_uid';
+
 export interface CreateTeacherAccountInput {
   name: string;
   phone: string;
   email?: string;
   initialPassword: string;
   status: ManagedAccountStatus;
+  provisioningMode?: AccountProvisioningMode;
+  existingAuthUid?: string;
 }
 
 export interface CreateStudentAccountInput {
@@ -76,6 +80,8 @@ export interface CreateStudentAccountInput {
   email?: string;
   initialPassword: string;
   status: ManagedAccountStatus;
+  provisioningMode?: AccountProvisioningMode;
+  existingAuthUid?: string;
 }
 
 export interface UpdateAccountInput {
@@ -91,6 +97,8 @@ export interface DemoPasswordResetReceipt {
   targetName: string;
   initiatedByAdminId: string;
   initiatedAt: string;
-  mode: 'demo_only';
+  mode: 'demo_only' | 'manual_console_required';
   notice: string;
+  authEmail?: string;
+  manualSteps?: string[];
 }

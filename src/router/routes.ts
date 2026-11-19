@@ -3,7 +3,6 @@ import type { PortalScope, UserRole } from '../types';
 export const ROUTES = {
   HOME: '/',
   ADMIN_LOGIN: '/admin/login',
-  ADMIN_FORGOT_PASSWORD: '/admin/forgot-password',
   ADMIN_DASHBOARD: '/admin/dashboard',
   ADMIN_WEBSITE: '/admin/website',
   ADMIN_APP: '/admin/app',
@@ -25,7 +24,6 @@ export interface RoutePolicy {
 export const ROUTE_POLICIES: readonly RoutePolicy[] = [
   { path: ROUTES.HOME, requiresAuth: false },
   { path: ROUTES.ADMIN_LOGIN, requiresAuth: false, portalScope: 'admin_portal' },
-  { path: ROUTES.ADMIN_FORGOT_PASSWORD, requiresAuth: false, portalScope: 'admin_portal' },
   { path: ROUTES.PORTAL_LOGIN, requiresAuth: false, portalScope: 'member_portal' },
   { path: ROUTES.PORTAL_FORGOT_PASSWORD, requiresAuth: false, portalScope: 'member_portal' },
   {

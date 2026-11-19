@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
   CheckCircle2,
@@ -13,9 +13,12 @@ import { useAuth } from '../../context/AuthContext';
 import {
   isFirebaseConnectedMode,
   migrationService,
-  storageService,
 } from '../../services';
 import { getFirebaseClientDescriptor } from '../../services/firebase/firebaseClient';
+import {
+  firebaseStorageService,
+  type StorageProbeResult,
+} from '../../services/firebase/firebaseStorageService';
 import type {
   MigrationExecutionReport,
   MigrationPreviewReport,
@@ -41,6 +44,21 @@ export function AdminMigrationSection() {
   const [error, setError] = useState<string | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [confirmClearModalOpen, setConfirmClearModalOpen] = useState(false);
+  const [storageProbe, setStorageProbe] = useState<StorageProbeResult | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    if (!firebaseConnected) return;
+    void firebaseStorageService
+      .probeBucketAvailability()
+      .then((res) => {
+        if (!cancelled) setStorageProbe(res);
+      })
+      .catch(() => undefined);
+    return () => {
+      cancelled = true;
+    };
+  }, [firebaseConnected]);
 
   if (!principal || principal.role !== 'admin') {
     return null;
@@ -206,10 +224,22 @@ export function AdminMigrationSection() {
               <span>Firebase Storage</span>
             </div>
             <p className="font-mono text-[#17172B] dark:text-[#F8FAFC]">
-              {storageService.isConnected() ? 'Configured' : 'Unavailable'}
+              {!firebaseConnected
+                ? 'Disabled (Local Mode)'
+                : storageProbe === null
+                  ? 'Checking...'
+                  : storageProbe.available
+                    ? 'Configured'
+                    : storageProbe.statusCode === 404
+                      ? 'Not Initialized (404)'
+                      : 'Unavailable'}
             </p>
             <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3]">
-              Centre branding assets only (2 MB cap)
+              {!firebaseConnected
+                ? 'Browser local demo mode'
+                : storageProbe?.available
+                  ? 'Centre branding assets only (2 MB cap)'
+                  : 'Optional; core app & branding run on Firestore/Spark'}
             </p>
           </div>
 
@@ -219,10 +249,12 @@ export function AdminMigrationSection() {
               <span>Cloud Functions</span>
             </div>
             <p className="font-mono text-[#17172B] dark:text-[#F8FAFC]">
-              {firebaseDescriptor.functionsEnabled ? 'Enabled (Callable)' : 'Client Fallback Active'}
+              {firebaseDescriptor.functionsEnabled ? 'Enabled (Callable)' : 'Disabled (Spark Mode)'}
             </p>
             <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3]">
-              Blaze plan required to deploy /functions
+              {firebaseDescriptor.functionsEnabled
+                ? 'Cloud Functions active'
+                : 'Spark Free Plan — zero Blaze billing required'}
             </p>
           </div>
         </div>

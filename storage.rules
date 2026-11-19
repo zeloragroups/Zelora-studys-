@@ -12,7 +12,7 @@ service firebase.storage {
     }
 
     function isBootstrappedAdmin() {
-      return isSignedIn() && request.auth.token.email == 'toutionacademy@gmail.com';
+      return isSignedIn() && request.auth.token.email == '07alphabro@gmail.com';
     }
 
     function isAdminUser() {

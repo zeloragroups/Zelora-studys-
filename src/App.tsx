@@ -63,12 +63,10 @@ function AppRouter() {
         return <PortalSelectorPage onNavigate={navigate} />;
       case ROUTES.ADMIN_LOGIN:
         return <AdminLoginPage onNavigate={navigate} />;
-      case ROUTES.ADMIN_FORGOT_PASSWORD:
-        return <ForgotPasswordPage portalScope="admin_portal" onNavigate={navigate} />;
       case ROUTES.PORTAL_LOGIN:
         return <PortalLoginPage onNavigate={navigate} />;
       case ROUTES.PORTAL_FORGOT_PASSWORD:
-        return <ForgotPasswordPage portalScope="member_portal" onNavigate={navigate} />;
+        return <ForgotPasswordPage onNavigate={navigate} />;
       case ROUTES.ADMIN_DASHBOARD:
       case ROUTES.ADMIN_WEBSITE:
       case ROUTES.ADMIN_APP:

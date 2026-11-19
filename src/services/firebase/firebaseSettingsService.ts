@@ -398,42 +398,41 @@ export class FirebaseSettingsService implements IApplicationSettingsService {
     const cfg = validateAndResolveFirebaseConfig();
     const firestoreState = getFirestoreConnectivitySnapshot();
     const functionsActive = isCloudFunctionsEnabled();
+    const storageProbe = await firebaseStorageService.probeBucketAvailability();
 
     return [
       {
         id: 'firebase-auth',
         name: 'Firebase Authentication',
-        purpose: 'Verified ID/Password and operator authentication for academy-0007',
+        purpose: 'Google Sign-In for Admin + Teacher/Student ID & Password on Spark Plan',
         status: cfg.mode === 'FIREBASE_CONNECTED' ? 'existing' : 'not_connected',
         detail:
           cfg.mode === 'FIREBASE_CONNECTED'
-            ? 'Connected to academy-0007 Firebase Auth.'
+            ? 'Connected to academy-0007 Firebase Auth (primary Google Admin session + isolated Spark secondary-app provisioning).'
             : 'Firebase configuration missing.',
       },
       {
         id: 'cloud-firestore',
         name: 'Cloud Firestore',
-        purpose: 'Production relational-safe multi-collection database',
+        purpose: 'Production relational-safe multi-collection database (Spark Free Plan)',
         status: firestoreState.state === 'connected' ? 'existing' : 'not_connected',
         detail: `${firestoreState.message} (Database: ${cfg.config?.firestoreDatabaseId ?? 'unconfigured'})`,
       },
       {
         id: 'firebase-storage',
-        name: 'Firebase Storage',
-        purpose: 'Restricted institutional logo storage (branding/centre-logo)',
-        status: firebaseStorageService.isConnected() ? 'existing' : 'not_connected',
-        detail: firebaseStorageService.isConnected()
-          ? `Bucket ${cfg.config?.storageBucket} configured with Admin-only write rules.`
-          : 'Storage bucket not initialized.',
+        name: 'Firebase Storage (Optional)',
+        purpose: 'Centre logo upload storage (not required for core modules)',
+        status: storageProbe.available ? 'existing' : 'not_connected',
+        detail: storageProbe.message,
       },
       {
         id: 'cloud-functions',
         name: 'Cloud Functions (/functions)',
-        purpose: 'Server-side account provisioning, password resets & atomic payment/salary verification',
-        status: functionsActive ? 'existing' : 'not_connected',
+        purpose: 'Excluded in Spark Free Plan Only mode (zero Blaze billing required)',
+        status: functionsActive ? 'existing' : 'not_used',
         detail: functionsActive
           ? 'Cloud Functions callable endpoints enabled (VITE_FIREBASE_FUNCTIONS_ENABLED=true).'
-          : 'Source ready in /functions; requires Firebase Blaze plan deployment and VITE_FIREBASE_FUNCTIONS_ENABLED=true.',
+          : 'Disabled (VITE_FIREBASE_FUNCTIONS_ENABLED=false). All tuition modules run on the Firebase Spark (free) plan without Cloud Functions.',
       },
       {
         id: 'upi-manual',

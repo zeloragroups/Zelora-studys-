@@ -188,6 +188,19 @@ export class LocalAccountStore {
     return storedVerifier === createSimpleVerifier(normalized, password);
   }
 
+  updateCredential(loginId: string, newPassword: string, skipPersistence = false): void {
+    const normalized = loginId.trim().toUpperCase();
+    this.credentialVerifiers.set(normalized, createSimpleVerifier(normalized, newPassword));
+    this.appendAudit(
+      normalized,
+      'password_reset_initiated',
+      normalized,
+      'Password updated by account holder.',
+      skipPersistence
+    );
+    this.persist(skipPersistence);
+  }
+
   insertAccount(
     account: AccountRecord,
     initialPassword: string,

@@ -274,6 +274,46 @@ export class LocalDevAuthService implements IAuthService {
     }
   }
 
+  async changeMyPassword(currentPassword: string, newPassword: string): Promise<void> {
+    const current = this.readStoredSession();
+    if (!current.isAuthenticated || !current.principal) {
+      throw new AuthServiceException({
+        code: 'UNEXPECTED_ERROR',
+        message: 'You must be signed in to change your password.',
+        field: 'form',
+      });
+    }
+    if (current.principal.role === 'admin') {
+      throw new AuthServiceException({
+        code: 'UNEXPECTED_ERROR',
+        message: 'Admin sign-in is Google-only.',
+        field: 'form',
+      });
+    }
+    if (!currentPassword) {
+      throw new AuthServiceException({
+        code: 'EMPTY_PASSWORD',
+        message: 'Please enter your current password.',
+        field: 'password',
+      });
+    }
+    if (newPassword.length < 8) {
+      throw new AuthServiceException({
+        code: 'UNEXPECTED_ERROR',
+        message: 'New password must be at least 8 characters long.',
+        field: 'password',
+      });
+    }
+    if (!this.store.verifyCredential(current.principal.loginId, currentPassword)) {
+      throw new AuthServiceException({
+        code: 'INCORRECT_PASSWORD',
+        message: 'Current password is incorrect.',
+        field: 'password',
+      });
+    }
+    this.store.updateCredential(current.principal.loginId, newPassword, this.skipSessionStorage);
+  }
+
   async requestForgotPassword(input: {
     loginId: string;
     portalScope: PortalScope;

@@ -1,6 +1,9 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import { Check, Copy, Eye, EyeOff } from 'lucide-react';
+import { deriveInternalAuthEmail } from '../../lib/firebase/config';
+import { LINKED_CONSOLE_UID_REGEX } from '../../lib/firebase/provisioningApp';
 import type {
+  AccountProvisioningMode,
   AccountRecord,
   AuthPrincipal,
   DemoClassOption,
@@ -42,11 +45,14 @@ export function CreateAccountModal({
   onCreated,
 }: CreateAccountModalProps) {
   const isStudent = role === 'student';
+  const firebaseConnected = isFirebaseConnectedMode();
 
   const [previewId, setPreviewId] = useState('');
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [email, setEmail] = useState('');
+  const [provisioningMode, setProvisioningMode] = useState<AccountProvisioningMode>('spark_secondary_auth');
+  const [existingAuthUid, setExistingAuthUid] = useState('');
   const [initialPassword, setInitialPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<ManagedAccountStatus>('active');
@@ -67,6 +73,8 @@ export function CreateAccountModal({
     setName('');
     setPhone('');
     setEmail('');
+    setProvisioningMode('spark_secondary_auth');
+    setExistingAuthUid('');
     setInitialPassword('');
     setShowPassword(false);
     setStatus('active');
@@ -89,6 +97,10 @@ export function CreateAccountModal({
   const selectedClass = classOptions.find((c) => c.id === classId);
   const availableBatches = selectedClass?.batches ?? [];
   const selectedBatch = availableBatches.find((b) => b.id === batchId);
+  const isManualConsoleMode = firebaseConnected && provisioningMode === 'manual_console_uid';
+  const derivedAuthEmail = previewId
+    ? deriveInternalAuthEmail(previewId)
+    : `${isStudent ? 'stu' : 'tch'}-xxxx@auth.academy-0007.internal`;
 
   const handleClassChange = (nextClassId: string) => {
     setClassId(nextClassId);
@@ -117,13 +129,20 @@ export function CreateAccountModal({
     const emailCheck = validateOptionalEmail(email);
     if (!emailCheck.valid) errors.email = emailCheck.error!;
 
-    const passCheck = validateInitialPassword(initialPassword);
-    if (!passCheck.valid) errors.initialPassword = passCheck.error!;
+    if (isManualConsoleMode) {
+      if (!LINKED_CONSOLE_UID_REGEX.test(existingAuthUid.trim())) {
+        errors.existingAuthUid =
+          'Enter a valid Firebase Auth UID (6-128 alphanumeric, "_" or "-" characters).';
+      }
+    } else {
+      const passCheck = validateInitialPassword(initialPassword);
+      if (!passCheck.valid) errors.initialPassword = passCheck.error!;
+    }
 
-    if (isStudent && !classId) {
+    if (isStudent && classOptions.length > 0 && !classId) {
       errors.classId = 'Please select a class.';
     }
-    if (isStudent && !batchId) {
+    if (isStudent && availableBatches.length > 0 && !batchId) {
       errors.batchId = 'Please select a batch.';
     }
 
@@ -144,6 +163,12 @@ export function CreateAccountModal({
     setSubmitting(true);
     setFormError(null);
     try {
+      const resolvedMode: AccountProvisioningMode | undefined = firebaseConnected
+        ? provisioningMode
+        : undefined;
+      const resolvedUid = isManualConsoleMode ? existingAuthUid.trim() : undefined;
+      const resolvedPassword = isManualConsoleMode ? '' : initialPassword;
+
       const created = isStudent
         ? await accountService.createStudentAccount(actor, {
             name,
@@ -151,18 +176,23 @@ export function CreateAccountModal({
             batchId,
             phone,
             email: email.trim() || undefined,
-            initialPassword,
+            initialPassword: resolvedPassword,
             status,
+            provisioningMode: resolvedMode,
+            existingAuthUid: resolvedUid,
           })
         : await accountService.createTeacherAccount(actor, {
             name,
             phone,
             email: email.trim() || undefined,
-            initialPassword,
+            initialPassword: resolvedPassword,
             status,
+            provisioningMode: resolvedMode,
+            existingAuthUid: resolvedUid,
           });
       setCreatedAccount(created);
       setInitialPassword(''); // Clear password from UI state immediately after creation
+      setExistingAuthUid('');
       setStep('created');
       onCreated(created);
     } catch (err) {
@@ -188,8 +218,8 @@ export function CreateAccountModal({
       title={isStudent ? 'Create Student Account' : 'Create Teacher Account'}
       subtitle={
         step === 'created'
-          ? isFirebaseConnectedMode()
-            ? 'Account provisioned in Firebase Authentication and Cloud Firestore.'
+          ? firebaseConnected
+            ? 'Account provisioned in Firebase Authentication and Cloud Firestore (Spark Free Plan).'
             : 'Account provisioned in local development store (Local Demo Mode).'
           : isStudent
             ? 'Parents share the student login credentials. No separate parent role is created.'
@@ -219,7 +249,7 @@ export function CreateAccountModal({
           </div>
 
           <p className="text-xs text-slate-600 dark:text-slate-400">
-            For security, the initial password is not displayed again or stored in readable profile records.
+            For security, passwords are never stored in Firestore or displayed again.
           </p>
 
           <div className="flex justify-end">
@@ -251,7 +281,9 @@ export function CreateAccountModal({
               <div className="px-4 py-2.5 flex justify-between gap-4">
                 <span className="text-slate-500 dark:text-slate-400">Class & Batch</span>
                 <span className="text-right">
-                  {selectedClass?.name} · {selectedBatch?.name}
+                  {selectedClass && selectedBatch
+                    ? `${selectedClass.name} · ${selectedBatch.name}`
+                    : 'Not assigned yet'}
                 </span>
               </div>
             )}
@@ -269,6 +301,16 @@ export function CreateAccountModal({
               <span className="text-slate-500 dark:text-slate-400">Initial Status</span>
               <span className="capitalize">{status}</span>
             </div>
+            {firebaseConnected && (
+              <div className="px-4 py-2.5 flex justify-between gap-4">
+                <span className="text-slate-500 dark:text-slate-400">Provisioning Method</span>
+                <span className="text-right text-xs font-medium">
+                  {isManualConsoleMode
+                    ? `Link Console UID (${existingAuthUid.trim()})`
+                    : 'Isolated Spark Secondary Auth'}
+                </span>
+              </div>
+            )}
           </div>
 
           <div className="flex flex-wrap items-center justify-end gap-3">
@@ -311,6 +353,54 @@ export function CreateAccountModal({
             )}
           </div>
 
+          {firebaseConnected && (
+            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/70 p-3 space-y-2.5">
+              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                Spark Account Provisioning Method
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProvisioningMode('spark_secondary_auth');
+                    setFieldErrors((prev) => ({ ...prev, existingAuthUid: '' }));
+                  }}
+                  className={`rounded-lg border px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
+                    provisioningMode === 'spark_secondary_auth'
+                      ? 'border-[#7552D9] bg-[#F1EEFA] dark:bg-[#202844] text-[#17172B] dark:text-[#F8FAFC] font-semibold'
+                      : 'border-[#E5E7EF] dark:border-[#303A55] text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  Isolated Spark Auth (Recommended)
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    setProvisioningMode('manual_console_uid');
+                    setFieldErrors((prev) => ({ ...prev, initialPassword: '' }));
+                  }}
+                  className={`rounded-lg border px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
+                    provisioningMode === 'manual_console_uid'
+                      ? 'border-[#7552D9] bg-[#F1EEFA] dark:bg-[#202844] text-[#17172B] dark:text-[#F8FAFC] font-semibold'
+                      : 'border-[#E5E7EF] dark:border-[#303A55] text-slate-600 dark:text-slate-300'
+                  }`}
+                >
+                  Link Pre-Created Console UID
+                </button>
+              </div>
+              {isManualConsoleMode ? (
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Create this user in Firebase Console → Authentication → Users with email{' '}
+                  <span className="font-mono font-semibold">{derivedAuthEmail}</span>, then paste its UID below.
+                </p>
+              ) : (
+                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                  Creates the account in an isolated in-memory secondary Firebase App so your Admin session remains signed in. Unlinked Auth accounts without an Admin-written Firestore profile cannot access app data.
+                </p>
+              )}
+            </div>
+          )}
+
           <Input
             label={isStudent ? 'Student Name' : 'Teacher Name'}
             value={name}
@@ -323,47 +413,53 @@ export function CreateAccountModal({
           />
 
           {isStudent && (
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-                  Class (Demo Options)
-                </label>
-                <select
-                  value={classId}
-                  onChange={(e) => handleClassChange(e.target.value)}
-                  className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {classOptions.map((c) => (
-                    <option key={c.id} value={c.id}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-                {fieldErrors.classId && (
-                  <p className="text-xs text-red-700 dark:text-red-400">{fieldErrors.classId}</p>
-                )}
-              </div>
+            classOptions.length > 0 ? (
+              <div className="grid gap-4 sm:grid-cols-2">
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
+                    {firebaseConnected ? 'Class' : 'Class (Demo Options)'}
+                  </label>
+                  <select
+                    value={classId}
+                    onChange={(e) => handleClassChange(e.target.value)}
+                    className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                  >
+                    {classOptions.map((c) => (
+                      <option key={c.id} value={c.id}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </select>
+                  {fieldErrors.classId && (
+                    <p className="text-xs text-red-700 dark:text-red-400">{fieldErrors.classId}</p>
+                  )}
+                </div>
 
-              <div className="space-y-1.5">
-                <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                  Batch (Demo Options)
-                </label>
-                <select
-                  value={batchId}
-                  onChange={(e) => setBatchId(e.target.value)}
-                  className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {availableBatches.map((b) => (
-                    <option key={b.id} value={b.id}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-                {fieldErrors.batchId && (
-                  <p className="text-xs text-red-700 dark:text-red-400">{fieldErrors.batchId}</p>
-                )}
+                <div className="space-y-1.5">
+                  <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                    {firebaseConnected ? 'Batch' : 'Batch (Demo Options)'}
+                  </label>
+                  <select
+                    value={batchId}
+                    onChange={(e) => setBatchId(e.target.value)}
+                    className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                  >
+                    {availableBatches.map((b) => (
+                      <option key={b.id} value={b.id}>
+                        {b.name}
+                      </option>
+                    ))}
+                  </select>
+                  {fieldErrors.batchId && (
+                    <p className="text-xs text-red-700 dark:text-red-400">{fieldErrors.batchId}</p>
+                  )}
+                </div>
               </div>
-            </div>
+            ) : (
+              <p className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 px-3.5 py-2.5 text-xs text-[#687086] dark:text-[#A6B0C3]">
+                No active classes or batches are configured yet. You can create this student account now and assign their class/batch later under Academics.
+              </p>
+            )
           )}
 
           <div className="grid gap-4 sm:grid-cols-2">
@@ -393,28 +489,41 @@ export function CreateAccountModal({
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">
-            <Input
-              label="Initial Password"
-              type={showPassword ? 'text' : 'password'}
-              autoComplete="new-password"
-              value={initialPassword}
-              onChange={(e) => {
-                setInitialPassword(e.target.value);
-                setFieldErrors((prev) => ({ ...prev, initialPassword: '' }));
-              }}
-              placeholder="Minimum 8 characters"
-              error={fieldErrors.initialPassword}
-              rightElement={
-                <button
-                  type="button"
-                  onClick={() => setShowPassword((prev) => !prev)}
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                  className="w-9 h-9 inline-flex items-center justify-center rounded-md text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 cursor-pointer"
-                >
-                  {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                </button>
-              }
-            />
+            {isManualConsoleMode ? (
+              <Input
+                label="Firebase Auth UID"
+                value={existingAuthUid}
+                onChange={(e) => {
+                  setExistingAuthUid(e.target.value);
+                  setFieldErrors((prev) => ({ ...prev, existingAuthUid: '' }));
+                }}
+                placeholder="Paste UID from Firebase Console"
+                error={fieldErrors.existingAuthUid}
+              />
+            ) : (
+              <Input
+                label="Initial Password"
+                type={showPassword ? 'text' : 'password'}
+                autoComplete="new-password"
+                value={initialPassword}
+                onChange={(e) => {
+                  setInitialPassword(e.target.value);
+                  setFieldErrors((prev) => ({ ...prev, initialPassword: '' }));
+                }}
+                placeholder="Minimum 8 characters"
+                error={fieldErrors.initialPassword}
+                rightElement={
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword((prev) => !prev)}
+                    aria-label={showPassword ? 'Hide password' : 'Show password'}
+                    className="w-9 h-9 inline-flex items-center justify-center rounded-md text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 cursor-pointer"
+                  >
+                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                  </button>
+                }
+              />
+            )}
 
             <div className="space-y-1.5">
               <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
@@ -442,3 +551,4 @@ export function CreateAccountModal({
     </Modal>
   );
 }
+

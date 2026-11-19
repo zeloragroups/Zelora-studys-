@@ -209,7 +209,7 @@ export function AccountManagementModule() {
           <button
             type="button"
             onClick={() => setResetDialogAccount(row)}
-            title="Initiate password reset (Demo)"
+            title={isFirebaseConnectedMode() ? 'Password reset procedure' : 'Initiate password reset (Demo)'}
             aria-label={`Reset password for ${row.accountId}`}
             className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
           >
@@ -278,7 +278,7 @@ export function AccountManagementModule() {
       {/* Overview KPIs */}
       {overview && (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          <StatTile label="Total Teachers" value={overview.totalTeachers} caption="Demo records" />
+          <StatTile label="Total Teachers" value={overview.totalTeachers} caption={isFirebaseConnectedMode() ? 'Firestore account records' : 'Demo records'} />
           <StatTile label="Total Students" value={overview.totalStudents} caption="Shared parent access" />
           <StatTile label="Active Accounts" value={overview.activeAccounts} caption="Eligible to sign in" />
           <StatTile label="Inactive Accounts" value={overview.inactiveAccounts} caption="Access blocked" />
@@ -478,7 +478,7 @@ export function AccountManagementModule() {
       {overview && overview.recentAccounts.length > 0 && (
         <Card
           title="Recently Created Accounts"
-          subtitle="Latest provisioned IDs in the local development adapter"
+          subtitle={isFirebaseConnectedMode() ? 'Latest provisioned IDs in Cloud Firestore' : 'Latest provisioned IDs in the local development adapter'}
           padding="sm"
         >
           <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
@@ -574,7 +574,7 @@ export function AccountManagementModule() {
         accountService={accountService}
         onClose={() => setResetDialogAccount(null)}
         onResetLogged={() => {
-          showToast('DEMO ONLY: Password reset event logged in account audit history.');
+          showToast(isFirebaseConnectedMode() ? 'Password reset procedure logged in account audit history.' : 'DEMO ONLY: Password reset event logged in account audit history.');
           void loadData();
         }}
       />

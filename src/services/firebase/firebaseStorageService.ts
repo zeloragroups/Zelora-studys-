@@ -19,10 +19,77 @@ export interface UploadedLogoAsset {
   sizeBytes: number;
 }
 
+export interface StorageProbeResult {
+  available: boolean;
+  statusCode: number;
+  bucket: string | null;
+  message: string;
+}
+
 export class FirebaseStorageService implements IStorageService {
+  private cachedProbe: StorageProbeResult | null = null;
+  private cachedProbeAt = 0;
+
   isConnected(): boolean {
     const validation = validateAndResolveFirebaseConfig();
-    return validation.mode === 'FIREBASE_CONNECTED' && Boolean(getFirebaseStorage());
+    const hasSdk = validation.mode === 'FIREBASE_CONNECTED' && Boolean(getFirebaseStorage());
+    if (!hasSdk) return false;
+    if (this.cachedProbe) {
+      return this.cachedProbe.available;
+    }
+    return false;
+  }
+
+  async probeBucketAvailability(): Promise<StorageProbeResult> {
+    const now = Date.now();
+    if (this.cachedProbe && now - this.cachedProbeAt < 60_000) {
+      return this.cachedProbe;
+    }
+    const validation = validateAndResolveFirebaseConfig();
+    const bucket = validation.config?.storageBucket ?? null;
+    if (validation.mode !== 'FIREBASE_CONNECTED' || !bucket) {
+      this.cachedProbe = {
+        available: false,
+        statusCode: 0,
+        bucket,
+        message: 'Firebase Storage is not configured.',
+      };
+      this.cachedProbeAt = now;
+      return this.cachedProbe;
+    }
+    try {
+      const response = await fetch(
+        `https://firebasestorage.googleapis.com/v0/b/${encodeURIComponent(bucket)}/o?maxResults=1`,
+        { method: 'GET' }
+      );
+      if (response.status === 200 || response.status === 401 || response.status === 403) {
+        this.cachedProbe = {
+          available: true,
+          statusCode: response.status,
+          bucket,
+          message: `Storage bucket "${bucket}" reachable (HTTP ${response.status}).`,
+        };
+      } else {
+        this.cachedProbe = {
+          available: false,
+          statusCode: response.status,
+          bucket,
+          message:
+            response.status === 404
+              ? `Storage bucket "${bucket}" is not initialized for project academy-0007 (HTTP 404). Optional on Spark; core app data uses Cloud Firestore.`
+              : `Storage bucket "${bucket}" unavailable (HTTP ${response.status}).`,
+        };
+      }
+    } catch {
+      this.cachedProbe = {
+        available: false,
+        statusCode: 0,
+        bucket,
+        message: `Unable to reach Storage bucket "${bucket}". Core app features use Cloud Firestore.`,
+      };
+    }
+    this.cachedProbeAt = now;
+    return this.cachedProbe;
   }
 
   async uploadCentreLogo(

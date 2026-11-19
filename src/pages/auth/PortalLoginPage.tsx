@@ -15,7 +15,8 @@ interface PortalLoginPageProps {
  * Shared Teacher & Student Portal Login Page.
  * - Zero role-selection dropdowns.
  * - Automatically identifies whether the authenticated account belongs to a
- *   Teacher, Student (shared with Parent), or Admin and routes accordingly.
+ *   Teacher or Student (shared with Parent) and routes accordingly.
+ * - Never displays Admin login options or Admin information.
  */
 export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
   const { branding, publicSettings } = useInterface();
@@ -90,18 +91,6 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
         "Sign in with your assigned Teacher ID or Student ID. Parents use their child's Student ID and password."
       }
       onNavigateHome={() => onNavigate(ROUTES.HOME)}
-      footerLink={
-        <div className="flex flex-wrap items-center justify-between gap-2">
-          <span>Centre Administrator?</span>
-          <button
-            type="button"
-            onClick={() => onNavigate(ROUTES.ADMIN_LOGIN)}
-            className="font-medium text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
-          >
-            Go to Admin Portal
-          </button>
-        </div>
-      }
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
         {authNotice && !formError && (

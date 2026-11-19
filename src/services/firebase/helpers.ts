@@ -14,7 +14,7 @@ import {
 } from '../../lib/firebase/firestore';
 import type { AuthPrincipal, UserRole } from '../../types';
 
-export const BOOTSTRAPPED_ADMIN_EMAIL = 'toutionacademy@gmail.com';
+export const BOOTSTRAPPED_ADMIN_EMAIL = '07alphabro@gmail.com';
 
 let cachedAdminUids: string[] | null = null;
 let cachedAtMs = 0;

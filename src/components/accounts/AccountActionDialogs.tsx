@@ -6,6 +6,7 @@ import type {
   DemoPasswordResetReceipt,
 } from '../../types';
 import type { IAccountManagementService } from '../../services/contracts/accountService';
+import { isFirebaseConnectedMode } from '../../services';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 
@@ -119,6 +120,7 @@ export function PasswordResetDemoDialog({
   const [submitting, setSubmitting] = useState(false);
   const [receipt, setReceipt] = useState<DemoPasswordResetReceipt | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const firebaseConnected = isFirebaseConnectedMode();
 
   if (!account) {
     return null;
@@ -149,7 +151,7 @@ export function PasswordResetDemoDialog({
     <Modal
       open={open}
       onClose={handleClose}
-      title="Initiate Password Reset (DEMO ONLY)"
+      title={firebaseConnected ? 'Password Reset Procedure (Spark Plan)' : 'Initiate Password Reset (DEMO ONLY)'}
       subtitle={`${account.name} · ${account.accountId}`}
     >
       {receipt ? (
@@ -158,6 +160,26 @@ export function PasswordResetDemoDialog({
             <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
             <p className="leading-relaxed">{receipt.notice}</p>
           </div>
+          {receipt.authEmail && (
+            <div className="rounded-lg border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/70 px-3.5 py-2.5 text-xs">
+              <span className="text-slate-500 dark:text-slate-400">Firebase Auth Login Email: </span>
+              <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">
+                {receipt.authEmail}
+              </span>
+            </div>
+          )}
+          {receipt.manualSteps && receipt.manualSteps.length > 0 && (
+            <div className="space-y-2 rounded-lg border border-[#E5E7EF] dark:border-[#303A55] p-3.5">
+              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+                Manual Firebase Console Reset Steps
+              </p>
+              <ol className="list-decimal pl-5 space-y-1 text-xs text-slate-700 dark:text-slate-300">
+                {receipt.manualSteps.map((stepText, idx) => (
+                  <li key={idx}>{stepText}</li>
+                ))}
+              </ol>
+            </div>
+          )}
           <div className="flex justify-end">
             <Button onClick={handleClose}>Done</Button>
           </div>
@@ -168,10 +190,12 @@ export function PasswordResetDemoDialog({
             <KeyRound className="w-5 h-5 text-[#7552D9] dark:text-[#A78BFA] shrink-0 mt-0.5" aria-hidden="true" />
             <div className="space-y-2">
               <p>
-                Admin cannot view or retrieve existing passwords. Initiating a reset logs a secure reset request in the audit trail.
+                Admin cannot view or retrieve existing passwords. Logging a reset records an immutable entry in the account audit trail.
               </p>
               <p className="text-xs text-slate-500 dark:text-slate-400">
-                DEMO ONLY: No actual email, SMS, or external notification is sent while Firebase Authentication is disconnected.
+                {firebaseConnected
+                  ? 'On the Firebase Spark (free) plan without Admin SDK Cloud Functions, resetting another user\'s password requires Firebase Console access. Teachers and students can change their own password anytime under Account & Preferences.'
+                  : 'DEMO ONLY: No actual email, SMS, or external notification is sent while Firebase Authentication is disconnected.'}
               </p>
             </div>
           </div>
@@ -187,7 +211,7 @@ export function PasswordResetDemoDialog({
               Cancel
             </Button>
             <Button onClick={handleInitiate} loading={submitting}>
-              Initiate Demo Reset
+              {firebaseConnected ? 'Log Reset & View Console Steps' : 'Initiate Demo Reset'}
             </Button>
           </div>
         </div>

@@ -121,10 +121,10 @@ export class FirebaseAttendanceService implements IAttendanceService {
                 where('status', '==', 'active')
               )
             ),
-        getDocs(collection(db, 'classes')),
-        getDocs(collection(db, 'batches')),
-        getDocs(collection(db, 'subjects')),
-        getDocs(collection(db, 'timetableEntries')),
+        getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'timetableEntries'), where('status', 'in', ['active', 'cancelled']))),
       ]);
 
       const assignments = asgSnap.docs.map((d) => d.data() as TeacherAssignment);
@@ -163,16 +163,20 @@ export class FirebaseAttendanceService implements IAttendanceService {
 
     return withFirestoreErrorHandling(OperationType.LIST, 'enrolments', async () => {
       const snap = await getDocs(
-        query(
-          collection(db, 'enrolments'),
-          where('batchId', '==', params.batchId),
-          where('status', '==', 'active')
-        )
+        teacher.role === 'admin'
+          ? query(
+              collection(db, 'enrolments'),
+              where('batchId', '==', params.batchId),
+              where('status', '==', 'active')
+            )
+          : query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', teacher.uid))
       );
       return snap.docs
         .map((d) => d.data())
         .filter(
           (e) =>
+            e.status === 'active' &&
+            e.batchId === params.batchId &&
             e.classId === params.classId &&
             (teacher.role === 'admin' ||
               (Array.isArray(e.teacherUids) && e.teacherUids.includes(teacher.uid)))
@@ -188,16 +192,27 @@ export class FirebaseAttendanceService implements IAttendanceService {
 
   private async buildSessionDetails(
     db: ReturnType<typeof requireFirestoreDb>,
-    sessions: AttendanceSession[]
+    sessions: AttendanceSession[],
+    actor: AuthPrincipal
   ): Promise<AttendanceSessionDetail[]> {
     if (sessions.length === 0) return [];
     const [clsSnap, batSnap, subSnap, recSnap, audSnap, enrSnap] = await Promise.all([
-      getDocs(collection(db, 'classes')),
-      getDocs(collection(db, 'batches')),
-      getDocs(collection(db, 'subjects')),
-      getDocs(collection(db, 'attendanceRecords')),
-      getDocs(collection(db, 'attendanceAudit')).catch(() => null),
-      getDocs(collection(db, 'enrolments')).catch(() => null),
+      getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
+      getDocs(
+        actor.role === 'admin'
+          ? collection(db, 'attendanceRecords')
+          : query(collection(db, 'attendanceRecords'), where('teacherUid', '==', actor.uid))
+      ),
+      actor.role === 'admin'
+        ? getDocs(collection(db, 'attendanceAudit')).catch(() => null)
+        : Promise.resolve(null),
+      getDocs(
+        actor.role === 'admin'
+          ? collection(db, 'enrolments')
+          : query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', actor.uid))
+      ).catch(() => null),
     ]);
 
     const clsMap = new Map(clsSnap.docs.map((d) => [d.id, d.data().name as string]));
@@ -249,7 +264,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
       const sessions = snap.docs
         .map((d) => d.data() as AttendanceSession)
         .sort((a, b) => b.sessionDate.localeCompare(a.sessionDate));
-      return this.buildSessionDetails(db, sessions);
+      return this.buildSessionDetails(db, sessions, teacher);
     });
   }
 
@@ -325,15 +340,18 @@ export class FirebaseAttendanceService implements IAttendanceService {
 
     // Resolve student UIDs from enrolments for ownership fields
     const enrSnap = await getDocs(
-      query(
-        collection(db, 'enrolments'),
-        where('batchId', '==', input.batchId),
-        where('status', '==', 'active')
-      )
+      actor.role === 'admin'
+        ? query(
+            collection(db, 'enrolments'),
+            where('batchId', '==', input.batchId),
+            where('status', '==', 'active')
+          )
+        : query(collection(db, 'enrolments'), where('teacherUids', 'array-contains', actor.uid))
     );
     const studentMeta = new Map<string, { uid: string; name: string }>();
     for (const d of enrSnap.docs) {
       const e = d.data();
+      if (e.status !== 'active' || e.batchId !== input.batchId) continue;
       studentMeta.set(String(e.studentAccountId).toUpperCase(), {
         uid: String(e.studentUid || ''),
         name: String(e.studentName || e.studentAccountId),
@@ -467,13 +485,13 @@ export class FirebaseAttendanceService implements IAttendanceService {
     actor: AuthPrincipal | null,
     sessionId: string
   ): Promise<AttendanceSessionDetail> {
-    this.ensureTeacherOrAdmin(actor);
+    const teacher = this.ensureTeacherOrAdmin(actor);
     const db = requireFirestoreDb();
     const snap = await getDoc(doc(db, 'attendanceSessions', sessionId));
     if (!snap.exists()) {
       throw new AttendanceServiceError('NOT_FOUND', `Attendance session "${sessionId}" not found.`);
     }
-    const details = await this.buildSessionDetails(db, [snap.data() as AttendanceSession]);
+    const details = await this.buildSessionDetails(db, [snap.data() as AttendanceSession], teacher);
     return details[0];
   }
 
@@ -577,10 +595,10 @@ export class FirebaseAttendanceService implements IAttendanceService {
     return withFirestoreErrorHandling(OperationType.LIST, 'attendanceRecords', async () => {
       const [recSnap, sesSnap, clsSnap, batSnap, subSnap, notifSnap] = await Promise.all([
         getDocs(query(collection(db, 'attendanceRecords'), where('studentUid', '==', student.uid))),
-        getDocs(collection(db, 'attendanceSessions')),
-        getDocs(collection(db, 'classes')),
-        getDocs(collection(db, 'batches')),
-        getDocs(collection(db, 'subjects')),
+        getDocs(query(collection(db, 'attendanceSessions'), where('status', 'in', ['submitted', 'corrected']))),
+        getDocs(query(collection(db, 'classes'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'batches'), where('status', 'in', ['active', 'inactive']))),
+        getDocs(query(collection(db, 'subjects'), where('status', 'in', ['active', 'inactive']))),
         getDocs(
           query(collection(db, 'attendanceNotifications'), where('studentUid', '==', student.uid))
         ),
@@ -726,7 +744,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
     actor: AuthPrincipal | null,
     filter?: AdminAttendanceFilter
   ): Promise<AttendanceSessionDetail[]> {
-    this.ensureAdmin(actor);
+    const admin = this.ensureAdmin(actor);
     const db = requireFirestoreDb();
     const snap = await getDocs(collection(db, 'attendanceSessions'));
     let sessions = snap.docs.map((d) => d.data() as AttendanceSession);
@@ -750,7 +768,8 @@ export class FirebaseAttendanceService implements IAttendanceService {
     }
     const details = await this.buildSessionDetails(
       db,
-      sessions.sort((a, b) => b.sessionDate.localeCompare(a.sessionDate))
+      sessions.sort((a, b) => b.sessionDate.localeCompare(a.sessionDate)),
+      admin
     );
     const search = filter?.studentIdSearch?.trim().toLowerCase();
     if (search) {
