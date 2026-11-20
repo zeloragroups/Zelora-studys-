@@ -10,9 +10,11 @@ import {
   type IAccountManagementService,
 } from '../../services/contracts/accountService';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { Select } from '../ui/Select';
 
 interface EditAccountModalProps {
   open: boolean;
@@ -126,24 +128,20 @@ export function EditAccountModal({
     >
       <div className="space-y-4">
         {/* Immutable Reference Header */}
-        <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F1EEFA]/70 dark:bg-[#101426] px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+        <div className="rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
             {account.accountId}
           </span>
-          <span className="text-[#687086] dark:text-[#A6B0C3] capitalize">
+          <span className="text-[#68737C] dark:text-[#AAB6B4] capitalize">
             {account.role} · Created {formatShortDate(account.createdAt)}
           </span>
         </div>
 
-        {formError && (
-          <p role="alert" className="text-xs font-medium text-red-700 dark:text-red-400">
-            {formError}
-          </p>
-        )}
+        {formError && <Alert tone="error">{formError}</Alert>}
 
         {confirming ? (
           <div className="space-y-4">
-            <p className="text-sm text-slate-700 dark:text-slate-300">
+            <p className="text-sm text-[#343C42] dark:text-[#D4DDDC]">
               Confirm updating profile details for{' '}
               <strong className="font-mono">{account.accountId}</strong> ({name.trim()})?
             </p>
@@ -174,38 +172,28 @@ export function EditAccountModal({
 
             {isStudent && (
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-                    Class
-                  </label>
-                  <select
-                    value={classId}
-                    onChange={(e) => handleClassChange(e.target.value)}
-                    className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                  >
-                    {classOptions.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
-                <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                    Batch
-                  </label>
-                  <select
-                    value={batchId}
-                    onChange={(e) => setBatchId(e.target.value)}
-                    className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                  >
-                    {availableBatches.map((b) => (
-                      <option key={b.id} value={b.id}>
-                        {b.name}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                <Select
+                  label="Class"
+                  value={classId}
+                  onChange={(e) => handleClassChange(e.target.value)}
+                >
+                  {classOptions.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </Select>
+                <Select
+                  label="Batch"
+                  value={batchId}
+                  onChange={(e) => setBatchId(e.target.value)}
+                >
+                  {availableBatches.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </Select>
               </div>
             )}
 

@@ -23,13 +23,19 @@ export function Modal({
     if (!open) {
       return;
     }
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         onClose();
       }
     };
     window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    return () => {
+      document.body.style.overflow = previousOverflow;
+      window.removeEventListener('keydown', handleKeyDown);
+    };
   }, [open, onClose]);
 
   return (
@@ -47,27 +53,27 @@ export function Modal({
             exit={{ opacity: 0 }}
             transition={{ duration: 0.16 }}
             onClick={onClose}
-            className="fixed inset-0 bg-[#101426]/65 backdrop-blur-[2px]"
+            className="fixed inset-0 bg-[#151A1E]/65 backdrop-blur-[2px]"
             aria-hidden="true"
           />
 
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.98 }}
+            initial={{ opacity: 0, y: 8, scale: 0.985 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
-            exit={{ opacity: 0, y: 6, scale: 0.98 }}
+            exit={{ opacity: 0, y: 6, scale: 0.985 }}
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-            className={`relative z-10 w-full ${maxWidthClass} rounded-2xl bg-white dark:bg-[#171D34] border border-[#E5E7EF] dark:border-[#303A55] shadow-xl my-auto`}
+            className={`relative z-10 w-full ${maxWidthClass} rounded-2xl bg-white dark:bg-[#1D2429] border border-[#E2E8E5] dark:border-[#344047] shadow-xl my-auto`}
           >
-            <header className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6 border-b border-[#E5E7EF] dark:border-[#303A55]">
+            <header className="flex items-start justify-between gap-4 px-5 py-4 sm:px-6 border-b border-[#E2E8E5] dark:border-[#344047]">
               <div className="min-w-0">
                 <h2
                   id="modal-title"
-                  className="text-base sm:text-lg font-semibold text-[#17172B] dark:text-[#F8FAFC] tracking-tight"
+                  className="text-base sm:text-lg font-semibold text-[#171D21] dark:text-[#F4F7F6] tracking-tight"
                 >
                   {title}
                 </h2>
                 {subtitle && (
-                  <p className="mt-1 text-xs sm:text-sm text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="mt-1 text-xs sm:text-sm text-[#68737C] dark:text-[#AAB6B4]">
                     {subtitle}
                   </p>
                 )}
@@ -76,9 +82,9 @@ export function Modal({
                 type="button"
                 onClick={onClose}
                 aria-label="Close dialog"
-                className="w-10 h-10 -mr-1 inline-flex items-center justify-center rounded-xl text-[#687086] hover:text-[#17172B] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] transition-colors cursor-pointer shrink-0"
+                className="w-10 h-10 -mr-1 inline-flex items-center justify-center rounded-xl text-[#68737C] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] transition-colors cursor-pointer shrink-0 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]"
               >
-                <X className="w-4 h-4" aria-hidden="true" />
+                <X className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
               </button>
             </header>
 

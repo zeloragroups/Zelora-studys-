@@ -3,49 +3,73 @@
 
 @layer base {
   :root {
+    color-scheme: light;
     --font-display: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
     --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-    /* Light Theme Tokens */
-    --bg-canvas: #F8F9FC;
-    --bg-secondary: #F1EEFA;
+    /* Scholars Academy 60/30/10 Light Theme Tokens */
+    --bg-canvas: #F7F9F8;
     --bg-surface: #FFFFFF;
-    --bg-elevated: #F1EEFA;
-    --border-subtle: #E5E7EF;
-    --text-main: #17172B;
-    --text-secondary: #434960;
-    --text-muted: #687086;
+    --bg-secondary: #F0F4F2;
+    --bg-elevated: #FFFFFF;
+    --border-subtle: #E2E8E5;
 
-    --accent: #7552D9;
-    --accent-hover: #6441C8;
-    --accent-soft: #A78BFA;
-    --accent-tint: rgba(117, 82, 217, 0.10);
+    --charcoal-primary: #20262B;
+    --charcoal-deep: #171D21;
+    --charcoal-secondary: #343C42;
 
-    --status-success: #168A62;
-    --status-warning: #B7791F;
-    --status-error: #D94C5C;
+    --text-main: #171D21;
+    --text-secondary: #343C42;
+    --text-muted: #68737C;
+
+    --accent: #35D6A0;
+    --accent-hover: #18B985;
+    --accent-text: #168A63;
+    --accent-soft: #DDF8EE;
+    --accent-border: #B8EBD8;
+    --accent-tint: rgba(53, 214, 160, 0.14);
+
+    --status-success: #168A63;
+    --status-warning: #D69B35;
+    --status-error: #D64C55;
+    --status-info: #4285A5;
+
+    --shadow-subtle: 0 1px 2px rgba(23, 29, 33, 0.03);
+    --focus-ring: rgba(24, 185, 133, 0.35);
   }
 
   .dark {
-    /* Dark Navy + Electric Purple Tokens */
-    --bg-canvas: #101426;
-    --bg-secondary: #171D34;
-    --bg-surface: #171D34;
-    --bg-elevated: #202844;
-    --border-subtle: #303A55;
-    --text-main: #F8FAFC;
-    --text-secondary: #D4DCEB;
-    --text-muted: #A6B0C3;
+    color-scheme: dark;
+    /* Scholars Academy Intentionally Tuned Dark Theme Tokens */
+    --bg-canvas: #151A1E;
+    --bg-surface: #1D2429;
+    --bg-secondary: #252E33;
+    --bg-elevated: #2B353A;
+    --border-subtle: #344047;
 
-    --accent: #8B5CF6;
-    --accent-hover: #7C3AED;
-    --accent-soft: #A78BFA;
-    --accent-tint: rgba(139, 92, 246, 0.16);
+    --charcoal-primary: #252E33;
+    --charcoal-deep: #151A1E;
+    --charcoal-secondary: #2B353A;
 
-    --status-success: #22C58B;
-    --status-warning: #F5B942;
-    --status-error: #F16B75;
+    --text-main: #F4F7F6;
+    --text-secondary: #D4DDDC;
+    --text-muted: #AAB6B4;
+
+    --accent: #42DDA9;
+    --accent-hover: #35D6A0;
+    --accent-text: #42DDA9;
+    --accent-soft: #244B3E;
+    --accent-border: #316453;
+    --accent-tint: rgba(66, 221, 169, 0.16);
+
+    --status-success: #42DDA9;
+    --status-warning: #E5B04D;
+    --status-error: #EF6D75;
+    --status-info: #62A7C7;
+
+    --shadow-subtle: none;
+    --focus-ring: rgba(66, 221, 169, 0.32);
   }
 
   html {
@@ -56,10 +80,15 @@
     -webkit-tap-highlight-color: transparent;
   }
 
+  .dark body {
+    letter-spacing: 0.005em;
+  }
+
   body {
     background-color: var(--bg-canvas);
     color: var(--text-main);
     min-height: 100dvh;
+    overflow-x: hidden;
   }
 
   h1, h2, h3, h4, .font-display {
@@ -69,6 +98,12 @@
   .font-mono {
     font-family: var(--font-mono);
   }
+
+  input,
+  select,
+  textarea {
+    color-scheme: inherit;
+  }
 }
 
 .tabular-nums {
@@ -77,6 +112,15 @@
 
 .text-balance {
   text-wrap: balance;
+}
+
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -92,13 +136,13 @@
   .no-print,
   aside,
   header,
-  nav[aria-label="Mobile quick navigation"] {
+  nav[aria-label="Primary mobile navigation"] {
     display: none !important;
   }
 
   body {
     background: #FFFFFF !important;
-    color: #17172B !important;
+    color: #171D21 !important;
   }
 
   main {
@@ -107,10 +151,9 @@
   }
 
   .print-surface {
-    border: 1px solid #D1D5DB !important;
+    border: 1px solid #D1DBD6 !important;
     box-shadow: none !important;
     background: #FFFFFF !important;
-    color: #17172B !important;
+    color: #171D21 !important;
   }
 }
-

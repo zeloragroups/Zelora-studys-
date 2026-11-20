@@ -1,0 +1,1378 @@
+SCHOLARS ACADEMY — COMPLETE PREMIUM UI/UX TRANSFORMATION
+
+Project: $10 Million-Class Product Design | Full Application Redesign
+
+PRIMARY OBJECTIVE
+
+Transform the existing Scholars Academy Tuition Centre Management Ecosystem into an exceptionally polished, premium, professional education management platform.
+
+The quality target is comparable to a product designed and developed by a highly experienced international product-design agency.
+
+This must not look like:
+
+- A generic AI-generated dashboard.
+- A basic tuition management template.
+- A collection of unrelated cards.
+- A typical admin panel with default components.
+- A cheap mobile application with inconsistent icons.
+- A website template with only different colours.
+
+It must feel like a carefully designed, commercially valuable software product.
+
+Use the supplied visual reference as the foundation:
+
+- Premium fintech-inspired visual language.
+- Clean white surfaces.
+- Deep charcoal sections.
+- Fresh mint-green accents.
+- Beautifully balanced spacing.
+- Refined typography.
+- Sophisticated card layouts.
+- High-quality navigation.
+- Elegant transitions and interactions.
+
+Adapt this visual language to an education management ecosystem. Do not copy financial application content or financial application layouts blindly.
+
+The result should be recognizably Scholars Academy, with a distinctive and consistent visual identity.
+
+---
+
+1. NON-NEGOTIABLE PROJECT PRESERVATION
+
+This is a visual and UX transformation, not a new application.
+
+The existing application already contains substantial functionality across Phases 1–10.
+
+Before making changes:
+
+1. Inspect the complete existing repository.
+2. Understand the current application architecture.
+3. Inspect all three role-based interfaces.
+4. Inspect existing routes and navigation.
+5. Inspect existing components and design tokens.
+6. Inspect Firebase integration and service contracts.
+7. Inspect existing Firestore collections and security rules.
+8. Identify reusable components.
+9. Identify existing UI inconsistencies.
+10. Prepare a screen-by-screen redesign plan.
+
+Do not start by replacing the application with a new dashboard.
+
+Preserve the existing technology stack
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+- Firebase Authentication.
+- Cloud Firestore.
+- Firebase Storage where currently supported.
+
+Do not introduce PostgreSQL, another database, an unnecessary UI framework, paid AI APIs or an unnecessary backend.
+
+Preserve existing functionality
+
+Do not delete or break:
+
+- Admin account management.
+- Teacher account management.
+- Student account management.
+- Classes and batches.
+- Subjects.
+- Enrolments.
+- Teacher assignments.
+- Timetable.
+- Announcements.
+- Attendance.
+- Absence notifications.
+- Homework.
+- Homework submissions.
+- Objective tests.
+- Examinations.
+- Marks and results.
+- Student portal.
+- Fee configurations.
+- UPI payment preparation.
+- Payment claims.
+- Admin payment verification.
+- Receipts.
+- Teacher salary.
+- Financial reports.
+- Notifications.
+- Application branding.
+- Admin settings.
+- Data migration.
+
+Do not replace working functionality with static mockups.
+
+All redesigned screens must continue to use the existing service layer.
+
+---
+
+2. PRODUCT DESIGN IDENTITY
+
+Create a distinctive design system for Scholars Academy.
+
+The visual direction is premium fintech-inspired minimalism adapted for education technology.
+
+The interface should feel calm, intelligent, confident, organised and expensive.
+
+Avoid visual noise.
+
+Every visual element must have a clear purpose.
+
+Core design principles
+
+1. Clarity before decoration.
+2. Premium simplicity rather than excessive visual effects.
+3. Strong information hierarchy.
+4. Consistent spacing.
+5. Purposeful use of colour.
+6. High-quality iconography.
+7. Excellent readability.
+8. Responsive layouts.
+9. Consistent behaviour across all roles.
+10. Professional details throughout the entire application.
+
+The Admin, Teacher and Student interfaces must look like three products belonging to the same premium software ecosystem.
+
+They must not look like three separately designed templates.
+
+---
+
+3. COLOUR SYSTEM — 60/30/10 RULE
+
+Use the 60-30-10 colour principle.
+
+The palette must be consistent across all application screens.
+
+Light theme
+
+Primary 60% — Main surfaces
+
+- Background: #F7F9F8
+- Main content surface: #FFFFFF
+- Secondary surface: #F0F4F2
+
+Use these for the main application background, page surfaces and large content areas.
+
+Secondary 30% — Charcoal
+
+- Primary charcoal: #20262B
+- Deep charcoal: #171D21
+- Secondary charcoal: #343C42
+
+Use charcoal for strong headings, navigation elements, selected dark surfaces and visual contrast.
+
+Accent 10% — Mint green
+
+- Primary mint: #35D6A0
+- Deep mint: #18B985
+- Soft mint: #DDF8EE
+- Mint border: #B8EBD8
+
+Use mint green for primary actions, selected states, progress indicators and important positive highlights.
+
+Do not colour every icon, heading or card green.
+
+Mint must remain an accent, not the entire interface.
+
+Supporting colours
+
+Use restrained semantic colours:
+
+- Success: #168A63
+- Warning: #D69B35
+- Error: #D64C55
+- Information: #4285A5
+- Neutral text: #68737C
+
+Ensure text contrast meets WCAG AA wherever practical.
+
+Do not use colour as the only method of communicating status.
+
+Dark theme
+
+Create a separately tuned dark theme using the same visual identity.
+
+- Main background: #151A1E
+- Main surface: #1D2429
+- Secondary surface: #252E33
+- Elevated surface: #2B353A
+- Primary text: #F4F7F6
+- Secondary text: #AAB6B4
+- Primary mint: #42DDA9
+- Soft mint: #244B3E
+- Border: #344047
+
+Dark mode must feel intentionally designed.
+
+Do not simply invert the light theme.
+
+Preserve readable contrast, subtle surface differences and carefully controlled highlights.
+
+Theme requirements
+
+- Retain the existing Light/Dark theme switch.
+- Retain existing theme persistence.
+- Ensure every module uses the same design tokens.
+- Avoid hardcoded colours scattered across components.
+- Do not introduce purple as the main accent.
+- Do not introduce unnecessary gradients.
+- Do not use bright green everywhere.
+- Do not use excessive glassmorphism.
+
+---
+
+4. TYPOGRAPHY SYSTEM
+
+Replace inconsistent typography with a cohesive professional type system.
+
+Use a refined modern sans-serif family.
+
+Suggested direction:
+
+- Inter.
+- Manrope.
+- Another suitable professional font already available in the project.
+
+Choose a suitable font with strong readability across English text, numbers and dashboard data.
+
+Define a consistent typography scale.
+
+Typography hierarchy
+
+- Main page heading: 30–36px desktop, responsive on mobile.
+- Section heading: 20–24px.
+- Card heading: 15–18px.
+- Body text: 14–16px.
+- Supporting text: 12–14px.
+- Small labels: 11–12px.
+- Financial values and key metrics: clear, readable and visually distinguished.
+
+Do not make every heading bold.
+
+Use font weight intentionally.
+
+Ensure consistent line heights and letter spacing.
+
+Avoid oversized headings that push important information below the fold on mobile.
+
+Use tabular numbers for financial amounts, counts, percentages and other comparable values.
+
+---
+
+5. COMPLETE ICONOGRAPHY TRANSFORMATION
+
+The current application icons must be redesigned consistently.
+
+Use Lucide React as the primary icon family.
+
+Requirements:
+
+- Use consistent stroke widths.
+- Use consistent icon dimensions.
+- Use appropriate optical alignment.
+- Use icons that accurately represent their actions.
+- Avoid mixing unrelated icon families.
+- Avoid emoji as interface icons.
+- Avoid decorative icons without meaning.
+- Avoid oversized icons inside every card.
+- Use restrained accent colours.
+- Use filled backgrounds only when they improve visual hierarchy.
+
+Create a reusable icon system with consistent sizes:
+
+- Small: 16px.
+- Standard: 20px.
+- Navigation: 21–23px.
+- Feature illustration: 28–32px.
+
+Selected navigation icons can use a more distinctive treatment.
+
+Do not use random colours for icons.
+
+Ensure icons remain understandable without relying only on tooltips.
+
+---
+
+6. APPLICATION SHELL AND NAVIGATION
+
+Redesign the shared application shell.
+
+All three roles must use a consistent design language.
+
+Desktop
+
+Create a premium desktop experience.
+
+- Refined sidebar.
+- Carefully organised navigation groups.
+- Clear active navigation state.
+- Consistent spacing.
+- Professional top header.
+- Responsive content width.
+- Clear page titles.
+- Breadcrumbs where genuinely useful.
+- Proper page-level actions.
+
+The sidebar must not look like a generic template.
+
+Use restrained selected states and excellent typography.
+
+Mobile and tablet
+
+Create a polished mobile-first experience.
+
+- Comfortable touch targets.
+- Clear header.
+- Responsive slide-over navigation drawer.
+- Proper safe-area spacing.
+- No horizontal overflow.
+- No clipped cards.
+- No unnecessarily compressed text.
+- No tiny controls.
+- No overlapping elements.
+
+Bottom navigation
+
+Preserve the existing five-slot bottom navigation design.
+
+Preserve the slightly prominent centered Home button.
+
+Maintain the current role-specific navigation destinations.
+
+Keep Profile out of the bottom navigation.
+
+Do not add Quick Actions.
+
+Do not add new navigation destinations without a functional reason.
+
+Top-right header controls
+
+Preserve the theme toggle.
+
+Keep the Profile button in the top-right corner.
+
+The Profile button must open the existing Profile page.
+
+Remove the Logout/Sign Out icon button from the top-right header.
+
+Do not reintroduce a top-right Back button.
+
+Do not remove actual Firebase sign-out functionality. Keep sign-out accessible from the existing Profile/account interface.
+
+Ensure the remaining header buttons have excellent spacing and alignment.
+
+---
+
+7. ADMIN WEB APP — COMPLETE REDESIGN
+
+Redesign the entire Admin Web App.
+
+The Admin interface should feel like a premium institutional management platform.
+
+Do not add a separate Admin Website.
+
+Do not mix Admin navigation or Admin information into the Teacher/Student portal.
+
+Admin dashboard
+
+Create a sophisticated overview with:
+
+- Centre identity.
+- Academic session.
+- Welcome message.
+- Student count.
+- Teacher count.
+- Active classes.
+- Attendance overview.
+- Financial summary.
+- Pending payment claims.
+- Relevant notifications.
+- Useful recent activity.
+
+Use carefully designed data visualizations.
+
+Do not overcrowd the dashboard.
+
+Do not reintroduce Quick Actions.
+
+Do not display meaningless demo statistics as real information.
+
+Use actual data from existing services.
+
+If information is unavailable, display a professional empty or unavailable state.
+
+Metric cards
+
+Design distinctive metric cards with:
+
+- Clear label.
+- Prominent value.
+- Supporting context.
+- Relevant icon.
+- Optional trend information only when actual historical data exists.
+
+Avoid unnecessary decoration.
+
+Charts
+
+Create polished visualizations for:
+
+- Attendance trends.
+- Student enrolment trends.
+- Fee collection.
+- Pending payments.
+- Academic performance.
+- Financial summaries.
+
+Use existing data.
+
+Never invent chart values.
+
+Provide useful empty states when there is insufficient data.
+
+Admin Accounts
+
+Redesign:
+
+- Student accounts.
+- Teacher accounts.
+- Account creation.
+- Account editing.
+- Account status.
+- Password reset workflows.
+- Account audit history.
+
+Use clear, structured forms.
+
+Make account status easy to understand.
+
+Academics
+
+Redesign:
+
+- Classes.
+- Batches.
+- Subjects.
+- Enrolments.
+- Teacher assignments.
+- Timetable.
+- Announcements.
+
+Use professional data tables on desktop and carefully designed cards or responsive tables on mobile.
+
+Attendance
+
+Redesign:
+
+- Attendance overview.
+- Session creation.
+- Student attendance.
+- Absence records.
+- Attendance correction.
+- Attendance audit history.
+
+Use clear present/absent/late indicators.
+
+Assessments
+
+Redesign:
+
+- Homework management.
+- Homework submissions.
+- Objective tests.
+- Examinations.
+- Marks entry.
+- Result publication.
+
+Make academic information easy to scan.
+
+Finance
+
+Finance is an important part of the application.
+
+Design:
+
+- Fee configuration.
+- Student fee accounts.
+- UPI payment preparation.
+- Payment claims.
+- Payment verification.
+- Receipts.
+- Teacher salary configuration.
+- Salary periods.
+- Salary payments.
+- Financial reports.
+
+Use excellent financial typography.
+
+Keep payment status visually clear.
+
+Preserve the existing direct UPI workflow.
+
+Do not add Razorpay or a payment gateway.
+
+Do not claim automatic bank verification.
+
+Admin Settings
+
+Create a refined settings experience.
+
+Preserve all existing settings.
+
+Organise settings into logical sections.
+
+The authorized Admin must be able to manage existing configurable options, including:
+
+- Authorized Admin Gmail.
+- UPI ID.
+- Application name.
+- Application tagline.
+- Centre details.
+- Logo and branding.
+- Academic defaults.
+- Theme preferences.
+- System configuration.
+
+Only the authorized Admin may edit these settings.
+
+Any change to the authorized Admin Gmail must require secure reauthentication and confirmation through a trusted authorization process.
+
+Never allow a frontend-only change to grant Admin privileges.
+
+---
+
+8. TEACHER WEB APP — COMPLETE REDESIGN
+
+The Teacher experience should be professional, calm and easy to use.
+
+Teachers should be able to complete daily tasks without unnecessary navigation.
+
+Redesign:
+
+- Teacher dashboard.
+- Assigned classes.
+- Timetable.
+- Attendance.
+- Homework.
+- Homework submissions.
+- Tests.
+- Examinations.
+- Marks entry.
+- Results where authorized.
+- Notifications.
+- Salary information.
+- Profile.
+
+Teacher dashboard
+
+Display relevant information:
+
+- Welcome message.
+- Assigned classes.
+- Today's timetable.
+- Attendance overview.
+- Pending homework reviews.
+- Upcoming assessments.
+- Recent notifications.
+
+Do not display Admin-only statistics.
+
+Do not reintroduce Quick Actions.
+
+Teacher attendance
+
+Create a polished attendance interface.
+
+- Easy student identification.
+- Clear present/absent selection.
+- Clear attendance summary.
+- Easy correction where authorized.
+- Confirmation before submission.
+- Professional success and error feedback.
+
+Teacher homework
+
+Design:
+
+- Homework creation.
+- Class and subject selection.
+- Instructions.
+- Due date.
+- Submission overview.
+- Student submission review.
+
+Preserve existing text-only homework requirements.
+
+Do not add a study-material library or file upload feature.
+
+Teacher assessments
+
+Design professional examination and marks-entry interfaces.
+
+Use clear student rows, score fields, validation and submission confirmation.
+
+Protect answer keys and private teacher notes.
+
+Teacher salary
+
+Create a clean salary overview with:
+
+- Salary periods.
+- Payment status.
+- Salary history.
+- Available receipts or records.
+
+Teachers must never see other Teachers' private salary information.
+
+---
+
+9. STUDENT WEB APP — COMPLETE REDESIGN
+
+The Student interface should feel welcoming, modern, simple and premium.
+
+It must be easy for students and parents using the student's account.
+
+Redesign:
+
+- Student dashboard.
+- Homework.
+- Homework submissions.
+- Tests.
+- Examinations.
+- Results.
+- Attendance.
+- Fees.
+- Payment instructions.
+- Payment claims.
+- Receipts.
+- Announcements.
+- Notifications.
+- Profile.
+
+Student dashboard
+
+Display:
+
+- Welcome message.
+- Academic session.
+- Attendance summary.
+- Pending homework.
+- Upcoming tests.
+- Recent results.
+- Fee status.
+- Important announcements.
+
+Avoid overcrowding.
+
+Use meaningful visual hierarchy.
+
+Student homework
+
+Design clear homework cards with:
+
+- Subject.
+- Teacher.
+- Instructions.
+- Assigned date.
+- Due date.
+- Submission status.
+
+Tests and examinations
+
+Provide a focused, distraction-free assessment experience.
+
+Use clear instructions, readable questions, proper spacing and understandable result presentation.
+
+Student fees
+
+Design a professional fee overview.
+
+- Total fee.
+- Paid amount.
+- Pending amount.
+- Payment status.
+- UPI payment instructions.
+- Payment claim status.
+- Receipts.
+
+Preserve manual Admin verification.
+
+Never mark a payment as verified merely because a Student submitted a claim.
+
+Students must only access their own records.
+
+---
+
+10. FORMS, TABLES AND DATA ENTRY
+
+Every form must be visually consistent.
+
+Use:
+
+- Clear field labels.
+- Proper input spacing.
+- Helpful validation messages.
+- Accessible focus indicators.
+- Clear required-field indicators.
+- Professional dropdowns.
+- Consistent date selection.
+- Clear confirmation dialogs.
+
+Do not rely on placeholders as the only labels.
+
+Avoid unnecessary multi-column forms on narrow mobile screens.
+
+Tables
+
+Create premium data tables.
+
+- Clear headers.
+- Comfortable row heights.
+- Proper alignment.
+- Consistent status indicators.
+- Useful sorting where supported.
+- Search and filtering where already available.
+- Responsive mobile presentation.
+
+Do not simply shrink desktop tables until they become unreadable.
+
+Dialogs and drawers
+
+Use refined dialogs with:
+
+- Clear title.
+- Short description.
+- Appropriate actions.
+- Proper dismissal.
+- Responsive sizing.
+
+Important actions must require appropriate confirmation.
+
+---
+
+11. CARDS AND COMPONENT DESIGN
+
+Create a reusable component design system.
+
+Components should include:
+
+- Metric cards.
+- Information cards.
+- Status badges.
+- Data tables.
+- Search inputs.
+- Filter controls.
+- Form fields.
+- Buttons.
+- Navigation items.
+- Empty states.
+- Confirmation dialogs.
+- Toast notifications.
+- Loading skeletons.
+- Progress indicators.
+
+Card design
+
+Use:
+
+- Consistent corner radii.
+- Restrained borders.
+- Very subtle shadows.
+- Proper internal spacing.
+- Clear content hierarchy.
+- Consistent alignment.
+
+Avoid excessive rounded shapes.
+
+Avoid cards nested inside cards without a reason.
+
+Avoid unnecessary decorative backgrounds.
+
+Buttons
+
+Define a consistent hierarchy:
+
+1. Primary action.
+2. Secondary action.
+3. Tertiary action.
+4. Destructive action.
+
+Every button must have a clear purpose.
+
+Use appropriate loading and disabled states.
+
+Do not make every button mint green.
+
+---
+
+12. ANIMATION AND INTERACTION QUALITY
+
+Use Motion carefully.
+
+The application should feel responsive and polished.
+
+Add purposeful animations for:
+
+- Page transitions.
+- Dialog opening and closing.
+- Navigation state changes.
+- Dropdowns.
+- Loading states.
+- Dashboard metric appearance.
+- Progress indicators.
+- Form feedback.
+- Expandable sections.
+
+Keep animations subtle and fast.
+
+Suggested durations:
+
+- Micro-interactions: 120–180ms.
+- Button feedback: 100–150ms.
+- Dialog transitions: 180–240ms.
+- Page transitions: 180–260ms.
+
+Avoid:
+
+- Excessive bouncing.
+- Continuous unnecessary motion.
+- Long loading animations.
+- Large decorative animations.
+- Animations that delay important actions.
+
+Respect reduced-motion preferences.
+
+All interactions must remain usable on low-end Android phones.
+
+---
+
+13. LOADING, EMPTY, ERROR AND SUCCESS STATES
+
+These states are part of the premium experience.
+
+Do not leave blank screens.
+
+Loading
+
+Create a consistent loading system.
+
+Use elegant skeletons that match the actual content layout.
+
+Preserve the existing application loading screen, but refine it to match the new visual identity.
+
+Empty states
+
+Examples:
+
+- No homework assigned.
+- No attendance recorded.
+- No upcoming examinations.
+- No payment history.
+- No notifications.
+
+Each empty state should clearly explain the situation.
+
+Do not display fake records.
+
+Error states
+
+Provide understandable messages.
+
+Do not expose Firebase internal errors, database paths, tokens, stack traces or sensitive implementation details to users.
+
+Keep technical diagnostic information in appropriately protected development logs.
+
+Success states
+
+Use clear confirmation after:
+
+- Saving settings.
+- Creating accounts.
+- Submitting attendance.
+- Publishing homework.
+- Submitting marks.
+- Submitting payment claims.
+
+Never show success before the actual operation succeeds.
+
+---
+
+14. PROFILE AND ACCOUNT EXPERIENCE
+
+Redesign the existing Profile pages.
+
+The Profile button must remain in the top-right header.
+
+Remove Profile from bottom navigation.
+
+Profile must display only information appropriate to the authenticated role.
+
+Provide the existing supported account options.
+
+Keep sign-out accessible through the Profile/account experience.
+
+Do not reintroduce the top-right logout icon.
+
+Do not expose Admin account information to Teachers or Students.
+
+---
+
+15. LOGIN EXPERIENCE
+
+Preserve the separate authentication structure.
+
+Admin
+
+Exactly one dedicated Admin login page.
+
+- Google Sign-In only.
+- Authorized Gmail: 07alphabro@gmail.com.
+- No ID/password fields.
+- No Teacher or Student login options.
+- Unauthorized Google accounts must be denied.
+
+Student and Teacher
+
+One separate shared login page.
+
+- Student ID + Password.
+- Teacher ID + Password.
+- Automatic role identification.
+- Correct role-based dashboard routing.
+- No Google Sign-In option.
+- No Admin information.
+- No public registration.
+
+Give the login pages the same premium design identity without mixing their authentication flows.
+
+Preserve all backend authorization.
+
+---
+
+16. RESPONSIVE DESIGN
+
+The entire application must be designed for:
+
+- Small Android phones: 360px.
+- Standard Android phones: 390px.
+- Large phones: 430px.
+- Tablets: 768px.
+- Small laptops: 1024px.
+- Standard laptops: 1280px.
+- Desktop: 1440px.
+- Large desktop: 1920px.
+
+Do not treat desktop as the primary design and simply shrink it for mobile.
+
+Design each breakpoint intentionally.
+
+Mobile requirements
+
+- No horizontal overflow.
+- No overlapping controls.
+- No clipped cards.
+- Readable font sizes.
+- Proper touch targets.
+- Proper bottom navigation.
+- Proper keyboard behaviour.
+- Proper scroll behaviour.
+- Correct safe-area spacing.
+
+Desktop requirements
+
+- Good use of available space.
+- No excessively stretched content.
+- Well-proportioned sidebar.
+- Consistent content widths.
+- Comfortable tables.
+- Professional data visualizations.
+
+---
+
+17. DATA VISUALIZATION AND ANALYTICS
+
+Charts must be accurate and meaningful.
+
+Use existing data services.
+
+Do not create fake data to make the dashboard look populated.
+
+Use charts only when they communicate useful information.
+
+Create consistent visualizations for:
+
+- Attendance.
+- Enrolment.
+- Fees.
+- Financial summaries.
+- Examination performance.
+
+Ensure charts are responsive.
+
+Use accessible labels and readable legends.
+
+Provide a useful empty state when data is insufficient.
+
+---
+
+18. SECURITY AND PRIVACY — STRICT REQUIREMENTS
+
+The redesign must never weaken the existing security architecture.
+
+This is a critical requirement.
+
+Preserve and review:
+
+- Firebase Authentication.
+- Firestore Security Rules.
+- Storage Rules.
+- Account authorization.
+- Role isolation.
+- Admin-only settings.
+- Student record isolation.
+- Teacher assignment restrictions.
+- Payment verification controls.
+- Audit records.
+
+Use deny-by-default security.
+
+Never trust client-side role selection.
+
+Never grant access because a UI element is hidden.
+
+Never expose:
+
+- Service-account private keys.
+- Firebase Admin SDK credentials.
+- Backend secrets.
+- Private authentication tokens.
+- Passwords.
+- Sensitive personal records.
+
+Firebase Web configuration may exist in the frontend as required for the Firebase client SDK, but private credentials must never be bundled into the frontend.
+
+Do not weaken Firestore Rules to make a redesigned screen load.
+
+Do not bypass authorization checks.
+
+Do not expose private homework notes, examination answer keys or other restricted records.
+
+Do not put sensitive data into analytics or browser logs.
+
+Keep all sensitive data access restricted by the existing trusted authorization model.
+
+---
+
+19. FIREBASE SPARK PLAN AND COST RESTRICTIONS
+
+The project owner wants the application to remain on Firebase Spark whenever possible.
+
+Preserve the existing Spark-compatible architecture.
+
+Do not introduce:
+
+- Mandatory Blaze upgrade.
+- Mandatory paid Cloud Functions.
+- PostgreSQL.
+- Paid AI APIs.
+- Paid third-party backend services.
+- Unapproved messaging services.
+- Razorpay or another payment gateway.
+
+Do not pretend that unavailable backend functionality works.
+
+Do not change the authentication architecture as part of a visual redesign.
+
+If an existing feature has a Spark-plan limitation, preserve the honest limitation and existing supported workflow.
+
+Do not modify Firebase data or production configuration merely to implement visual changes.
+
+---
+
+20. PERFORMANCE AND ACCESSIBILITY
+
+The application must remain fast and usable.
+
+Requirements:
+
+- Avoid unnecessary rerenders.
+- Avoid oversized assets.
+- Avoid excessive animation libraries.
+- Lazy-load large modules where appropriate.
+- Preserve existing code-splitting.
+- Optimise images.
+- Avoid unnecessary network requests.
+- Avoid unnecessary Firestore listeners.
+- Clean up listeners correctly.
+- Preserve keyboard navigation.
+- Provide visible focus states.
+- Use semantic HTML.
+- Maintain accessible colour contrast.
+- Respect reduced-motion settings.
+
+The application should perform well on ordinary Android devices and slower connections.
+
+Do not sacrifice performance for visual decoration.
+
+---
+
+21. DESIGN SYSTEM ARCHITECTURE
+
+Implement a central and reusable design system.
+
+Organise:
+
+- Colour tokens.
+- Typography tokens.
+- Spacing tokens.
+- Border radius tokens.
+- Shadow tokens.
+- Elevation levels.
+- Icon sizes.
+- Button variants.
+- Input variants.
+- Card variants.
+- Navigation styles.
+- Theme variables.
+- Motion presets.
+
+Avoid duplicated styles.
+
+Use shared components where appropriate.
+
+Do not create a different implementation of the same button or card for every role.
+
+Role-specific components may exist where the behaviour genuinely differs.
+
+Keep the code maintainable and understandable.
+
+---
+
+22. IMPLEMENTATION STRATEGY
+
+Do not attempt a careless application-wide replacement.
+
+Work systematically.
+
+Stage 1 — Audit
+
+Inspect all existing screens, modules, components and design tokens.
+
+Produce a list of the screens requiring redesign.
+
+Identify existing components that can be improved and reused.
+
+Stage 2 — Design foundation
+
+Create the new central design system.
+
+Implement Light and Dark theme tokens.
+
+Establish typography, spacing, colour and iconography standards.
+
+Stage 3 — Shared application shell
+
+Redesign the shared header, sidebar, bottom navigation, drawer, buttons and global layout.
+
+Verify that all three roles use the same design language.
+
+Stage 4 — Admin interface
+
+Redesign the Admin dashboard and every existing Admin module.
+
+Preserve all functionality and permissions.
+
+Stage 5 — Teacher interface
+
+Redesign the Teacher dashboard and all existing Teacher modules.
+
+Preserve assignment-based access restrictions.
+
+Stage 6 — Student interface
+
+Redesign the Student dashboard and all existing Student modules.
+
+Preserve Student data isolation.
+
+Stage 7 — Forms and interaction refinement
+
+Refine all forms, tables, dialogs, loading states, empty states and notifications.
+
+Stage 8 — Responsive refinement
+
+Test all important screens across mobile, tablet, laptop and desktop.
+
+Stage 9 — Regression testing
+
+Verify that the visual changes have not broken existing functionality.
+
+Stage 10 — Final quality review
+
+Review the entire application as a premium commercial product.
+
+Correct inconsistencies before declaring completion.
+
+---
+
+23. STRICTLY PRESERVE THESE EXISTING DESIGN DECISIONS
+
+- No Quick Actions section on any dashboard.
+- No Profile button in the bottom navigation.
+- Profile button in the top-right header.
+- No top-right Logout icon.
+- No top-right Back button.
+- Keep the existing five-slot bottom navigation.
+- Keep the centered, slightly prominent Home button.
+- Keep the Admin login separate.
+- Keep Teacher and Student on their separate shared login page.
+- Preserve Light and Dark modes.
+- Keep the application responsive.
+- Do not create a separate Admin Website.
+- Do not mix Admin information into Teacher or Student screens.
+
+Do not reintroduce removed elements during the redesign.
+
+---
+
+24. VISUAL QUALITY ACCEPTANCE CRITERIA
+
+The work is not complete merely because the application builds.
+
+Review the actual interface.
+
+Every screen must meet these standards:
+
+1. Consistent visual identity.
+2. Professional typography.
+3. High-quality icons.
+4. Clear information hierarchy.
+5. Balanced spacing.
+6. Consistent cards and controls.
+7. Excellent mobile presentation.
+8. Excellent desktop presentation.
+9. Proper Light and Dark themes.
+10. Smooth and purposeful interactions.
+11. Clear loading, empty and error states.
+12. No broken functionality.
+13. No unauthorized data access.
+14. No unnecessary visual clutter.
+15. No generic template appearance.
+
+Compare the Admin, Teacher and Student interfaces side by side.
+
+They must feel like one coherent premium product.
+
+Do not use screenshots or static images as replacements for actual functional interfaces.
+
+---
+
+25. TESTING REQUIREMENTS
+
+Run:
+
+- TypeScript checks.
+- Production build.
+- Existing Phase 2–10 automated test suites.
+- Existing Firebase security checks.
+- Responsive visual checks.
+- Navigation tests.
+- Authentication regression tests.
+- Form validation tests.
+- Light theme tests.
+- Dark theme tests.
+
+Verify:
+
+- Admin Google authentication still works.
+- Only 07alphabro@gmail.com can access Admin.
+- Teacher ID/password authentication still works.
+- Student ID/password authentication still works.
+- Teacher cannot access another Teacher's restricted records.
+- Student cannot access another Student's records.
+- Admin settings remain protected.
+- Payment verification remains Admin-only.
+- All existing modules remain accessible.
+
+Do not claim a test passed if it was not executed.
+
+If browser visual testing is unavailable, clearly state that manual verification remains necessary.
+
+---
+
+26. WORKFLOW AND TOKEN-LIMIT CHECKPOINT
+
+This is a large application-wide transformation.
+
+Work incrementally without restarting the project.
+
+Do not rewrite completed modules unnecessarily.
+
+If the available generation limit is approaching:
+
+1. Finish the current safe implementation step.
+2. Save all completed code changes.
+3. Run available checks.
+4. Record exactly which files and modules have been completed.
+5. Record the next unfinished task.
+6. Provide one clear continuation checkpoint.
+
+Create a clear continuation instruction so that I can send CONTINUE and resume from the exact stopping point.
+
+Do not restart from Stage 1.
+
+Do not overwrite completed work.
+
+Do not remove existing functionality to save tokens.
+
+---
+
+27. FINAL REPORT
+
+After completing the redesign, provide:
+
+1. Summary of the new visual identity.
+2. Exact Light and Dark colour palettes.
+3. Design-system components created or updated.
+4. Admin screens redesigned.
+5. Teacher screens redesigned.
+6. Student screens redesigned.
+7. Shared components redesigned.
+8. Responsive improvements.
+9. Accessibility improvements.
+10. Performance improvements.
+11. Security and privacy regression results.
+12. Build and TypeScript results.
+13. Automated test results.
+14. Screens or modules that still need manual visual verification.
+15. Any remaining unfinished tasks.
+
+Include screenshots of the actual implemented application where the environment supports them.
+
+Clearly distinguish completed work from planned or unverified work.
+
+---
+
+FINAL INSTRUCTION
+
+Deliver a complete, cohesive, premium redesign of Scholars Academy.
+
+The supplied mint-green, white and charcoal reference is the visual foundation.
+
+Aim for the craftsmanship, consistency, polish and attention to detail expected from a high-end commercial software product.
+
+Do not confuse premium design with unnecessary complexity.
+
+Do not add features simply to make the application look expensive.
+
+Do not remove existing functionality.
+
+Do not compromise security, privacy, performance or data integrity.
+
+The final result must feel intentionally designed, professionally engineered and ready to become a serious commercial education management product.
+
+Start with the repository audit, then implement the redesign systematically. Do not stop after producing a design proposal; make the actual code changes.

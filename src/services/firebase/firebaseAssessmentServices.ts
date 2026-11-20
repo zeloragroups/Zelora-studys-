@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   query,
   setDoc,
   updateDoc,
@@ -699,17 +700,20 @@ export class FirebaseHomeworkSubmissionService implements IHomeworkSubmissionSer
     }
 
     const auditId = generateSafeDocId('HAUD');
-    batch.set(doc(db, 'homeworkAudit', auditId), {
-      id: auditId,
-      homeworkId: existing.homeworkId,
-      submissionId: input.submissionId,
-      teacherUid: existing.teacherUid,
-      actorId: teacher.loginId,
-      action: input.action === 'reopened' ? 'reopened' : status,
-      reason: input.correctionReason?.trim() || undefined,
-      timestamp: nowIso,
-      adminUids: existing.adminUids,
-    });
+    batch.set(
+      doc(db, 'homeworkAudit', auditId),
+      stripUndefinedFields({
+        id: auditId,
+        homeworkId: existing.homeworkId,
+        submissionId: input.submissionId,
+        teacherUid: existing.teacherUid,
+        actorId: teacher.loginId,
+        action: input.action === 'reopened' ? 'reopened' : status,
+        reason: input.correctionReason?.trim() || undefined,
+        timestamp: nowIso,
+        adminUids: existing.adminUids,
+      })
+    );
 
     const nid = `ANF-REV-${input.submissionId}-${existing.revisionNumber}`;
     batch.set(doc(db, 'notifications', nid), {
@@ -838,7 +842,7 @@ export class FirebaseObjectiveTestService implements IObjectiveTestService {
       resultReleaseMode: input.resultReleaseMode,
       scheduledReleaseAt: input.scheduledReleaseAt,
       showCorrectAnswersOnRelease: Boolean(input.showCorrectAnswersOnRelease),
-      manualResultsReleased: input.resultReleaseMode === 'auto_after_submission',
+      manualResultsReleased: false,
       status,
       createdAt: nowIso,
       updatedAt: nowIso,
@@ -1684,6 +1688,12 @@ export class FirebaseExaminationService implements IExaminationService, IExamina
         'Only an Admin can correct released examination marks.'
       );
     }
+    if (activeActor.role === 'teacher' && existing.teacherUid !== activeActor.uid) {
+      throw new AssessmentServiceError(
+        'UNAUTHORIZED',
+        'You may only correct marks for examinations you created.'
+      );
+    }
     if (input.newMarksObtained < 0 || input.newMarksObtained > existing.maximumMarks) {
       throw new AssessmentServiceError(
         'VALIDATION_ERROR',
@@ -2023,8 +2033,8 @@ export class FirebaseAssessmentOverviewService implements IAssessmentOverviewSer
       }),
       this.testSvc.listTeacherTests(actor),
       this.examSvc.listTeacherExaminations(actor),
-      getDocs(collection(db, 'marksAudit')).catch(() => null),
-      getDocs(collection(db, 'homeworkAudit')).catch(() => null),
+      getDocs(query(collection(db, 'marksAudit'), limit(250))).catch(() => null),
+      getDocs(query(collection(db, 'homeworkAudit'), limit(250))).catch(() => null),
     ]);
 
     return {

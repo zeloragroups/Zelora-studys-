@@ -21,9 +21,11 @@ import {
   AccountServiceError,
   type IAccountManagementService,
 } from '../../services/contracts/accountService';
+import { Alert } from '../ui/Alert';
 import { Modal } from '../ui/Modal';
 import { Input } from '../ui/Input';
 import { Button } from '../ui/Button';
+import { Select } from '../ui/Select';
 
 interface CreateAccountModalProps {
   open: boolean;
@@ -228,12 +230,9 @@ export function CreateAccountModal({
     >
       {step === 'created' && createdAccount ? (
         <div className="space-y-5">
-          <div className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 p-4 space-y-2">
-            <p className="text-sm font-semibold text-emerald-900 dark:text-emerald-200">
-              {createdAccount.name} ({createdAccount.role}) created successfully
-            </p>
+          <Alert tone="success" title={`${createdAccount.name} (${createdAccount.role}) created successfully`}>
             <div className="flex flex-wrap items-center justify-between gap-2 pt-1">
-              <span className="text-xs text-emerald-800 dark:text-emerald-300">
+              <span>
                 Assigned Account ID:{' '}
                 <strong className="font-mono text-sm">{createdAccount.accountId}</strong>
               </span>
@@ -246,9 +245,9 @@ export function CreateAccountModal({
                 {copied ? 'Copied' : 'Copy ID'}
               </Button>
             </div>
-          </div>
+          </Alert>
 
-          <p className="text-xs text-slate-600 dark:text-slate-400">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             For security, passwords are never stored in Firestore or displayed again.
           </p>
 
@@ -258,28 +257,24 @@ export function CreateAccountModal({
         </div>
       ) : step === 'confirm' ? (
         <div className="space-y-5">
-          {formError && (
-            <p role="alert" className="text-xs font-medium text-red-700 dark:text-red-400">
-              {formError}
-            </p>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
 
-          <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] border border-[#E5E7EF] dark:border-[#303A55] rounded-xl text-sm bg-white dark:bg-[#101426]/65">
+          <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border border-[#E2E8E5] dark:border-[#344047] rounded-xl text-sm bg-white dark:bg-[#151A1E]/70">
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-slate-500 dark:text-slate-400">Generated ID</span>
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">Generated ID</span>
               <span className="font-mono font-semibold">{previewId}</span>
             </div>
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-slate-500 dark:text-slate-400">Full Name</span>
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">Full Name</span>
               <span className="font-medium text-right">{name.trim()}</span>
             </div>
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-slate-500 dark:text-slate-400">Role</span>
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">Role</span>
               <span className="capitalize">{role}</span>
             </div>
             {isStudent && (
               <div className="px-4 py-2.5 flex justify-between gap-4">
-                <span className="text-slate-500 dark:text-slate-400">Class & Batch</span>
+                <span className="text-[#68737C] dark:text-[#AAB6B4]">Class & Batch</span>
                 <span className="text-right">
                   {selectedClass && selectedBatch
                     ? `${selectedClass.name} · ${selectedBatch.name}`
@@ -288,22 +283,22 @@ export function CreateAccountModal({
               </div>
             )}
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-slate-500 dark:text-slate-400">Phone</span>
-              <span className="font-mono">{phone.trim()}</span>
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">Phone</span>
+              <span className="font-mono tabular-nums">{phone.trim()}</span>
             </div>
             {email.trim() && (
               <div className="px-4 py-2.5 flex justify-between gap-4">
-                <span className="text-slate-500 dark:text-slate-400">Email</span>
+                <span className="text-[#68737C] dark:text-[#AAB6B4]">Email</span>
                 <span className="truncate">{email.trim()}</span>
               </div>
             )}
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-slate-500 dark:text-slate-400">Initial Status</span>
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">Initial Status</span>
               <span className="capitalize">{status}</span>
             </div>
             {firebaseConnected && (
               <div className="px-4 py-2.5 flex justify-between gap-4">
-                <span className="text-slate-500 dark:text-slate-400">Provisioning Method</span>
+                <span className="text-[#68737C] dark:text-[#AAB6B4]">Provisioning Method</span>
                 <span className="text-right text-xs font-medium">
                   {isManualConsoleMode
                     ? `Link Console UID (${existingAuthUid.trim()})`
@@ -324,19 +319,15 @@ export function CreateAccountModal({
         </div>
       ) : (
         <form onSubmit={handleReviewSubmit} className="space-y-4" noValidate>
-          {formError && (
-            <p role="alert" className="text-xs font-medium text-red-700 dark:text-red-400">
-              {formError}
-            </p>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
 
           {/* Read-only Auto-generated ID preview */}
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F1EEFA]/70 dark:bg-[#101426] px-3.5 py-2.5">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 px-3.5 py-2.5">
             <div>
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 Auto-Generated {isStudent ? 'Student' : 'Teacher'} ID
               </p>
-              <p className="font-mono text-sm font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+              <p className="font-mono text-sm font-semibold text-[#168A63] dark:text-[#42DDA9]">
                 {previewId || 'Generating...'}
               </p>
             </div>
@@ -354,8 +345,8 @@ export function CreateAccountModal({
           </div>
 
           {firebaseConnected && (
-            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/70 p-3 space-y-2.5">
-              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 p-3 space-y-2.5">
+              <p className="text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 Spark Account Provisioning Method
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -367,8 +358,8 @@ export function CreateAccountModal({
                   }}
                   className={`rounded-lg border px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
                     provisioningMode === 'spark_secondary_auth'
-                      ? 'border-[#7552D9] bg-[#F1EEFA] dark:bg-[#202844] text-[#17172B] dark:text-[#F8FAFC] font-semibold'
-                      : 'border-[#E5E7EF] dark:border-[#303A55] text-slate-600 dark:text-slate-300'
+                      ? 'border-[#35D6A0] bg-[#DDF8EE] dark:border-[#42DDA9] dark:bg-[#244B3E] text-[#171D21] dark:text-[#F4F7F6] font-semibold'
+                      : 'border-[#E2E8E5] dark:border-[#344047] text-[#68737C] dark:text-[#AAB6B4]'
                   }`}
                 >
                   Isolated Spark Auth (Recommended)
@@ -381,20 +372,20 @@ export function CreateAccountModal({
                   }}
                   className={`rounded-lg border px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
                     provisioningMode === 'manual_console_uid'
-                      ? 'border-[#7552D9] bg-[#F1EEFA] dark:bg-[#202844] text-[#17172B] dark:text-[#F8FAFC] font-semibold'
-                      : 'border-[#E5E7EF] dark:border-[#303A55] text-slate-600 dark:text-slate-300'
+                      ? 'border-[#35D6A0] bg-[#DDF8EE] dark:border-[#42DDA9] dark:bg-[#244B3E] text-[#171D21] dark:text-[#F4F7F6] font-semibold'
+                      : 'border-[#E2E8E5] dark:border-[#344047] text-[#68737C] dark:text-[#AAB6B4]'
                   }`}
                 >
                   Link Pre-Created Console UID
                 </button>
               </div>
               {isManualConsoleMode ? (
-                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
                   Create this user in Firebase Console → Authentication → Users with email{' '}
-                  <span className="font-mono font-semibold">{derivedAuthEmail}</span>, then paste its UID below.
+                  <span className="font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">{derivedAuthEmail}</span>, then paste its UID below.
                 </p>
               ) : (
-                <p className="text-[11px] text-slate-600 dark:text-slate-400 leading-relaxed">
+                <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
                   Creates the account in an isolated in-memory secondary Firebase App so your Admin session remains signed in. Unlinked Auth accounts without an Admin-written Firestore profile cannot access app data.
                 </p>
               )}
@@ -415,48 +406,34 @@ export function CreateAccountModal({
           {isStudent && (
             classOptions.length > 0 ? (
               <div className="grid gap-4 sm:grid-cols-2">
-                <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-                    {firebaseConnected ? 'Class' : 'Class (Demo Options)'}
-                  </label>
-                  <select
-                    value={classId}
-                    onChange={(e) => handleClassChange(e.target.value)}
-                    className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                  >
-                    {classOptions.map((c) => (
-                      <option key={c.id} value={c.id}>
-                        {c.name}
-                      </option>
-                    ))}
-                  </select>
-                  {fieldErrors.classId && (
-                    <p className="text-xs text-red-700 dark:text-red-400">{fieldErrors.classId}</p>
-                  )}
-                </div>
+                <Select
+                  label={firebaseConnected ? 'Class' : 'Class (Demo Options)'}
+                  value={classId}
+                  onChange={(e) => handleClassChange(e.target.value)}
+                  error={fieldErrors.classId}
+                >
+                  {classOptions.map((c) => (
+                    <option key={c.id} value={c.id}>
+                      {c.name}
+                    </option>
+                  ))}
+                </Select>
 
-                <div className="space-y-1.5">
-                  <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                    {firebaseConnected ? 'Batch' : 'Batch (Demo Options)'}
-                  </label>
-                  <select
-                    value={batchId}
-                    onChange={(e) => setBatchId(e.target.value)}
-                    className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                  >
-                    {availableBatches.map((b) => (
-                      <option key={b.id} value={b.id}>
-                        {b.name}
-                      </option>
-                    ))}
-                  </select>
-                  {fieldErrors.batchId && (
-                    <p className="text-xs text-red-700 dark:text-red-400">{fieldErrors.batchId}</p>
-                  )}
-                </div>
+                <Select
+                  label={firebaseConnected ? 'Batch' : 'Batch (Demo Options)'}
+                  value={batchId}
+                  onChange={(e) => setBatchId(e.target.value)}
+                  error={fieldErrors.batchId}
+                >
+                  {availableBatches.map((b) => (
+                    <option key={b.id} value={b.id}>
+                      {b.name}
+                    </option>
+                  ))}
+                </Select>
               </div>
             ) : (
-              <p className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 px-3.5 py-2.5 text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 px-3.5 py-2.5 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 No active classes or batches are configured yet. You can create this student account now and assign their class/batch later under Academics.
               </p>
             )
@@ -513,31 +490,26 @@ export function CreateAccountModal({
                 placeholder="Minimum 8 characters"
                 error={fieldErrors.initialPassword}
                 rightElement={
-                  <button
-                    type="button"
-                    onClick={() => setShowPassword((prev) => !prev)}
-                    aria-label={showPassword ? 'Hide password' : 'Show password'}
-                    className="w-9 h-9 inline-flex items-center justify-center rounded-md text-slate-500 hover:text-slate-800 dark:text-slate-400 dark:hover:text-slate-100 cursor-pointer"
-                  >
-                    {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
-                  </button>
-                }
-              />
-            )}
+                    <button
+                      type="button"
+                      onClick={() => setShowPassword((prev) => !prev)}
+                      aria-label={showPassword ? 'Hide password' : 'Show password'}
+                      className="w-9 h-9 inline-flex items-center justify-center rounded-lg text-[#68737C] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:text-[#F4F7F6] cursor-pointer"
+                    >
+                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                    </button>
+                  }
+                />
+              )}
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-                Account Status
-              </label>
-              <select
-                value={status}
-                onChange={(e) => setStatus(e.target.value as ManagedAccountStatus)}
-                className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              >
-                <option value="active">Active</option>
-                <option value="deactivated">Deactivated</option>
-              </select>
-            </div>
+            <Select
+              label="Account Status"
+              value={status}
+              onChange={(e) => setStatus(e.target.value as ManagedAccountStatus)}
+            >
+              <option value="active">Active</option>
+              <option value="deactivated">Deactivated</option>
+            </Select>
           </div>
 
           <div className="pt-2 flex flex-wrap items-center justify-end gap-3">

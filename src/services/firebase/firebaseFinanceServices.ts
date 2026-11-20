@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   query,
   runTransaction,
   setDoc,
@@ -2000,9 +2001,13 @@ export class FirebasePaymentService implements IPaymentClaimService, IPaymentVer
     return withFirestoreErrorHandling(OperationType.LIST, 'paymentVerificationAudit', async () => {
       const snap = claimId
         ? await getDocs(
-            query(collection(db, 'paymentVerificationAudit'), where('paymentClaimId', '==', claimId))
+            query(
+              collection(db, 'paymentVerificationAudit'),
+              where('paymentClaimId', '==', claimId),
+              limit(250)
+            )
           )
-        : await getDocs(collection(db, 'paymentVerificationAudit'));
+        : await getDocs(query(collection(db, 'paymentVerificationAudit'), limit(250)));
       return snap.docs
         .map((d) => d.data() as PaymentVerificationAudit)
         .sort((a, b) => b.timestamp.localeCompare(a.timestamp));
@@ -3168,9 +3173,13 @@ export class FirebaseFinancialReportService implements IFinancialReportService {
     return withFirestoreErrorHandling(OperationType.LIST, 'financialAudit', async () => {
       const snap =
         entityType === 'all'
-          ? await getDocs(collection(db, 'financialAudit'))
+          ? await getDocs(query(collection(db, 'financialAudit'), limit(250)))
           : await getDocs(
-              query(collection(db, 'financialAudit'), where('entityType', '==', entityType))
+              query(
+                collection(db, 'financialAudit'),
+                where('entityType', '==', entityType),
+                limit(250)
+              )
             );
       return snap.docs
         .map((d) => d.data() as FinancialAuditEntry)

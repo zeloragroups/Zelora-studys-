@@ -1,9 +1,10 @@
 import { useState, type FormEvent } from 'react';
-import { ArrowLeft, CheckCircle2 } from 'lucide-react';
+import { ArrowLeft } from 'lucide-react';
 import { useAuth, AuthServiceException } from '../../context/AuthContext';
 import { useInterface } from '../../context/InterfaceContext';
 import { ROUTES, type AppRoutePath } from '../../router/routes';
 import { LoginShell } from '../../components/auth/LoginShell';
+import { Alert } from '../../components/ui/Alert';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 
@@ -60,7 +61,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
         <button
           type="button"
           onClick={() => onNavigate(ROUTES.PORTAL_LOGIN)}
-          className="inline-flex items-center gap-1.5 font-medium text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
+          className="inline-flex items-center gap-1.5 font-medium text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
           <span>Back to Sign In</span>
@@ -69,13 +70,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
     >
       {confirmationMessage ? (
         <div className="space-y-4">
-          <div
-            role="status"
-            className="flex items-start gap-2.5 rounded-xl border border-[#168A62]/30 dark:border-[#22C58B]/40 bg-[#168A62]/10 dark:bg-[#22C58B]/12 p-4 text-sm text-[#168A62] dark:text-[#22C58B]"
-          >
-            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="leading-relaxed">{confirmationMessage}</p>
-          </div>
+          <Alert tone="success">{confirmationMessage}</Alert>
           <Button
             variant="secondary"
             className="w-full"

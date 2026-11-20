@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { AlertCircle, ShieldCheck } from 'lucide-react';
+import { ShieldCheck } from 'lucide-react';
 import { useAuth, AuthServiceException } from '../../context/AuthContext';
 import { useInterface } from '../../context/InterfaceContext';
 import { getDefaultRouteForRole, ROUTES, type AppRoutePath } from '../../router/routes';
 import { LoginShell } from '../../components/auth/LoginShell';
+import { Alert } from '../../components/ui/Alert';
 import { Button } from '../../components/ui/Button';
 
 interface AdminLoginPageProps {
@@ -65,32 +66,19 @@ export function AdminLoginPage({ onNavigate }: AdminLoginPageProps) {
       onNavigateHome={() => onNavigate(ROUTES.HOME)}
     >
       <div className="space-y-4">
-        {authNotice && !formError && (
-          <div
-            role="status"
-            className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F1EEFA] dark:bg-[#202844] px-3.5 py-2.5 text-xs text-[#17172B] dark:text-[#F8FAFC]"
-          >
-            {authNotice}
-          </div>
-        )}
+        {authNotice && !formError && <Alert tone="info">{authNotice}</Alert>}
 
-        {formError && (
-          <div
-            role="alert"
-            className="flex items-start gap-2 rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 px-3.5 py-2.5 text-xs font-medium text-[#D94C5C] dark:text-[#F16B75]"
-          >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-            <span>{formError}</span>
-          </div>
-        )}
+        {formError && <Alert tone="error">{formError}</Alert>}
 
         <Button
           type="button"
+          variant="primary"
           loading={googleSubmitting}
           onClick={() => void handleGoogleAdminSignIn()}
           iconLeft={
             <ShieldCheck
-              className="w-4 h-4 text-white"
+              className="w-4 h-4"
+              strokeWidth={1.75}
               aria-hidden="true"
             />
           }
@@ -99,7 +87,7 @@ export function AdminLoginPage({ onNavigate }: AdminLoginPageProps) {
           Continue with Google
         </Button>
 
-        <p className="text-xs text-center text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
+        <p className="text-xs text-center text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
           Restricted to authorized Administrator Google accounts. Unauthorized Google accounts are denied access.
         </p>
       </div>

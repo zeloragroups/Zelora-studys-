@@ -10,13 +10,19 @@ import type {
   BatchRecord,
   ClassRecord,
 } from '../../types';
-import { cn } from '../../utils/cn';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Checkbox } from '../ui/Checkbox';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { PageHeader } from '../ui/PageHeader';
+import { Select } from '../ui/Select';
 import { StatusText, type SemanticTone } from '../ui/StatusText';
+import { Tabs } from '../ui/Tabs';
+import { Textarea } from '../ui/Textarea';
 
 type StatusFilter = 'all' | AnnouncementPublicationStatus;
 
@@ -82,9 +88,9 @@ export function AnnouncementsModule() {
   if (!principal || principal.role !== 'admin') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-red-700 dark:text-red-400">
+        <Alert tone="error">
           Only authenticated Admin accounts can publish or manage announcements.
-        </p>
+        </Alert>
       </Card>
     );
   }
@@ -211,121 +217,85 @@ export function AnnouncementsModule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Admin-Only Communications · Strictly Text-Only · {isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            Announcements & Notices
-          </h1>
-        </div>
-        <Button
-          size="sm"
-          onClick={openCreate}
-          iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
-        >
-          New Announcement
-        </Button>
-      </div>
+      <PageHeader
+        eyebrow={`Admin-Only Communications · Text-Only · ${isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}`}
+        title="Announcements & Notices"
+        rightSlot={
+          <Button
+            size="sm"
+            onClick={openCreate}
+            iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
+          >
+            New Announcement
+          </Button>
+        }
+      />
 
       {toast && (
-        <div
-          role="status"
-          className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2.5 text-xs font-medium text-emerald-900 dark:text-emerald-200"
-        >
+        <Alert tone="success" onDismiss={() => setToast(null)}>
           {toast}
-        </div>
+        </Alert>
       )}
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-800 dark:text-red-300"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card
         title="Announcement Ledger"
         subtitle="Teachers and students see only Published announcements targeted to their role, class, or batch."
       >
         <div className="space-y-4">
-          <div
-            className="inline-flex flex-wrap gap-1 p-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844]"
-            role="tablist"
-            aria-label="Filter announcements by status"
-          >
-            {(
-              [
-                { id: 'all', label: 'All' },
-                { id: 'published', label: 'Published' },
-                { id: 'draft', label: 'Drafts' },
-                { id: 'unpublished', label: 'Unpublished' },
-                { id: 'archived', label: 'Archived' },
-              ] as const
-            ).map((tab) => {
-              const active = statusFilter === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  type="button"
-                  role="tab"
-                  aria-selected={active}
-                  onClick={() => setStatusFilter(tab.id)}
-                  className={cn(
-                    'px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer',
-                    active
-                      ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-                      : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-                  )}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
-          </div>
+          <Tabs<StatusFilter>
+            items={[
+              { id: 'all', label: 'All' },
+              { id: 'published', label: 'Published' },
+              { id: 'draft', label: 'Drafts' },
+              { id: 'unpublished', label: 'Unpublished' },
+              { id: 'archived', label: 'Archived' },
+            ]}
+            value={statusFilter}
+            onChange={setStatusFilter}
+            ariaLabel="Filter announcements by status"
+          />
 
           {loading ? (
             <div className="space-y-3">
               {[0, 1].map((i) => (
                 <div
                   key={i}
-                  className="h-24 rounded-xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse"
+                  className="h-24 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
                 />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-8 text-center space-y-2">
-              <Megaphone className="w-6 h-6 text-[#687086] dark:text-[#A6B0C3] mx-auto" aria-hidden="true" />
-              <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+            <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
+              <Megaphone className="w-6 h-6 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
+              <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                 No announcements match this filter
               </p>
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 Create a text-only announcement targeted to teachers, students, or specific batches.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
               {filtered.map((ann) => {
                 const st = statusMeta(ann.publicationStatus);
                 return (
                   <article key={ann.announcementId} className="py-4 first:pt-1 last:pb-1 space-y-2.5">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
-                        <p className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                        <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                           {ann.announcementId} · {audienceLabel(ann)} ·{' '}
                           {formatShortDate(ann.publishedAt ?? ann.createdAt)}
                         </p>
-                        <h3 className="mt-1 text-base font-semibold text-slate-900 dark:text-slate-100">
+                        <h3 className="mt-1 text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                           {ann.title}
                         </h3>
                       </div>
                       <StatusText tone={st.tone} label={st.label} />
                     </div>
 
-                    <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line leading-relaxed">
+                    <p className="text-sm text-[#343C42] dark:text-[#D4DDDC] whitespace-pre-line leading-relaxed">
                       {ann.content}
                     </p>
 
@@ -392,14 +362,7 @@ export function AnnouncementsModule() {
         subtitle="Text-only notice without attachments. Visible to selected target groups once published."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {formError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-800 dark:text-red-300"
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
 
           <Input
             label="Title"
@@ -409,87 +372,63 @@ export function AnnouncementsModule() {
             required
           />
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-              Message (Text-Only)
-            </label>
-            <textarea
-              rows={4}
-              value={content}
-              onChange={(e) => setContent(e.target.value)}
-              placeholder="Write clear centre instructions or schedule notice..."
-              required
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
+          <Textarea
+            label="Message (Text-Only)"
+            rows={4}
+            value={content}
+            onChange={(e) => setContent(e.target.value)}
+            placeholder="Write clear centre instructions or schedule notice…"
+            required
+          />
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-              Target Audience
-            </label>
-            <select
-              value={audience}
-              onChange={(e) => setAudience(e.target.value as AnnouncementAudience)}
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            >
-              <option value="all">All Teachers & Students</option>
-              <option value="teachers">Teachers Only</option>
-              <option value="students">Students & Parents</option>
-              <option value="class">Specific Class</option>
-              <option value="batch">Specific Batch</option>
-            </select>
-          </div>
+          <Select
+            label="Target Audience"
+            value={audience}
+            onChange={(e) => setAudience(e.target.value as AnnouncementAudience)}
+          >
+            <option value="all">All Teachers & Students</option>
+            <option value="teachers">Teachers Only</option>
+            <option value="students">Students & Parents</option>
+            <option value="class">Specific Class</option>
+            <option value="batch">Specific Batch</option>
+          </Select>
 
           {audience === 'class' && (
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                Select Target Class
-              </label>
-              <select
-                value={targetClassId}
-                onChange={(e) => setTargetClassId(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              >
-                {classes.map((c) => (
-                  <option key={c.classId} value={c.classId}>
-                    {c.name} ({c.classId})
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              label="Select Target Class"
+              value={targetClassId}
+              onChange={(e) => setTargetClassId(e.target.value)}
+              required
+            >
+              {classes.map((c) => (
+                <option key={c.classId} value={c.classId}>
+                  {c.name} ({c.classId})
+                </option>
+              ))}
+            </Select>
           )}
 
           {audience === 'batch' && (
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                Select Target Batch
-              </label>
-              <select
-                value={targetBatchId}
-                onChange={(e) => setTargetBatchId(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              >
-                {batches.map((b) => (
-                  <option key={b.batchId} value={b.batchId}>
-                    {b.name} — {classMap.get(b.classId) ?? b.classId}
-                  </option>
-                ))}
-              </select>
-            </div>
+            <Select
+              label="Select Target Batch"
+              value={targetBatchId}
+              onChange={(e) => setTargetBatchId(e.target.value)}
+              required
+            >
+              {batches.map((b) => (
+                <option key={b.batchId} value={b.batchId}>
+                  {b.name} — {classMap.get(b.classId) ?? b.classId}
+                </option>
+              ))}
+            </Select>
           )}
 
           {modalMode === 'create' && (
-            <label className="flex items-center gap-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] cursor-pointer pt-1">
-              <input
-                type="checkbox"
-                checked={publishImmediately}
-                onChange={(e) => setPublishImmediately(e.target.checked)}
-                className="w-4 h-4 rounded accent-[#7552D9] dark:accent-[#8B5CF6]"
-              />
-              <span>Publish immediately to selected audience</span>
-            </label>
+            <Checkbox
+              checked={publishImmediately}
+              onChange={setPublishImmediately}
+              label="Publish immediately to selected audience"
+            />
           )}
 
           <div className="flex justify-end gap-2 pt-2">
@@ -507,9 +446,10 @@ export function AnnouncementsModule() {
         </form>
       </Modal>
 
-      <Modal
+      <ConfirmDialog
         open={confirmTransition !== null}
         onClose={() => setConfirmTransition(null)}
+        onConfirm={() => void executeStatusTransition()}
         title={
           confirmTransition?.action === 'publish'
             ? 'Confirm Publish'
@@ -517,31 +457,18 @@ export function AnnouncementsModule() {
               ? 'Confirm Unpublish'
               : 'Confirm Archive'
         }
-        maxWidthClass="max-w-md"
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            {confirmTransition?.action === 'publish' &&
-              `Make "${confirmTransition.record.title}" visible to ${audienceLabel(confirmTransition.record)}?`}
-            {confirmTransition?.action === 'unpublish' &&
-              `Hide "${confirmTransition.record.title}" from teacher and student dashboards?`}
-            {confirmTransition?.action === 'archive' &&
-              `Archive "${confirmTransition.record.title}"? Archived notices are retained for admin audit and hidden from users.`}
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setConfirmTransition(null)}>
-              Cancel
-            </Button>
-            <Button
-              variant={confirmTransition?.action === 'archive' ? 'danger' : 'primary'}
-              loading={submitting}
-              onClick={() => void executeStatusTransition()}
-            >
-              Confirm
-            </Button>
-          </div>
-        </div>
-      </Modal>
+        description={
+          confirmTransition?.action === 'publish'
+            ? `Make "${confirmTransition.record.title}" visible to ${audienceLabel(confirmTransition.record)}?`
+            : confirmTransition?.action === 'unpublish'
+              ? `Hide "${confirmTransition.record.title}" from teacher and student dashboards?`
+              : `Archive "${confirmTransition?.record.title ?? ''}"? Archived notices are retained for admin audit and hidden from users.`
+        }
+        confirmLabel="Confirm"
+        confirmVariant={confirmTransition?.action === 'archive' ? 'danger' : 'primary'}
+        tone={confirmTransition?.action === 'archive' ? 'danger' : 'warning'}
+        loading={submitting}
+      />
     </div>
   );
 }

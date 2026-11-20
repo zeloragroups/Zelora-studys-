@@ -1,8 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
-  AlertTriangle,
   CalendarCheck2,
-  CheckCircle2,
   Eye,
   Save,
   Send,
@@ -24,11 +22,15 @@ import {
 import { calculateAttendanceSummary } from '../../utils/attendanceCalculations';
 import { cn } from '../../utils/cn';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { PageHeader } from '../ui/PageHeader';
+import { Select } from '../ui/Select';
 import { StatusText } from '../ui/StatusText';
+import { Tabs } from '../ui/Tabs';
 import { AttendanceStatusBadge } from './AttendanceStatusBadge';
 
 type TeacherTab = 'mark' | 'sessions';
@@ -113,11 +115,9 @@ export function TeacherAttendanceModule() {
 
   if (!principal || principal.role !== 'teacher') {
     return (
-      <Card title="Access Restricted">
-        <p className="text-sm text-red-700 dark:text-red-400">
-          Only authenticated Teacher accounts can access Attendance Marking.
-        </p>
-      </Card>
+      <Alert tone="error" title="Access Restricted">
+        Only authenticated Teacher accounts can access Attendance Marking.
+      </Alert>
     );
   }
 
@@ -367,78 +367,40 @@ export function TeacherAttendanceModule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Teacher Attendance Operations · Scoped to {principal.loginId} · {isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            Daily & Exam Attendance
-          </h1>
-        </div>
-        <StatusText tone="nominal" label={`Teacher: ${principal.fullName}`} />
-      </div>
+      <PageHeader
+        eyebrow={`Teacher Attendance Operations · Scoped to ${principal.loginId} · ${isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}`}
+        title="Daily & Exam Attendance"
+        rightSlot={<StatusText tone="nominal" label={`Teacher: ${principal.fullName}`} />}
+      />
 
       {banner && (
-        <div
-          role="status"
-          className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-xs sm:text-sm font-medium text-emerald-900 dark:text-emerald-200 flex items-start gap-2.5"
-        >
-          <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-          <span>{banner}</span>
-        </div>
+        <Alert tone="success" onDismiss={() => setBanner(null)}>
+          {banner}
+        </Alert>
       )}
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-800 dark:text-red-300"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
-      <div
-        className="inline-flex items-center gap-1 p-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844]"
-        role="tablist"
-        aria-label="Teacher attendance sections"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'mark'}
-          onClick={() => setActiveTab('mark')}
-          className={cn(
-            'min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer',
-            activeTab === 'mark'
-              ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-              : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-          )}
-        >
-          Mark Attendance
-        </button>
-        <button
-          type="button"
-          role="tab"
-          aria-selected={activeTab === 'sessions'}
-          onClick={() => setActiveTab('sessions')}
-          className={cn(
-            'min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer',
-            activeTab === 'sessions'
-              ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-              : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-          )}
-        >
-          My Attendance History ({mySessions.length})
-        </button>
-      </div>
+      <Tabs
+        ariaLabel="Teacher attendance sections"
+        value={activeTab}
+        onChange={setActiveTab}
+        items={[
+          { id: 'mark', label: 'Mark Attendance' },
+          {
+            id: 'sessions',
+            label: 'My Attendance History',
+            count: mySessions.length,
+          },
+        ]}
+      />
 
       {loading ? (
-        <div className="h-44 rounded-2xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse" />
+        <div className="h-44 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse" />
       ) : activeTab === 'mark' ? (
         options && options.assignments.length === 0 ? (
           <Card title="No Active Teaching Assignments">
-            <p className="text-sm text-slate-600 dark:text-slate-400">
+            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
               You have no active class, batch, or subject assignments. Contact the tuition centre Admin to assign your classes before marking attendance.
             </p>
           </Card>
@@ -450,7 +412,7 @@ export function TeacherAttendanceModule() {
             >
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-medium text-slate-600 dark:text-slate-400 mr-1">
+                  <span className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4] mr-1">
                     Session Type:
                   </span>
                   {(
@@ -471,8 +433,8 @@ export function TeacherAttendanceModule() {
                         className={cn(
                           'min-h-[42px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-colors cursor-pointer whitespace-nowrap',
                           active
-                            ? 'bg-[#7552D9] text-white border-[#7552D9] dark:bg-[#8B5CF6] dark:border-[#8B5CF6]'
-                            : 'bg-white dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
+                            ? 'bg-[#20262B] dark:bg-[#42DDA9] text-[#F4F7F6] dark:text-[#151A1E] border-[#20262B] dark:border-[#42DDA9]'
+                            : 'bg-[#F7F9F8] dark:bg-[#151A1E] text-[#343C42] dark:text-[#AAB6B4] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
                         )}
                       >
                         {t.label}
@@ -482,60 +444,45 @@ export function TeacherAttendanceModule() {
                 </div>
 
                 <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-                  <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                      Assigned Class
-                    </label>
-                    <select
-                      value={selectedClassId}
-                      onChange={(e) => handleClassChange(e.target.value)}
-                      className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                    >
-                      {(options?.classes ?? []).map((c) => (
-                        <option key={c.classId} value={c.classId}>
-                          {c.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    label="Assigned Class"
+                    value={selectedClassId}
+                    onChange={(e) => handleClassChange(e.target.value)}
+                  >
+                    {(options?.classes ?? []).map((c) => (
+                      <option key={c.classId} value={c.classId}>
+                        {c.name}
+                      </option>
+                    ))}
+                  </Select>
 
-                  <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                      Assigned Batch
-                    </label>
-                    <select
-                      value={selectedBatchId}
-                      onChange={(e) => handleBatchChange(e.target.value)}
-                      className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                    >
-                      {assignedBatchesForClass.map((b) => (
-                        <option key={b.batchId} value={b.batchId}>
-                          {b.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    label="Assigned Batch"
+                    value={selectedBatchId}
+                    onChange={(e) => handleBatchChange(e.target.value)}
+                  >
+                    {assignedBatchesForClass.map((b) => (
+                      <option key={b.batchId} value={b.batchId}>
+                        {b.name}
+                      </option>
+                    ))}
+                  </Select>
 
-                  <div className="space-y-1.5">
-                    <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                      Assigned Subject
-                    </label>
-                    <select
-                      value={selectedSubjectId}
-                      onChange={(e) => {
-                        setSelectedSubjectId(e.target.value);
-                        setSelectedTimetableId('');
-                        setRoster(null);
-                      }}
-                      className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                    >
-                      {assignedSubjectsForSelection.map((s) => (
-                        <option key={s.subjectId} value={s.subjectId}>
-                          {s.name}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    label="Assigned Subject"
+                    value={selectedSubjectId}
+                    onChange={(e) => {
+                      setSelectedSubjectId(e.target.value);
+                      setSelectedTimetableId('');
+                      setRoster(null);
+                    }}
+                  >
+                    {assignedSubjectsForSelection.map((s) => (
+                      <option key={s.subjectId} value={s.subjectId}>
+                        {s.name}
+                      </option>
+                    ))}
+                  </Select>
 
                   <Input
                     label="Attendance Date"
@@ -547,24 +494,20 @@ export function TeacherAttendanceModule() {
                 </div>
 
                 {sessionType === 'regular' ? (
-                  <div className="space-y-1.5 max-w-md">
-                    <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                      Scheduled Timetable Session (Optional)
-                    </label>
-                    <select
-                      value={selectedTimetableId}
-                      onChange={(e) => setSelectedTimetableId(e.target.value)}
-                      className="w-full min-h-[44px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                    >
-                      <option value="">Daily Regular Session (No specific slot selected)</option>
-                      {matchingTimetableSlots.map((tt) => (
-                        <option key={tt.entryId} value={tt.entryId}>
-                          {tt.dayOfWeek} · {tt.startTime}–{tt.endTime}
-                          {tt.room ? ` (${tt.room})` : ''}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
+                  <Select
+                    label="Scheduled Timetable Session (Optional)"
+                    containerClassName="max-w-md"
+                    value={selectedTimetableId}
+                    onChange={(e) => setSelectedTimetableId(e.target.value)}
+                  >
+                    <option value="">Daily Regular Session (No specific slot selected)</option>
+                    {matchingTimetableSlots.map((tt) => (
+                      <option key={tt.entryId} value={tt.entryId}>
+                        {tt.dayOfWeek} · {tt.startTime}–{tt.endTime}
+                        {tt.room ? ` (${tt.room})` : ''}
+                      </option>
+                    ))}
+                  </Select>
                 ) : (
                   <div className="max-w-md">
                     <Input
@@ -572,20 +515,13 @@ export function TeacherAttendanceModule() {
                       value={examTitle}
                       onChange={(e) => setExamTitle(e.target.value)}
                       placeholder="e.g. Monthly Algebra Assessment — Nov 2026"
-                      hint="Records exam-day attendance only. Question papers and marks belong to Phase 6."
+                      hint="Records exam-day attendance only. Question papers and marks live in Tests & Examinations."
                       required
                     />
                   </div>
                 )}
 
-                {workflowError && (
-                  <div
-                    role="alert"
-                    className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3.5 text-xs sm:text-sm text-red-800 dark:text-red-300"
-                  >
-                    {workflowError}
-                  </div>
-                )}
+                {workflowError && <Alert tone="error">{workflowError}</Alert>}
 
                 <div className="flex flex-wrap items-center gap-3 pt-1">
                   <Button
@@ -597,7 +533,7 @@ export function TeacherAttendanceModule() {
                     Load Enrolled Students
                   </Button>
                   {draftSessionId && (
-                    <span className="text-xs font-mono text-amber-700 dark:text-amber-400">
+                    <span className="text-xs font-mono text-[#A67317] dark:text-[#E5B04D]">
                       Editing Draft {draftSessionId}
                     </span>
                   )}
@@ -618,24 +554,24 @@ export function TeacherAttendanceModule() {
                 }
               >
                 {roster.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center text-sm text-[#687086] dark:text-[#A6B0C3]">
+                  <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center text-sm text-[#68737C] dark:text-[#AAB6B4]">
                     No active enrolled students found in this batch. Contact Admin to verify student enrolments.
                   </div>
                 ) : (
                   <div className="space-y-5">
                     {/* Live Status Counter Bar */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E5E7EF] dark:border-[#303A55] text-xs font-mono tabular-nums">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E2E8E5] dark:border-[#344047] text-xs font-mono tabular-nums">
                       <div className="flex flex-wrap items-center gap-4">
-                        <span className="text-emerald-700 dark:text-emerald-400 font-semibold">
+                        <span className="text-[#168A63] dark:text-[#42DDA9] font-semibold">
                           Present: {liveSummary.presentCount}
                         </span>
-                        <span className="text-red-700 dark:text-red-400 font-semibold">
+                        <span className="text-[#D64C55] dark:text-[#EF6D75] font-semibold">
                           Absent: {liveSummary.absentCount}
                         </span>
-                        <span className="text-amber-700 dark:text-amber-400 font-semibold">
+                        <span className="text-[#A67317] dark:text-[#E5B04D] font-semibold">
                           Late: {liveSummary.lateCount}
                         </span>
-                        <span className="text-slate-600 dark:text-slate-400 font-semibold">
+                        <span className="text-[#4285A5] dark:text-[#62A7C7] font-semibold">
                           Excused: {liveSummary.excusedCount}
                         </span>
                       </div>
@@ -643,8 +579,8 @@ export function TeacherAttendanceModule() {
                         className={cn(
                           'font-semibold',
                           unmarkedStudents.length > 0
-                            ? 'text-amber-700 dark:text-amber-400'
-                            : 'text-emerald-700 dark:text-emerald-400'
+                            ? 'text-[#A67317] dark:text-[#E5B04D]'
+                            : 'text-[#168A63] dark:text-[#42DDA9]'
                         )}
                       >
                         Unmarked: {unmarkedStudents.length}
@@ -652,15 +588,12 @@ export function TeacherAttendanceModule() {
                     </div>
 
                     {unmarkedStudents.length > 0 && (
-                      <div className="rounded-lg border border-amber-200 dark:border-amber-900/60 bg-amber-50 dark:bg-amber-950/30 p-3 text-xs text-amber-900 dark:text-amber-200 flex items-center gap-2">
-                        <AlertTriangle className="w-4 h-4 shrink-0" aria-hidden="true" />
-                        <span>
-                          {unmarkedStudents.length} student(s) still unmarked (highlighted below). Unmarked students are never silently defaulted to Absent.
-                        </span>
-                      </div>
+                      <Alert tone="warning">
+                        {unmarkedStudents.length} student(s) still unmarked (highlighted below). Unmarked students are never silently defaulted to Absent.
+                      </Alert>
                     )}
 
-                    <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+                    <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                       {roster.map((stu) => {
                         const current = marksMap[stu.studentId]?.status;
                         const remarks = marksMap[stu.studentId]?.remarks ?? '';
@@ -670,21 +603,21 @@ export function TeacherAttendanceModule() {
                             key={stu.studentId}
                             className={cn(
                               'py-3.5 px-3 -mx-3 rounded-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 transition-colors',
-                              unmarked && 'bg-[#F5B942]/10 dark:bg-[#F5B942]/10'
+                              unmarked && 'bg-[#D69B35]/10 dark:bg-[#E5B04D]/10'
                             )}
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                                <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
                                   {stu.studentId}
                                 </span>
                                 {unmarked && (
-                                  <span className="text-[11px] font-medium text-[#B7791F] dark:text-[#F5B942]">
+                                  <span className="text-[11px] font-medium text-[#A67317] dark:text-[#E5B04D]">
                                     · Unmarked
                                   </span>
                                 )}
                               </div>
-                              <p className="font-medium text-sm text-[#17172B] dark:text-[#F8FAFC]">
+                              <p className="font-medium text-sm text-[#171D21] dark:text-[#F4F7F6]">
                                 {stu.studentName}
                               </p>
                             </div>
@@ -707,18 +640,18 @@ export function TeacherAttendanceModule() {
                                         'min-h-[44px] px-3 rounded-xl text-xs font-semibold border transition-colors whitespace-nowrap cursor-pointer',
                                         selected &&
                                           st === 'present' &&
-                                          'bg-[#168A62] text-white border-[#168A62] dark:bg-[#22C58B] dark:border-[#22C58B] dark:text-[#101426]',
+                                          'bg-[#168A63] text-white border-[#168A63] dark:bg-[#42DDA9] dark:border-[#42DDA9] dark:text-[#151A1E]',
                                         selected &&
                                           st === 'absent' &&
-                                          'bg-[#D94C5C] text-white border-[#D94C5C] dark:bg-[#F16B75] dark:border-[#F16B75] dark:text-[#101426]',
+                                          'bg-[#D64C55] text-white border-[#D64C55] dark:bg-[#EF6D75] dark:border-[#EF6D75] dark:text-[#151A1E]',
                                         selected &&
                                           st === 'late' &&
-                                          'bg-[#B7791F] text-white border-[#B7791F] dark:bg-[#F5B942] dark:border-[#F5B942] dark:text-[#101426]',
+                                          'bg-[#A67317] text-white border-[#A67317] dark:bg-[#E5B04D] dark:border-[#E5B04D] dark:text-[#151A1E]',
                                         selected &&
                                           st === 'excused' &&
-                                          'bg-[#7552D9] text-white border-[#7552D9] dark:bg-[#8B5CF6] dark:border-[#8B5CF6]',
+                                          'bg-[#4285A5] text-white border-[#4285A5] dark:bg-[#62A7C7] dark:border-[#62A7C7] dark:text-[#151A1E]',
                                         !selected &&
-                                          'bg-white dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
+                                          'bg-[#FFFFFF] dark:bg-[#1D2429] text-[#171D21] dark:text-[#F4F7F6] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
                                       )}
                                     >
                                       {STATUS_LABELS[st]}
@@ -735,7 +668,7 @@ export function TeacherAttendanceModule() {
                                 }
                                 placeholder="Optional remarks..."
                                 aria-label={`Remarks for ${stu.studentName}`}
-                                className="min-h-[44px] sm:w-44 rounded-xl px-3 py-1.5 text-xs bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                                className="min-h-[44px] sm:w-44 rounded-xl px-3.5 py-2 text-xs bg-white dark:bg-[#151A1E] border border-[#E2E8E5] dark:border-[#344047] text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                               />
                             </div>
                           </div>
@@ -743,7 +676,7 @@ export function TeacherAttendanceModule() {
                       })}
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E5E7EF] dark:border-[#303A55]">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E2E8E5] dark:border-[#344047]">
                       <Button
                         variant="secondary"
                         onClick={() => void handleSaveDraft()}
@@ -782,14 +715,14 @@ export function TeacherAttendanceModule() {
           subtitle="Submitted attendance is locked for teacher edits in this local adapter; contact Admin with a reason if a formal audited correction is required."
         >
           {mySessions.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-8 text-center space-y-2">
-              <CalendarCheck2 className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto" aria-hidden="true" />
-              <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+            <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
+              <CalendarCheck2 className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
+              <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                 No attendance sessions recorded yet
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
               {mySessions.map((item) => {
                 const s = item.session;
                 return (
@@ -798,8 +731,8 @@ export function TeacherAttendanceModule() {
                     className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-                        <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                           {s.id}
                         </span>
                         <span aria-hidden="true">·</span>
@@ -811,10 +744,10 @@ export function TeacherAttendanceModule() {
                             : 'Regular Class'}
                         </span>
                       </div>
-                      <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                         {item.subjectName} — {item.className} ({item.batchName})
                       </p>
-                      <p className="text-xs font-mono tabular-nums text-slate-600 dark:text-slate-400">
+                      <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                         Present: {item.summary.presentCount} · Absent:{' '}
                         {item.summary.absentCount} · Late: {item.summary.lateCount} ·
                         Excused: {item.summary.excusedCount} · Rate:{' '}
@@ -874,23 +807,23 @@ export function TeacherAttendanceModule() {
         subtitle="Absent students will immediately receive an in-app absence notification upon submission."
       >
         <div className="space-y-4">
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3.5 text-xs space-y-1 bg-[#F1EEFA]/60 dark:bg-[#101426]">
-            <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 text-xs space-y-1 bg-[#F0F4F2] dark:bg-[#252E33]">
+            <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
               {selectedSubjectObj?.name} — {selectedClassObj?.name} ({selectedBatchObj?.name})
             </p>
-            <p className="text-[#687086] dark:text-[#A6B0C3] font-mono tabular-nums">
+            <p className="text-[#68737C] dark:text-[#AAB6B4] font-mono tabular-nums">
               Date: {sessionDate} · Type:{' '}
               {sessionType === 'examination'
                 ? `Examination (${examTitle})`
                 : 'Regular Class'}
             </p>
-            <p className="font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC] pt-1">
+            <p className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6] pt-1">
               Present: {liveSummary.presentCount} · Absent: {liveSummary.absentCount} ·
               Late: {liveSummary.lateCount} · Excused: {liveSummary.excusedCount}
             </p>
           </div>
 
-          <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] max-h-60 overflow-y-auto">
+          <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] max-h-60 overflow-y-auto">
             {(roster ?? []).map((stu) => {
               const st = marksMap[stu.studentId]?.status ?? 'present';
               return (
@@ -899,10 +832,10 @@ export function TeacherAttendanceModule() {
                   className="py-2 flex items-center justify-between gap-2 text-sm"
                 >
                   <div>
-                    <span className="font-mono text-xs text-slate-500 mr-2">
+                    <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4] mr-2">
                       {stu.studentId}
                     </span>
-                    <span className="font-medium text-slate-900 dark:text-slate-100">
+                    <span className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
                       {stu.studentName}
                     </span>
                   </div>
@@ -939,7 +872,7 @@ export function TeacherAttendanceModule() {
       >
         {detailModal && (
           <div className="space-y-4">
-            <div className="text-xs text-slate-600 dark:text-slate-400 space-y-1 font-mono tabular-nums">
+            <div className="text-xs text-[#68737C] dark:text-[#AAB6B4] space-y-1 font-mono tabular-nums">
               <p>
                 Date: {detailModal.session.sessionDate} · Submitted:{' '}
                 {formatShortDate(
@@ -953,17 +886,17 @@ export function TeacherAttendanceModule() {
               </p>
             </div>
 
-            <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] max-h-64 overflow-y-auto">
+            <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] max-h-64 overflow-y-auto">
               {detailModal.records.map((item) => (
                 <li
                   key={item.record.id}
                   className="py-2.5 flex items-center justify-between gap-2 text-sm"
                 >
                   <div>
-                    <p className="font-medium text-slate-900 dark:text-slate-100">
+                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
                       {item.studentName}
                     </p>
-                    <p className="font-mono text-xs text-slate-500">
+                    <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       {item.record.studentId}
                       {item.record.remarks ? ` · ${item.record.remarks}` : ''}
                     </p>

@@ -1,5 +1,5 @@
 import { useMemo, useState, type ReactNode } from 'react';
-import { LogOut, Menu, X } from 'lucide-react';
+import { ChevronRight, LogOut, Menu, UserCircle2, X } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import type { BottomNavSlot, NavItemConfig } from '../../config/navigation';
 import type { AuthPrincipal, LogoConfiguration } from '../../types';
@@ -17,8 +17,6 @@ interface ResponsiveShellProps {
   bottomNav?: BottomNavSlot[];
   activeNavId: string;
   onSelectNav: (id: string) => void;
-  onSwitchInterface?: () => void;
-  switchActionLabel?: string;
   authenticatedPrincipal?: AuthPrincipal | null;
   onSignOut?: () => void;
   headerRightExtra?: ReactNode;
@@ -27,9 +25,10 @@ interface ResponsiveShellProps {
 }
 
 /**
- * Shared responsive shell across Admin Portal, Teacher Portal, and Student Portal.
- * - Desktop (>=1024px): Fixed 264px left sidebar with grouped navigation + clean top bar.
- * - Mobile/Tablet (<1024px): Compact top bar + slide-over drawer + 5-slot bottom bar centered on Home.
+ * Shared responsive application shell across Admin, Teacher, and Student portals.
+ * - Desktop (>=1024px): 264px left sidebar with Charcoal active highlight + crisp top breadcrumb bar.
+ * - Mobile/Tablet (<1024px): Compact 56px top bar + slide-over drawer + 5-slot bottom bar centered on Home.
+ * - Preserves top-right ThemeToggle (mobile/tablet) and Profile button without Logout or Back buttons.
  */
 export function ResponsiveShell({
   brandName,
@@ -39,8 +38,6 @@ export function ResponsiveShell({
   bottomNav,
   activeNavId,
   onSelectNav,
-  onSwitchInterface,
-  switchActionLabel = 'Switch Portal',
   authenticatedPrincipal,
   onSignOut,
   headerRightExtra,
@@ -82,19 +79,21 @@ export function ResponsiveShell({
   }, [bottomNav, navItems]);
 
   const activeItem = navItems.find((item) => item.id === activeNavId);
+  const hasProfileSection = navItems.some((item) => item.id === 'profile');
+  const isProfileActive = activeNavId === 'profile';
 
   return (
-    <div className="min-h-screen flex flex-col lg:flex-row bg-[#F8F9FC] dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC]">
+    <div className="min-h-screen flex flex-col lg:flex-row bg-[#F7F9F8] dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6]">
       {/* Desktop Sidebar */}
-      <aside className="hidden lg:flex lg:flex-col lg:w-64 lg:shrink-0 border-r border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#171D34]">
-        <div className="px-5 py-4 border-b border-[#E5E7EF] dark:border-[#303A55]">
+      <aside className="hidden lg:flex lg:flex-col lg:w-[264px] lg:shrink-0 border-r border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429]">
+        <div className="px-5 py-4 border-b border-[#E2E8E5] dark:border-[#344047]">
           <div className="flex items-center gap-3">
             <BrandLogoMark logoConfiguration={logoConfiguration} alt={brandName} size="md" />
             <div className="min-w-0 text-left">
-              <span className="block font-display text-sm font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] truncate">
+              <span className="block font-display text-sm font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] truncate">
                 {brandName}
               </span>
-              <span className="block text-xs text-[#687086] dark:text-[#A6B0C3] truncate">
+              <span className="block text-xs text-[#68737C] dark:text-[#AAB6B4] truncate">
                 {interfaceTitle}
               </span>
             </div>
@@ -107,7 +106,7 @@ export function ResponsiveShell({
         >
           {groupedNavItems.map(({ group, items }) => (
             <div key={group} className="space-y-1">
-              <p className="px-3 text-xs font-semibold text-[#687086] dark:text-[#A6B0C3]">
+              <p className="px-3 pb-0.5 text-[11px] font-medium text-[#68737C] dark:text-[#AAB6B4]">
                 {group}
               </p>
               {items.map((item) => {
@@ -119,19 +118,20 @@ export function ResponsiveShell({
                     onClick={() => handleNavClick(item.id)}
                     aria-current={active ? 'page' : undefined}
                     className={cn(
-                      'w-full flex items-center gap-2.5 min-h-[40px] px-3 py-2 rounded-xl text-sm font-medium transition-colors duration-150 cursor-pointer whitespace-nowrap',
+                      'w-full flex items-center gap-2.5 min-h-[42px] px-3 py-2 rounded-xl text-sm transition-colors duration-150 cursor-pointer whitespace-nowrap',
+                      'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
                       active
-                        ? 'bg-[#F1EEFA] text-[#7552D9] dark:bg-[#8B5CF6]/18 dark:text-[#C4B5FD] font-semibold'
-                        : 'text-[#434960] hover:bg-[#F8F9FC] hover:text-[#17172B] dark:text-[#A6B0C3] dark:hover:bg-[#202844] dark:hover:text-[#F8FAFC]'
+                        ? 'bg-[#20262B] text-[#F4F7F6] font-semibold dark:bg-[#244B3E] dark:text-[#F4F7F6]'
+                        : 'text-[#343C42] font-medium hover:bg-[#F0F4F2] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:bg-[#252E33] dark:hover:text-[#F4F7F6]'
                     )}
                   >
                     <NavIcon
                       name={item.icon}
                       className={cn(
-                        'w-4 h-4 shrink-0',
+                        'w-[21px] h-[21px] shrink-0',
                         active
-                          ? 'text-[#7552D9] dark:text-[#A78BFA]'
-                          : 'text-[#687086] dark:text-[#A6B0C3]'
+                          ? 'text-[#35D6A0] dark:text-[#42DDA9]'
+                          : 'text-[#68737C] dark:text-[#AAB6B4]'
                       )}
                     />
                     <span className="truncate flex-1 text-left">{item.label}</span>
@@ -142,21 +142,21 @@ export function ResponsiveShell({
           ))}
         </nav>
 
-        <div className="p-4 border-t border-[#E5E7EF] dark:border-[#303A55] space-y-3">
+        <div className="p-4 border-t border-[#E2E8E5] dark:border-[#344047] space-y-3">
           {authenticatedPrincipal && (
             <button
               type="button"
               onClick={() => {
-                if (navItems.some((n) => n.id === 'profile')) {
+                if (hasProfileSection) {
                   handleNavClick('profile');
                 }
               }}
-              className="w-full text-left rounded-xl p-2 -mx-2 hover:bg-[#F8F9FC] dark:hover:bg-[#202844] transition-colors cursor-pointer"
+              className="w-full text-left rounded-xl p-2 -mx-2 hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] transition-colors cursor-pointer"
             >
-              <p className="text-xs font-semibold text-[#17172B] dark:text-[#F8FAFC] truncate">
+              <p className="text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
                 {authenticatedPrincipal.fullName}
               </p>
-              <p className="font-mono text-[11px] text-[#687086] dark:text-[#A6B0C3]">
+              <p className="font-mono text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
                 {authenticatedPrincipal.loginId} · {authenticatedPrincipal.role}
               </p>
             </button>
@@ -169,9 +169,9 @@ export function ResponsiveShell({
                 onClick={onSignOut}
                 aria-label="Sign out"
                 title="Sign out"
-                className="min-h-[40px] px-3 py-2 inline-flex items-center justify-center rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#202844] text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#283254] transition-colors cursor-pointer"
+                className="min-h-[40px] px-3 py-2 inline-flex items-center justify-center rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#252E33] text-[#20262B] dark:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#2B353A] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]"
               >
-                <LogOut className="w-4 h-4" aria-hidden="true" />
+                <LogOut className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
               </button>
             )}
           </div>
@@ -181,24 +181,40 @@ export function ResponsiveShell({
       {/* Main Column */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Top Bar (compact single row, 56px) */}
-        <header className="sticky top-0 z-30 h-14 px-4 sm:px-6 flex items-center justify-between gap-3 border-b border-[#E5E7EF] dark:border-[#303A55] bg-white/95 dark:bg-[#171D34]/95 backdrop-blur-md">
+        <header className="sticky top-0 z-30 h-14 px-4 sm:px-6 flex items-center justify-between gap-3 border-b border-[#E2E8E5] dark:border-[#344047] bg-white/95 dark:bg-[#1D2429]/95 backdrop-blur-md">
           <div className="flex items-center gap-2.5 min-w-0">
             <button
               type="button"
               onClick={() => setDrawerOpen(true)}
               aria-label="Open navigation menu"
-              className="lg:hidden inline-flex items-center justify-center w-10 h-10 -ml-2 rounded-xl text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] cursor-pointer"
+              className="lg:hidden inline-flex items-center justify-center w-11 h-11 -ml-2 rounded-xl text-[#20262B] dark:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] cursor-pointer"
             >
-              <Menu className="w-5 h-5" aria-hidden="true" />
+              <Menu className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
             </button>
             <div className="min-w-0 flex items-center gap-2">
               <span className="lg:hidden inline-flex shrink-0">
                 <BrandLogoMark logoConfiguration={logoConfiguration} alt={brandName} size="xs" />
               </span>
-              <span className="font-display font-semibold text-sm sm:text-base text-[#17172B] dark:text-[#F8FAFC] truncate">
-                <span className="lg:hidden">{activeItem?.label ?? interfaceTitle}</span>
-                <span className="hidden lg:inline">{interfaceTitle}</span>
+              <span className="lg:hidden font-display font-semibold text-sm sm:text-base text-[#171D21] dark:text-[#F4F7F6] truncate">
+                {activeItem?.label ?? interfaceTitle}
               </span>
+              <div className="hidden lg:flex items-center gap-1.5 text-sm min-w-0">
+                <span className="font-display font-semibold text-[#171D21] dark:text-[#F4F7F6] whitespace-nowrap">
+                  {interfaceTitle}
+                </span>
+                {activeItem && (
+                  <>
+                    <ChevronRight
+                      className="w-4 h-4 text-[#68737C] dark:text-[#AAB6B4] shrink-0"
+                      strokeWidth={1.75}
+                      aria-hidden="true"
+                    />
+                    <span className="font-medium text-[#68737C] dark:text-[#AAB6B4] truncate">
+                      {activeItem.label}
+                    </span>
+                  </>
+                )}
+              </div>
             </div>
           </div>
 
@@ -207,23 +223,32 @@ export function ResponsiveShell({
             <div className="lg:hidden">
               <ThemeToggle compact />
             </div>
-            {onSignOut && (
+            {hasProfileSection && (
               <button
                 type="button"
-                onClick={onSignOut}
-                className="min-h-[38px] px-3 py-1.5 inline-flex items-center gap-1.5 rounded-xl text-xs font-medium border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#202844] text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#283254] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
+                onClick={() => handleNavClick('profile')}
+                aria-label="Profile"
+                aria-current={isProfileActive ? 'page' : undefined}
+                title="Profile"
+                className={cn(
+                  'min-h-[40px] px-2.5 sm:px-3 py-2 inline-flex items-center gap-1.5 rounded-xl text-xs font-medium border transition-colors whitespace-nowrap shrink-0 cursor-pointer',
+                  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
+                  isProfileActive
+                    ? 'border-[#B8EBD8] bg-[#DDF8EE] text-[#168A63] dark:border-[#316453] dark:bg-[#244B3E] dark:text-[#42DDA9]'
+                    : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#252E33] text-[#20262B] dark:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#2B353A]'
+                )}
               >
-                <LogOut className="w-3.5 h-3.5" aria-hidden="true" />
-                <span className="hidden sm:inline">Sign Out</span>
-              </button>
-            )}
-            {onSwitchInterface && !onSignOut && (
-              <button
-                type="button"
-                onClick={onSwitchInterface}
-                className="min-h-[38px] px-3 py-1.5 rounded-xl text-xs font-medium border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] transition-colors whitespace-nowrap shrink-0 cursor-pointer"
-              >
-                {switchActionLabel}
+                <UserCircle2
+                  className={cn(
+                    'w-4 h-4 shrink-0',
+                    isProfileActive
+                      ? 'text-[#168A63] dark:text-[#42DDA9]'
+                      : 'text-[#343C42] dark:text-[#AAB6B4]'
+                  )}
+                  strokeWidth={1.75}
+                  aria-hidden="true"
+                />
+                <span className="hidden sm:inline">Profile</span>
               </button>
             )}
           </div>
@@ -266,7 +291,7 @@ export function ResponsiveShell({
               exit={{ opacity: 0 }}
               transition={{ duration: 0.16 }}
               onClick={() => setDrawerOpen(false)}
-              className="fixed inset-0 bg-[#101426]/65 backdrop-blur-[1px]"
+              className="fixed inset-0 bg-[#151A1E]/65 backdrop-blur-[1px]"
               aria-hidden="true"
             />
             <motion.aside
@@ -274,12 +299,12 @@ export function ResponsiveShell({
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
-              className="relative z-10 w-72 max-w-[82vw] bg-white dark:bg-[#171D34] h-full flex flex-col border-r border-[#E5E7EF] dark:border-[#303A55]"
+              className="relative z-10 w-72 max-w-[82vw] bg-white dark:bg-[#1D2429] h-full flex flex-col border-r border-[#E2E8E5] dark:border-[#344047]"
             >
-              <div className="h-14 px-4 flex items-center justify-between border-b border-[#E5E7EF] dark:border-[#303A55]">
+              <div className="h-14 px-4 flex items-center justify-between border-b border-[#E2E8E5] dark:border-[#344047]">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <BrandLogoMark logoConfiguration={logoConfiguration} alt={brandName} size="xs" />
-                  <span className="font-display font-bold text-sm truncate text-[#17172B] dark:text-[#F8FAFC]">
+                  <span className="font-display font-semibold text-sm truncate text-[#171D21] dark:text-[#F4F7F6]">
                     {brandName}
                   </span>
                 </div>
@@ -287,15 +312,15 @@ export function ResponsiveShell({
                   type="button"
                   onClick={() => setDrawerOpen(false)}
                   aria-label="Close navigation menu"
-                  className="w-10 h-10 inline-flex items-center justify-center rounded-xl text-[#687086] dark:text-[#A6B0C3] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] cursor-pointer"
+                  className="w-10 h-10 inline-flex items-center justify-center rounded-xl text-[#68737C] dark:text-[#AAB6B4] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] cursor-pointer"
                 >
-                  <X className="w-5 h-5" aria-hidden="true" />
+                  <X className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
                 </button>
               </div>
               <nav className="flex-1 p-3 space-y-5 overflow-y-auto" aria-label="Drawer navigation">
                 {groupedNavItems.map(({ group, items }) => (
                   <div key={group} className="space-y-1">
-                    <p className="px-3 text-xs font-semibold text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="px-3 text-[11px] font-medium text-[#68737C] dark:text-[#AAB6B4]">
                       {group}
                     </p>
                     {items.map((item) => {
@@ -307,19 +332,19 @@ export function ResponsiveShell({
                           onClick={() => handleNavClick(item.id)}
                           aria-current={active ? 'page' : undefined}
                           className={cn(
-                            'w-full flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-sm font-medium transition-colors cursor-pointer',
+                            'w-full flex items-center gap-2.5 min-h-[44px] px-3 py-2 rounded-xl text-sm transition-colors cursor-pointer',
                             active
-                              ? 'bg-[#F1EEFA] text-[#7552D9] dark:bg-[#8B5CF6]/18 dark:text-[#C4B5FD] font-semibold'
-                              : 'text-[#434960] hover:bg-[#F8F9FC] dark:text-[#A6B0C3] dark:hover:bg-[#202844]'
+                              ? 'bg-[#20262B] text-[#F4F7F6] font-semibold dark:bg-[#244B3E] dark:text-[#F4F7F6]'
+                              : 'text-[#343C42] font-medium hover:bg-[#F0F4F2] dark:text-[#AAB6B4] dark:hover:bg-[#252E33]'
                           )}
                         >
                           <NavIcon
                             name={item.icon}
                             className={cn(
-                              'w-4 h-4 shrink-0',
+                              'w-[21px] h-[21px] shrink-0',
                               active
-                                ? 'text-[#7552D9] dark:text-[#A78BFA]'
-                                : 'text-[#687086] dark:text-[#A6B0C3]'
+                                ? 'text-[#35D6A0] dark:text-[#42DDA9]'
+                                : 'text-[#68737C] dark:text-[#AAB6B4]'
                             )}
                           />
                           <span className="truncate">{item.label}</span>
@@ -329,13 +354,13 @@ export function ResponsiveShell({
                   </div>
                 ))}
               </nav>
-              <div className="p-4 border-t border-[#E5E7EF] dark:border-[#303A55] space-y-3">
+              <div className="p-4 border-t border-[#E2E8E5] dark:border-[#344047] space-y-3">
                 {authenticatedPrincipal && (
                   <div className="text-xs">
-                    <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC] truncate">
+                    <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
                       {authenticatedPrincipal.fullName}
                     </p>
-                    <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
                       {authenticatedPrincipal.loginId} · {authenticatedPrincipal.role}
                     </p>
                   </div>

@@ -3,6 +3,7 @@ import { useInterface } from '../../context/InterfaceContext';
 import type { FeeReceipt } from '../../types';
 import { formatInrFromPaise } from '../../utils/currency';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { BrandLogoMark } from '../ui/BrandLogoMark';
 import { Button } from '../ui/Button';
 import { Modal } from '../ui/Modal';
@@ -46,9 +47,9 @@ export function ReceiptPreviewModal({ receipt, onClose }: ReceiptPreviewModalPro
       maxWidthClass="max-w-2xl"
     >
       <div className="space-y-5">
-        <div className="print-surface rounded-2xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426] p-5 sm:p-6 space-y-5">
+        <div className="print-surface rounded-2xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-5 sm:p-6 space-y-5">
           {/* Receipt Header */}
-          <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-[#E5E7EF] dark:border-[#303A55]">
+          <div className="flex flex-wrap items-start justify-between gap-4 pb-4 border-b border-[#E2E8E5] dark:border-[#344047]">
             <div className="flex items-start gap-3 min-w-0">
               <BrandLogoMark
                 logoConfiguration={applicationBranding.logoConfiguration}
@@ -56,30 +57,30 @@ export function ReceiptPreviewModal({ receipt, onClose }: ReceiptPreviewModalPro
                 size="md"
               />
               <div className="min-w-0">
-                <p className="text-xs font-medium text-[#7552D9] dark:text-[#A78BFA]">
+                <p className="text-xs font-medium text-[#168A63] dark:text-[#42DDA9]">
                   Official Verified Payment Receipt
                 </p>
-                <h3 className="mt-1 text-xl font-bold font-display text-[#17172B] dark:text-[#F8FAFC]">
+                <h3 className="mt-1 text-xl font-bold font-display text-[#20262B] dark:text-[#F4F7F6]">
                   {receipt.centreName}
                 </h3>
                 {centreProfile.tagline && (
-                  <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                     {centreProfile.tagline}
                   </p>
                 )}
                 {locationParts.length > 0 && (
-                  <p className="mt-1 text-[11px] text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="mt-1 text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
                     {locationParts.join(', ')}
                   </p>
                 )}
                 {contactParts.length > 0 && (
-                  <p className="text-[11px] font-mono text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="text-[11px] font-mono text-[#68737C] dark:text-[#AAB6B4]">
                     {contactParts.join(' · ')}
                   </p>
                 )}
-                <p className="mt-1 text-xs font-mono text-[#687086] dark:text-[#A6B0C3]">
+                <p className="mt-1 text-xs font-mono text-[#68737C] dark:text-[#AAB6B4]">
                   Receipt No:{' '}
-                  <span className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <span className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                     {receipt.receiptNumber}
                   </span>
                 </p>
@@ -90,115 +91,112 @@ export function ReceiptPreviewModal({ receipt, onClose }: ReceiptPreviewModalPro
                 tone={isVoided ? 'danger' : 'nominal'}
                 label={isVoided ? 'Voided / Superseded' : 'Admin Verified'}
               />
-              <p className="text-xs font-mono text-[#687086] dark:text-[#A6B0C3] tabular-nums">
+              <p className="text-xs font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
                 Issued: {formatShortDate(receipt.issuedAt)}
               </p>
             </div>
           </div>
 
           {isVoided && receipt.voidReason && (
-            <div
-              role="alert"
-              className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 p-3 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-            >
-              <span className="font-semibold">Void Notice:</span> {receipt.voidReason}
-            </div>
+            <Alert tone="error" title="Void Notice">
+              {receipt.voidReason}
+            </Alert>
           )}
 
           {/* Student & Period Details */}
           <div className="grid gap-4 sm:grid-cols-2 text-sm">
             <div className="space-y-1">
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Student Name & ID</p>
-              <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Student Name & ID</p>
+              <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                 {receipt.studentName}
               </p>
-              <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 {receipt.studentId}
               </p>
             </div>
 
             <div className="space-y-1">
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Class & Batch</p>
-              <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Class & Batch</p>
+              <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                 {receipt.className}
               </p>
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">{receipt.batchName}</p>
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">{receipt.batchName}</p>
             </div>
 
             <div className="space-y-1">
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Fee Period Covered</p>
-              <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Fee Period Covered</p>
+              <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                 {receipt.periodLabel}
               </p>
-              <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 Period Code: {receipt.feePeriod}
               </p>
             </div>
 
             <div className="space-y-1">
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Payment Date & Verification</p>
-              <p className="font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Payment Date & Verification</p>
+              <p className="font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6] tabular-nums">
                 {formatShortDate(receipt.paymentDate)}
               </p>
-              <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 Verified By: {receipt.issuedBy}
               </p>
             </div>
           </div>
 
           {/* Payment References */}
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#171D34] p-4 grid gap-3 sm:grid-cols-2 text-xs">
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] p-4 grid gap-3 sm:grid-cols-2 text-xs">
             <div>
-              <p className="text-[#687086] dark:text-[#A6B0C3]">Internal Payment Reference</p>
-              <p className="mt-0.5 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <p className="text-[#68737C] dark:text-[#AAB6B4]">Internal Payment Reference</p>
+              <p className="mt-0.5 font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                 {receipt.paymentReference}
               </p>
             </div>
             <div>
-              <p className="text-[#687086] dark:text-[#A6B0C3]">Student-Submitted UTR / Transaction Ref</p>
-              <p className="mt-0.5 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <p className="text-[#68737C] dark:text-[#AAB6B4]">Student-Submitted UTR / Transaction Ref</p>
+              <p className="mt-0.5 font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                 {receipt.transactionReference ?? 'Not recorded'}
               </p>
             </div>
           </div>
 
           {/* Financial Breakdown (explicit distinction for partial vs full payments) */}
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#171D34] divide-y divide-[#E5E7EF] dark:divide-[#303A55] text-sm">
-            <div className="flex items-center justify-between px-4 py-3 bg-[#F1EEFA]/70 dark:bg-[#202844]/70 rounded-t-xl">
-              <span className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] divide-y divide-[#E2E8E5] dark:divide-[#344047] text-sm">
+            <div className="flex items-center justify-between px-4 py-3 bg-[#DDF8EE]/70 dark:bg-[#244B3E]/70 rounded-t-xl">
+              <span className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                 Verified Payment Amount (This Receipt)
               </span>
-              <span className="font-mono text-base font-bold text-[#7552D9] dark:text-[#C4B5FD] tabular-nums">
+              <span className="font-mono text-base font-bold text-[#168A63] dark:text-[#42DDA9] tabular-nums">
                 {formatInrFromPaise(receipt.amountPaise)}
               </span>
             </div>
             <div className="flex items-center justify-between px-4 py-2.5 text-xs">
-              <span className="text-[#687086] dark:text-[#A6B0C3]">
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">
                 Total Period Fee Due ({receipt.periodLabel})
               </span>
-              <span className="font-mono font-medium text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+              <span className="font-mono font-medium text-[#20262B] dark:text-[#F4F7F6] tabular-nums">
                 {formatInrFromPaise(receipt.totalFeeDuePaise)}
               </span>
             </div>
             <div className="flex items-center justify-between px-4 py-2.5 text-xs">
-              <span className="text-[#687086] dark:text-[#A6B0C3]">
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">
                 Cumulative Verified Paid for Period
               </span>
-              <span className="font-mono font-medium text-[#168A62] dark:text-[#22C58B] tabular-nums">
+              <span className="font-mono font-medium text-[#168A63] dark:text-[#42DDA9] tabular-nums">
                 {formatInrFromPaise(receipt.totalAmountPaidAfterPaise)}
               </span>
             </div>
             <div className="flex items-center justify-between px-4 py-2.5 text-xs">
-              <span className="text-[#687086] dark:text-[#A6B0C3]">
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">
                 Remaining Period Balance
               </span>
-              <span className="font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+              <span className="font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6] tabular-nums">
                 {formatInrFromPaise(receipt.remainingBalancePaise)}
               </span>
             </div>
           </div>
 
-          <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
+          <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
             Receipt ID: <span className="font-mono">{receipt.id}</span> · Verified Payment ID:{' '}
             <span className="font-mono">{receipt.verifiedPaymentId}</span> · Claim ID:{' '}
             <span className="font-mono">{receipt.paymentClaimId}</span>
@@ -206,7 +204,7 @@ export function ReceiptPreviewModal({ receipt, onClose }: ReceiptPreviewModalPro
         </div>
 
         <div className="no-print flex flex-wrap items-center justify-between gap-3 pt-1">
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             Use browser Print dialog to print or save a PDF copy.
           </p>
           <div className="flex items-center gap-2.5">

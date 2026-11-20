@@ -13,11 +13,15 @@ import type {
   TimetableEntry,
 } from '../../types';
 import { cn } from '../../utils/cn';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { IconButton } from '../ui/IconButton';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { Select } from '../ui/Select';
 import { StatusText } from '../ui/StatusText';
+import { Tabs } from '../ui/Tabs';
 
 const DAYS_OF_WEEK: DayOfWeek[] = [
   'Monday',
@@ -208,12 +212,12 @@ export function TimetableSection({
         className={cn(
           'rounded-xl border p-3 space-y-2 transition-colors',
           entry.status === 'cancelled'
-            ? 'border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#171D34]/60 opacity-75'
-            : 'border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426]/80'
+            ? 'border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33]/60 opacity-75'
+            : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429]'
         )}
       >
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-xs font-semibold tabular-nums text-[#7552D9] dark:text-[#A78BFA]">
+          <span className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
             {entry.startTime}–{entry.endTime}
           </span>
           <StatusText
@@ -223,37 +227,35 @@ export function TimetableSection({
         </div>
 
         <div>
-          <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">{subject}</p>
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">{subject}</p>
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {cls} · {batch}
           </p>
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {teacher}
             {entry.room ? ` · ${entry.room}` : ''}
           </p>
         </div>
 
-        <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-[#E5E7EF] dark:border-[#303A55]">
-          <span className="font-mono text-[11px] text-[#687086] dark:text-[#A6B0C3]">{entry.entryId}</span>
+        <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-[#E2E8E5] dark:border-[#344047]">
+          <span className="font-mono text-[11px] text-[#68737C] dark:text-[#AAB6B4]">{entry.entryId}</span>
           <div className="inline-flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => openEdit(entry)}
+            <IconButton
+              size="sm"
+              variant="ghost"
+              label={`Edit ${entry.entryId}`}
               title="Edit session"
-              aria-label={`Edit ${entry.entryId}`}
-              className="w-7 h-7 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-            >
-              <Pencil className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
-            <button
-              type="button"
-              onClick={() => void handleToggleStatus(entry)}
+              onClick={() => openEdit(entry)}
+              icon={<Pencil className="w-3.5 h-3.5" aria-hidden="true" />}
+            />
+            <IconButton
+              size="sm"
+              variant="ghost"
+              label={`${entry.status === 'active' ? 'Cancel' : 'Restore'} ${entry.entryId}`}
               title={entry.status === 'active' ? 'Cancel session' : 'Restore session'}
-              aria-label={`${entry.status === 'active' ? 'Cancel' : 'Restore'} ${entry.entryId}`}
-              className="w-7 h-7 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-            >
-              <Power className="w-3.5 h-3.5" aria-hidden="true" />
-            </button>
+              onClick={() => void handleToggleStatus(entry)}
+              icon={<Power className="w-3.5 h-3.5" aria-hidden="true" />}
+            />
           </div>
         </div>
       </div>
@@ -277,12 +279,11 @@ export function TimetableSection({
     >
       <div className="space-y-5">
         {/* Filter Grid */}
-        <div className="grid grid-cols-2 lg:grid-cols-5 gap-2.5">
-          <select
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-2.5 items-end">
+          <Select
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
             aria-label="Filter timetable by class"
-            className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
           >
             <option value="all">All Classes</option>
             {classes.map((c) => (
@@ -290,13 +291,12 @@ export function TimetableSection({
                 {c.name}
               </option>
             ))}
-          </select>
+          </Select>
 
-          <select
+          <Select
             value={batchFilter}
             onChange={(e) => setBatchFilter(e.target.value)}
             aria-label="Filter timetable by batch"
-            className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
           >
             <option value="all">All Batches</option>
             {batches.map((b) => (
@@ -304,13 +304,12 @@ export function TimetableSection({
                 {b.name}
               </option>
             ))}
-          </select>
+          </Select>
 
-          <select
+          <Select
             value={teacherFilter}
             onChange={(e) => setTeacherFilter(e.target.value)}
             aria-label="Filter timetable by teacher"
-            className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
           >
             <option value="all">All Teachers</option>
             {teacherAccounts.map((t) => (
@@ -318,13 +317,12 @@ export function TimetableSection({
                 {t.name}
               </option>
             ))}
-          </select>
+          </Select>
 
-          <select
+          <Select
             value={subjectFilter}
             onChange={(e) => setSubjectFilter(e.target.value)}
             aria-label="Filter timetable by subject"
-            className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
           >
             <option value="all">All Subjects</option>
             {subjects.map((s) => (
@@ -332,60 +330,40 @@ export function TimetableSection({
                 {s.name}
               </option>
             ))}
-          </select>
+          </Select>
 
           {hasFilters && (
-            <button
-              type="button"
+            <Button
+              variant="secondary"
+              size="md"
               onClick={() => {
                 setClassFilter('all');
                 setBatchFilter('all');
                 setTeacherFilter('all');
                 setSubjectFilter('all');
               }}
-              className="min-h-[40px] px-3 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center justify-center gap-1 cursor-pointer"
+              iconLeft={<X className="w-3.5 h-3.5" aria-hidden="true" />}
             >
-              <X className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Clear Filters</span>
-            </button>
+              Clear Filters
+            </Button>
           )}
         </div>
 
-        {actionError && (
-          <div
-            role="alert"
-            className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3.5 text-xs sm:text-sm text-red-800 dark:text-red-300"
-          >
-            {actionError}
-          </div>
-        )}
+        {actionError && <Alert tone="error">{actionError}</Alert>}
 
         {/* Mobile Day Selector (< md) */}
         <div className="md:hidden space-y-4">
-          <div className="flex overflow-x-auto gap-1.5 pb-1">
-            {DAYS_OF_WEEK.map((day) => {
-              const active = mobileDay === day;
-              return (
-                <button
-                  key={day}
-                  type="button"
-                  onClick={() => setMobileDay(day)}
-                  className={cn(
-                    'min-h-[40px] px-3 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 cursor-pointer border transition-colors',
-                    active
-                      ? 'bg-[#7552D9] text-white border-[#7552D9] dark:bg-[#8B5CF6] dark:border-[#8B5CF6]'
-                      : 'bg-white dark:bg-[#101426] border-[#E5E7EF] dark:border-[#303A55] text-[#687086] dark:text-[#A6B0C3]'
-                  )}
-                >
-                  {day.slice(0, 3)}
-                </button>
-              );
-            })}
-          </div>
+          <Tabs
+            items={DAYS_OF_WEEK.map((d) => ({ id: d, label: d.slice(0, 3) }))}
+            value={mobileDay}
+            onChange={setMobileDay}
+            ariaLabel="Select day of week"
+            className="w-full"
+          />
 
           <div className="space-y-3">
             {filteredEntries.filter((e) => e.dayOfWeek === mobileDay).length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 No sessions scheduled on {mobileDay}.
               </div>
             ) : (
@@ -401,22 +379,22 @@ export function TimetableSection({
             return (
               <div
                 key={day}
-                className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-3.5 space-y-3"
+                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 p-3.5 space-y-3"
               >
-                <div className="flex items-center justify-between pb-2 border-b border-[#E5E7EF] dark:border-[#303A55]">
+                <div className="flex items-center justify-between pb-2 border-b border-[#E2E8E5] dark:border-[#344047]">
                   <div className="flex items-center gap-2">
-                    <CalendarClock className="w-4 h-4 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
-                    <h3 className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <CalendarClock className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+                    <h3 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                       {day}
                     </h3>
                   </div>
-                  <span className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3] tabular-nums">
+                  <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
                     {dayEntries.filter((e) => e.status === 'active').length} active
                   </span>
                 </div>
 
                 {dayEntries.length === 0 ? (
-                  <p className="text-xs text-slate-400 dark:text-slate-500 py-4 text-center">
+                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
                     No sessions
                   </p>
                 ) : (
@@ -439,58 +417,41 @@ export function TimetableSection({
         subtitle="Conflicts on the same batch or same teacher on the same day are automatically blocked."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {formError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-800 dark:text-red-300"
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-              Active Teacher Assignment (Teacher · Subject · Class & Batch)
-            </label>
-            <select
-              value={selectedAssignmentId}
-              onChange={(e) => setSelectedAssignmentId(e.target.value)}
-              required
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            >
-              {activeAssignments.map((asg) => {
-                const tName =
-                  teacherMap.get(asg.teacherAccountId.toUpperCase())?.name ??
-                  asg.teacherAccountId;
-                const sName = subjectMap.get(asg.subjectId)?.name ?? asg.subjectId;
-                const bName = batchMap.get(asg.batchId)?.name ?? asg.batchId;
-                const cName = classMap.get(asg.classId)?.name ?? asg.classId;
-                return (
-                  <option key={asg.assignmentId} value={asg.assignmentId}>
-                    {tName} · {sName} · {cName} ({bName})
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-              Day of Week
-            </label>
-            <select
-              value={dayOfWeek}
-              onChange={(e) => setDayOfWeek(e.target.value as DayOfWeek)}
-              required
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            >
-              {DAYS_OF_WEEK.map((d) => (
-                <option key={d} value={d}>
-                  {d}
+          <Select
+            label="Active Teacher Assignment (Teacher · Subject · Class & Batch)"
+            value={selectedAssignmentId}
+            onChange={(e) => setSelectedAssignmentId(e.target.value)}
+            required
+          >
+            {activeAssignments.map((asg) => {
+              const tName =
+                teacherMap.get(asg.teacherAccountId.toUpperCase())?.name ??
+                asg.teacherAccountId;
+              const sName = subjectMap.get(asg.subjectId)?.name ?? asg.subjectId;
+              const bName = batchMap.get(asg.batchId)?.name ?? asg.batchId;
+              const cName = classMap.get(asg.classId)?.name ?? asg.classId;
+              return (
+                <option key={asg.assignmentId} value={asg.assignmentId}>
+                  {tName} · {sName} · {cName} ({bName})
                 </option>
-              ))}
-            </select>
-          </div>
+              );
+            })}
+          </Select>
+
+          <Select
+            label="Day of Week"
+            value={dayOfWeek}
+            onChange={(e) => setDayOfWeek(e.target.value as DayOfWeek)}
+            required
+          >
+            {DAYS_OF_WEEK.map((d) => (
+              <option key={d} value={d}>
+                {d}
+              </option>
+            ))}
+          </Select>
 
           <div className="grid grid-cols-2 gap-3">
             <Input

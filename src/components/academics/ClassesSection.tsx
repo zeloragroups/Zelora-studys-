@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Pencil, Plus, Power, Search, Trash2, X } from 'lucide-react';
+import { Pencil, Plus, Power, Trash2 } from 'lucide-react';
 import { academicService } from '../../services';
 import { AcademicServiceError } from '../../services/contracts/academicService';
 import type {
@@ -9,12 +9,17 @@ import type {
   StudentEnrolment,
 } from '../../types';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
+import { IconButton } from '../ui/IconButton';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { SearchInput } from '../ui/SearchInput';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
+import { Textarea } from '../ui/Textarea';
 
 interface ClassesSectionProps {
   actor: AuthPrincipal;
@@ -142,7 +147,7 @@ export function ClassesSection({
       key: 'classId',
       header: 'Class ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
           {row.classId}
         </span>
       ),
@@ -152,9 +157,9 @@ export function ClassesSection({
       header: 'Class Name',
       render: (row) => (
         <div>
-          <p className="font-medium text-slate-900 dark:text-slate-100">{row.name}</p>
+          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.name}</p>
           {row.description && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[260px]">
+            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[260px]">
               {row.description}
             </p>
           )}
@@ -165,13 +170,13 @@ export function ClassesSection({
       key: 'batches',
       header: 'Batches',
       align: 'right',
-      render: (row) => <span>{getBatchCount(row.classId)}</span>,
+      render: (row) => <span className="tabular-nums">{getBatchCount(row.classId)}</span>,
     },
     {
       key: 'students',
       header: 'Enrolled',
       align: 'right',
-      render: (row) => <span>{getStudentCount(row.classId)}</span>,
+      render: (row) => <span className="tabular-nums">{getStudentCount(row.classId)}</span>,
     },
     {
       key: 'status',
@@ -187,7 +192,7 @@ export function ClassesSection({
       key: 'createdAt',
       header: 'Created',
       render: (row) => (
-        <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
+        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
           {formatShortDate(row.createdAt)}
         </span>
       ),
@@ -198,36 +203,33 @@ export function ClassesSection({
       align: 'right',
       render: (row) => (
         <div className="inline-flex items-center justify-end gap-1">
-          <button
-            type="button"
-            onClick={() => openEdit(row)}
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`Edit ${row.classId}`}
             title="Edit class"
-            aria-label={`Edit ${row.classId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Pencil className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleToggleStatus(row)}
+            onClick={() => openEdit(row)}
+            icon={<Pencil className="w-4 h-4" aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`${row.status === 'active' ? 'Deactivate' : 'Activate'} ${row.classId}`}
             title={row.status === 'active' ? 'Deactivate class' : 'Activate class'}
-            aria-label={`${row.status === 'active' ? 'Deactivate' : 'Activate'} ${row.classId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Power className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
+            onClick={() => void handleToggleStatus(row)}
+            icon={<Power className="w-4 h-4" aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant="danger"
+            label={`Delete ${row.classId}`}
+            title="Delete unused class"
             onClick={() => {
               setActionError(null);
               setDeleteTarget(row);
             }}
-            title="Delete unused class"
-            aria-label={`Delete ${row.classId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#D94C5C] hover:bg-[#D94C5C]/10 dark:text-[#F16B75] dark:hover:bg-[#F16B75]/15 cursor-pointer transition-colors"
-          >
-            <Trash2 className="w-4 h-4" aria-hidden="true" />
-          </button>
+            icon={<Trash2 className="w-4 h-4" aria-hidden="true" />}
+          />
         </div>
       ),
     },
@@ -248,41 +250,15 @@ export function ClassesSection({
       }
     >
       <div className="space-y-4">
-        <div className="flex items-center gap-2 max-w-sm">
-          <div className="relative flex-1">
-            <Search
-              className="w-4 h-4 text-[#687086] dark:text-[#A6B0C3] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              aria-hidden="true"
-            />
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search class ID or name..."
-              aria-label="Search classes"
-              className="w-full min-h-[40px] rounded-xl pl-9 pr-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="min-h-[40px] px-2.5 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center gap-1 cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Clear</span>
-            </button>
-          )}
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          placeholder="Search class ID or name…"
+          aria-label="Search classes"
+          containerClassName="max-w-sm"
+        />
 
-        {actionError && (
-          <div
-            role="alert"
-            className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3.5 text-xs sm:text-sm text-red-800 dark:text-red-300"
-          >
-            {actionError}
-          </div>
-        )}
+        {actionError && <Alert tone="error">{actionError}</Alert>}
 
         <div className="hidden md:block">
           <Table
@@ -297,23 +273,23 @@ export function ClassesSection({
 
         <div className="md:hidden space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">
+            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
               No matching classes found.
             </p>
           ) : (
             filtered.map((cls) => (
               <div
                 key={cls.classId}
-                className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-2.5 bg-white dark:bg-[#101426]/65"
+                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       {cls.classId}
                     </p>
-                    <p className="font-medium text-[#17172B] dark:text-[#F8FAFC]">{cls.name}</p>
+                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{cls.name}</p>
                     {cls.description && (
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">{cls.description}</p>
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">{cls.description}</p>
                     )}
                   </div>
                   <StatusText
@@ -321,7 +297,7 @@ export function ClassesSection({
                     label={cls.status === 'active' ? 'Active' : 'Inactive'}
                   />
                 </div>
-                <p className="text-xs text-slate-500 dark:text-slate-400 tabular-nums">
+                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
                   {getBatchCount(cls.classId)} batches · {getStudentCount(cls.classId)} enrolled students
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1">
@@ -359,14 +335,7 @@ export function ClassesSection({
         subtitle="Unique class IDs (CLS-0001) are generated sequentially."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {formError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-800 dark:text-red-300"
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
           <Input
             label="Class Name"
             value={name}
@@ -374,18 +343,13 @@ export function ClassesSection({
             placeholder="e.g. Class 10 — Foundation"
             required
           />
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-              Description (Optional)
-            </label>
-            <textarea
-              rows={3}
-              value={description}
-              onChange={(e) => setDescription(e.target.value)}
-              placeholder="Curriculum scope or stream notes..."
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
+          <Textarea
+            label="Description (Optional)"
+            rows={3}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
+            placeholder="Curriculum scope or stream notes…"
+          />
           <div className="flex justify-end gap-2 pt-2">
             <Button type="button" variant="secondary" onClick={() => setModalMode(null)}>
               Cancel
@@ -397,31 +361,18 @@ export function ClassesSection({
         </form>
       </Modal>
 
-      <Modal
+      <ConfirmDialog
         open={deleteTarget !== null}
         onClose={() => setDeleteTarget(null)}
+        onConfirm={() => void handleDelete()}
         title="Confirm Class Deletion"
         subtitle="Only unused classes with zero batches, subjects, or enrolments can be deleted."
-        maxWidthClass="max-w-md"
-      >
-        <div className="space-y-4">
-          <p className="text-sm text-slate-700 dark:text-slate-300">
-            Delete class{' '}
-            <span className="font-semibold text-slate-900 dark:text-slate-100">
-              {deleteTarget?.classId} ({deleteTarget?.name})
-            </span>
-            ?
-          </p>
-          <div className="flex justify-end gap-2">
-            <Button variant="secondary" onClick={() => setDeleteTarget(null)}>
-              Cancel
-            </Button>
-            <Button variant="danger" loading={submitting} onClick={() => void handleDelete()}>
-              Delete Class
-            </Button>
-          </div>
-        </div>
-      </Modal>
+        description={`Delete class ${deleteTarget?.classId ?? ''} (${deleteTarget?.name ?? ''})?`}
+        confirmLabel="Delete Class"
+        confirmVariant="danger"
+        tone="danger"
+        loading={submitting}
+      />
     </Card>
   );
 }

@@ -11,9 +11,11 @@ import type {
   TeacherAssignment,
   TimetableEntry,
 } from '../../types';
-import { cn } from '../../utils/cn';
+import { Alert } from '../ui/Alert';
 import { Card } from '../ui/Card';
+import { PageHeader } from '../ui/PageHeader';
 import { StatTile } from '../ui/StatTile';
+import { Tabs } from '../ui/Tabs';
 import { ClassesSection } from './ClassesSection';
 import { BatchesSection } from './BatchesSection';
 import { SubjectsSection } from './SubjectsSection';
@@ -131,9 +133,9 @@ export function AcademicManagementModule({
   if (!principal || principal.role !== 'admin') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-red-700 dark:text-red-400">
+        <Alert tone="error">
           Only authenticated Admin accounts may manage academic operations.
-        </p>
+        </Alert>
       </Card>
     );
   }
@@ -145,34 +147,18 @@ export function AcademicManagementModule({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Admin Academic Operations · {isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Development Adapter'}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            Academic Management
-          </h1>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={`Admin Academic Operations · ${isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Development Adapter'}`}
+        title="Academic Management"
+      />
 
       {toast && (
-        <div
-          role="status"
-          className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2.5 text-xs font-medium text-emerald-900 dark:text-emerald-200"
-        >
+        <Alert tone="success" onDismiss={() => setToast(null)}>
           {toast}
-        </div>
+        </Alert>
       )}
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-800 dark:text-red-300"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
       {overview && (
         <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
@@ -199,33 +185,12 @@ export function AcademicManagementModule({
         </div>
       )}
 
-      {/* Horizontal Tab Bar */}
-      <div
-        className="flex overflow-x-auto gap-1 p-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844]"
-        role="tablist"
-        aria-label="Academic management modules"
-      >
-        {ACADEMIC_TABS.map((tab) => {
-          const active = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer',
-                active
-                  ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-                  : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-              )}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <Tabs
+        items={ACADEMIC_TABS}
+        value={activeTab}
+        onChange={setActiveTab}
+        ariaLabel="Academic management modules"
+      />
 
       {activeTab === 'classes' && (
         <ClassesSection

@@ -2,7 +2,7 @@ import type { ButtonHTMLAttributes, ReactNode } from 'react';
 import { cn } from '../../utils/cn';
 import { LoadingSpinner } from '../feedback/LoadingSpinner';
 
-export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
+export type ButtonVariant = 'primary' | 'charcoal' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'sm' | 'md' | 'lg';
 
 interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -15,13 +15,15 @@ interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<ButtonVariant, string> = {
   primary:
-    'bg-[#7552D9] text-white hover:bg-[#6441C8] dark:bg-[#8B5CF6] dark:hover:bg-[#7C3AED] border border-transparent shadow-xs',
+    'bg-[#35D6A0] text-[#171D21] font-semibold hover:bg-[#18B985] dark:bg-[#42DDA9] dark:text-[#151A1E] dark:hover:bg-[#35D6A0] border border-transparent shadow-xs',
+  charcoal:
+    'bg-[#20262B] text-[#F4F7F6] font-medium hover:bg-[#171D21] dark:bg-[#2B353A] dark:text-[#F4F7F6] dark:hover:bg-[#343C42] border border-transparent shadow-xs',
   secondary:
-    'bg-white text-[#17172B] border border-[#E5E7EF] hover:bg-[#F1EEFA] dark:bg-[#202844] dark:text-[#F8FAFC] dark:border-[#303A55] dark:hover:bg-[#283254]',
+    'bg-white text-[#20262B] font-medium border border-[#E2E8E5] hover:bg-[#F0F4F2] dark:bg-[#252E33] dark:text-[#F4F7F6] dark:border-[#344047] dark:hover:bg-[#2B353A]',
   ghost:
-    'bg-transparent text-[#434960] hover:bg-[#F1EEFA] hover:text-[#17172B] dark:text-[#A6B0C3] dark:hover:bg-[#202844] dark:hover:text-[#F8FAFC] border border-transparent',
+    'bg-transparent text-[#343C42] font-medium hover:bg-[#F0F4F2] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:bg-[#252E33] dark:hover:text-[#F4F7F6] border border-transparent',
   danger:
-    'bg-[#D94C5C] text-white hover:bg-[#C03A4A] dark:bg-[#F16B75] dark:text-[#101426] dark:hover:bg-[#FA7E87] border border-transparent',
+    'bg-[#D64C55] text-white font-medium hover:bg-[#BE3E47] dark:bg-[#EF6D75] dark:text-[#151A1E] dark:hover:bg-[#F5858C] border border-transparent',
 };
 
 const SIZE_CLASSES: Record<ButtonSize, string> = {
@@ -47,9 +49,9 @@ export function Button({
       type={type}
       disabled={disabled || loading}
       className={cn(
-        'inline-flex items-center justify-center gap-2 rounded-xl font-medium whitespace-nowrap shrink-0',
-        'transition-[transform,background-color,border-color,color,box-shadow] duration-150 ease-out active:scale-[0.98]',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#7552D9] dark:focus-visible:outline-[#8B5CF6]',
+        'inline-flex items-center justify-center gap-2 rounded-xl whitespace-nowrap shrink-0',
+        'transition-[transform,background-color,border-color,color,box-shadow] duration-150 ease-out active:scale-[0.985]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
         'disabled:opacity-55 disabled:pointer-events-none cursor-pointer',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],

@@ -1,6 +1,5 @@
 import { useState, type FormEvent } from 'react';
 import {
-  AlertTriangle,
   Banknote,
   CalendarPlus,
   CheckCircle2,
@@ -22,10 +21,12 @@ import type {
 } from '../../types';
 import { formatInrFromPaise, paiseToRupees } from '../../utils/currency';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { Select } from '../ui/Select';
 import { StatusText, type SemanticTone } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
 
@@ -261,8 +262,8 @@ export function AdminSalaryPanel({
       header: 'Teacher & Period',
       render: (p) => (
         <div>
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">{p.teacherName}</p>
-          <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{p.teacherName}</p>
+          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {p.teacherId} · {p.periodLabel}
           </p>
         </div>
@@ -276,7 +277,7 @@ export function AdminSalaryPanel({
           <p className="font-medium">
             {p.salaryModel === 'fixed_monthly' ? 'Fixed Monthly' : 'Per-Session'} ({formatInrFromPaise(p.ratePaise)})
           </p>
-          <p className="font-mono text-[#687086] dark:text-[#A6B0C3] tabular-nums">
+          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
             {p.eligibleSessionIds.length} submitted non-cancelled session(s)
           </p>
           {p.requiresAdminReview && (
@@ -289,14 +290,18 @@ export function AdminSalaryPanel({
       key: 'payable',
       header: 'Payable',
       align: 'right',
-      render: (p) => formatInrFromPaise(p.payableAmountPaise),
+      render: (p) => (
+        <span className="font-mono tabular-nums">
+          {formatInrFromPaise(p.payableAmountPaise)}
+        </span>
+      ),
     },
     {
       key: 'paid',
       header: 'Paid',
       align: 'right',
       render: (p) => (
-        <span className="text-[#168A62] dark:text-[#22C58B] font-semibold">
+        <span className="font-mono tabular-nums text-[#168A63] dark:text-[#42DDA9] font-semibold">
           {formatInrFromPaise(p.paidAmountPaise)}
         </span>
       ),
@@ -306,7 +311,9 @@ export function AdminSalaryPanel({
       header: 'Remaining',
       align: 'right',
       render: (p) => (
-        <span className="font-semibold">{formatInrFromPaise(p.remainingAmountPaise)}</span>
+        <span className="font-mono tabular-nums font-semibold">
+          {formatInrFromPaise(p.remainingAmountPaise)}
+        </span>
       ),
     },
     {
@@ -395,7 +402,7 @@ export function AdminSalaryPanel({
       render: (r) => (
         <div>
           <p className="font-mono font-semibold text-xs">{r.id}</p>
-          <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {r.teacherId} · {r.period}
           </p>
         </div>
@@ -407,7 +414,7 @@ export function AdminSalaryPanel({
       render: (r) => (
         <div className="text-xs">
           <p className="font-mono tabular-nums">{formatShortDate(r.paymentDate)}</p>
-          <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">
+          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
             {r.paymentReference ?? 'No external ref'}
           </p>
         </div>
@@ -418,7 +425,7 @@ export function AdminSalaryPanel({
       header: 'Paid Amount',
       align: 'right',
       render: (r) => (
-        <span className="font-semibold text-[#168A62] dark:text-[#22C58B]">
+        <span className="font-semibold text-[#168A63] dark:text-[#42DDA9]">
           {formatInrFromPaise(r.amountPaise)}
         </span>
       ),
@@ -427,7 +434,7 @@ export function AdminSalaryPanel({
       key: 'note',
       header: 'Note / Audit',
       render: (r) => (
-        <div className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+        <div className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
           <p>{r.note ?? '—'}</p>
           {r.corrected && (
             <StatusText tone="warning" label={`Corrected: ${r.correctionReason ?? ''}`} />
@@ -460,12 +467,9 @@ export function AdminSalaryPanel({
   return (
     <div className="space-y-6">
       {formError && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 p-4 text-sm text-[#D94C5C] dark:text-[#F16B75]"
-        >
+        <Alert tone="error" onDismiss={() => setFormError(null)}>
           {formError}
-        </div>
+        </Alert>
       )}
 
       <div className="grid gap-6 lg:grid-cols-5">
@@ -477,44 +481,28 @@ export function AdminSalaryPanel({
         >
           <form onSubmit={handleSaveSalaryConfig} className="space-y-4">
             <div className="grid gap-4 sm:grid-cols-2">
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="salary-teacher-select"
-                  className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]"
-                >
-                  Select Teacher
-                </label>
-                <select
-                  id="salary-teacher-select"
-                  value={selectedTeacherId}
-                  onChange={(e) => setSelectedTeacherId(e.target.value)}
-                  className="w-full min-h-[44px] rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC] border border-[#E5E7EF] dark:border-[#303A55]"
-                >
-                  {summaries.map((s) => (
-                    <option key={s.teacherId} value={s.teacherId}>
-                      {s.teacherName} ({s.teacherId})
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Select Teacher"
+                id="salary-teacher-select"
+                value={selectedTeacherId}
+                onChange={(e) => setSelectedTeacherId(e.target.value)}
+              >
+                {summaries.map((s) => (
+                  <option key={s.teacherId} value={s.teacherId}>
+                    {s.teacherName} ({s.teacherId})
+                  </option>
+                ))}
+              </Select>
 
-              <div className="space-y-1.5">
-                <label
-                  htmlFor="salary-model-select"
-                  className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]"
-                >
-                  Salary Model
-                </label>
-                <select
-                  id="salary-model-select"
-                  value={salaryModel}
-                  onChange={(e) => setSalaryModel(e.target.value as TeacherSalaryModel)}
-                  className="w-full min-h-[44px] rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC] border border-[#E5E7EF] dark:border-[#303A55]"
-                >
-                  <option value="fixed_monthly">Fixed Monthly Salary</option>
-                  <option value="per_session">Per-Session / Per-Class Salary</option>
-                </select>
-              </div>
+              <Select
+                label="Salary Model"
+                id="salary-model-select"
+                value={salaryModel}
+                onChange={(e) => setSalaryModel(e.target.value as TeacherSalaryModel)}
+              >
+                <option value="fixed_monthly">Fixed Monthly Salary</option>
+                <option value="per_session">Per-Session / Per-Class Salary</option>
+              </Select>
             </div>
 
             <div className="grid gap-4 sm:grid-cols-2">
@@ -609,7 +597,7 @@ export function AdminSalaryPanel({
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-semibold text-sm">{p.teacherName}</p>
-                    <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       {p.periodLabel} · {p.salaryModel === 'fixed_monthly' ? 'Fixed Monthly' : 'Per-Session'}
                     </p>
                   </div>
@@ -617,17 +605,17 @@ export function AdminSalaryPanel({
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs font-mono tabular-nums">
                   <div>
-                    <span className="block font-sans text-[#687086] dark:text-[#A6B0C3]">Payable</span>
+                    <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Payable</span>
                     <span>{formatInrFromPaise(p.payableAmountPaise)}</span>
                   </div>
                   <div>
-                    <span className="block font-sans text-[#687086] dark:text-[#A6B0C3]">Paid</span>
-                    <span className="text-[#168A62] dark:text-[#22C58B]">
+                    <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Paid</span>
+                    <span className="text-[#168A63] dark:text-[#42DDA9]">
                       {formatInrFromPaise(p.paidAmountPaise)}
                     </span>
                   </div>
                   <div>
-                    <span className="block font-sans text-[#687086] dark:text-[#A6B0C3]">Remaining</span>
+                    <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Remaining</span>
                     <span className="font-bold">{formatInrFromPaise(p.remainingAmountPaise)}</span>
                   </div>
                 </div>
@@ -675,11 +663,11 @@ export function AdminSalaryPanel({
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="font-mono font-semibold">{r.id} · {r.teacherId}</span>
-                <span className="font-mono font-bold text-[#168A62] dark:text-[#22C58B]">
+                <span className="font-mono font-bold text-[#168A63] dark:text-[#42DDA9]">
                   {formatInrFromPaise(r.amountPaise)}
                 </span>
               </div>
-              <p className="text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-[#68737C] dark:text-[#AAB6B4]">
                 {r.period} · Paid {formatShortDate(r.paymentDate)}
               </p>
               <Button
@@ -710,7 +698,7 @@ export function AdminSalaryPanel({
       >
         {payPeriodTarget && (
           <form onSubmit={handleRecordPayment} className="space-y-4">
-            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426] p-3.5 text-xs space-y-1 font-mono tabular-nums">
+            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-3.5 text-xs space-y-1 font-mono tabular-nums">
               <p>Period: {payPeriodTarget.periodLabel}</p>
               <p>Total Payable: {formatInrFromPaise(payPeriodTarget.payableAmountPaise)}</p>
               <p>Already Paid: {formatInrFromPaise(payPeriodTarget.paidAmountPaise)}</p>
@@ -802,10 +790,7 @@ export function AdminSalaryPanel({
         {reviewTarget && (
           <form onSubmit={handleResolveReview} className="space-y-4">
             {reviewTarget.reviewReason && (
-              <div className="rounded-xl border border-[#B7791F]/35 bg-[#B7791F]/10 p-3 text-xs text-[#B7791F] dark:text-[#F5B942] flex items-start gap-2">
-                <AlertTriangle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-                <span>{reviewTarget.reviewReason}</span>
-              </div>
+              <Alert tone="warning">{reviewTarget.reviewReason}</Alert>
             )}
             <Input
               label="Approved Payable Amount (INR)"
@@ -887,12 +872,10 @@ export function AdminSalaryPanel({
         {inspectPeriod && (
           <div className="space-y-3 text-xs">
             {inspectPeriod.requiresAdminReview && inspectPeriod.reviewReason && (
-              <div className="rounded-xl border border-[#B7791F]/35 bg-[#B7791F]/10 p-3 text-[#B7791F] dark:text-[#F5B942]">
-                {inspectPeriod.reviewReason}
-              </div>
+              <Alert tone="warning">{inspectPeriod.reviewReason}</Alert>
             )}
             {inspectPeriod.eligibleSessionsSummary.length === 0 ? (
-              <p className="text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-[#68737C] dark:text-[#AAB6B4]">
                 No eligible submitted attendance sessions found for {inspectPeriod.periodLabel}.
               </p>
             ) : (
@@ -900,13 +883,13 @@ export function AdminSalaryPanel({
                 {inspectPeriod.eligibleSessionsSummary.map((s) => (
                   <div
                     key={s.sessionId}
-                    className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3 flex flex-wrap items-center justify-between gap-2"
+                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3 flex flex-wrap items-center justify-between gap-2"
                   >
                     <div>
-                      <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                         {s.className} · {s.batchName} ({s.subjectName})
                       </p>
-                      <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">
+                      <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
                         {s.sessionId} · {formatShortDate(s.sessionDate)} · {s.sessionType}
                       </p>
                     </div>

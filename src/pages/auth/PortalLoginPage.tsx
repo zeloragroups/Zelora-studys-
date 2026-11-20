@@ -1,9 +1,10 @@
 import { useEffect, useState, type FormEvent } from 'react';
-import { AlertCircle, Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff } from 'lucide-react';
 import { useAuth, AuthServiceException } from '../../context/AuthContext';
 import { useInterface } from '../../context/InterfaceContext';
 import { getDefaultRouteForRole, ROUTES, type AppRoutePath } from '../../router/routes';
 import { LoginShell } from '../../components/auth/LoginShell';
+import { Alert } from '../../components/ui/Alert';
 import { Button } from '../../components/ui/Button';
 import { Input } from '../../components/ui/Input';
 
@@ -93,24 +94,9 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
       onNavigateHome={() => onNavigate(ROUTES.HOME)}
     >
       <form onSubmit={handleSubmit} className="space-y-4" noValidate>
-        {authNotice && !formError && (
-          <div
-            role="status"
-            className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F1EEFA] dark:bg-[#202844] px-3.5 py-2.5 text-xs text-[#17172B] dark:text-[#F8FAFC]"
-          >
-            {authNotice}
-          </div>
-        )}
+        {authNotice && !formError && <Alert tone="info">{authNotice}</Alert>}
 
-        {formError && (
-          <div
-            role="alert"
-            className="flex items-start gap-2 rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 px-3.5 py-2.5 text-xs font-medium text-[#D94C5C] dark:text-[#F16B75]"
-          >
-            <AlertCircle className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-            <span>{formError}</span>
-          </div>
-        )}
+        {formError && <Alert tone="error">{formError}</Alert>}
 
         <Input
           label="User ID"
@@ -149,12 +135,12 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
               type="button"
               onClick={() => setShowPassword((prev) => !prev)}
               aria-label={showPassword ? 'Hide password' : 'Show password'}
-              className="w-9 h-9 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] cursor-pointer"
+              className="w-9 h-9 inline-flex items-center justify-center rounded-lg text-[#68737C] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:text-[#F4F7F6] cursor-pointer"
             >
               {showPassword ? (
-                <EyeOff className="w-4 h-4" aria-hidden="true" />
+                <EyeOff className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
               ) : (
-                <Eye className="w-4 h-4" aria-hidden="true" />
+                <Eye className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
               )}
             </button>
           }
@@ -164,7 +150,7 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
           <button
             type="button"
             onClick={() => onNavigate(ROUTES.PORTAL_FORGOT_PASSWORD)}
-            className="text-xs font-medium text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
+            className="text-xs font-medium text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
           >
             Forgot password?
           </button>
@@ -172,6 +158,7 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
 
         <Button
           type="submit"
+          variant="primary"
           loading={submitting}
           className="w-full"
         >

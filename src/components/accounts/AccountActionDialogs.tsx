@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { AlertTriangle, CheckCircle2, KeyRound } from 'lucide-react';
+import { AlertTriangle, KeyRound } from 'lucide-react';
 import type {
   AccountRecord,
   AuthPrincipal,
@@ -7,6 +7,7 @@ import type {
 } from '../../types';
 import type { IAccountManagementService } from '../../services/contracts/accountService';
 import { isFirebaseConnectedMode } from '../../services';
+import { Alert } from '../ui/Alert';
 import { Modal } from '../ui/Modal';
 import { Button } from '../ui/Button';
 
@@ -61,12 +62,12 @@ export function AccountStatusConfirmDialog({
       subtitle={`${account.name} (${account.accountId})`}
     >
       <div className="space-y-4">
-        <div className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
+        <div className="flex items-start gap-3 text-sm text-[#343C42] dark:text-[#D4DDDC] leading-relaxed">
           <AlertTriangle
             className={`w-5 h-5 shrink-0 mt-0.5 ${
               isDeactivating
-                ? 'text-[#D94C5C] dark:text-[#F16B75]'
-                : 'text-[#7552D9] dark:text-[#A78BFA]'
+                ? 'text-[#D64C55] dark:text-[#EF6D75]'
+                : 'text-[#168A63] dark:text-[#42DDA9]'
             }`}
             aria-hidden="true"
           />
@@ -77,11 +78,7 @@ export function AccountStatusConfirmDialog({
           </p>
         </div>
 
-        {error && (
-          <p role="alert" className="text-xs font-medium text-red-700 dark:text-red-400">
-            {error}
-          </p>
-        )}
+        {error && <Alert tone="error">{error}</Alert>}
 
         <div className="flex justify-end gap-3 pt-2">
           <Button variant="secondary" onClick={onClose} disabled={submitting}>
@@ -156,24 +153,21 @@ export function PasswordResetDemoDialog({
     >
       {receipt ? (
         <div className="space-y-4">
-          <div className="flex items-start gap-2.5 rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 p-4 text-sm text-emerald-900 dark:text-emerald-200">
-            <CheckCircle2 className="w-4 h-4 shrink-0 mt-0.5" aria-hidden="true" />
-            <p className="leading-relaxed">{receipt.notice}</p>
-          </div>
+          <Alert tone="success">{receipt.notice}</Alert>
           {receipt.authEmail && (
-            <div className="rounded-lg border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/70 px-3.5 py-2.5 text-xs">
-              <span className="text-slate-500 dark:text-slate-400">Firebase Auth Login Email: </span>
-              <span className="font-mono font-semibold text-slate-900 dark:text-slate-100">
+            <div className="rounded-lg border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 px-3.5 py-2.5 text-xs">
+              <span className="text-[#68737C] dark:text-[#AAB6B4]">Firebase Auth Login Email: </span>
+              <span className="font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 {receipt.authEmail}
               </span>
             </div>
           )}
           {receipt.manualSteps && receipt.manualSteps.length > 0 && (
-            <div className="space-y-2 rounded-lg border border-[#E5E7EF] dark:border-[#303A55] p-3.5">
-              <p className="text-xs font-semibold text-slate-800 dark:text-slate-200">
+            <div className="space-y-2 rounded-lg border border-[#E2E8E5] dark:border-[#344047] p-3.5">
+              <p className="text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 Manual Firebase Console Reset Steps
               </p>
-              <ol className="list-decimal pl-5 space-y-1 text-xs text-slate-700 dark:text-slate-300">
+              <ol className="list-decimal pl-5 space-y-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 {receipt.manualSteps.map((stepText, idx) => (
                   <li key={idx}>{stepText}</li>
                 ))}
@@ -186,25 +180,21 @@ export function PasswordResetDemoDialog({
         </div>
       ) : (
         <div className="space-y-4">
-          <div className="flex items-start gap-3 text-sm text-slate-700 dark:text-slate-300 leading-relaxed">
-            <KeyRound className="w-5 h-5 text-[#7552D9] dark:text-[#A78BFA] shrink-0 mt-0.5" aria-hidden="true" />
+          <div className="flex items-start gap-3 text-sm text-[#343C42] dark:text-[#D4DDDC] leading-relaxed">
+            <KeyRound className="w-5 h-5 text-[#168A63] dark:text-[#42DDA9] shrink-0 mt-0.5" aria-hidden="true" />
             <div className="space-y-2">
               <p>
                 Admin cannot view or retrieve existing passwords. Logging a reset records an immutable entry in the account audit trail.
               </p>
-              <p className="text-xs text-slate-500 dark:text-slate-400">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 {firebaseConnected
-                  ? 'On the Firebase Spark (free) plan without Admin SDK Cloud Functions, resetting another user\'s password requires Firebase Console access. Teachers and students can change their own password anytime under Account & Preferences.'
+                  ? 'On the Firebase Spark (free) plan without Admin SDK Cloud Functions, resetting another user\'s password requires Firebase Console access. Teachers and students can change their own password anytime under Settings.'
                   : 'DEMO ONLY: No actual email, SMS, or external notification is sent while Firebase Authentication is disconnected.'}
               </p>
             </div>
           </div>
 
-          {error && (
-            <p role="alert" className="text-xs font-medium text-red-700 dark:text-red-400">
-              {error}
-            </p>
-          )}
+          {error && <Alert tone="error">{error}</Alert>}
 
           <div className="flex justify-end gap-3 pt-2">
             <Button variant="secondary" onClick={handleClose} disabled={submitting}>

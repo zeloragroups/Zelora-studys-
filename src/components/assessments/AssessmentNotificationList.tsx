@@ -48,7 +48,7 @@ export function AssessmentNotificationList({
       subtitle={subtitle}
       action={
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+          <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
             {unreadCount} unread
           </span>
           {!readOnly && unreadCount > 0 && onMarkAllRead && (
@@ -65,17 +65,17 @@ export function AssessmentNotificationList({
       }
     >
       {visibleList.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-2">
-          <Bell className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto" aria-hidden="true" />
-          <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+        <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
+          <Bell className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
+          <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
             No assessment notifications right now
           </p>
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             Notifications appear here when homework, online tests, exams, or released scores are published.
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+        <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
           {visibleList.map((notif) => {
             const isRead = Boolean(notif.readAt);
             const typeMeta = TYPE_META[notif.type];
@@ -85,8 +85,8 @@ export function AssessmentNotificationList({
                 className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
               >
                 <div className="space-y-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-                    <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       {notif.id}
                     </span>
                     <span aria-hidden="true">·</span>
@@ -97,10 +97,10 @@ export function AssessmentNotificationList({
                     <span className="tabular-nums">{formatDateTime(notif.createdAt)}</span>
                   </div>
 
-                  <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                     {notif.title}
                   </p>
-                  <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                     {notif.message}
                   </p>
                 </div>

@@ -19,7 +19,7 @@ export function AttendanceStatusBadge({ status, corrected }: AttendanceStatusBad
     <span className="inline-flex items-center gap-1.5 whitespace-nowrap">
       <StatusText tone={meta.tone} label={meta.label} />
       {corrected && (
-        <span className="text-[11px] font-medium text-amber-700 dark:text-amber-400">
+        <span className="text-[11px] font-medium text-[#A67317] dark:text-[#E5B04D]">
           · Corrected
         </span>
       )}

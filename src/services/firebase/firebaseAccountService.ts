@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   query,
   updateDoc,
   where,
@@ -732,7 +733,8 @@ export class FirebaseAccountService implements IAccountManagementService {
       const snap = await getDocs(
         query(
           collection(db, 'accountAudit'),
-          where('accountId', '==', accountId.trim().toUpperCase())
+          where('accountId', '==', accountId.trim().toUpperCase()),
+          limit(250)
         )
       ).catch(() => null);
       if (!snap) return [];

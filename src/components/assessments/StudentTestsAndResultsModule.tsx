@@ -22,11 +22,16 @@ import type {
 } from '../../types';
 import { cn } from '../../utils/cn';
 import { formatDateTime, formatShortDate } from '../../utils/formatters';
+import { ComparisonBarChart } from '../charts/AnalyticsCharts';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Modal } from '../ui/Modal';
+import { PageHeader } from '../ui/PageHeader';
+import { Select } from '../ui/Select';
 import { StatusText, type SemanticTone } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
+import { Tabs } from '../ui/Tabs';
 
 type StudentSubTab = 'tests' | 'examinations' | 'results';
 type TestStatusFilter =
@@ -228,11 +233,9 @@ export function StudentTestsAndResultsModule({
 
   if (!principal || principal.role !== 'student') {
     return (
-      <Card title="Access Restricted">
-        <p className="text-sm text-[#D94C5C] dark:text-[#F16B75]">
-          Tests and results are accessible only with Student / Parent credentials.
-        </p>
-      </Card>
+      <Alert tone="error" title="Access Restricted">
+        Tests and results are accessible only with Student / Parent credentials.
+      </Alert>
     );
   }
 
@@ -328,24 +331,24 @@ export function StudentTestsAndResultsModule({
                 className={cn(
                   'inline-flex items-center gap-1.5 font-mono text-base font-bold tabular-nums',
                   isExpired
-                    ? 'text-[#D94C5C] dark:text-[#F16B75]'
+                    ? 'text-[#D64C55] dark:text-[#EF6D75]'
                     : isLowTime
-                      ? 'text-[#B7791F] dark:text-[#F5B942]'
-                      : 'text-[#7552D9] dark:text-[#A78BFA]'
+                      ? 'text-[#A67317] dark:text-[#E5B04D]'
+                      : 'text-[#168A63] dark:text-[#42DDA9]'
                 )}
               >
                 <Clock className="w-4 h-4" aria-hidden="true" />
                 <span>{formatCountdown(remainingMs)}</span>
               </div>
-              <p className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                 Answered {answeredCount} / {questions.length} · Unanswered {unansweredCount}
               </p>
             </div>
           }
         >
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 px-3.5 py-2.5 text-xs text-[#687086] dark:text-[#A6B0C3] flex items-center justify-between gap-3 mb-5">
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] px-3.5 py-2.5 text-xs text-[#68737C] dark:text-[#AAB6B4] flex items-center justify-between gap-3 mb-5">
             <span>
-              Browser timer shown for local development convenience — production anti-cheat enforcement requires server-side deadline validation.
+              Countdown timer is enforced in-browser on the Spark free plan; server-side deadline enforcement requires Cloud Functions.
             </span>
             <button
               type="button"
@@ -353,24 +356,21 @@ export function StudentTestsAndResultsModule({
                 setActiveRunner(null);
                 void loadData();
               }}
-              className="text-[#7552D9] dark:text-[#A78BFA] font-medium underline shrink-0 cursor-pointer"
+              className="text-[#168A63] dark:text-[#42DDA9] font-medium underline shrink-0 cursor-pointer"
             >
               Pause & Exit (Progress Saved)
             </button>
           </div>
 
           {error && (
-            <div
-              role="alert"
-              className="mb-4 rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-            >
+            <Alert tone="error" className="mb-4">
               {error}
-            </div>
+            </Alert>
           )}
 
           {/* Question Navigator Grid */}
           <div className="mb-5">
-            <p className="text-xs font-semibold text-[#687086] dark:text-[#A6B0C3] mb-2">
+            <p className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
               Question Navigator
             </p>
             <div className="flex flex-wrap gap-2">
@@ -388,10 +388,10 @@ export function StudentTestsAndResultsModule({
                     className={cn(
                       'min-w-[44px] min-h-[44px] px-2.5 rounded-xl text-xs font-mono font-semibold border cursor-pointer transition-colors',
                       active
-                        ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white border-[#7552D9] dark:border-[#8B5CF6]'
+                        ? 'bg-[#20262B] dark:bg-[#42DDA9] text-[#F4F7F6] dark:text-[#151A1E] border-[#20262B] dark:border-[#42DDA9]'
                         : answered
-                          ? 'bg-[#168A62]/10 dark:bg-[#22C58B]/15 text-[#168A62] dark:text-[#22C58B] border-[#168A62]/40 dark:border-[#22C58B]/40'
-                          : 'bg-white dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
+                          ? 'bg-[#DDF8EE] dark:bg-[#244B3E] text-[#168A63] dark:text-[#42DDA9] border-[#B8EBD8] dark:border-[#316453]'
+                          : 'bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
                     )}
                   >
                     {idx + 1}
@@ -404,8 +404,8 @@ export function StudentTestsAndResultsModule({
                 className={cn(
                   'min-h-[44px] px-3.5 rounded-xl text-xs font-medium border cursor-pointer whitespace-nowrap transition-colors',
                   reviewScreenOpen
-                    ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white border-[#7552D9] dark:border-[#8B5CF6]'
-                    : 'bg-white dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
+                    ? 'bg-[#20262B] dark:bg-[#42DDA9] text-[#F4F7F6] dark:text-[#151A1E] border-[#20262B] dark:border-[#42DDA9] font-semibold'
+                    : 'bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
                 )}
               >
                 Review All Questions
@@ -416,14 +416,14 @@ export function StudentTestsAndResultsModule({
           {reviewScreenOpen ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                   Pre-Submission Review Summary
                 </h2>
-                <span className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                   {answeredCount} answered · {unansweredCount} unanswered
                 </span>
               </div>
-              <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] border-t border-b border-[#E5E7EF] dark:border-[#303A55]">
+              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
                 {questions.map((q, idx) => {
                   const chosenId = attempt.answers[q.id];
                   const chosenText = q.options.find((o) => o.id === chosenId)?.text;
@@ -433,10 +433,10 @@ export function StudentTestsAndResultsModule({
                       className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                        <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                           Q{idx + 1}. {q.questionText}
                         </p>
-                        <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           {chosenText ? `Selected: ${chosenText}` : 'Not answered yet'}
                         </p>
                       </div>
@@ -480,15 +480,15 @@ export function StudentTestsAndResultsModule({
             currentQuestion && (
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-[#687086] dark:text-[#A6B0C3]">
-                    <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                  <div className="flex items-center justify-between text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       Question {currentQIdx + 1} of {questions.length}
                     </span>
                     <span className="font-mono tabular-nums">
                       {currentQuestion.marks} mark(s)
                     </span>
                   </div>
-                  <p className="text-base sm:text-lg font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <p className="text-base sm:text-lg font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                     {currentQuestion.questionText}
                   </p>
                 </div>
@@ -502,8 +502,8 @@ export function StudentTestsAndResultsModule({
                         className={cn(
                           'flex items-center gap-3 rounded-xl border p-3.5 cursor-pointer transition-colors min-h-[44px]',
                           checked
-                            ? 'border-[#7552D9] bg-[#F1EEFA]/75 dark:border-[#8B5CF6] dark:bg-[#8B5CF6]/15'
-                            : 'border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426]/65 hover:bg-[#F1EEFA]/45 dark:hover:bg-[#202844]/60'
+                            ? 'border-[#18B985] bg-[#DDF8EE]/75 dark:border-[#42DDA9] dark:bg-[#244B3E]/75'
+                            : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
                         )}
                       >
                         <input
@@ -514,9 +514,9 @@ export function StudentTestsAndResultsModule({
                           onChange={() =>
                             void handleSelectOption(currentQuestion.id, opt.id)
                           }
-                          className="w-4 h-4 shrink-0 accent-[#7552D9] dark:accent-[#8B5CF6]"
+                          className="w-4 h-4 shrink-0 accent-[#18B985] dark:accent-[#42DDA9]"
                         />
-                        <span className="text-sm text-[#17172B] dark:text-[#F8FAFC]">
+                        <span className="text-sm text-[#171D21] dark:text-[#F4F7F6]">
                           {opt.text}
                         </span>
                       </label>
@@ -524,7 +524,7 @@ export function StudentTestsAndResultsModule({
                   })}
                 </div>
 
-                <div className="pt-3 border-t border-[#E5E7EF] dark:border-[#303A55] flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-3 border-t border-[#E2E8E5] dark:border-[#344047] flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <Button
                       variant="secondary"
@@ -578,12 +578,12 @@ export function StudentTestsAndResultsModule({
           subtitle="Once submitted, this attempt is locked and evaluated automatically."
         >
           <div className="space-y-4">
-            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-3.5 text-sm space-y-1">
-              <p className="font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 text-sm space-y-1">
+              <p className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
                 Answered Questions: {answeredCount} / {questions.length}
               </p>
               {unansweredCount > 0 && (
-                <p className="text-xs text-[#B7791F] dark:text-[#F5B942]">
+                <p className="text-xs text-[#A67317] dark:text-[#E5B04D]">
                   {unansweredCount} question(s) are currently unanswered and will score 0 marks.
                 </p>
               )}
@@ -618,10 +618,10 @@ export function StudentTestsAndResultsModule({
       header: 'Assessment',
       render: (row) => (
         <div className="space-y-0.5">
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3] capitalize">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
             {row.sourceType.replace(/_/g, ' ')} · {row.subjectName}
           </p>
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
             {row.title}
           </p>
         </div>
@@ -631,7 +631,7 @@ export function StudentTestsAndResultsModule({
       key: 'date',
       header: 'Date & Released',
       render: (row) => (
-        <div className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+        <div className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
           <p>{formatShortDate(row.assessmentDate)}</p>
           <p>Released {formatShortDate(row.releasedAt)}</p>
         </div>
@@ -643,10 +643,10 @@ export function StudentTestsAndResultsModule({
       align: 'right',
       render: (row) => (
         <div className="space-y-0.5">
-          <p className="font-mono font-semibold tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="font-mono font-semibold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
             {row.marksObtained} / {row.maximumMarks}
           </p>
-          <p className="font-mono text-xs tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+          <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
             {row.percentage}%
           </p>
         </div>
@@ -672,69 +672,34 @@ export function StudentTestsAndResultsModule({
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Student & Parent Portal · Shared ID ({principal.loginId})
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            Online Tests, Examinations & Results
-          </h1>
-        </div>
-        <StatusText tone="nominal" label={`Student: ${principal.fullName}`} />
-      </div>
+      <PageHeader
+        eyebrow={`Student & Parent Portal · Shared ID (${principal.loginId})`}
+        title="Online Tests, Examinations & Results"
+        rightSlot={<StatusText tone="nominal" label={`Student: ${principal.fullName}`} />}
+      />
 
-      <div className="flex overflow-x-auto gap-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844] p-1">
-        {(
-          [
-            { id: 'tests', label: `Online Tests (${tests.length})` },
-            { id: 'examinations', label: `Examinations (${exams.length})` },
-            {
-              id: 'results',
-              label: `Results & Performance (${resultsDash?.releasedCount ?? 0})`,
-            },
-          ] as const
-        ).map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setSubTab(tab.id)}
-            className={cn(
-              'min-h-[40px] px-4 rounded-lg text-sm font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors',
-              subTab === tab.id
-                ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-                : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        ariaLabel="Student assessment sections"
+        value={subTab}
+        onChange={setSubTab}
+        items={[
+          { id: 'tests', label: 'Online Tests', count: tests.length },
+          { id: 'examinations', label: 'Examinations', count: exams.length },
+          {
+            id: 'results',
+            label: 'Results & Performance',
+            count: resultsDash?.releasedCount ?? 0,
+          },
+        ]}
+      />
 
       {banner && (
-        <div
-          role="status"
-          className="rounded-xl border border-[#168A62]/30 dark:border-[#22C58B]/30 bg-[#168A62]/10 dark:bg-[#22C58B]/15 p-3.5 text-sm text-[#168A62] dark:text-[#22C58B] flex items-center justify-between gap-3"
-        >
-          <span>{banner}</span>
-          <button
-            type="button"
-            onClick={() => setBanner(null)}
-            className="text-xs font-medium underline cursor-pointer shrink-0"
-          >
-            Dismiss
-          </button>
-        </div>
+        <Alert tone="success" onDismiss={() => setBanner(null)}>
+          {banner}
+        </Alert>
       )}
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3.5 text-sm text-[#D94C5C] dark:text-[#F16B75]"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
       {subTab === 'tests' && (
         <Card
@@ -742,33 +707,22 @@ export function StudentTestsAndResultsModule({
           subtitle="Tests scoped to your active enrolled class and batch. Open test details before starting an attempt."
         >
           <div className="space-y-4">
-            <div className="flex overflow-x-auto gap-1.5 pb-1">
-              {TEST_FILTER_TABS.map((tab) => {
-                const count = tests.filter((t) => matchesTestFilter(t, tab.id)).length;
-                const active = testFilter === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setTestFilter(tab.id)}
-                    className={cn(
-                      'min-h-[40px] px-3.5 rounded-xl text-xs font-medium whitespace-nowrap shrink-0 cursor-pointer border transition-colors',
-                      active
-                        ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white border-[#7552D9] dark:border-[#8B5CF6]'
-                        : 'bg-[#F8F9FC] dark:bg-[#101426] text-[#434960] dark:text-[#A6B0C3] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
-                    )}
-                  >
-                    {tab.label} ({count})
-                  </button>
-                );
-              })}
-            </div>
+            <Tabs
+              ariaLabel="Filter online tests"
+              value={testFilter}
+              onChange={setTestFilter}
+              items={TEST_FILTER_TABS.map((tab) => ({
+                id: tab.id,
+                label: tab.label,
+                count: tests.filter((t) => matchesTestFilter(t, tab.id)).length,
+              }))}
+            />
 
             {loading ? (
-              <div className="h-24 rounded-xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse" />
+              <div className="h-24 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse" />
             ) : tests.filter((t) => matchesTestFilter(t, testFilter)).length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-2">
-                <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
+                <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
                   {tests.length === 0
                     ? 'No online tests published for your batch right now.'
                     : 'No online tests match this status filter.'}
@@ -784,7 +738,7 @@ export function StudentTestsAndResultsModule({
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                 {tests
                   .filter((t) => matchesTestFilter(t, testFilter))
                   .map((test) => {
@@ -797,8 +751,8 @@ export function StudentTestsAndResultsModule({
                         className="py-4 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                       >
                         <div className="space-y-1.5 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-                            <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                               {test.id}
                             </span>
                             <span aria-hidden="true">·</span>
@@ -809,10 +763,10 @@ export function StudentTestsAndResultsModule({
                               {test.durationMinutes} min
                             </span>
                           </div>
-                          <h2 className="text-base font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                          <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                             {test.title}
                           </h2>
-                          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                             Window: {formatDateTime(test.startsAt)} –{' '}
                             {formatDateTime(test.endsAt)} · Attempts:{' '}
                             <span className="font-mono tabular-nums">
@@ -827,7 +781,7 @@ export function StudentTestsAndResultsModule({
                                   key={att.id}
                                   type="button"
                                   onClick={() => void handleOpenAttemptDetail(att.id)}
-                                  className="text-[#7552D9] dark:text-[#A78BFA] font-mono tabular-nums underline cursor-pointer"
+                                  className="text-[#168A63] dark:text-[#42DDA9] font-mono tabular-nums underline cursor-pointer"
                                 >
                                   Attempt #{att.attemptNumber}:{' '}
                                   {att.resultsVisible
@@ -892,34 +846,23 @@ export function StudentTestsAndResultsModule({
           subtitle="Written and offline examinations for your active class and batch. Unreleased marks stay masked until published."
         >
           <div className="space-y-4">
-            <div className="flex overflow-x-auto gap-1.5 pb-1">
-              {EXAM_FILTER_TABS.map((tab) => {
-                const count = exams.filter((item) => {
+            <Tabs
+              ariaLabel="Filter examinations"
+              value={examFilter}
+              onChange={setExamFilter}
+              items={EXAM_FILTER_TABS.map((tab) => ({
+                id: tab.id,
+                label: tab.label,
+                count: exams.filter((item) => {
                   if (tab.id === 'all') return true;
                   if (tab.id === 'released') return Boolean(item.myMarks);
                   if (tab.id === 'pending_release') {
                     return !item.myMarks && item.marksEnteredPendingRelease;
                   }
                   return !item.myMarks && !item.marksEnteredPendingRelease;
-                }).length;
-                const active = examFilter === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    onClick={() => setExamFilter(tab.id)}
-                    className={cn(
-                      'min-h-[40px] px-3.5 rounded-xl text-xs font-medium whitespace-nowrap shrink-0 cursor-pointer border transition-colors',
-                      active
-                        ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white border-[#7552D9] dark:border-[#8B5CF6]'
-                        : 'bg-[#F8F9FC] dark:bg-[#101426] text-[#434960] dark:text-[#A6B0C3] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
-                    )}
-                  >
-                    {tab.label} ({count})
-                  </button>
-                );
-              })}
-            </div>
+                }).length,
+              }))}
+            />
 
             {exams.filter((item) => {
               if (examFilter === 'all') return true;
@@ -929,13 +872,13 @@ export function StudentTestsAndResultsModule({
               }
               return !item.myMarks && !item.marksEnteredPendingRelease;
             }).length === 0 ? (
-              <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
                 {exams.length === 0
                   ? 'No examinations scheduled for your batch right now.'
                   : 'No examinations match this status filter.'}
               </p>
             ) : (
-              <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                 {exams
                   .filter((item) => {
                     if (examFilter === 'all') return true;
@@ -951,8 +894,8 @@ export function StudentTestsAndResultsModule({
                       className="py-4 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                     >
                       <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-                          <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                             {item.examination.id}
                           </span>
                           <span aria-hidden="true">·</span>
@@ -971,10 +914,10 @@ export function StudentTestsAndResultsModule({
                             </>
                           )}
                         </div>
-                        <h2 className="text-base font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                        <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                           {item.examination.title}
                         </h2>
-                        <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           {item.examination.instructions}
                         </p>
                       </div>
@@ -982,7 +925,7 @@ export function StudentTestsAndResultsModule({
                       <div className="text-left sm:text-right shrink-0 space-y-1">
                         {item.myMarks ? (
                           <>
-                            <p className="font-mono text-sm font-bold tabular-nums text-[#168A62] dark:text-[#22C58B]">
+                            <p className="font-mono text-sm font-bold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
                               {item.myMarks.marksObtained} / {item.myMarks.maximumMarks} (
                               {item.myMarks.percentage}%)
                             </p>
@@ -1016,49 +959,79 @@ export function StudentTestsAndResultsModule({
             subtitle="Average percentage = (Total marks obtained ÷ Total maximum marks) × 100 across released scores only."
           >
             {resultsDash.subjectSummaries.length === 0 ? (
-              <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
                 No active subjects found for your batch enrolment.
               </p>
             ) : (
-              <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
-                {resultsDash.subjectSummaries.map((sub) => {
-                  const meta = SUBJECT_AVAILABILITY_META[sub.availability];
-                  return (
-                    <div
-                      key={sub.subjectId}
-                      className="py-3.5 flex flex-wrap items-center justify-between gap-3"
-                    >
-                      <div className="space-y-0.5">
-                        <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-                          {sub.subjectName}
-                        </p>
-                        <p className="text-xs text-[#687086] dark:text-[#A6B0C3] tabular-nums">
-                          Released: {sub.releasedAssessmentsCount} · Pending:{' '}
-                          {sub.pendingAssessmentsCount}
-                        </p>
-                        {sub.latestResultTitle && sub.latestResultDisplay && (
-                          <p className="text-xs text-[#434960] dark:text-[#D4DCEB]">
-                            Latest: {sub.latestResultTitle} —{' '}
-                            <span className="font-mono font-semibold tabular-nums">
-                              {sub.latestResultDisplay}
-                            </span>
+              <div className="space-y-5">
+                {resultsDash.subjectSummaries.some(
+                  (sub) => sub.availability === 'result_available' && sub.percentage !== null
+                ) && (
+                  <div className="pb-4 border-b border-[#E2E8E5] dark:border-[#344047]">
+                    <ComparisonBarChart
+                      data={resultsDash.subjectSummaries
+                        .filter(
+                          (sub) =>
+                            sub.availability === 'result_available' &&
+                            sub.percentage !== null
+                        )
+                        .map((sub) => {
+                          const pct = sub.percentage ?? 0;
+                          return {
+                            id: sub.subjectId,
+                            label: sub.subjectName,
+                            value: pct,
+                            maxValue: 100,
+                            displayValue: sub.displayPercentage,
+                            helperText: `${sub.totalMarksObtained}/${sub.totalMaximumMarks}`,
+                            tone: pct >= 75 ? 'mint' : pct >= 40 ? 'charcoal' : 'danger',
+                          };
+                        })}
+                      ariaLabel="Subject-wise average percentage"
+                    />
+                  </div>
+                )}
+
+                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                  {resultsDash.subjectSummaries.map((sub) => {
+                    const meta = SUBJECT_AVAILABILITY_META[sub.availability];
+                    return (
+                      <div
+                        key={sub.subjectId}
+                        className="py-3.5 first:pt-1 last:pb-1 flex flex-wrap items-center justify-between gap-3"
+                      >
+                        <div className="space-y-0.5">
+                          <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                            {sub.subjectName}
                           </p>
-                        )}
-                      </div>
-                      <div className="text-right space-y-0.5">
-                        <p className="font-mono text-base font-bold tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
-                          {sub.displayPercentage}
-                          {sub.availability === 'result_available' && (
-                            <span className="ml-2 text-xs font-normal text-[#687086] dark:text-[#A6B0C3]">
-                              ({sub.totalMarksObtained}/{sub.totalMaximumMarks})
-                            </span>
+                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                            Released: {sub.releasedAssessmentsCount} · Pending:{' '}
+                            {sub.pendingAssessmentsCount}
+                          </p>
+                          {sub.latestResultTitle && sub.latestResultDisplay && (
+                            <p className="text-xs text-[#343C42] dark:text-[#D5E0DD]">
+                              Latest: {sub.latestResultTitle} —{' '}
+                              <span className="font-mono font-semibold tabular-nums">
+                                {sub.latestResultDisplay}
+                              </span>
+                            </p>
                           )}
-                        </p>
-                        <StatusText tone={meta.tone} label={meta.label} />
+                        </div>
+                        <div className="text-right space-y-0.5">
+                          <p className="font-mono text-base font-bold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                            {sub.displayPercentage}
+                            {sub.availability === 'result_available' && (
+                              <span className="ml-2 text-xs font-normal text-[#68737C] dark:text-[#AAB6B4]">
+                                ({sub.totalMarksObtained}/{sub.totalMaximumMarks})
+                              </span>
+                            )}
+                          </p>
+                          <StatusText tone={meta.tone} label={meta.label} />
+                        </div>
                       </div>
-                    </div>
-                  );
-                })}
+                    );
+                  })}
+                </div>
               </div>
             )}
           </Card>
@@ -1089,11 +1062,10 @@ export function StudentTestsAndResultsModule({
               return (
                 <>
                   <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 mb-5">
-                    <select
+                    <Select
                       value={filterSubjectId}
                       onChange={(e) => setFilterSubjectId(e.target.value)}
                       aria-label="Filter results by subject"
-                      className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                     >
                       <option value="all">All Subjects</option>
                       {resultsDash.subjectSummaries.map((s) => (
@@ -1101,9 +1073,9 @@ export function StudentTestsAndResultsModule({
                           {s.subjectName}
                         </option>
                       ))}
-                    </select>
+                    </Select>
 
-                    <select
+                    <Select
                       value={filterSourceType}
                       onChange={(e) =>
                         setFilterSourceType(
@@ -1115,15 +1087,14 @@ export function StudentTestsAndResultsModule({
                         )
                       }
                       aria-label="Filter by assessment type"
-                      className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                     >
                       <option value="all">All Assessment Types</option>
                       <option value="examination">Examinations</option>
                       <option value="objective_test">Online Objective Tests</option>
                       <option value="homework">Graded Homework</option>
-                    </select>
+                    </Select>
 
-                    <select
+                    <Select
                       value={filterStatus}
                       onChange={(e) =>
                         setFilterStatus(
@@ -1131,19 +1102,17 @@ export function StudentTestsAndResultsModule({
                         )
                       }
                       aria-label="Filter by result outcome"
-                      className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                     >
                       <option value="all">All Outcomes</option>
                       <option value="pass">Pass</option>
                       <option value="fail">Fail</option>
                       <option value="recorded">Recorded</option>
-                    </select>
+                    </Select>
 
-                    <select
+                    <Select
                       value={filterMonth}
                       onChange={(e) => setFilterMonth(e.target.value)}
                       aria-label="Filter results by month"
-                      className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                     >
                       <option value="all">All Months</option>
                       {availableMonths.map((m) => (
@@ -1151,13 +1120,12 @@ export function StudentTestsAndResultsModule({
                           {m}
                         </option>
                       ))}
-                    </select>
+                    </Select>
 
-                    <select
+                    <Select
                       value={filterYear}
                       onChange={(e) => setFilterYear(e.target.value)}
                       aria-label="Filter results by year"
-                      className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                     >
                       <option value="all">All Years</option>
                       {availableYears.map((y) => (
@@ -1165,7 +1133,7 @@ export function StudentTestsAndResultsModule({
                           {y}
                         </option>
                       ))}
-                    </select>
+                    </Select>
                   </div>
 
                   {hasResultFilters && (
@@ -1200,10 +1168,10 @@ export function StudentTestsAndResultsModule({
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3] capitalize">
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
                         {row.sourceType.replace(/_/g, ' ')} · {row.subjectName}
                       </p>
-                      <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                         {row.title}
                       </p>
                     </div>
@@ -1219,11 +1187,11 @@ export function StudentTestsAndResultsModule({
                     />
                   </div>
                   <div className="flex items-center justify-between gap-2 text-xs font-mono tabular-nums">
-                    <span className="text-[#687086] dark:text-[#A6B0C3]">
+                    <span className="text-[#68737C] dark:text-[#AAB6B4]">
                       {formatShortDate(row.assessmentDate)} · Released{' '}
                       {formatShortDate(row.releasedAt)}
                     </span>
-                    <span className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <span className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                       {row.marksObtained} / {row.maximumMarks} ({row.percentage}%)
                     </span>
                   </div>
@@ -1234,7 +1202,7 @@ export function StudentTestsAndResultsModule({
         </div>
       )}
 
-      {/* Pre-Start Test Details & Instructions Modal (§18) */}
+      {/* Pre-Start Test Details & Instructions Modal */}
       <Modal
         open={Boolean(preStartTestModal)}
         onClose={() => setPreStartTestModal(null)}
@@ -1249,44 +1217,44 @@ export function StudentTestsAndResultsModule({
         {preStartTestModal && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-3">
-                <p className="text-[#687086] dark:text-[#A6B0C3]">Duration</p>
-                <p className="mt-1 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
+                <p className="text-[#68737C] dark:text-[#AAB6B4]">Duration</p>
+                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
                   {preStartTestModal.durationMinutes} min
                 </p>
               </div>
-              <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-3">
-                <p className="text-[#687086] dark:text-[#A6B0C3]">Questions</p>
-                <p className="mt-1 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
+                <p className="text-[#68737C] dark:text-[#AAB6B4]">Questions</p>
+                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
                   {preStartTestModal.questionCount} MCQs
                 </p>
               </div>
-              <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-3">
-                <p className="text-[#687086] dark:text-[#A6B0C3]">Total Marks</p>
-                <p className="mt-1 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
+                <p className="text-[#68737C] dark:text-[#AAB6B4]">Total Marks</p>
+                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
                   {preStartTestModal.totalMarks}
                 </p>
               </div>
-              <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-3">
-                <p className="text-[#687086] dark:text-[#A6B0C3]">Attempts</p>
-                <p className="mt-1 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
+                <p className="text-[#68737C] dark:text-[#AAB6B4]">Attempts</p>
+                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
                   {preStartTestModal.attemptsUsed} / {preStartTestModal.maximumAttempts}
                 </p>
               </div>
             </div>
 
-            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-3.5 space-y-1.5 text-xs">
-              <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 space-y-1.5 text-xs">
+              <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 Instructions & Rules
               </p>
-              <p className="text-[#434960] dark:text-[#D4DCEB] whitespace-pre-line leading-relaxed">
+              <p className="text-[#343C42] dark:text-[#D5E0DD] whitespace-pre-line leading-relaxed">
                 {preStartTestModal.instructions}
               </p>
-              <p className="pt-1 text-[#687086] dark:text-[#A6B0C3]">
+              <p className="pt-1 text-[#68737C] dark:text-[#AAB6B4]">
                 Window: {formatDateTime(preStartTestModal.startsAt)} –{' '}
                 {formatDateTime(preStartTestModal.endsAt)}
               </p>
-              <p className="text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-[#68737C] dark:text-[#AAB6B4]">
                 Result Policy:{' '}
                 {preStartTestModal.resultReleaseMode === 'auto_after_submission'
                   ? 'Score released immediately after submission.'
@@ -1342,33 +1310,33 @@ export function StudentTestsAndResultsModule({
         {reviewDetailModal && (
           <div className="space-y-4">
             {!reviewDetailModal.attempt.resultsVisible ? (
-              <div className="rounded-xl border border-[#B7791F]/30 dark:border-[#F5B942]/30 bg-[#B7791F]/10 dark:bg-[#F5B942]/15 p-4 text-sm text-[#B7791F] dark:text-[#F5B942] flex items-center gap-2">
+              <div className="rounded-xl border border-[#F0D9AA] dark:border-[#664D1E] bg-[#FDF6E7] dark:bg-[#332712] p-4 text-sm text-[#A67317] dark:text-[#E5B04D] flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>
                   Your attempt is locked and recorded. Scores and answer keys remain hidden until released under the test schedule.
                 </span>
               </div>
             ) : (
-              <ol className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] space-y-3">
+              <ol className="divide-y divide-[#E2E8E5] dark:divide-[#344047] space-y-3">
                 {reviewDetailModal.questions.map((q, idx) => {
                   const chosenId = reviewDetailModal.attempt.answers[q.id];
                   const isCorrect = q.correctOptionId && chosenId === q.correctOptionId;
                   return (
                     <li key={q.id} className="pt-3 first:pt-0 space-y-1.5 text-sm">
-                      <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                         Q{idx + 1}. {q.questionText}{' '}
-                        <span className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           ({q.marks}m)
                         </span>
                       </p>
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                         Your Answer:{' '}
                         <span
                           className={
                             q.correctOptionId
                               ? isCorrect
-                                ? 'font-semibold text-[#168A62] dark:text-[#22C58B]'
-                                : 'font-semibold text-[#D94C5C] dark:text-[#F16B75]'
+                                ? 'font-semibold text-[#168A63] dark:text-[#42DDA9]'
+                                : 'font-semibold text-[#D64C55] dark:text-[#EF6D75]'
                               : ''
                           }
                         >
@@ -1376,13 +1344,13 @@ export function StudentTestsAndResultsModule({
                         </span>
                       </p>
                       {q.correctOptionId && !isCorrect && (
-                        <p className="text-xs text-[#168A62] dark:text-[#22C58B]">
+                        <p className="text-xs text-[#168A63] dark:text-[#42DDA9]">
                           Correct Answer:{' '}
                           {q.options.find((o) => o.id === q.correctOptionId)?.text}
                         </p>
                       )}
                       {q.explanation && (
-                        <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           Explanation: {q.explanation}
                         </p>
                       )}

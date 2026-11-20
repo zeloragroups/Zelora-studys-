@@ -11,14 +11,23 @@ service firebase.storage {
       return request.auth != null && request.auth.token.email_verified == true;
     }
 
-    function isBootstrappedAdmin() {
-      return isSignedIn() && request.auth.token.email == '07alphabro@gmail.com';
+    function isGoogleProvider() {
+      return 'firebase' in request.auth.token
+        && request.auth.token.firebase.sign_in_provider == 'google.com';
+    }
+
+    function isActiveBootstrappedAdmin() {
+      return isSignedIn()
+        && isGoogleProvider()
+        && request.auth.token.email == '07alphabro@gmail.com'
+        && (!firestore.exists(/databases/ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470/documents/admins/$(request.auth.uid))
+          || firestore.get(/databases/ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470/documents/admins/$(request.auth.uid)).data.status == 'active');
     }
 
     function isAdminUser() {
-      return isBootstrappedAdmin()
-        || (isSignedIn() && request.auth.token.role == 'admin')
+      return isActiveBootstrappedAdmin()
         || (isSignedIn()
+          && isGoogleProvider()
           && firestore.exists(/databases/ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470/documents/admins/$(request.auth.uid))
           && firestore.get(/databases/ai-studio-tuitioncentreman-6b2667d2-c24a-4077-b286-962e1941f470/documents/admins/$(request.auth.uid)).data.status == 'active');
     }
@@ -30,12 +39,19 @@ service firebase.storage {
         && request.resource.contentType in ['image/png', 'image/jpeg', 'image/webp'];
     }
 
-    // Branding & institutional logo assets (publicly readable on login screens; Admin-only write/delete)
+    function isValidLogoFileName(fileName) {
+      return fileName.size() >= 3
+        && fileName.size() <= 120
+        && fileName.matches('^[0-9]+-[a-zA-Z0-9._-]+$');
+    }
+
+    // Branding & institutional logo assets (publicly readable on login screens; active Admin-only write/delete)
     match /branding/{assetFolder}/{fileName} {
       allow get: if assetFolder == 'centre-logo';
       allow list: if isAdminUser();
       allow write: if isAdminUser()
         && assetFolder == 'centre-logo'
+        && isValidLogoFileName(fileName)
         && (request.resource == null || isAllowedImageAsset());
     }
   }

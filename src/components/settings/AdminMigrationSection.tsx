@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import {
   AlertTriangle,
-  CheckCircle2,
   Database,
   HardDrive,
   RefreshCw,
@@ -24,9 +23,11 @@ import type {
   MigrationPreviewReport,
 } from '../../services/firebase/firebaseMigrationService';
 import { formatDateTime } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
-import { Modal } from '../ui/Modal';
+import { Checkbox } from '../ui/Checkbox';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
 
@@ -137,10 +138,10 @@ export function AdminMigrationSection() {
       header: 'Local Storage Entity',
       render: (row) => (
         <div className="space-y-0.5">
-          <p className="text-xs font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="text-xs font-semibold text-[#20262B] dark:text-[#F4F7F6]">
             {row.category}
           </p>
-          <p className="text-[11px] font-mono text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-[11px] font-mono text-[#68737C] dark:text-[#AAB6B4]">
             → {row.firestoreCollection}
           </p>
         </div>
@@ -151,10 +152,10 @@ export function AdminMigrationSection() {
       header: 'Detected / Custom / Demo',
       render: (row) => (
         <div className="text-xs font-mono tabular-nums space-y-0.5">
-          <p className="text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="text-[#20262B] dark:text-[#F4F7F6]">
             {row.totalFound} found · {row.eligibleCustomCount} custom
           </p>
-          <p className="text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-[#68737C] dark:text-[#AAB6B4]">
             {row.demoFixturesDetected} demo fixture(s)
           </p>
         </div>
@@ -165,7 +166,7 @@ export function AdminMigrationSection() {
       header: 'Firestore & Auth Status',
       render: (row) => (
         <div className="text-xs space-y-0.5">
-          <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">
+          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
             {row.alreadyInFirestoreCount} already in Firestore
           </p>
           {row.requiresManualActionCount > 0 && (
@@ -192,38 +193,38 @@ export function AdminMigrationSection() {
         }
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-xs">
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-              <Database className="w-3.5 h-3.5 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+              <Database className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
               <span>Project & Database</span>
             </div>
-            <p className="font-mono text-[#17172B] dark:text-[#F8FAFC]">
+            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
               {firebaseDescriptor.projectId ?? 'LOCAL_DEMO'}
             </p>
-            <p className="font-mono text-[11px] text-[#687086] dark:text-[#A6B0C3] truncate">
+            <p className="font-mono text-[11px] text-[#68737C] dark:text-[#AAB6B4] truncate">
               {firebaseDescriptor.firestoreDatabaseId ?? 'Browser storage'}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
               <span>Firestore Connectivity</span>
             </div>
-            <p className="font-mono text-[#17172B] dark:text-[#F8FAFC]">
+            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
               {firebaseDescriptor.firestoreState}
             </p>
-            <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3]">
+            <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
               Strict multi-role Security Rules active
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-              <HardDrive className="w-3.5 h-3.5 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+              <HardDrive className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
               <span>Firebase Storage</span>
             </div>
-            <p className="font-mono text-[#17172B] dark:text-[#F8FAFC]">
+            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
               {!firebaseConnected
                 ? 'Disabled (Local Mode)'
                 : storageProbe === null
@@ -234,7 +235,7 @@ export function AdminMigrationSection() {
                       ? 'Not Initialized (404)'
                       : 'Unavailable'}
             </p>
-            <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3]">
+            <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
               {!firebaseConnected
                 ? 'Browser local demo mode'
                 : storageProbe?.available
@@ -243,15 +244,15 @@ export function AdminMigrationSection() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-              <UploadCloud className="w-3.5 h-3.5 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+              <UploadCloud className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
               <span>Cloud Functions</span>
             </div>
-            <p className="font-mono text-[#17172B] dark:text-[#F8FAFC]">
+            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
               {firebaseDescriptor.functionsEnabled ? 'Enabled (Callable)' : 'Disabled (Spark Mode)'}
             </p>
-            <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3]">
+            <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
               {firebaseDescriptor.functionsEnabled
                 ? 'Cloud Functions active'
                 : 'Spark Free Plan — zero Blaze billing required'}
@@ -261,22 +262,15 @@ export function AdminMigrationSection() {
       </Card>
 
       {toast && (
-        <div
-          role="status"
-          className="rounded-xl border border-[#168A62]/30 dark:border-[#22C58B]/40 bg-[#168A62]/8 dark:bg-[#22C58B]/12 px-4 py-3 text-xs text-[#168A62] dark:text-[#22C58B] flex items-center gap-2"
-        >
-          <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span>{toast}</span>
-        </div>
+        <Alert tone="success" onDismiss={() => setToast(null)}>
+          {toast}
+        </Alert>
       )}
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 p-4 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-        >
+        <Alert tone="error" onDismiss={() => setError(null)}>
           {error}
-        </div>
+        </Alert>
       )}
 
       <Card
@@ -297,8 +291,8 @@ export function AdminMigrationSection() {
         }
       >
         <div className="space-y-5">
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-4 text-xs text-[#687086] dark:text-[#A6B0C3] space-y-2 leading-relaxed">
-            <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 text-xs text-[#68737C] dark:text-[#AAB6B4] space-y-2 leading-relaxed">
+            <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
               Safety Guarantees
             </p>
             <ul className="list-disc pl-5 space-y-1">
@@ -319,26 +313,26 @@ export function AdminMigrationSection() {
           {preview && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3">
-                  <p className="text-[#687086] dark:text-[#A6B0C3]">Scanned Records</p>
+                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
+                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Scanned Records</p>
                   <p className="mt-1 text-lg font-bold font-mono tabular-nums">
                     {preview.totalRecordsFound}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3">
-                  <p className="text-[#687086] dark:text-[#A6B0C3]">Custom Eligible</p>
-                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[#168A62] dark:text-[#22C58B]">
+                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
+                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Custom Eligible</p>
+                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[#168A63] dark:text-[#42DDA9]">
                     {preview.totalEligibleCustomRecords}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3">
-                  <p className="text-[#687086] dark:text-[#A6B0C3]">Demo Fixtures</p>
-                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[#B7791F] dark:text-[#F5B942]">
+                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
+                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Demo Fixtures</p>
+                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[#A67317] dark:text-[#E5B04D]">
                     {preview.totalDemoFixtures}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3">
-                  <p className="text-[#687086] dark:text-[#A6B0C3]">Already in Firestore</p>
+                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
+                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Already in Firestore</p>
                   <p className="mt-1 text-lg font-bold font-mono tabular-nums">
                     {preview.totalDuplicatesInFirestore}
                   </p>
@@ -346,7 +340,7 @@ export function AdminMigrationSection() {
               </div>
 
               {preview.warnings.length > 0 && (
-                <div className="rounded-xl border border-[#B7791F]/30 dark:border-[#F5B942]/35 bg-[#B7791F]/8 dark:bg-[#F5B942]/10 p-3.5 space-y-1.5 text-xs text-[#8A5A12] dark:text-[#F5B942]">
+                <div className="rounded-xl border border-[#A67317]/30 dark:border-[#E5B04D]/35 bg-[#A67317]/8 dark:bg-[#E5B04D]/10 p-3.5 space-y-1.5 text-xs text-[#A67317] dark:text-[#E5B04D]">
                   {preview.warnings.map((w, idx) => (
                     <p key={idx} className="flex items-start gap-2">
                       <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden="true" />
@@ -365,30 +359,20 @@ export function AdminMigrationSection() {
               />
 
               {preview.hasLocalData && (
-                <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-3">
-                  <label className="flex items-start gap-2.5 text-xs cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={includeDemoFixtures}
-                      onChange={(e) => setIncludeDemoFixtures(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 accent-[#7552D9]"
-                    />
-                    <span className="text-[#434960] dark:text-[#D4DCEB]">
-                      Include built-in demo fixtures (not recommended for production — leave unchecked to migrate only custom records)
-                    </span>
-                  </label>
+                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-3">
+                  <Checkbox
+                    checked={includeDemoFixtures}
+                    onChange={setIncludeDemoFixtures}
+                    label="Include built-in demo fixtures"
+                    description="Not recommended for production — leave unchecked to migrate only custom records."
+                  />
 
-                  <label className="flex items-start gap-2.5 text-xs cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={confirmMigration}
-                      onChange={(e) => setConfirmMigration(e.target.checked)}
-                      className="mt-0.5 w-4 h-4 accent-[#7552D9]"
-                    />
-                    <span className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-                      I confirm migrating eligible records into Cloud Firestore project academy-0007 (existing IDs will be skipped; local data stays intact).
-                    </span>
-                  </label>
+                  <Checkbox
+                    checked={confirmMigration}
+                    onChange={setConfirmMigration}
+                    label="I confirm migrating eligible records into Cloud Firestore project academy-0007"
+                    description="Existing IDs will be skipped and local browser data remains intact."
+                  />
 
                   <div className="flex flex-wrap items-center justify-between gap-3 pt-2">
                     <Button
@@ -419,9 +403,9 @@ export function AdminMigrationSection() {
           )}
 
           {executionReport && (
-            <div className="rounded-xl border border-[#168A62]/30 dark:border-[#22C58B]/40 bg-[#168A62]/6 dark:bg-[#22C58B]/10 p-4 space-y-3 text-xs">
+            <div className="rounded-xl border border-[#168A63]/30 dark:border-[#42DDA9]/40 bg-[#168A63]/6 dark:bg-[#42DDA9]/10 p-4 space-y-3 text-xs">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                   Migration Summary ({formatDateTime(executionReport.executedAt)})
                 </p>
                 <StatusText
@@ -439,14 +423,14 @@ export function AdminMigrationSection() {
               </div>
 
               {executionReport.manualReviewItems.length > 0 && (
-                <div className="space-y-1.5 pt-2 border-t border-[#E5E7EF] dark:border-[#303A55]">
-                  <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                <div className="space-y-1.5 pt-2 border-t border-[#E2E8E5] dark:border-[#344047]">
+                  <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                     Items Requiring Manual Admin Auth Provisioning ({executionReport.manualReviewItems.length})
                   </p>
-                  <ul className="space-y-1 text-[11px] text-[#687086] dark:text-[#A6B0C3]">
+                  <ul className="space-y-1 text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
                     {executionReport.manualReviewItems.map((item, idx) => (
                       <li key={`${item.recordId}-${idx}`}>
-                        <span className="font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                        <span className="font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                           {item.recordId}
                         </span>{' '}
                         ({item.category}): {item.reason}
@@ -457,7 +441,7 @@ export function AdminMigrationSection() {
               )}
 
               {executionReport.errors.length > 0 && (
-                <div className="space-y-1 pt-2 border-t border-[#D94C5C]/30 text-[#D94C5C] dark:text-[#F16B75]">
+                <div className="space-y-1 pt-2 border-t border-[#D64C55]/30 text-[#D64C55] dark:text-[#EF6D75]">
                   {executionReport.errors.map((errMsg, idx) => (
                     <p key={idx}>{errMsg}</p>
                   ))}
@@ -468,37 +452,18 @@ export function AdminMigrationSection() {
         </div>
       </Card>
 
-      <Modal
+      <ConfirmDialog
         open={confirmClearModalOpen}
         onClose={() => setConfirmClearModalOpen(false)}
+        onConfirm={handleClearLocalCache}
         title="Clear Local Browser Demo Cache?"
-        subtitle="Removes tuition_ecosystem_dev_* keys from this browser only. Cloud Firestore data in academy-0007 is never modified."
-      >
-        <div className="space-y-4">
-          <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5 text-xs text-[#687086] dark:text-[#A6B0C3] flex items-start gap-2.5">
-            <AlertTriangle className="w-4 h-4 text-[#B7791F] dark:text-[#F5B942] shrink-0 mt-0.5" aria-hidden="true" />
-            <span>
-              Only clear your browser local dev cache after confirming that your desired records exist in Cloud Firestore or are no longer needed locally.
-            </span>
-          </div>
-          <div className="flex justify-end gap-2.5">
-            <Button
-              variant="secondary"
-              size="sm"
-              onClick={() => setConfirmClearModalOpen(false)}
-            >
-              Keep Local Cache
-            </Button>
-            <Button
-              variant="danger"
-              size="sm"
-              onClick={handleClearLocalCache}
-            >
-              Confirm Clear Browser Cache
-            </Button>
-          </div>
-        </div>
-      </Modal>
+        subtitle="Removes tuition_ecosystem_dev_* keys from this browser only."
+        description="Cloud Firestore data in academy-0007 is never modified. Only clear your browser local dev cache after confirming your desired records exist in Cloud Firestore or are no longer needed locally."
+        cancelLabel="Keep Local Cache"
+        confirmLabel="Confirm Clear Browser Cache"
+        confirmVariant="danger"
+        tone="warning"
+      />
     </div>
   );
 }

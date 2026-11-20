@@ -3,6 +3,7 @@ import type { AbsenceNotification } from '../../types';
 import { formatShortDate } from '../../utils/formatters';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { EmptyState } from '../ui/EmptyState';
 import { StatusText } from '../ui/StatusText';
 
 interface AbsenceNotificationListProps {
@@ -42,7 +43,7 @@ export function AbsenceNotificationList({
       }
       action={
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono tabular-nums text-slate-600 dark:text-slate-300">
+          <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
             {unreadCount} unread
           </span>
           {unreadCount > 0 && (
@@ -59,17 +60,13 @@ export function AbsenceNotificationList({
       }
     >
       {visibleList.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-2">
-          <Bell className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto" aria-hidden="true" />
-          <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-            No absence notifications recorded
-          </p>
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
-            Absence alerts appear only when attendance is formally submitted with an Absent status.
-          </p>
-        </div>
+        <EmptyState
+          icon={<Bell className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />}
+          title="No absence notifications recorded"
+          description="Absence alerts appear only when attendance is formally submitted with an Absent status."
+        />
       ) : (
-        <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+        <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
           {visibleList.map((notif) => {
             const read = isRead(notif);
             const isCorrected = notif.resolutionStatus === 'corrected_not_absent';
@@ -79,8 +76,8 @@ export function AbsenceNotificationList({
                 className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
               >
                 <div className="space-y-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-                    <span className="font-mono font-semibold text-slate-700 dark:text-slate-300">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <span className="font-mono font-semibold text-[#343C42] dark:text-[#D4DDDC]">
                       {notif.id}
                     </span>
                     <span aria-hidden="true">·</span>
@@ -95,10 +92,10 @@ export function AbsenceNotificationList({
                     <span>Created {formatShortDate(notif.createdAt)}</span>
                   </div>
 
-                  <p className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                  <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                     {notif.studentName} ({notif.studentId}) — {notif.subjectName}
                   </p>
-                  <p className="text-xs text-slate-600 dark:text-slate-400">
+                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                     {notif.className} · {notif.batchName}
                   </p>
 

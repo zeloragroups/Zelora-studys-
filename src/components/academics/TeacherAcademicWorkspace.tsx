@@ -3,11 +3,13 @@ import { BookOpen, CalendarClock, Megaphone } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { academicService, isFirebaseConnectedMode } from '../../services';
 import type { DayOfWeek, TeacherWorkspaceData } from '../../types';
-import { cn } from '../../utils/cn';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Card } from '../ui/Card';
+import { PageHeader } from '../ui/PageHeader';
 import { StatTile } from '../ui/StatTile';
 import { StatusText } from '../ui/StatusText';
+import { Tabs } from '../ui/Tabs';
 
 const DAYS_OF_WEEK: DayOfWeek[] = [
   'Monday',
@@ -54,7 +56,7 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
   if (!principal || principal.role !== 'teacher') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-red-700 dark:text-red-400">
+        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
           This workspace is strictly restricted to authenticated Teacher accounts.
         </p>
       </Card>
@@ -74,27 +76,20 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Teacher Operations · Scoped to {principal.loginId} · {isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            {section === 'classes'
-              ? 'My Assigned Classes & Timetable'
-              : 'Relevant Centre Announcements'}
-          </h1>
-        </div>
-        <StatusText tone="nominal" label={`Teacher: ${principal.fullName}`} />
-      </div>
+      <PageHeader
+        eyebrow={`Teacher Operations · Scoped to ${principal.loginId} · ${isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}`}
+        title={
+          section === 'classes'
+            ? 'My Assigned Classes & Timetable'
+            : 'Relevant Centre Announcements'
+        }
+        rightSlot={<StatusText tone="nominal" label={`Teacher: ${principal.fullName}`} />}
+      />
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-800 dark:text-red-300"
-        >
+        <Alert tone="error" onDismiss={() => setError(null)}>
           {error}
-        </div>
+        </Alert>
       )}
 
       {loading ? (
@@ -102,7 +97,7 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
           {[0, 1].map((i) => (
             <div
               key={i}
-              className="h-28 rounded-xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse"
+              className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
             />
           ))}
         </div>
@@ -136,12 +131,12 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                   subtitle="Only classes, batches, and subjects actively assigned to your teacher ID appear here."
                 >
                   {workspace.assignments.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-2">
-                      <BookOpen className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto" aria-hidden="true" />
-                      <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                    <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
+                      <BookOpen className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
+                      <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                         No active class or subject assignments yet
                       </p>
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                         Contact the Admin office when your batch assignments are finalized.
                       </p>
                     </div>
@@ -150,16 +145,16 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                       {workspace.assignments.map((item) => (
                         <div
                           key={item.assignment.assignmentId}
-                          className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 bg-white dark:bg-[#101426]/65 space-y-1.5"
+                          className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 bg-[#F7F9F8] dark:bg-[#151A1E] space-y-1.5"
                         >
-                          <p className="font-mono text-xs text-[#7552D9] dark:text-[#A78BFA] font-semibold">
+                          <p className="font-mono text-xs text-[#168A63] dark:text-[#42DDA9] font-semibold">
                             {item.assignment.assignmentId}
                             {item.subjectRecord.code ? ` · ${item.subjectRecord.code}` : ''}
                           </p>
-                          <p className="text-base font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                          <p className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                             {item.subjectRecord.name}
                           </p>
-                          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                             {item.classRecord.name} · {item.batchRecord.name}
                           </p>
                         </div>
@@ -174,12 +169,12 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                   subtitle="Weekly schedule filtered exclusively to your active teaching sessions."
                 >
                   {sortedTimetable.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-2">
+                    <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
                       <CalendarClock
-                        className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto"
+                        className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
                         aria-hidden="true"
                       />
-                      <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                         No active teaching sessions scheduled
                       </p>
                     </div>
@@ -187,30 +182,19 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                     <div className="space-y-4">
                       {/* Mobile Day Selector */}
                       <div className="md:hidden space-y-3">
-                        <div className="flex overflow-x-auto gap-1.5 pb-1">
-                          {DAYS_OF_WEEK.map((day) => {
-                            const active = selectedDay === day;
-                            return (
-                              <button
-                                key={day}
-                                type="button"
-                                onClick={() => setSelectedDay(day)}
-                                className={cn(
-                                  'min-h-[40px] px-3 rounded-xl text-xs font-semibold whitespace-nowrap shrink-0 cursor-pointer border transition-colors',
-                                  active
-                                    ? 'bg-[#7552D9] text-white border-[#7552D9] dark:bg-[#8B5CF6] dark:border-[#8B5CF6]'
-                                    : 'bg-white dark:bg-[#101426] border-[#E5E7EF] dark:border-[#303A55] text-[#687086] dark:text-[#A6B0C3]'
-                                )}
-                              >
-                                {day.slice(0, 3)}
-                              </button>
-                            );
-                          })}
-                        </div>
+                        <Tabs
+                          ariaLabel="Select teaching day"
+                          value={selectedDay}
+                          onChange={setSelectedDay}
+                          items={DAYS_OF_WEEK.map((day) => ({
+                            id: day,
+                            label: day.slice(0, 3),
+                          }))}
+                        />
                         <div className="space-y-2.5">
                           {sortedTimetable.filter((t) => t.entry.dayOfWeek === selectedDay).length ===
                           0 ? (
-                            <p className="text-xs text-[#687086] dark:text-[#A6B0C3] py-4 text-center">
+                            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
                               No sessions on {selectedDay}.
                             </p>
                           ) : (
@@ -219,16 +203,16 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                               .map((slot) => (
                                 <div
                                   key={slot.entry.entryId}
-                                  className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3.5 bg-white dark:bg-[#101426]/65"
+                                  className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 bg-[#F0F4F2] dark:bg-[#252E33]"
                                 >
-                                  <p className="font-mono text-xs font-semibold tabular-nums text-[#7552D9] dark:text-[#A78BFA]">
+                                  <p className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
                                     {slot.entry.startTime}–{slot.entry.endTime}
                                     {slot.entry.room ? ` · ${slot.entry.room}` : ''}
                                   </p>
-                                  <p className="mt-1 font-semibold text-sm text-[#17172B] dark:text-[#F8FAFC]">
+                                  <p className="mt-1 font-semibold text-sm text-[#171D21] dark:text-[#F4F7F6]">
                                     {slot.subjectName}
                                   </p>
-                                  <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                                     {slot.className} · {slot.batchName}
                                   </p>
                                 </div>
@@ -244,26 +228,26 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                           return (
                             <div
                               key={day}
-                              className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3.5 bg-[#F8F9FC] dark:bg-[#101426]/65 space-y-2.5"
+                              className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 bg-[#F0F4F2] dark:bg-[#252E33] space-y-2.5"
                             >
-                              <h3 className="text-xs font-semibold text-[#687086] dark:text-[#A6B0C3]">
+                              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
                                 {day}
                               </h3>
                               {slots.length === 0 ? (
-                                <p className="text-xs text-[#687086] dark:text-[#A6B0C3] py-2">No sessions</p>
+                                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] py-2">No sessions</p>
                               ) : (
                                 slots.map((slot) => (
                                   <div
                                     key={slot.entry.entryId}
-                                    className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3 bg-white dark:bg-[#171D34] space-y-1"
+                                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3 bg-[#FFFFFF] dark:bg-[#1D2429] space-y-1"
                                   >
-                                    <p className="font-mono text-xs font-semibold tabular-nums text-[#7552D9] dark:text-[#A78BFA]">
+                                    <p className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
                                       {slot.entry.startTime}–{slot.entry.endTime}
                                     </p>
-                                    <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                                       {slot.subjectName}
                                     </p>
-                                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                                       {slot.className} · {slot.batchName}
                                       {slot.entry.room ? ` · ${slot.entry.room}` : ''}
                                     </p>
@@ -286,25 +270,25 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
               subtitle="Read-only notices published by Admin for teachers or your assigned classes and batches."
             >
               {workspace.announcements.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-2">
-                  <Megaphone className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto" aria-hidden="true" />
-                  <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
+                  <Megaphone className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
+                  <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                     No active announcements for your teaching assignments
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                   {workspace.announcements.map((ann) => (
                     <article key={ann.announcementId} className="py-3.5 first:pt-1 last:pb-1 space-y-1.5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="text-sm font-semibold text-slate-900 dark:text-slate-100">
+                        <h3 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                           {ann.title}
                         </h3>
-                        <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                        <span className="font-mono tabular-nums text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           {formatShortDate(ann.publishedAt ?? ann.createdAt)}
                         </span>
                       </div>
-                      <p className="text-sm text-slate-700 dark:text-slate-300 whitespace-pre-line">
+                      <p className="text-sm text-[#343C42] dark:text-[#D5E0DD] whitespace-pre-line">
                         {ann.content}
                       </p>
                     </article>

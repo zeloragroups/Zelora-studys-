@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Pencil, Plus, Power, Search, UserPlus, X } from 'lucide-react';
+import { Pencil, Plus, Power, UserPlus, X } from 'lucide-react';
 import { academicService } from '../../services';
 import { AcademicServiceError } from '../../services/contracts/academicService';
 import type {
@@ -10,10 +10,14 @@ import type {
   StudentEnrolment,
 } from '../../types';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { IconButton } from '../ui/IconButton';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { SearchInput } from '../ui/SearchInput';
+import { Select } from '../ui/Select';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
 
@@ -163,7 +167,7 @@ export function EnrolmentsSection({
       key: 'enrolmentId',
       header: 'Enrolment ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
           {row.enrolmentId}
         </span>
       ),
@@ -175,10 +179,10 @@ export function EnrolmentsSection({
         const acc = studentMap.get(row.studentAccountId.toUpperCase());
         return (
           <div>
-            <p className="font-medium text-slate-900 dark:text-slate-100">
+            <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
               {acc?.name ?? row.studentAccountId}
             </p>
-            <p className="font-mono text-xs text-slate-500 dark:text-slate-400">
+            <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
               {row.studentAccountId}
               {acc && acc.status !== 'active' ? ' · Account Inactive' : ''}
             </p>
@@ -191,10 +195,10 @@ export function EnrolmentsSection({
       header: 'Class & Batch',
       render: (row) => (
         <div className="text-xs">
-          <p className="font-medium text-slate-800 dark:text-slate-200">
+          <p className="font-medium text-[#20262B] dark:text-[#F4F7F6]">
             {classMap.get(row.classId)?.name ?? row.classId}
           </p>
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-[#68737C] dark:text-[#AAB6B4]">
             {batchMap.get(row.batchId)?.name ?? row.batchId}
           </p>
         </div>
@@ -204,7 +208,7 @@ export function EnrolmentsSection({
       key: 'enrolmentDate',
       header: 'Enrolled On',
       render: (row) => (
-        <span className="font-mono text-xs text-slate-500 dark:text-slate-400">
+        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
           {formatShortDate(row.enrolmentDate)}
         </span>
       ),
@@ -225,24 +229,22 @@ export function EnrolmentsSection({
       align: 'right',
       render: (row) => (
         <div className="inline-flex items-center justify-end gap-1">
-          <button
-            type="button"
-            onClick={() => openEditModal(row)}
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`Change class or batch for ${row.enrolmentId}`}
             title="Change class or batch"
-            aria-label={`Change class or batch for ${row.enrolmentId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Pencil className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleToggleStatus(row)}
+            onClick={() => openEditModal(row)}
+            icon={<Pencil className="w-4 h-4" aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`${row.status === 'active' ? 'Deactivate' : 'Reactivate'} ${row.enrolmentId}`}
             title={row.status === 'active' ? 'Deactivate enrolment' : 'Reactivate enrolment'}
-            aria-label={`${row.status === 'active' ? 'Deactivate' : 'Reactivate'} ${row.enrolmentId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Power className="w-4 h-4" aria-hidden="true" />
-          </button>
+            onClick={() => void handleToggleStatus(row)}
+            icon={<Power className="w-4 h-4" aria-hidden="true" />}
+          />
         </div>
       ),
     },
@@ -269,40 +271,33 @@ export function EnrolmentsSection({
         <div className="space-y-4">
           <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center justify-between">
             <div className="flex items-center gap-2 flex-1 max-w-md">
-              <div className="relative flex-1">
-                <Search
-                  className="w-4 h-4 text-[#687086] dark:text-[#A6B0C3] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search student ID, name, or ENR ID..."
-                  aria-label="Search student enrolments"
-                  className="w-full min-h-[40px] rounded-xl pl-9 pr-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                />
-              </div>
-              {(searchQuery || classFilter !== 'all') && (
-                <button
-                  type="button"
+              <SearchInput
+                value={searchQuery}
+                onValueChange={setSearchQuery}
+                placeholder="Search student ID, name, or ENR ID…"
+                aria-label="Search student enrolments"
+                containerClassName="flex-1"
+              />
+              {classFilter !== 'all' && (
+                <Button
+                  variant="secondary"
+                  size="sm"
                   onClick={() => {
                     setSearchQuery('');
                     setClassFilter('all');
                   }}
-                  className="min-h-[40px] px-2.5 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center gap-1 cursor-pointer"
+                  iconLeft={<X className="w-3.5 h-3.5" aria-hidden="true" />}
                 >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Clear</span>
-                </button>
+                  Reset
+                </Button>
               )}
             </div>
 
-            <select
+            <Select
               value={classFilter}
               onChange={(e) => setClassFilter(e.target.value)}
               aria-label="Filter enrolments by class"
-              className="min-h-[40px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+              containerClassName="sm:w-52"
             >
               <option value="all">All Classes</option>
               {classes.map((c) => (
@@ -310,17 +305,10 @@ export function EnrolmentsSection({
                   {c.name}
                 </option>
               ))}
-            </select>
+            </Select>
           </div>
 
-          {actionError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3.5 text-xs sm:text-sm text-red-800 dark:text-red-300"
-            >
-              {actionError}
-            </div>
-          )}
+          {actionError && <Alert tone="error">{actionError}</Alert>}
 
           <div className="hidden md:block">
             <Table
@@ -335,7 +323,7 @@ export function EnrolmentsSection({
 
           <div className="md:hidden space-y-3">
             {filtered.length === 0 ? (
-              <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">
+              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
                 No matching enrolments found.
               </p>
             ) : (
@@ -344,17 +332,17 @@ export function EnrolmentsSection({
                 return (
                   <div
                     key={enr.enrolmentId}
-                    className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-2.5 bg-white dark:bg-[#101426]/65"
+                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                        <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
                           {enr.enrolmentId} · {enr.studentAccountId}
                         </p>
-                        <p className="font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                        <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
                           {acc?.name ?? enr.studentAccountId}
                         </p>
-                        <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           {classMap.get(enr.classId)?.name ?? enr.classId} ·{' '}
                           {batchMap.get(enr.batchId)?.name ?? enr.batchId}
                         </p>
@@ -387,25 +375,25 @@ export function EnrolmentsSection({
       {/* Unenrolled Students Roster */}
       <Card
         title="Students Without Active Enrolment"
-        subtitle="Linked from Phase 3 Student Accounts. Only active accounts may be enrolled."
+        subtitle="Linked from Student Accounts. Only active accounts may be enrolled."
         padding="sm"
       >
         {unenrolledStudents.length === 0 ? (
-          <p className="text-xs sm:text-sm text-slate-500 dark:text-slate-400 py-2">
+          <p className="text-xs sm:text-sm text-[#68737C] dark:text-[#AAB6B4] py-2">
             All student accounts currently have an active class and batch enrolment.
           </p>
         ) : (
-          <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+          <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
             {unenrolledStudents.map((stu) => (
               <li
                 key={stu.accountId}
                 className="py-3 flex flex-wrap items-center justify-between gap-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-slate-900 dark:text-slate-100">
+                  <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                     {stu.name}
                   </p>
-                  <p className="font-mono text-xs text-slate-500 dark:text-slate-400">
+                  <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                     {stu.accountId} · {stu.phone}
                   </p>
                 </div>
@@ -442,74 +430,52 @@ export function EnrolmentsSection({
         subtitle="Students may have one active enrolment at a time; batch must belong to the chosen class."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {formError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-800 dark:text-red-300"
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
 
           {!editingEnrolment && (
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-                Active Student Account
-              </label>
-              <select
-                value={selectedStudentId}
-                onChange={(e) => setSelectedStudentId(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              >
-                {activeUnenrolled.map((stu) => (
-                  <option key={stu.accountId} value={stu.accountId}>
-                    {stu.accountId} — {stu.name}
-                  </option>
-                ))}
-              </select>
-            </div>
-          )}
-
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-              Class
-            </label>
-            <select
-              value={selectedClassId}
-              onChange={(e) => handleClassChange(e.target.value)}
+            <Select
+              label="Active Student Account"
+              value={selectedStudentId}
+              onChange={(e) => setSelectedStudentId(e.target.value)}
               required
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
             >
-              {activeClasses.map((c) => (
-                <option key={c.classId} value={c.classId}>
-                  {c.name} ({c.classId})
+              {activeUnenrolled.map((stu) => (
+                <option key={stu.accountId} value={stu.accountId}>
+                  {stu.accountId} — {stu.name}
                 </option>
               ))}
-            </select>
-          </div>
+            </Select>
+          )}
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-              Batch
-            </label>
-            <select
-              value={selectedBatchId}
-              onChange={(e) => setSelectedBatchId(e.target.value)}
-              required
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            >
-              {availableBatchesInForm.length === 0 ? (
-                <option value="">No active batches in selected class</option>
-              ) : (
-                availableBatchesInForm.map((b) => (
-                  <option key={b.batchId} value={b.batchId}>
-                    {b.name} ({b.batchId})
-                  </option>
-                ))
-              )}
-            </select>
-          </div>
+          <Select
+            label="Class"
+            value={selectedClassId}
+            onChange={(e) => handleClassChange(e.target.value)}
+            required
+          >
+            {activeClasses.map((c) => (
+              <option key={c.classId} value={c.classId}>
+                {c.name} ({c.classId})
+              </option>
+            ))}
+          </Select>
+
+          <Select
+            label="Batch"
+            value={selectedBatchId}
+            onChange={(e) => setSelectedBatchId(e.target.value)}
+            required
+          >
+            {availableBatchesInForm.length === 0 ? (
+              <option value="">No active batches in selected class</option>
+            ) : (
+              availableBatchesInForm.map((b) => (
+                <option key={b.batchId} value={b.batchId}>
+                  {b.name} ({b.batchId})
+                </option>
+              ))
+            )}
+          </Select>
 
           {!editingEnrolment && (
             <Input

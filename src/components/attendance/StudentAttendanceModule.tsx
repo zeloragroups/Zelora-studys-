@@ -8,8 +8,11 @@ import type {
   StudentAttendanceHistoryItem,
 } from '../../types';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { PageHeader } from '../ui/PageHeader';
+import { Select } from '../ui/Select';
 import { StatTile } from '../ui/StatTile';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
@@ -55,11 +58,9 @@ export function StudentAttendanceModule() {
 
   if (!principal || principal.role !== 'student') {
     return (
-      <Card title="Access Restricted">
-        <p className="text-sm text-red-700 dark:text-red-400">
-          Only authenticated Student / Parent accounts can access personal attendance.
-        </p>
-      </Card>
+      <Alert tone="error" title="Access Restricted">
+        Only authenticated Student / Parent accounts can access personal attendance.
+      </Alert>
     );
   }
 
@@ -88,7 +89,7 @@ export function StudentAttendanceModule() {
       key: 'date',
       header: 'Date',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-slate-700 dark:text-slate-300">
+        <span className="font-mono text-xs tabular-nums text-[#343C42] dark:text-[#D5E0DD]">
           {row.session.sessionDate}
         </span>
       ),
@@ -98,8 +99,8 @@ export function StudentAttendanceModule() {
       header: 'Subject',
       render: (row) => (
         <div>
-          <p className="font-medium text-slate-900 dark:text-slate-100">{row.subjectName}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.subjectName}</p>
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -110,11 +111,11 @@ export function StudentAttendanceModule() {
       header: 'Session Type',
       render: (row) => (
         <div className="text-xs">
-          <p className="capitalize font-medium text-slate-800 dark:text-slate-200">
+          <p className="capitalize font-medium text-[#171D21] dark:text-[#F4F7F6]">
             {row.session.sessionType === 'examination' ? 'Examination' : 'Regular Class'}
           </p>
           {row.session.examTitle && (
-            <p className="text-slate-500 dark:text-slate-400 truncate max-w-[180px]">
+            <p className="text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[180px]">
               {row.session.examTitle}
             </p>
           )}
@@ -125,7 +126,7 @@ export function StudentAttendanceModule() {
       key: 'teacher',
       header: 'Teacher',
       render: (row) => (
-        <span className="text-xs text-slate-600 dark:text-slate-300">
+        <span className="text-xs text-[#343C42] dark:text-[#D5E0DD]">
           {row.teacherName}
         </span>
       ),
@@ -144,7 +145,7 @@ export function StudentAttendanceModule() {
       key: 'remarks',
       header: 'Remarks',
       render: (row) => (
-        <span className="text-xs text-slate-500 dark:text-slate-400">
+        <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
           {row.record.remarks ?? '—'}
         </span>
       ),
@@ -153,33 +154,20 @@ export function StudentAttendanceModule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Student & Parent Attendance · {principal.loginId} · {isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            My Attendance & Absence Alerts
-          </h1>
-        </div>
-        <StatusText tone="nominal" label={`Student: ${principal.fullName}`} />
-      </div>
+      <PageHeader
+        eyebrow={`Student & Parent Attendance · ${principal.loginId} · ${isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Demo'}`}
+        title="My Attendance & Absence Alerts"
+        rightSlot={<StatusText tone="nominal" label={`Student: ${principal.fullName}`} />}
+      />
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-800 dark:text-red-300"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
       {loading ? (
         <div className="grid grid-cols-2 lg:grid-cols-6 gap-4">
           {[0, 1, 2, 3, 4, 5].map((i) => (
             <div
               key={i}
-              className="h-24 rounded-2xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse"
+              className="h-24 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
             />
           ))}
         </div>
@@ -188,19 +176,17 @@ export function StudentAttendanceModule() {
           <>
             {/* Summary Metrics */}
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-4">
-              <div className="col-span-2 sm:col-span-1 rounded-2xl bg-white dark:bg-[#171D34] border border-[#E5E7EF] dark:border-[#303A55] p-4 sm:p-5">
-                <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-                  Attendance Rate
-                </p>
-                <p className="mt-2 text-2xl font-semibold tracking-tight text-[#7552D9] dark:text-[#A78BFA] font-mono tabular-nums">
-                  {data.summary.percentage === null ? 'N/A' : data.summary.displayPercentage}
-                </p>
-                <p className="mt-1.5 text-xs text-[#687086] dark:text-[#A6B0C3] font-mono tabular-nums">
-                  {data.summary.eligibleDenominator > 0
+              <StatTile
+                label="Attendance Rate"
+                value={data.summary.percentage === null ? 'N/A' : data.summary.displayPercentage}
+                caption={
+                  data.summary.eligibleDenominator > 0
                     ? `${data.summary.attendedCount} / ${data.summary.eligibleDenominator} attended`
-                    : 'No eligible sessions'}
-                </p>
-              </div>
+                    : 'No eligible sessions'
+                }
+                tone="mint"
+                className="col-span-2 sm:col-span-1"
+              />
 
               <StatTile
                 label="Eligible Sessions"
@@ -233,20 +219,20 @@ export function StudentAttendanceModule() {
                 subtitle="Latest attendance records submitted by your subject teachers."
                 padding="sm"
               >
-                <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+                <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                   {data.recentRecords.map((item) => (
                     <li
                       key={item.record.id}
                       className="py-2.5 flex flex-wrap items-center justify-between gap-2 text-sm"
                     >
                       <div className="flex flex-wrap items-center gap-2.5">
-                        <span className="font-mono text-xs tabular-nums text-slate-500 dark:text-slate-400">
+                        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                           {item.session.sessionDate}
                         </span>
-                        <span className="font-medium text-slate-900 dark:text-slate-100">
+                        <span className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
                           {item.subjectName}
                         </span>
-                        <span className="text-xs text-slate-500 dark:text-slate-400 capitalize">
+                        <span className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
                           {item.session.sessionType === 'examination'
                             ? `Exam (${item.session.examTitle ?? ''})`
                             : 'Regular'}
@@ -274,20 +260,19 @@ export function StudentAttendanceModule() {
                     value={dateFrom}
                     onChange={(e) => setDateFrom(e.target.value)}
                     aria-label="Filter from date"
-                    className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                    className="min-h-[44px] rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#151A1E] border border-[#E2E8E5] dark:border-[#344047] text-[#171D21] dark:text-[#F4F7F6] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                   />
                   <input
                     type="date"
                     value={dateTo}
                     onChange={(e) => setDateTo(e.target.value)}
                     aria-label="Filter to date"
-                    className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                    className="min-h-[44px] rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#151A1E] border border-[#E2E8E5] dark:border-[#344047] text-[#171D21] dark:text-[#F4F7F6] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                   />
-                  <select
+                  <Select
                     value={subjectFilter}
                     onChange={(e) => setSubjectFilter(e.target.value)}
                     aria-label="Filter by subject"
-                    className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                   >
                     <option value="all">All Subjects</option>
                     {data.availableSubjects.map((s) => (
@@ -295,28 +280,26 @@ export function StudentAttendanceModule() {
                         {s.name}
                       </option>
                     ))}
-                  </select>
-                  <select
+                  </Select>
+                  <Select
                     value={typeFilter}
                     onChange={(e) =>
                       setTypeFilter(e.target.value as 'all' | AttendanceSessionType)
                     }
                     aria-label="Filter by session type"
-                    className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                   >
                     <option value="all">Regular & Exam</option>
                     <option value="regular">Regular Class Only</option>
                     <option value="examination">Examination Only</option>
-                  </select>
+                  </Select>
                   {hasFilters && (
-                    <button
-                      type="button"
+                    <Button
+                      variant="secondary"
                       onClick={clearFilters}
-                      className="min-h-[40px] px-3 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center justify-center gap-1 cursor-pointer"
+                      iconLeft={<X className="w-3.5 h-3.5" aria-hidden="true" />}
                     >
-                      <X className="w-3.5 h-3.5" aria-hidden="true" />
-                      <span>Clear Filters</span>
-                    </button>
+                      Clear Filters
+                    </Button>
                   )}
                 </div>
 
@@ -339,12 +322,12 @@ export function StudentAttendanceModule() {
 
                 <div className="md:hidden space-y-3">
                   {data.history.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-2">
+                    <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
                       <CalendarCheck2
-                        className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto"
+                        className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
                         aria-hidden="true"
                       />
-                      <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                         No matching attendance records
                       </p>
                     </div>
@@ -352,20 +335,20 @@ export function StudentAttendanceModule() {
                     data.history.map((item) => (
                       <div
                         key={item.record.id}
-                        className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-2 bg-white dark:bg-[#101426]/65"
+                        className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2 bg-white dark:bg-[#1D2429]"
                       >
                         <div className="flex items-start justify-between gap-2">
                           <div>
-                            <p className="font-mono text-xs tabular-nums text-slate-500 dark:text-slate-400">
+                            <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                               {item.session.sessionDate} ·{' '}
                               {item.session.sessionType === 'examination'
                                 ? `Exam (${item.session.examTitle ?? ''})`
                                 : 'Regular'}
                             </p>
-                            <p className="font-semibold text-sm text-slate-900 dark:text-slate-100">
+                            <p className="font-semibold text-sm text-[#171D21] dark:text-[#F4F7F6]">
                               {item.subjectName}
                             </p>
-                            <p className="text-xs text-slate-500 dark:text-slate-400">
+                            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                               {item.className} · {item.batchName}
                             </p>
                           </div>
@@ -374,7 +357,7 @@ export function StudentAttendanceModule() {
                             corrected={item.record.corrected}
                           />
                         </div>
-                        <p className="text-xs text-slate-500 dark:text-slate-400">
+                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           Marked by {item.teacherName} on{' '}
                           {formatShortDate(item.record.markedAt)}
                           {item.record.remarks ? ` · Note: ${item.record.remarks}` : ''}

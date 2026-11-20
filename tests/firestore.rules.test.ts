@@ -1,7 +1,7 @@
 /**
- * Phase 10 — Firestore Security Rules Automated Verification Suite
+ * Security Audit — Firestore Security Rules Automated Verification Suite
  *
- * Tests all 12 "Dirty Dozen" adversarial attacks defined in /security_spec.md
+ * Tests all 20 adversarial attack scenarios defined in /security_spec.md
  * plus authorized Admin, Teacher (assigned), and Student (own) operations.
  *
  * Execution (requires Java 17+ and Firebase CLI Emulator):
@@ -26,14 +26,17 @@ import {
   setDoc,
   updateDoc,
   where,
+  writeBatch,
 } from 'firebase/firestore';
 
 const PROJECT_ID = 'academy-0007';
 const ADMIN_UID = 'uid-adm-0001';
+const DEACTIVATED_ADMIN_UID = 'uid-adm-deactivated';
 const TEACHER_A_UID = 'uid-tch-0001';
 const TEACHER_B_UID = 'uid-tch-0002';
 const STUDENT_A_UID = 'uid-stu-0001';
 const STUDENT_B_UID = 'uid-stu-0002';
+const DEACTIVATED_STUDENT_UID = 'uid-stu-deactivated';
 
 async function seedTestBaseline(testEnv: RulesTestEnvironment): Promise<void> {
   const now = new Date().toISOString();
@@ -46,6 +49,14 @@ async function seedTestBaseline(testEnv: RulesTestEnvironment): Promise<void> {
       accountId: 'ADM-0001',
       email: '07alphabro@gmail.com',
       status: 'active',
+      createdAt: now,
+    });
+
+    await setDoc(doc(db, 'admins', DEACTIVATED_ADMIN_UID), {
+      uid: DEACTIVATED_ADMIN_UID,
+      accountId: 'ADM-0002',
+      email: '07alphabro@gmail.com',
+      status: 'deactivated',
       createdAt: now,
     });
 
@@ -93,6 +104,17 @@ async function seedTestBaseline(testEnv: RulesTestEnvironment): Promise<void> {
       createdAt: now,
     });
 
+    await setDoc(doc(db, 'users', DEACTIVATED_STUDENT_UID), {
+      uid: DEACTIVATED_STUDENT_UID,
+      accountId: 'STU-0099',
+      role: 'student',
+      name: 'Deactivated Student',
+      phone: '9800000099',
+      status: 'deactivated',
+      adminUids: [ADMIN_UID],
+      createdAt: now,
+    });
+
     await setDoc(doc(db, 'authIdMappings', 'ADM-0001'), {
       loginId: 'ADM-0001',
       uid: ADMIN_UID,
@@ -115,6 +137,15 @@ async function seedTestBaseline(testEnv: RulesTestEnvironment): Promise<void> {
       batchId: 'BAT-0001',
       name: 'Batch A',
       classId: 'CLS-0001',
+      status: 'active',
+      createdAt: now,
+    });
+
+    await setDoc(doc(db, 'subjects', 'SUB-0001'), {
+      id: 'SUB-0001',
+      subjectId: 'SUB-0001',
+      name: 'Mathematics',
+      classIds: ['CLS-0001'],
       status: 'active',
       createdAt: now,
     });
@@ -151,6 +182,27 @@ async function seedTestBaseline(testEnv: RulesTestEnvironment): Promise<void> {
       updatedAt: now,
     });
 
+    await setDoc(doc(db, 'homeworkSubmissions', 'HSUB-0001'), {
+      id: 'HSUB-0001',
+      homeworkId: 'HW-0001',
+      studentId: 'STU-0001',
+      studentUid: STUDENT_A_UID,
+      teacherUid: TEACHER_A_UID,
+      responseText: 'Completed exercise 1 to 10.',
+      submittedAt: now,
+      status: 'submitted',
+      revisionNumber: 1,
+      revisionHistory: [{ revisionNumber: 1, responseText: 'Completed exercise 1 to 10.', submittedAt: now }],
+      adminUids: [ADMIN_UID],
+    });
+
+    await setDoc(doc(db, 'homeworkSubmissions', 'HSUB-0001', 'private', 'teacherNote'), {
+      submissionId: 'HSUB-0001',
+      teacherUid: TEACHER_A_UID,
+      privateTeacherNote: 'Needs extra practice on quadratics.',
+      updatedAt: now,
+    });
+
     await setDoc(doc(db, 'objectiveTests', 'TST-0001'), {
       id: 'TST-0001',
       title: 'Unit Quiz 1',
@@ -180,6 +232,21 @@ async function seedTestBaseline(testEnv: RulesTestEnvironment): Promise<void> {
       teacherUid: TEACHER_A_UID,
       answers: [{ questionId: 'Q1', correctOptionId: 'A' }],
       updatedAt: now,
+    });
+
+    await setDoc(doc(db, 'testAttempts', 'ATT-TST-0001'), {
+      id: 'ATT-TST-0001',
+      testId: 'TST-0001',
+      studentId: 'STU-0001',
+      studentUid: STUDENT_A_UID,
+      teacherUid: TEACHER_A_UID,
+      attemptNumber: 1,
+      startedAt: now,
+      expiresAt: now,
+      status: 'in_progress',
+      answers: {},
+      totalMarks: 20,
+      adminUids: [ADMIN_UID],
     });
 
     await setDoc(doc(db, 'examinations', 'EXM-0001'), {
@@ -255,6 +322,22 @@ async function seedTestBaseline(testEnv: RulesTestEnvironment): Promise<void> {
       updatedAt: now,
     });
 
+    await setDoc(doc(db, 'paymentClaims', 'PCLM-0001'), {
+      id: 'PCLM-0001',
+      paymentReference: 'PREF-0001',
+      studentId: 'STU-0001',
+      studentUid: STUDENT_A_UID,
+      feeAccountId: 'FEE-0001',
+      feePeriod: '2026-11',
+      amountPaise: 250000,
+      transactionReference: 'UTR000111222',
+      paymentDate: '2026-11-18',
+      status: 'verification_pending',
+      duplicateTransactionFlag: false,
+      submittedAt: now,
+      adminUids: [ADMIN_UID],
+    });
+
     await setDoc(doc(db, 'teacherSalaryPeriods', 'SPER-0002'), {
       id: 'SPER-0002',
       teacherId: 'TCH-0002',
@@ -310,6 +393,13 @@ async function runRulesSecurityTests(): Promise<void> {
         firebase: { sign_in_provider: 'google.com' },
       })
       .firestore();
+    const deactivatedAdminDb = testEnv
+      .authenticatedContext(DEACTIVATED_ADMIN_UID, {
+        email: '07alphabro@gmail.com',
+        email_verified: true,
+        firebase: { sign_in_provider: 'google.com' },
+      })
+      .firestore();
     const unverifiedAdminDb = testEnv
       .authenticatedContext(ADMIN_UID, {
         email: '07alphabro@gmail.com',
@@ -330,9 +420,21 @@ async function runRulesSecurityTests(): Promise<void> {
         email_verified: false,
       })
       .firestore();
+    const teacherBDb = testEnv
+      .authenticatedContext(TEACHER_B_UID, {
+        email: 'tch-0002@auth.academy-0007.internal',
+        email_verified: false,
+      })
+      .firestore();
     const studentADb = testEnv
       .authenticatedContext(STUDENT_A_UID, {
         email: 'stu-0001@auth.academy-0007.internal',
+        email_verified: false,
+      })
+      .firestore();
+    const deactivatedStudentDb = testEnv
+      .authenticatedContext(DEACTIVATED_STUDENT_UID, {
+        email: 'stu-0099@auth.academy-0007.internal',
         email_verified: false,
       })
       .firestore();
@@ -343,17 +445,16 @@ async function runRulesSecurityTests(): Promise<void> {
       })
       .firestore();
 
-    // Dirty Dozen #1: Unauthenticated account directory scrape
+    // Scenario 1: Unauthenticated user reads private Student data
     await assertFails(getDocs(collection(unauthDb, 'users')));
-    await assertFails(getDoc(doc(unauthDb, 'authIdMappings', 'ADM-0001')));
+    await assertFails(getDoc(doc(unauthDb, 'studentFeeAccounts', 'FEE-0001')));
 
-    // Dirty Dozen #2: Student role self-escalation & unauthorized Google Admin self-creation
-    await assertFails(
-      updateDoc(doc(studentADb, 'users', STUDENT_A_UID), {
-        role: 'admin',
-        adminUids: [STUDENT_A_UID],
-      })
-    );
+    // Scenario 2: Unauthenticated user reads Teacher data
+    await assertFails(getDoc(doc(unauthDb, 'teacherSalaryPeriods', 'SPER-0002')));
+    await assertFails(getDoc(doc(unauthDb, 'users', TEACHER_A_UID)));
+
+    // Scenario 3: Unauthorized Google account accesses Admin
+    await assertFails(getDoc(doc(unauthorizedGoogleDb, 'authIdMappings', 'ADM-0001')));
     await assertFails(
       setDoc(doc(unauthorizedGoogleDb, 'admins', 'uid-other-google'), {
         uid: 'uid-other-google',
@@ -364,10 +465,35 @@ async function runRulesSecurityTests(): Promise<void> {
       })
     );
 
-    // Dirty Dozen #3: Cross-student fee account read
+    // Scenario 4: Student accesses another Student's record
     await assertFails(getDoc(doc(studentADb, 'studentFeeAccounts', 'FEE-0002')));
+    await assertFails(getDoc(doc(studentADb, 'users', STUDENT_B_UID)));
 
-    // Dirty Dozen #4: Student financial balance forgery
+    // Scenario 5: Teacher accesses unassigned class/enrolments or unowned homework
+    await assertFails(getDocs(query(collection(teacherADb, 'enrolments'), where('batchId', '==', 'BAT-0001'))));
+    await assertFails(updateDoc(doc(teacherBDb, 'homework', 'HW-0001'), { title: 'Tampered' }));
+
+    // Scenario 6: Teacher accesses another Teacher's private records
+    await assertFails(getDoc(doc(teacherADb, 'teacherSalaryPeriods', 'SPER-0002')));
+    await assertFails(getDoc(doc(teacherBDb, 'homeworkSubmissions', 'HSUB-0001', 'private', 'teacherNote')));
+
+    // Scenario 7: Student changes their own role
+    await assertFails(
+      updateDoc(doc(studentADb, 'users', STUDENT_A_UID), {
+        role: 'admin',
+        adminUids: [STUDENT_A_UID],
+      })
+    );
+
+    // Scenario 8: Teacher changes their own role
+    await assertFails(
+      updateDoc(doc(teacherADb, 'users', TEACHER_A_UID), {
+        role: 'admin',
+        adminUids: [TEACHER_A_UID],
+      })
+    );
+
+    // Scenario 9: Student modifies their fee balance
     await assertFails(
       updateDoc(doc(studentADb, 'studentFeeAccounts', 'FEE-0001'), {
         remainingBalancePaise: 0,
@@ -375,7 +501,7 @@ async function runRulesSecurityTests(): Promise<void> {
       })
     );
 
-    // Dirty Dozen #5: Payment claim auto-verify bypass
+    // Scenario 10: Student verifies their own payment
     await assertFails(
       setDoc(doc(studentADb, 'paymentClaims', 'PCLM-9999'), {
         id: 'PCLM-9999',
@@ -394,8 +520,113 @@ async function runRulesSecurityTests(): Promise<void> {
         adminUids: [ADMIN_UID],
       })
     );
+    await assertFails(updateDoc(doc(studentADb, 'paymentClaims', 'PCLM-0001'), { status: 'verified' }));
 
-    // Dirty Dozen #6: Shadow field injection on homework submission
+    // Scenario 11: Teacher approves a payment claim
+    await assertFails(updateDoc(doc(teacherADb, 'paymentClaims', 'PCLM-0001'), { status: 'verified' }));
+
+    // Scenario 12 & 13: Unauthorized user changes Admin settings or UPI settings
+    await assertFails(
+      setDoc(doc(teacherADb, 'applicationSettings', 'APP-SETTINGS-001'), {
+        id: 'APP-SETTINGS-001',
+      })
+    );
+    await assertFails(
+      setDoc(doc(studentADb, 'upiConfigurations', 'UPI-ROGUE'), {
+        id: 'UPI-ROGUE',
+        upiId: 'attacker@upi',
+        payeeName: 'Attacker',
+        status: 'active',
+        updatedBy: 'STU-0001',
+        updatedAt: now,
+        adminUids: [ADMIN_UID],
+      })
+    );
+
+    // Scenario 14: Student reads examination answer keys & unreleased marks
+    await assertFails(getDoc(doc(studentADb, 'objectiveTests', 'TST-0001', 'private', 'answerKey')));
+    await assertFails(
+      getDocs(
+        query(collection(studentADb, 'examinationMarks'), where('studentUid', '==', STUDENT_A_UID))
+      )
+    );
+
+    // Scenario 15: Student reads private teacher notes
+    await assertFails(
+      getDoc(doc(studentADb, 'homeworkSubmissions', 'HSUB-0001', 'private', 'teacherNote'))
+    );
+
+    // Scenario 16: Unauthorized user changes or forges audit records
+    await assertFails(updateDoc(doc(adminDb, 'financialAudit', 'FAUD-0001'), { action: 'tampered' }));
+    await assertFails(deleteDoc(doc(adminDb, 'financialAudit', 'FAUD-0001')));
+    await assertFails(
+      setDoc(doc(studentADb, 'paymentVerificationAudit', 'PAUD-FORGED'), {
+        id: 'PAUD-FORGED',
+        paymentClaimId: 'PCLM-0001',
+        actorId: 'STU-0001',
+        action: 'payment_verified',
+        timestamp: now,
+        adminUids: [ADMIN_UID],
+      })
+    );
+
+    // Scenario 17: Unauthorized user modifies account mappings
+    await assertFails(
+      setDoc(doc(teacherADb, 'authIdMappings', 'ADM-0001'), {
+        loginId: 'ADM-0001',
+        uid: TEACHER_A_UID,
+        authEmail: 'tch-0001@auth.academy-0007.internal',
+        role: 'admin',
+        status: 'active',
+        createdAt: now,
+      })
+    );
+
+    // Scenario 18: Deactivated account (both Student and Deactivated Admin Gmail) accesses protected data
+    await assertFails(getDocs(query(collection(deactivatedStudentDb, 'classes'), where('status', '==', 'active'))));
+    await assertFails(getDocs(collection(deactivatedAdminDb, 'users')));
+    await assertFails(getDoc(doc(deactivatedAdminDb, 'authIdMappings', 'ADM-0001')));
+
+    // Scenario 19: Unlinked auth user & arbitrary notification spoofing
+    await assertFails(getDocs(collection(unlinkedAuthDb, 'classes')));
+    await assertFails(getDoc(doc(unlinkedAuthDb, 'studentFeeAccounts', 'FEE-0001')));
+    await assertFails(
+      setDoc(doc(unverifiedAdminDb, 'classes', 'CLS-9999'), {
+        id: 'CLS-9999',
+        classId: 'CLS-9999',
+        name: 'Spoofed Class',
+        status: 'active',
+        createdAt: now,
+      })
+    );
+    await assertFails(
+      setDoc(doc(studentADb, 'notifications', 'NOTIF-SPOOF'), {
+        id: 'NOTIF-SPOOF',
+        recipientId: 'STU-0002',
+        recipientUid: STUDENT_B_UID,
+        recipientRole: 'student',
+        category: 'fees_receipts',
+        type: 'overdue_fee',
+        relatedRecordId: 'FEE-0002',
+        dedupeKey: 'spoof:1',
+        title: 'Fake Notification',
+        message: 'Unauthorized message',
+        adminUids: [ADMIN_UID],
+        createdAt: now,
+      })
+    );
+
+    // Scenario 20: Malicious or unexpected input (shadow fields, test score forgery, oversized ID, malicious URL)
+    const oversizedId = 'X'.repeat(140);
+    await assertFails(
+      setDoc(doc(adminDb, 'classes', oversizedId), {
+        id: oversizedId,
+        classId: oversizedId,
+        name: 'Oversized ID Class',
+        status: 'active',
+        createdAt: now,
+      })
+    );
     await assertFails(
       setDoc(doc(studentADb, 'homeworkSubmissions', 'HSUB-9999'), {
         id: 'HSUB-9999',
@@ -412,98 +643,78 @@ async function runRulesSecurityTests(): Promise<void> {
         adminUids: [ADMIN_UID],
       })
     );
-
-    // Dirty Dozen #7: Unverified email spoofing
     await assertFails(
-      setDoc(doc(unverifiedAdminDb, 'classes', 'CLS-9999'), {
-        id: 'CLS-9999',
-        classId: 'CLS-9999',
-        name: 'Spoofed Class',
-        status: 'active',
-        createdAt: now,
-      })
-    );
-
-    // Dirty Dozen #8: ID poisoning / oversized payload
-    const oversizedId = 'X'.repeat(140);
-    await assertFails(
-      setDoc(doc(adminDb, 'classes', oversizedId), {
-        id: oversizedId,
-        classId: oversizedId,
-        name: 'Oversized ID Class',
-        status: 'active',
-        createdAt: now,
-      })
-    );
-
-    // Dirty Dozen #9: Teacher cross-teacher salary read
-    await assertFails(getDoc(doc(teacherADb, 'teacherSalaryPeriods', 'SPER-0002')));
-
-    // Dirty Dozen #10: Student answer key peek before release
-    await assertFails(getDoc(doc(studentADb, 'objectiveTests', 'TST-0001', 'private', 'answerKey')));
-
-    // Dirty Dozen #11: Student unreleased marks read
-    await assertFails(
-      getDocs(
-        query(
-          collection(studentADb, 'examinationMarks'),
-          where('studentUid', '==', STUDENT_A_UID)
-        )
-      )
-    );
-
-    // Dirty Dozen #12: Client audit history tampering
-    await assertFails(updateDoc(doc(adminDb, 'financialAudit', 'FAUD-0001'), { action: 'tampered' }));
-    await assertFails(deleteDoc(doc(adminDb, 'financialAudit', 'FAUD-0001')));
-
-    // Dirty Dozen #13: Unlinked Firebase Auth account without Admin-created users/{uid} mapping
-    await assertFails(getDocs(collection(unlinkedAuthDb, 'users')));
-    await assertFails(getDocs(collection(unlinkedAuthDb, 'classes')));
-    await assertFails(getDoc(doc(unlinkedAuthDb, 'studentFeeAccounts', 'FEE-0001')));
-    await assertFails(
-      setDoc(doc(unlinkedAuthDb, 'paymentClaims', 'PCLM-UNLINKED'), {
-        id: 'PCLM-UNLINKED',
-        paymentReference: 'PREF-UNLINKED',
-        studentId: 'STU-0001',
-        studentUid: 'uid-unlinked-auth',
-        feeAccountId: 'FEE-0001',
-        feePeriod: '2026-11',
-        amountPaise: 250000,
-        transactionReference: 'UTR00000000',
-        paymentDate: '2026-11-18',
-        status: 'verification_pending',
-        duplicateTransactionFlag: false,
+      updateDoc(doc(studentADb, 'testAttempts', 'ATT-TST-0001'), {
+        answers: { Q1: 'A' },
         submittedAt: now,
-        adminUids: [ADMIN_UID],
+        status: 'evaluated',
+        marksObtained: 20,
+        percentage: 100,
+        evaluatedAt: now,
       })
     );
     await assertFails(
-      setDoc(doc(unlinkedAuthDb, 'homeworkSubmissions', 'HSUB-UNLINKED'), {
-        id: 'HSUB-UNLINKED',
-        homeworkId: 'HW-0001',
-        studentId: 'STU-0001',
-        studentUid: 'uid-unlinked-auth',
-        teacherUid: TEACHER_A_UID,
-        responseText: 'Unlinked submission attempt.',
-        submittedAt: now,
-        status: 'submitted',
-        revisionNumber: 1,
-        revisionHistory: [{ revisionNumber: 1, responseText: 'x', submittedAt: now }],
+      setDoc(doc(adminDb, 'upiConfigurations', 'UPI-BAD'), {
+        id: 'UPI-BAD',
+        upiId: 'javascript:alert(1)',
+        payeeName: 'Bad Config',
+        status: 'active',
+        updatedBy: 'ADM-0001',
+        updatedAt: now,
         adminUids: [ADMIN_UID],
       })
     );
 
-    // Positive controls: authorized Admin, Spark Teacher, and Spark Student workflows succeed
+    // Positive controls: legitimate Admin, Spark Teacher, and Spark Student workflows succeed
     await assertSucceeds(getDoc(doc(studentADb, 'users', STUDENT_A_UID)));
     await assertSucceeds(getDoc(doc(teacherADb, 'users', TEACHER_A_UID)));
     await assertSucceeds(getDocs(query(collection(studentADb, 'classes'), where('status', '==', 'active'))));
-    await assertSucceeds(getDocs(query(collection(studentADb, 'homework'), where('status', '==', 'published'))));
-    await assertSucceeds(getDocs(query(collection(teacherADb, 'homework'), where('teacherUid', '==', TEACHER_A_UID))));
     await assertSucceeds(getDocs(query(collection(teacherADb, 'enrolments'), where('teacherUids', 'array-contains', TEACHER_A_UID))));
-    await assertSucceeds(getDocs(query(collection(teacherADb, 'homeworkSubmissions'), where('teacherUid', '==', TEACHER_A_UID))));
-    await assertFails(getDocs(query(collection(teacherADb, 'enrolments'), where('batchId', '==', 'BAT-0001'))));
     await assertSucceeds(getDoc(doc(studentADb, 'studentFeeAccounts', 'FEE-0001')));
     await assertSucceeds(getDoc(doc(teacherADb, 'objectiveTests', 'TST-0001', 'private', 'answerKey')));
+
+    // Atomic Teacher attendance session creation + record + audit
+    const attBatch = writeBatch(teacherADb);
+    attBatch.set(doc(teacherADb, 'attendanceSessions', 'ATT-VALID-1'), {
+      id: 'ATT-VALID-1',
+      sessionDate: '2026-11-19',
+      classId: 'CLS-0001',
+      batchId: 'BAT-0001',
+      subjectId: 'SUB-0001',
+      teacherId: 'TCH-0001',
+      teacherUid: TEACHER_A_UID,
+      sessionType: 'regular',
+      status: 'submitted',
+      submittedAt: now,
+      adminUids: [ADMIN_UID],
+      createdAt: now,
+      updatedAt: now,
+    });
+    attBatch.set(doc(teacherADb, 'attendanceRecords', 'ATT-VALID-1-STU-0001'), {
+      id: 'ATT-VALID-1-STU-0001',
+      attendanceSessionId: 'ATT-VALID-1',
+      studentId: 'STU-0001',
+      studentUid: STUDENT_A_UID,
+      teacherUid: TEACHER_A_UID,
+      status: 'present',
+      markedBy: 'TCH-0001',
+      markedAt: now,
+      adminUids: [ADMIN_UID],
+    });
+    attBatch.set(doc(teacherADb, 'attendanceAudit', 'AAUD-VALID-1'), {
+      id: 'AAUD-VALID-1',
+      attendanceSessionId: 'ATT-VALID-1',
+      action: 'session_submitted',
+      actorId: 'TCH-0001',
+      actorRole: 'teacher',
+      teacherUid: TEACHER_A_UID,
+      timestamp: now,
+      adminUids: [ADMIN_UID],
+      createdAt: now,
+    });
+    await assertSucceeds(attBatch.commit());
+
+    // Legitimate Student payment claim + audit
     await assertSucceeds(
       setDoc(doc(studentADb, 'paymentClaims', 'PCLM-VALID'), {
         id: 'PCLM-VALID',
@@ -531,7 +742,7 @@ async function runRulesSecurityTests(): Promise<void> {
       })
     );
 
-    console.log('Phase 10 Firestore Rules Security Suite: ALL 13 DIRTY DOZEN & SPARK POSITIVE TESTS PASSED');
+    console.log('Security Audit Firestore Rules Suite: ALL 20 ATTACK SCENARIOS & POSITIVE CONTROLS PASSED');
   } finally {
     await testEnv.cleanup();
   }

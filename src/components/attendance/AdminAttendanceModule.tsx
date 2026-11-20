@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState, type FormEvent } from 'react';
-import { Eye, History, Pencil, Search, X } from 'lucide-react';
+import { Eye, History, Pencil, X } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { AttendanceServiceError } from '../../services/contracts/attendanceService';
 import {
@@ -22,14 +22,19 @@ import {
   type ClassRecord,
   type SubjectRecord,
 } from '../../types';
-import { cn } from '../../utils/cn';
 import { formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Modal } from '../ui/Modal';
+import { PageHeader } from '../ui/PageHeader';
+import { SearchInput } from '../ui/SearchInput';
+import { Select } from '../ui/Select';
 import { StatTile } from '../ui/StatTile';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
+import { Tabs } from '../ui/Tabs';
+import { Textarea } from '../ui/Textarea';
 import { AbsenceNotificationList } from './AbsenceNotificationList';
 import { AttendanceStatusBadge } from './AttendanceStatusBadge';
 
@@ -147,11 +152,9 @@ export function AdminAttendanceModule() {
 
   if (!principal || principal.role !== 'admin') {
     return (
-      <Card title="Access Restricted">
-        <p className="text-sm text-red-700 dark:text-red-400">
-          Only authenticated Admin accounts can monitor and correct centre attendance.
-        </p>
-      </Card>
+      <Alert tone="error" title="Access Restricted">
+        Only authenticated Admin accounts can monitor and correct centre attendance.
+      </Alert>
     );
   }
 
@@ -230,10 +233,10 @@ export function AdminAttendanceModule() {
       header: 'Session',
       render: (row) => (
         <div>
-          <p className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+          <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
             {row.session.id}
           </p>
-          <p className="font-mono text-xs tabular-nums text-slate-500">
+          <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
             {row.session.sessionDate}
           </p>
         </div>
@@ -244,8 +247,8 @@ export function AdminAttendanceModule() {
       header: 'Class & Subject',
       render: (row) => (
         <div>
-          <p className="font-medium text-slate-900 dark:text-slate-100">{row.subjectName}</p>
-          <p className="text-xs text-slate-500 dark:text-slate-400">
+          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.subjectName}</p>
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -255,7 +258,7 @@ export function AdminAttendanceModule() {
       key: 'teacher',
       header: 'Teacher',
       render: (row) => (
-        <span className="text-xs text-slate-700 dark:text-slate-300">
+        <span className="text-xs text-[#343C42] dark:text-[#D5E0DD]">
           {row.teacherName}
         </span>
       ),
@@ -265,11 +268,11 @@ export function AdminAttendanceModule() {
       header: 'Type',
       render: (row) => (
         <div className="text-xs">
-          <p className="capitalize text-slate-800 dark:text-slate-200">
+          <p className="capitalize text-[#171D21] dark:text-[#F4F7F6]">
             {row.session.sessionType === 'examination' ? 'Examination' : 'Regular'}
           </p>
           {row.session.examTitle && (
-            <p className="text-slate-500 truncate max-w-[140px]">
+            <p className="text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[140px]">
               {row.session.examTitle}
             </p>
           )}
@@ -280,7 +283,7 @@ export function AdminAttendanceModule() {
       key: 'counts',
       header: 'Counts (P / A / L / E)',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-slate-700 dark:text-slate-300">
+        <span className="font-mono text-xs tabular-nums text-[#343C42] dark:text-[#D5E0DD]">
           {row.summary.presentCount} / {row.summary.absentCount} /{' '}
           {row.summary.lateCount} / {row.summary.excusedCount} (
           {row.summary.displayPercentage})
@@ -331,7 +334,7 @@ export function AdminAttendanceModule() {
       key: 'id',
       header: 'Audit ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
           {row.id}
         </span>
       ),
@@ -340,7 +343,7 @@ export function AdminAttendanceModule() {
       key: 'session',
       header: 'Session / Record',
       render: (row) => (
-        <span className="font-mono text-xs text-slate-700 dark:text-slate-300">
+        <span className="font-mono text-xs text-[#343C42] dark:text-[#D5E0DD]">
           {row.attendanceSessionId}
           {row.attendanceRecordId ? ` · ${row.attendanceRecordId}` : ''}
         </span>
@@ -350,7 +353,7 @@ export function AdminAttendanceModule() {
       key: 'action',
       header: 'Action',
       render: (row) => (
-        <span className="text-xs font-medium capitalize text-slate-800 dark:text-slate-200">
+        <span className="text-xs font-medium capitalize text-[#171D21] dark:text-[#F4F7F6]">
           {row.action.replace(/_/g, ' ')}
         </span>
       ),
@@ -361,14 +364,14 @@ export function AdminAttendanceModule() {
       render: (row) => (
         <div className="text-xs space-y-0.5">
           {row.previousValue && row.newValue ? (
-            <p className="font-mono text-slate-800 dark:text-slate-200">
+            <p className="font-mono text-[#171D21] dark:text-[#F4F7F6]">
               {row.previousValue} → {row.newValue}
             </p>
           ) : (
-            <p className="text-slate-600 dark:text-slate-400">{row.newValue ?? '—'}</p>
+            <p className="text-[#68737C] dark:text-[#AAB6B4]">{row.newValue ?? '—'}</p>
           )}
           {row.reason && (
-            <p className="text-slate-500 dark:text-slate-400">Reason: {row.reason}</p>
+            <p className="text-[#68737C] dark:text-[#AAB6B4]">Reason: {row.reason}</p>
           )}
         </div>
       ),
@@ -382,7 +385,7 @@ export function AdminAttendanceModule() {
       key: 'timestamp',
       header: 'Timestamp',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-slate-500">
+        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
           {formatShortDate(row.timestamp)}
         </span>
       ),
@@ -391,34 +394,19 @@ export function AdminAttendanceModule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Admin Attendance Monitoring & Audit · {isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Development Adapter'}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            Attendance Operations & Audit
-          </h1>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={`Admin Attendance Monitoring & Audit · ${isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Development Adapter'}`}
+        title="Attendance Operations & Audit"
+        subtitle="Monitor submitted sessions, absence alerts, and audited status corrections across every batch."
+      />
 
       {toast && (
-        <div
-          role="status"
-          className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2.5 text-xs font-medium text-emerald-900 dark:text-emerald-200"
-        >
+        <Alert tone="success" onDismiss={() => setToast(null)}>
           {toast}
-        </div>
+        </Alert>
       )}
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-800 dark:text-red-300"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
       {overview && (
         <>
@@ -448,18 +436,12 @@ export function AdminAttendanceModule() {
               value={overview.absentCount}
               caption={`${overview.excusedCount} excused`}
             />
-            <div className="rounded-2xl bg-white dark:bg-[#171D34] border border-[#E5E7EF] dark:border-[#303A55] p-4 sm:p-5">
-              <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-                Overall Rate
-              </p>
-              <p className="mt-2 text-2xl font-semibold tracking-tight text-[#7552D9] dark:text-[#A78BFA] font-mono tabular-nums">
-                {overview.overallSummary.displayPercentage}
-              </p>
-              <p className="mt-1.5 text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
-                {overview.overallSummary.attendedCount} /{' '}
-                {overview.overallSummary.eligibleDenominator} eligible
-              </p>
-            </div>
+            <StatTile
+              label="Overall Rate"
+              value={overview.overallSummary.displayPercentage}
+              caption={`${overview.overallSummary.attendedCount} / ${overview.overallSummary.eligibleDenominator} eligible`}
+              tone="mint"
+            />
           </div>
 
           {overview.byClass.length > 0 && (
@@ -469,9 +451,9 @@ export function AdminAttendanceModule() {
               padding="sm"
             >
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-[#E5E7EF] dark:divide-[#303A55] text-xs sm:text-sm">
+                <table className="min-w-full divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs sm:text-sm">
                   <thead>
-                    <tr className="text-left text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <tr className="text-left text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       <th className="py-2 pr-3 font-semibold">Class</th>
                       <th className="py-2 px-3 font-semibold text-right">Submitted</th>
                       <th className="py-2 px-3 font-semibold text-right">Present</th>
@@ -481,10 +463,10 @@ export function AdminAttendanceModule() {
                       <th className="py-2 pl-3 font-semibold text-right">Attendance %</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+                  <tbody className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                     {overview.byClass.map((row) => (
                       <tr key={row.classId}>
-                        <td className="py-2.5 pr-3 font-medium text-slate-900 dark:text-slate-100">
+                        <td className="py-2.5 pr-3 font-medium text-[#171D21] dark:text-[#F4F7F6]">
                           {row.className}
                         </td>
                         <td className="py-2.5 px-3 text-right font-mono tabular-nums">
@@ -515,42 +497,28 @@ export function AdminAttendanceModule() {
         </>
       )}
 
-      {/* Sub-Tabs */}
-      <div
-        className="flex overflow-x-auto gap-1 p-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844]"
-        role="tablist"
-        aria-label="Admin attendance tabs"
-      >
-        {(
-          [
-            { id: 'sessions', label: `Sessions & Corrections (${sessions.length})` },
-            {
-              id: 'notifications',
-              label: `Absence Alerts (${overview?.unreadNotificationCount ?? 0} unread)`,
-            },
-            { id: 'audit', label: `Audit History (${auditEntries.length})` },
-          ] as const
-        ).map((tab) => {
-          const active = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'min-h-[40px] px-3.5 py-1.5 text-xs sm:text-sm font-semibold rounded-lg transition-colors whitespace-nowrap shrink-0 cursor-pointer',
-                active
-                  ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-                  : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-              )}
-            >
-              {tab.label}
-            </button>
-          );
-        })}
-      </div>
+      <Tabs
+        ariaLabel="Admin attendance tabs"
+        value={activeTab}
+        onChange={setActiveTab}
+        items={[
+          {
+            id: 'sessions',
+            label: 'Sessions & Corrections',
+            count: sessions.length,
+          },
+          {
+            id: 'notifications',
+            label: 'Absence Alerts',
+            count: overview?.unreadNotificationCount ?? 0,
+          },
+          {
+            id: 'audit',
+            label: 'Audit History',
+            count: auditEntries.length,
+          },
+        ]}
+      />
 
       {activeTab === 'sessions' && (
         <Card
@@ -559,34 +527,25 @@ export function AdminAttendanceModule() {
         >
           <div className="space-y-4">
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-2.5">
-              <div className="relative">
-                <Search
-                  className="w-4 h-4 text-[#687086] dark:text-[#A6B0C3] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <input
-                  type="search"
-                  value={studentSearch}
-                  onChange={(e) => setStudentSearch(e.target.value)}
-                  placeholder="Search Student ID or name..."
-                  aria-label="Search attendance by student ID or name"
-                  className="w-full min-h-[40px] rounded-xl pl-9 pr-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                />
-              </div>
+              <SearchInput
+                value={studentSearch}
+                onValueChange={setStudentSearch}
+                placeholder="Search Student ID or name..."
+                aria-label="Search attendance by student ID or name"
+              />
 
               <input
                 type="date"
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
                 aria-label="Filter attendance by date"
-                className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                className="min-h-[44px] rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#151A1E] border border-[#E2E8E5] dark:border-[#344047] text-[#171D21] dark:text-[#F4F7F6] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
               />
 
-              <select
+              <Select
                 value={classFilter}
                 onChange={(e) => setClassFilter(e.target.value)}
                 aria-label="Filter by class"
-                className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
               >
                 <option value="all">All Classes</option>
                 {classes.map((c) => (
@@ -594,13 +553,12 @@ export function AdminAttendanceModule() {
                     {c.name}
                   </option>
                 ))}
-              </select>
+              </Select>
 
-              <select
+              <Select
                 value={batchFilter}
                 onChange={(e) => setBatchFilter(e.target.value)}
                 aria-label="Filter by batch"
-                className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
               >
                 <option value="all">All Batches</option>
                 {batches.map((b) => (
@@ -608,13 +566,12 @@ export function AdminAttendanceModule() {
                     {b.name}
                   </option>
                 ))}
-              </select>
+              </Select>
 
-              <select
+              <Select
                 value={teacherFilter}
                 onChange={(e) => setTeacherFilter(e.target.value)}
                 aria-label="Filter by teacher"
-                className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
               >
                 <option value="all">All Teachers</option>
                 {teachers.map((t) => (
@@ -622,13 +579,12 @@ export function AdminAttendanceModule() {
                     {t.name} ({t.accountId})
                   </option>
                 ))}
-              </select>
+              </Select>
 
-              <select
+              <Select
                 value={subjectFilter}
                 onChange={(e) => setSubjectFilter(e.target.value)}
                 aria-label="Filter by subject"
-                className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
               >
                 <option value="all">All Subjects</option>
                 {subjects.map((s) => (
@@ -636,30 +592,28 @@ export function AdminAttendanceModule() {
                     {s.name}
                   </option>
                 ))}
-              </select>
+              </Select>
 
-              <select
+              <Select
                 value={typeFilter}
                 onChange={(e) =>
                   setTypeFilter(e.target.value as 'all' | AttendanceSessionType)
                 }
                 aria-label="Filter by attendance type"
-                className="min-h-[40px] rounded-xl px-3 py-2 text-xs sm:text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
               >
                 <option value="all">Regular & Exam</option>
                 <option value="regular">Regular Class</option>
                 <option value="examination">Examination</option>
-              </select>
+              </Select>
 
               {hasFilters && (
-                <button
-                  type="button"
+                <Button
+                  variant="secondary"
                   onClick={clearFilters}
-                  className="min-h-[40px] px-3 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center justify-center gap-1 cursor-pointer"
+                  iconLeft={<X className="w-3.5 h-3.5" aria-hidden="true" />}
                 >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Clear Filters</span>
-                </button>
+                  Clear Filters
+                </Button>
               )}
             </div>
 
@@ -676,24 +630,24 @@ export function AdminAttendanceModule() {
 
             <div className="md:hidden space-y-3">
               {sessions.length === 0 ? (
-                <p className="text-sm text-slate-500 text-center py-6">
+                <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] text-center py-6">
                   No matching attendance sessions found.
                 </p>
               ) : (
                 sessions.map((row) => (
                   <div
                     key={row.session.id}
-                    className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-2.5 bg-white dark:bg-[#101426]/65"
+                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-[#F7F9F8] dark:bg-[#151A1E]/75"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                        <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
                           {row.session.id} · {row.session.sessionDate}
                         </p>
-                        <p className="font-semibold text-sm text-[#17172B] dark:text-[#F8FAFC]">
+                        <p className="font-semibold text-sm text-[#20262B] dark:text-[#F4F7F6]">
                           {row.subjectName}
                         </p>
-                        <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           {row.className} · {row.batchName} · {row.teacherName}
                         </p>
                       </div>
@@ -708,7 +662,7 @@ export function AdminAttendanceModule() {
                         label={row.session.status}
                       />
                     </div>
-                    <p className="font-mono text-xs tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                       P:{row.summary.presentCount} A:{row.summary.absentCount} L:
                       {row.summary.lateCount} E:{row.summary.excusedCount} ·{' '}
                       {row.summary.displayPercentage}
@@ -758,30 +712,30 @@ export function AdminAttendanceModule() {
             {auditEntries.map((entry) => (
               <div
                 key={entry.id}
-                className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3.5 space-y-1.5 bg-white dark:bg-[#101426]/65 text-xs"
+                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 space-y-1.5 bg-[#F7F9F8] dark:bg-[#151A1E]/75 text-xs"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                  <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                     {entry.id}
                   </span>
-                  <span className="font-mono text-[#687086] dark:text-[#A6B0C3]">
+                  <span className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
                     {formatShortDate(entry.timestamp)}
                   </span>
                 </div>
-                <p className="font-medium capitalize text-slate-900 dark:text-slate-100">
+                <p className="font-medium capitalize text-[#171D21] dark:text-[#F4F7F6]">
                   {entry.action.replace(/_/g, ' ')} ({entry.attendanceSessionId})
                 </p>
                 {entry.previousValue && entry.newValue ? (
-                  <p className="font-mono text-slate-700 dark:text-slate-300">
+                  <p className="font-mono text-[#343C42] dark:text-[#D5E0DD]">
                     {entry.previousValue} → {entry.newValue}
                   </p>
                 ) : (
-                  <p className="text-slate-600 dark:text-slate-400">{entry.newValue}</p>
+                  <p className="text-[#68737C] dark:text-[#AAB6B4]">{entry.newValue}</p>
                 )}
                 {entry.reason && (
-                  <p className="text-slate-500">Reason: {entry.reason}</p>
+                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Reason: {entry.reason}</p>
                 )}
-                <p className="font-mono text-slate-500">Actor: {entry.actorId}</p>
+                <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">Actor: {entry.actorId}</p>
               </div>
             ))}
           </div>
@@ -802,7 +756,7 @@ export function AdminAttendanceModule() {
       >
         {selectedSession && (
           <div className="space-y-5">
-            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3.5 bg-[#F1EEFA]/60 dark:bg-[#101426] text-xs space-y-1 font-mono tabular-nums">
+            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 bg-[#F0F4F2] dark:bg-[#151A1E] text-xs space-y-1 font-mono tabular-nums">
               <p>
                 Teacher: {selectedSession.teacherName} ({selectedSession.session.teacherId}) ·
                 Type:{' '}
@@ -818,20 +772,20 @@ export function AdminAttendanceModule() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <h3 className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                 Student Roster ({selectedSession.records.length})
               </h3>
-              <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] max-h-64 overflow-y-auto">
+              <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] max-h-64 overflow-y-auto">
                 {selectedSession.records.map((item) => (
                   <li
                     key={item.record.id}
                     className="py-2.5 flex flex-wrap items-center justify-between gap-2"
                   >
                     <div>
-                      <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="text-sm font-medium text-[#20262B] dark:text-[#F4F7F6]">
                         {item.studentName}
                       </p>
-                      <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+                      <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                         {item.record.studentId}
                         {item.record.remarks ? ` · ${item.record.remarks}` : ''}
                       </p>
@@ -864,12 +818,12 @@ export function AdminAttendanceModule() {
             </div>
 
             {selectedSession.auditEntries.length > 0 && (
-              <div className="space-y-2 pt-3 border-t border-[#E5E7EF] dark:border-[#303A55]">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-                  <History className="w-3.5 h-3.5 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
+              <div className="space-y-2 pt-3 border-t border-[#E2E8E5] dark:border-[#344047]">
+                <div className="flex items-center gap-2 text-xs font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                  <History className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
                   <span>Session Audit Trail ({selectedSession.auditEntries.length})</span>
                 </div>
-                <ul className="space-y-1.5 text-xs text-[#687086] dark:text-[#A6B0C3]">
+                <ul className="space-y-1.5 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                   {selectedSession.auditEntries.map((aud) => (
                     <li key={aud.id} className="font-mono">
                       [{formatShortDate(aud.timestamp)}] {aud.actorId} ·{' '}
@@ -896,17 +850,10 @@ export function AdminAttendanceModule() {
         maxWidthClass="max-w-md"
       >
         <form onSubmit={handleSubmitCorrection} className="space-y-4">
-          {correctionError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-800 dark:text-red-300"
-            >
-              {correctionError}
-            </div>
-          )}
+          {correctionError && <Alert tone="error">{correctionError}</Alert>}
 
-          <div className="text-xs text-[#687086] dark:text-[#A6B0C3] space-y-1">
-            <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <div className="text-xs text-[#68737C] dark:text-[#AAB6B4] space-y-1">
+            <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
               {correctionTarget?.studentName} ({correctionTarget?.record.studentId})
             </p>
             <p>
@@ -917,36 +864,26 @@ export function AdminAttendanceModule() {
             </p>
           </div>
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-              New Attendance Status
-            </label>
-            <select
-              value={newStatus}
-              onChange={(e) => setNewStatus(e.target.value as AttendanceStatus)}
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            >
-              {ATTENDANCE_STATUSES.map((st) => (
-                <option key={st} value={st}>
-                  {st.charAt(0).toUpperCase() + st.slice(1)}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="New Attendance Status"
+            value={newStatus}
+            onChange={(e) => setNewStatus(e.target.value as AttendanceStatus)}
+          >
+            {ATTENDANCE_STATUSES.map((st) => (
+              <option key={st} value={st}>
+                {st.charAt(0).toUpperCase() + st.slice(1)}
+              </option>
+            ))}
+          </Select>
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-              Mandatory Correction Reason
-            </label>
-            <textarea
-              rows={3}
-              value={correctionReason}
-              onChange={(e) => setCorrectionReason(e.target.value)}
-              placeholder="Explain why this submitted record is being changed (minimum 5 characters)..."
-              required
-              className="w-full rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
+          <Textarea
+            label="Mandatory Correction Reason"
+            rows={3}
+            value={correctionReason}
+            onChange={(e) => setCorrectionReason(e.target.value)}
+            placeholder="Explain why this submitted record is being changed (minimum 5 characters)..."
+            required
+          />
 
           <div className="flex justify-end gap-2 pt-2">
             <Button

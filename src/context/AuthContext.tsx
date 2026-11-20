@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
   type ReactNode,
 } from 'react';
@@ -108,6 +109,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
     return true;
   }, [session]);
+
+  const lastFocusCheckRef = useRef<number>(0);
+  useEffect(() => {
+    if (!session.isAuthenticated) {
+      return;
+    }
+    const handleRevalidate = () => {
+      const now = Date.now();
+      if (now - lastFocusCheckRef.current < 60_000) {
+        return;
+      }
+      lastFocusCheckRef.current = now;
+      void validateActiveSession();
+    };
+    const intervalId = window.setInterval(() => {
+      void validateActiveSession();
+    }, 5 * 60 * 1000);
+    window.addEventListener('focus', handleRevalidate);
+    return () => {
+      window.clearInterval(intervalId);
+      window.removeEventListener('focus', handleRevalidate);
+    };
+  }, [session.isAuthenticated, validateActiveSession]);
 
   const signIn = useCallback(async (credentials: LoginCredentials): Promise<AuthSession> => {
     setAuthNotice(null);

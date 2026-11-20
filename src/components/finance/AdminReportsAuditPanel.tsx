@@ -29,9 +29,11 @@ import { formatShortDate } from '../../utils/formatters';
 import { BrandLogoMark } from '../ui/BrandLogoMark';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Select } from '../ui/Select';
 import { StatTile } from '../ui/StatTile';
 import { StatusText, type SemanticTone } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
+import { ComparisonBarChart, DistributionDonutChart } from '../charts/AnalyticsCharts';
 
 interface AdminReportsAuditPanelProps {
   mode: 'overview' | 'reports' | 'audit';
@@ -189,8 +191,8 @@ export function AdminReportsAuditPanel({
       header: 'Student',
       render: (r) => (
         <div>
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">{r.studentName}</p>
-          <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{r.studentName}</p>
+          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {r.studentId} · {r.className} ({r.batchName})
           </p>
         </div>
@@ -212,7 +214,7 @@ export function AdminReportsAuditPanel({
       header: 'Verified Paid',
       align: 'right',
       render: (r) => (
-        <span className="text-[#168A62] dark:text-[#22C58B] font-semibold">
+        <span className="text-[#168A63] dark:text-[#42DDA9] font-semibold">
           {formatInrFromPaise(r.verifiedPaidPaise)}
         </span>
       ),
@@ -222,7 +224,7 @@ export function AdminReportsAuditPanel({
       header: 'Pending Claims',
       align: 'right',
       render: (r) => (
-        <span className="text-[#B7791F] dark:text-[#F5B942]">
+        <span className="text-[#A67317] dark:text-[#E5B04D]">
           {formatInrFromPaise(r.pendingClaimsPaise)}
         </span>
       ),
@@ -256,8 +258,8 @@ export function AdminReportsAuditPanel({
       header: 'Teacher',
       render: (r) => (
         <div>
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">{r.teacherName}</p>
-          <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{r.teacherName}</p>
+          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {r.teacherId} · {r.period}
           </p>
         </div>
@@ -283,7 +285,7 @@ export function AdminReportsAuditPanel({
       header: 'Paid',
       align: 'right',
       render: (r) => (
-        <span className="text-[#168A62] dark:text-[#22C58B] font-semibold">
+        <span className="text-[#168A63] dark:text-[#42DDA9] font-semibold">
           {formatInrFromPaise(r.paidPaise)}
         </span>
       ),
@@ -318,7 +320,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs">
           <p className="font-mono tabular-nums">{formatShortDate(r.timestamp)}</p>
-          <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">Actor: {r.actorId}</p>
+          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">Actor: {r.actorId}</p>
         </div>
       ),
     },
@@ -327,10 +329,10 @@ export function AdminReportsAuditPanel({
       header: 'Entity & Action',
       render: (r) => (
         <div className="text-xs">
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
             {r.entityType.replace('_', ' ')} · {r.action}
           </p>
-          <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">ID: {r.entityId}</p>
+          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">ID: {r.entityId}</p>
         </div>
       ),
     },
@@ -340,11 +342,11 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs space-y-0.5">
           {r.previousValues && (
-            <p className="text-[#687086] dark:text-[#A6B0C3]">From: {r.previousValues}</p>
+            <p className="text-[#68737C] dark:text-[#AAB6B4]">From: {r.previousValues}</p>
           )}
-          {r.newValues && <p className="text-[#17172B] dark:text-[#F8FAFC]">To: {r.newValues}</p>}
+          {r.newValues && <p className="text-[#20262B] dark:text-[#F4F7F6]">To: {r.newValues}</p>}
           {r.reason && (
-            <p className="text-[#7552D9] dark:text-[#C4B5FD]">Reason: {r.reason}</p>
+            <p className="text-[#168A63] dark:text-[#42DDA9]">Reason: {r.reason}</p>
           )}
         </div>
       ),
@@ -358,7 +360,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs font-mono">
           <p>{formatShortDate(r.timestamp)}</p>
-          <p className="text-[#687086] dark:text-[#A6B0C3]">{r.actorId}</p>
+          <p className="text-[#68737C] dark:text-[#AAB6B4]">{r.actorId}</p>
         </div>
       ),
     },
@@ -368,7 +370,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs">
           <p className="font-semibold">{r.action.replace('_', ' ')}</p>
-          <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">{r.paymentClaimId}</p>
+          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">{r.paymentClaimId}</p>
         </div>
       ),
     },
@@ -378,7 +380,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs space-y-0.5">
           {r.newValues && <p>{r.newValues}</p>}
-          {r.reason && <p className="text-[#D94C5C] dark:text-[#F16B75]">Reason: {r.reason}</p>}
+          {r.reason && <p className="text-[#D64C55] dark:text-[#EF6D75]">Reason: {r.reason}</p>}
         </div>
       ),
     },
@@ -432,26 +434,26 @@ export function AdminReportsAuditPanel({
               }
             >
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between py-1.5 border-b border-[#E5E7EF] dark:border-[#303A55]">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Current Period ({dashboard.currentPeriod}) Verified</span>
-                  <span className="font-mono font-semibold text-[#168A62] dark:text-[#22C58B] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Current Period ({dashboard.currentPeriod}) Verified</span>
+                  <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9] tabular-nums">
                     {formatInrFromPaise(dashboard.currentMonthCollectionsPaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E5E7EF] dark:border-[#303A55]">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Current Year ({dashboard.currentYear}) Verified</span>
+                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Current Year ({dashboard.currentYear}) Verified</span>
                   <span className="font-mono font-semibold tabular-nums">
                     {formatInrFromPaise(dashboard.currentYearCollectionsPaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E5E7EF] dark:border-[#303A55]">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Rejected Claims ({dashboard.rejectedClaimsCount})</span>
-                  <span className="font-mono text-[#D94C5C] dark:text-[#F16B75] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Rejected Claims ({dashboard.rejectedClaimsCount})</span>
+                  <span className="font-mono text-[#D64C55] dark:text-[#EF6D75] tabular-nums">
                     {formatInrFromPaise(dashboard.rejectedClaimsPaise)}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Active Fee Template</span>
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Active Fee Template</span>
                   <span className="font-mono font-semibold">
                     {dashboard.activeFeeConfig
                       ? `${formatInrFromPaise(dashboard.activeFeeConfig.amountPaise)} / ${dashboard.activeFeeConfig.frequency}`
@@ -475,26 +477,26 @@ export function AdminReportsAuditPanel({
               }
             >
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between py-1.5 border-b border-[#E5E7EF] dark:border-[#303A55]">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Total Salary Payable</span>
+                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Total Salary Payable</span>
                   <span className="font-mono font-semibold tabular-nums">
                     {formatInrFromPaise(dashboard.totalTeacherSalaryPayablePaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E5E7EF] dark:border-[#303A55]">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Total Salary Paid</span>
-                  <span className="font-mono font-semibold text-[#168A62] dark:text-[#22C58B] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Total Salary Paid</span>
+                  <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9] tabular-nums">
                     {formatInrFromPaise(dashboard.totalTeacherSalaryPaidPaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E5E7EF] dark:border-[#303A55]">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Pending Teacher Salary</span>
-                  <span className="font-mono font-semibold text-[#B7791F] dark:text-[#F5B942] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Pending Teacher Salary</span>
+                  <span className="font-mono font-semibold text-[#A67317] dark:text-[#E5B04D] tabular-nums">
                     {formatInrFromPaise(dashboard.pendingTeacherSalaryPaise)}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-[#687086] dark:text-[#A6B0C3]">Active UPI ID</span>
+                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Active UPI ID</span>
                   <span className="font-mono text-xs">
                     {dashboard.upiConfig?.status === 'active'
                       ? dashboard.upiConfig.upiId
@@ -502,6 +504,102 @@ export function AdminReportsAuditPanel({
                   </span>
                 </div>
               </div>
+            </Card>
+          </div>
+
+          <div className="grid gap-5 lg:grid-cols-2">
+            <Card
+              title="Fee Collections & Receivables Mix"
+              subtitle="Verified collections compared with unverified claims and outstanding student fees."
+            >
+              <DistributionDonutChart
+                centerLabel="Verified"
+                centerValue={formatInrFromPaise(dashboard.totalVerifiedCollectionsPaise)}
+                emptyTitle="No fee ledger amounts recorded yet"
+                emptyDescription="Generate period fee accounts or verify student payment claims to visualize collections."
+                segments={[
+                  {
+                    id: 'verified',
+                    label: 'Verified Collections',
+                    value: dashboard.totalVerifiedCollectionsPaise,
+                    displayValue: formatInrFromPaise(dashboard.totalVerifiedCollectionsPaise),
+                    colorLight: '#35D6A0',
+                    colorDark: '#42DDA9',
+                  },
+                  {
+                    id: 'pending',
+                    label: 'Pending Verification Claims',
+                    value: dashboard.pendingPaymentClaimsPaise,
+                    displayValue: formatInrFromPaise(dashboard.pendingPaymentClaimsPaise),
+                    colorLight: '#D69B35',
+                    colorDark: '#E5B04D',
+                  },
+                  {
+                    id: 'outstanding',
+                    label: 'Outstanding Student Fees',
+                    value: dashboard.totalOutstandingStudentFeesPaise,
+                    displayValue: formatInrFromPaise(dashboard.totalOutstandingStudentFeesPaise),
+                    colorLight: '#20262B',
+                    colorDark: '#AAB6B4',
+                  },
+                ]}
+              />
+            </Card>
+
+            <Card
+              title="Payroll & Collections Position"
+              subtitle="Recorded salary disbursements relative to total payable and verified fee collections."
+            >
+              <ComparisonBarChart
+                ariaLabel="Payroll and collections position"
+                emptyTitle="No salary or fee records yet"
+                emptyDescription="Comparative bars appear once student fees or teacher salaries are recorded."
+                data={
+                  dashboard.totalTeacherSalaryPayablePaise > 0 ||
+                  dashboard.totalVerifiedCollectionsPaise > 0
+                    ? [
+                        {
+                          id: 'collections',
+                          label: 'Verified Fee Collections',
+                          value: dashboard.totalVerifiedCollectionsPaise,
+                          maxValue: Math.max(
+                            dashboard.totalVerifiedCollectionsPaise,
+                            dashboard.totalTeacherSalaryPayablePaise,
+                            1
+                          ),
+                          displayValue: formatInrFromPaise(
+                            dashboard.totalVerifiedCollectionsPaise
+                          ),
+                          tone: 'mint',
+                        },
+                        {
+                          id: 'salary-paid',
+                          label: 'Teacher Salary Paid',
+                          value: dashboard.totalTeacherSalaryPaidPaise,
+                          maxValue: Math.max(
+                            dashboard.totalVerifiedCollectionsPaise,
+                            dashboard.totalTeacherSalaryPayablePaise,
+                            1
+                          ),
+                          displayValue: formatInrFromPaise(dashboard.totalTeacherSalaryPaidPaise),
+                          tone: 'charcoal',
+                        },
+                        {
+                          id: 'salary-pending',
+                          label: 'Pending Teacher Salary',
+                          value: dashboard.pendingTeacherSalaryPaise,
+                          maxValue: Math.max(
+                            dashboard.totalVerifiedCollectionsPaise,
+                            dashboard.totalTeacherSalaryPayablePaise,
+                            1
+                          ),
+                          displayValue: formatInrFromPaise(dashboard.pendingTeacherSalaryPaise),
+                          tone: 'warning',
+                        },
+                      ]
+                    : []
+                }
+              />
             </Card>
           </div>
         </div>
@@ -537,7 +635,7 @@ export function AdminReportsAuditPanel({
             }
           >
             <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
-              <select
+              <Select
                 aria-label="Report granularity"
                 value={reportFilter.granularity}
                 onChange={(e) =>
@@ -546,11 +644,10 @@ export function AdminReportsAuditPanel({
                     granularity: e.target.value as 'monthly' | 'yearly',
                   })
                 }
-                className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
               >
                 <option value="monthly">Monthly Report</option>
                 <option value="yearly">Yearly Report</option>
-              </select>
+              </Select>
 
               {reportFilter.granularity === 'monthly' ? (
                 <input
@@ -560,7 +657,7 @@ export function AdminReportsAuditPanel({
                   onChange={(e) =>
                     onChangeReportFilter({ ...reportFilter, month: e.target.value })
                   }
-                  className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
+                  className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                 />
               ) : (
                 <input
@@ -571,7 +668,7 @@ export function AdminReportsAuditPanel({
                     onChangeReportFilter({ ...reportFilter, year: e.target.value })
                   }
                   placeholder="YYYY (e.g. 2026)"
-                  className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
+                  className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                 />
               )}
 
@@ -585,7 +682,7 @@ export function AdminReportsAuditPanel({
                     dateFrom: e.target.value || undefined,
                   })
                 }
-                className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
+                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
               />
 
               <input
@@ -598,10 +695,10 @@ export function AdminReportsAuditPanel({
                     dateTo: e.target.value || undefined,
                   })
                 }
-                className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
+                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
               />
 
-              <select
+              <Select
                 aria-label="Filter by class"
                 value={reportFilter.classId ?? 'all'}
                 onChange={(e) =>
@@ -610,7 +707,6 @@ export function AdminReportsAuditPanel({
                     classId: e.target.value === 'all' ? undefined : e.target.value,
                   })
                 }
-                className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
               >
                 <option value="all">All Classes</option>
                 {classes.map((c) => (
@@ -618,9 +714,9 @@ export function AdminReportsAuditPanel({
                     {c.name}
                   </option>
                 ))}
-              </select>
+              </Select>
 
-              <select
+              <Select
                 aria-label="Filter by batch"
                 value={reportFilter.batchId ?? 'all'}
                 onChange={(e) =>
@@ -629,7 +725,6 @@ export function AdminReportsAuditPanel({
                     batchId: e.target.value === 'all' ? undefined : e.target.value,
                   })
                 }
-                className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
               >
                 <option value="all">All Batches</option>
                 {batches.map((b) => (
@@ -637,9 +732,9 @@ export function AdminReportsAuditPanel({
                     {b.name}
                   </option>
                 ))}
-              </select>
+              </Select>
 
-              <select
+              <Select
                 aria-label="Filter by teacher"
                 value={reportFilter.teacherId ?? 'all'}
                 onChange={(e) =>
@@ -648,7 +743,6 @@ export function AdminReportsAuditPanel({
                     teacherId: e.target.value === 'all' ? undefined : e.target.value,
                   })
                 }
-                className="min-h-[44px] rounded-xl px-3 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
               >
                 <option value="all">All Teachers</option>
                 {teachers.map((t) => (
@@ -656,13 +750,13 @@ export function AdminReportsAuditPanel({
                     {t.name} ({t.accountId})
                   </option>
                 ))}
-              </select>
+              </Select>
             </div>
           </Card>
 
           {reportSummary && (
             <div className="print-surface space-y-6">
-              <div className="rounded-2xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#171D34] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+              <div className="rounded-2xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
                   <BrandLogoMark
                     logoConfiguration={applicationBranding.logoConfiguration}
@@ -670,14 +764,14 @@ export function AdminReportsAuditPanel({
                     size="md"
                   />
                   <div className="min-w-0">
-                    <h2 className="text-base sm:text-lg font-bold font-display text-[#17172B] dark:text-[#F8FAFC] truncate">
+                    <h2 className="text-base sm:text-lg font-bold font-display text-[#20262B] dark:text-[#F4F7F6] truncate">
                       {centreProfile.centreName}
                     </h2>
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       Financial Statement · {reportSummary.periodTitle} · {academicDefaults.academicYearDisplay}
                     </p>
                     {centreContactSummary && (
-                      <p className="text-[11px] font-mono text-[#687086] dark:text-[#A6B0C3] mt-0.5">
+                      <p className="text-[11px] font-mono text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
                         {centreContactSummary}
                       </p>
                     )}
@@ -776,13 +870,13 @@ export function AdminReportsAuditPanel({
             title={`Financial Audit History (${filteredFinancialAudit.length})`}
             subtitle="Append-only trail of fee structure changes, UPI configuration, verifications, receipts, salaries, and audited corrections."
             action={
-              <select
+              <Select
                 aria-label="Filter financial audit by entity"
                 value={auditFilter}
                 onChange={(e) =>
                   setAuditFilter(e.target.value as 'all' | FinancialAuditEntityType)
                 }
-                className="min-h-[40px] rounded-xl px-3 text-xs bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55]"
+                className="min-h-[40px] py-1.5 text-xs"
               >
                 <option value="all">All Entities</option>
                 <option value="fee_configuration">Fee Configurations</option>
@@ -793,7 +887,7 @@ export function AdminReportsAuditPanel({
                 <option value="salary_configuration">Salary Configs</option>
                 <option value="salary_period">Salary Periods</option>
                 <option value="salary_payment">Salary Payments</option>
-              </select>
+              </Select>
             }
           >
             <Table
@@ -806,11 +900,11 @@ export function AdminReportsAuditPanel({
                   <p className="font-semibold">
                     {r.entityType.replace('_', ' ')} · {r.action}
                   </p>
-                  <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
                     {r.entityId} · {r.actorId} · {formatShortDate(r.timestamp)}
                   </p>
                   {r.newValues && <p>{r.newValues}</p>}
-                  {r.reason && <p className="text-[#7552D9] dark:text-[#C4B5FD]">{r.reason}</p>}
+                  {r.reason && <p className="text-[#168A63] dark:text-[#42DDA9]">{r.reason}</p>}
                 </div>
               )}
             />
@@ -819,7 +913,7 @@ export function AdminReportsAuditPanel({
           <Card
             title={`Payment Verification Audit Log (${paymentVerificationAudit.length})`}
             subtitle="Dedicated ledger tracking every student claim submission, admin verification, rejection, and payment correction."
-            action={<History className="w-4 h-4 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />}
+            action={<History className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />}
           >
             <Table
               columns={verificationAuditColumns}
@@ -829,7 +923,7 @@ export function AdminReportsAuditPanel({
               mobileCardRender={(r) => (
                 <div className="space-y-1 text-xs">
                   <p className="font-semibold">{r.action.replace('_', ' ')} ({r.paymentClaimId})</p>
-                  <p className="font-mono text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
                     {r.actorId} · {formatShortDate(r.timestamp)}
                   </p>
                   {r.newValues && <p>{r.newValues}</p>}

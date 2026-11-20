@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import {
   Banknote,
-  CheckCircle2,
   ClipboardCheck,
   FileBarChart2,
   History,
@@ -38,10 +37,11 @@ import type {
   TeacherSalarySummaryView,
   UpiConfiguration,
 } from '../../types';
-import { cn } from '../../utils/cn';
+import { Alert } from '../ui/Alert';
 import { Card } from '../ui/Card';
 import { PageHeader } from '../ui/PageHeader';
 import { StatusText } from '../ui/StatusText';
+import { Tabs } from '../ui/Tabs';
 import {
   AdminFeeVerificationPanel,
   type FeeVerificationPanelSection,
@@ -182,7 +182,7 @@ export function AdminFinanceModule({ initialTab = 'overview' }: AdminFinanceModu
   if (!principal || principal.role !== 'admin') {
     return (
       <Card title="Access Denied">
-        <p className="text-sm text-[#D94C5C] dark:text-[#F16B75]">
+        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
           Only authorized Administrators can manage fee structures, payment verifications, receipts, and teacher salaries.
         </p>
       </Card>
@@ -210,65 +210,48 @@ export function AdminFinanceModule({ initialTab = 'overview' }: AdminFinanceModu
       />
 
       {toast && (
-        <div
-          role="status"
-          className="no-print rounded-xl border border-[#168A62]/30 dark:border-[#22C58B]/40 bg-[#168A62]/8 dark:bg-[#22C58B]/12 px-4 py-3 text-sm text-[#168A62] dark:text-[#22C58B] flex items-center gap-2"
+        <Alert
+          tone="success"
+          onDismiss={() => setToast(null)}
+          className="no-print"
         >
-          <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span>{toast}</span>
-        </div>
+          {toast}
+        </Alert>
       )}
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 p-4 text-sm text-[#D94C5C] dark:text-[#F16B75]"
-        >
+        <Alert tone="error" onDismiss={() => setError(null)}>
           {error}
-        </div>
+        </Alert>
       )}
 
       {/* Horizontal Tab Navigation */}
-      <div
-        className="no-print flex flex-wrap gap-2 pb-1"
-        role="tablist"
-        aria-label="Admin financial management tabs"
-      >
-        {TABS.map((tab) => {
+      <Tabs
+        variant="underline"
+        ariaLabel="Admin financial management tabs"
+        className="no-print"
+        value={activeTab}
+        onChange={setActiveTab}
+        items={TABS.map((tab) => {
           const Icon = tab.icon;
-          const active = activeTab === tab.id;
-          return (
-            <button
-              key={tab.id}
-              type="button"
-              role="tab"
-              aria-selected={active}
-              onClick={() => setActiveTab(tab.id)}
-              className={cn(
-                'inline-flex items-center gap-2 min-h-[44px] px-3.5 py-2 rounded-xl text-xs font-medium transition-colors cursor-pointer whitespace-nowrap',
-                active
-                  ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white font-semibold shadow-xs'
-                  : 'bg-white dark:bg-[#171D34] border border-[#E5E7EF] dark:border-[#303A55] text-[#434960] dark:text-[#A6B0C3] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
-              )}
-            >
-              <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />
-              <span>{tab.label}</span>
-              {tab.id === 'verification_queue' && pendingCount > 0 && (
-                <span className="font-mono text-[11px] font-bold tabular-nums">
-                  ({pendingCount})
-                </span>
-              )}
-            </button>
-          );
+          return {
+            id: tab.id,
+            label: tab.label,
+            icon: <Icon className="w-4 h-4 shrink-0" aria-hidden="true" />,
+            count:
+              tab.id === 'verification_queue' && pendingCount > 0
+                ? pendingCount
+                : undefined,
+          };
         })}
-      </div>
+      />
 
       {loading && !dashboard ? (
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {[0, 1, 2, 3].map((idx) => (
             <div
               key={idx}
-              className="h-28 rounded-2xl bg-[#F1EEFA] dark:bg-[#202844]/70 animate-pulse"
+              className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33]/70 animate-pulse"
             />
           ))}
         </div>

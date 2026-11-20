@@ -16,10 +16,12 @@ import type {
 import { studentPortalService } from '../../services';
 import { cn } from '../../utils/cn';
 import { formatDateTime, formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { PageHeader } from '../ui/PageHeader';
 import { StatusText } from '../ui/StatusText';
+import { Tabs } from '../ui/Tabs';
 
 interface StudentNotificationsModuleProps {
   initialFocus?: 'notifications' | 'announcements';
@@ -105,7 +107,7 @@ export function StudentNotificationsModule({
   if (!principal || principal.role !== 'student') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-[#D94C5C] dark:text-[#F16B75]">
+        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
           Notifications and announcements are restricted to authenticated Student / Parent accounts.
         </p>
       </Card>
@@ -191,63 +193,38 @@ export function StudentNotificationsModule({
       />
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 p-4 text-sm text-[#D94C5C] dark:text-[#F16B75]"
-        >
+        <Alert tone="error" onDismiss={() => setError(null)}>
           {error}
-        </div>
+        </Alert>
       )}
 
       {/* Primary Section Switcher */}
-      <div
-        className="inline-flex items-center gap-1 p-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844]"
-        role="tablist"
-        aria-label="Notification center views"
-      >
-        <button
-          type="button"
-          role="tab"
-          aria-selected={sectionTab === 'notifications'}
-          onClick={() => setSectionTab('notifications')}
-          className={cn(
-            'inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg text-sm font-medium transition-colors whitespace-nowrap cursor-pointer',
-            sectionTab === 'notifications'
-              ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white'
-              : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-          )}
-        >
-          <Bell className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span>
-            Notifications ({data?.unreadTotal ?? 0} unread)
-          </span>
-        </button>
-
-        <button
-          type="button"
-          role="tab"
-          aria-selected={sectionTab === 'announcements'}
-          onClick={() => setSectionTab('announcements')}
-          className={cn(
-            'inline-flex items-center gap-2 min-h-[44px] px-4 rounded-lg text-sm font-medium transition-colors whitespace-nowrap cursor-pointer',
-            sectionTab === 'announcements'
-              ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white'
-              : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-          )}
-        >
-          <Megaphone className="w-4 h-4 shrink-0" aria-hidden="true" />
-          <span>
-            Announcements ({data?.announcements.length ?? 0})
-          </span>
-        </button>
-      </div>
+      <Tabs
+        ariaLabel="Notification center views"
+        value={sectionTab}
+        onChange={setSectionTab}
+        items={[
+          {
+            id: 'notifications',
+            label: 'Notifications',
+            count: data?.unreadTotal ?? 0,
+            icon: <Bell className="w-4 h-4 shrink-0" aria-hidden="true" />,
+          },
+          {
+            id: 'announcements',
+            label: 'Announcements',
+            count: data?.announcements.length ?? 0,
+            icon: <Megaphone className="w-4 h-4 shrink-0" aria-hidden="true" />,
+          },
+        ]}
+      />
 
       {loading ? (
         <div className="space-y-3">
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="h-24 rounded-2xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse"
+              className="h-24 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
             />
           ))}
         </div>
@@ -263,8 +240,8 @@ export function StudentNotificationsModule({
                 className={cn(
                   'min-h-[40px] px-3 rounded-xl text-xs font-medium border cursor-pointer transition-colors',
                   unreadOnly
-                    ? 'border-[#7552D9] bg-[#F1EEFA] text-[#7552D9] dark:border-[#8B5CF6] dark:bg-[#202844] dark:text-[#C4B5FD]'
-                    : 'border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] text-[#687086] dark:text-[#A6B0C3]'
+                    ? 'border-[#168A63] bg-[#DDF8EE] text-[#168A63] dark:border-[#42DDA9] dark:bg-[#244B3E] dark:text-[#42DDA9]'
+                    : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] text-[#68737C] dark:text-[#AAB6B4]'
                 )}
               >
                 {unreadOnly ? 'Showing Unread Only' : 'Filter: Unread Only'}
@@ -284,64 +261,56 @@ export function StudentNotificationsModule({
         >
           <div className="space-y-4">
             {/* Category Filter Strip */}
-            <div className="flex overflow-x-auto gap-1.5 pb-1">
-              {CATEGORY_TABS.filter((cat) => {
+            <Tabs
+              ariaLabel="Filter notifications by category"
+              value={categoryFilter}
+              onChange={setCategoryFilter}
+              items={CATEGORY_TABS.filter((cat) => {
                 if (cat.id === 'attendance') return notifPrefs.enabledCategories.attendance;
                 if (cat.id === 'homework_tests') return notifPrefs.enabledCategories.homeworkTests;
                 if (cat.id === 'exams_results') return notifPrefs.enabledCategories.examsResults;
                 if (cat.id === 'fees_receipts') return notifPrefs.enabledCategories.feesReceipts;
                 return true;
               }).map((cat) => {
-                const active = categoryFilter === cat.id;
                 const unreadCat =
                   cat.id === 'all'
                     ? data?.unreadTotal ?? 0
                     : data?.unreadByCategory[cat.id] ?? 0;
-                return (
-                  <button
-                    key={cat.id}
-                    type="button"
-                    onClick={() => setCategoryFilter(cat.id)}
-                    className={cn(
-                      'min-h-[40px] px-3.5 rounded-xl text-xs font-medium whitespace-nowrap shrink-0 cursor-pointer border transition-colors',
-                      active
-                        ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white border-[#7552D9] dark:border-[#8B5CF6]'
-                        : 'bg-[#F8F9FC] dark:bg-[#101426] text-[#434960] dark:text-[#A6B0C3] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
-                    )}
-                  >
-                    {cat.label}
-                    {notifPrefs.showUnreadBadgesInNavigation && unreadCat > 0
-                      ? ` (${unreadCat})`
-                      : ''}
-                  </button>
-                );
+                return {
+                  id: cat.id,
+                  label: cat.label,
+                  count:
+                    notifPrefs.showUnreadBadgesInNavigation && unreadCat > 0
+                      ? unreadCat
+                      : undefined,
+                };
               })}
-            </div>
+            />
 
             {filteredNotifications.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-8 text-center space-y-2">
+              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
                 <Bell
-                  className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto"
+                  className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
                   aria-hidden="true"
                 />
-                <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                   {unreadOnly
                     ? 'No unread notifications in this category'
                     : 'No notifications recorded in this category'}
                 </p>
-                <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                   Alerts appear automatically when teachers mark absence, publish homework or tests, release results, or Admin verifies fees.
                 </p>
               </div>
             ) : (
-              <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+              <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                 {filteredNotifications.map((notif) => (
                   <li
                     key={notif.id}
                     className="py-4 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                   >
                     <div className="space-y-1.5 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                         <StatusText tone={notif.tone} label={notif.typeLabel} />
                         <span aria-hidden="true">·</span>
                         <span className="font-mono tabular-nums">
@@ -353,10 +322,10 @@ export function StudentNotificationsModule({
                         </span>
                       </div>
 
-                      <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                         {notif.title}
                       </p>
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
                         {notif.message}
                       </p>
                     </div>
@@ -414,43 +383,29 @@ export function StudentNotificationsModule({
         >
           <div className="space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
-              <div className="flex overflow-x-auto gap-1.5 pb-1">
-                {ANNOUNCEMENT_FILTERS.map((f) => {
-                  const active = announcementFilter === f.id;
-                  return (
-                    <button
-                      key={f.id}
-                      type="button"
-                      onClick={() => setAnnouncementFilter(f.id)}
-                      className={cn(
-                        'min-h-[40px] px-3.5 rounded-xl text-xs font-medium whitespace-nowrap shrink-0 cursor-pointer border transition-colors',
-                        active
-                          ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white border-[#7552D9] dark:border-[#8B5CF6]'
-                          : 'bg-[#F8F9FC] dark:bg-[#101426] text-[#434960] dark:text-[#A6B0C3] border-[#E5E7EF] dark:border-[#303A55] hover:bg-[#F1EEFA] dark:hover:bg-[#202844]'
-                      )}
-                    >
-                      {f.label}
-                    </button>
-                  );
-                })}
-              </div>
-              <span className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <Tabs
+                ariaLabel="Filter announcements"
+                value={announcementFilter}
+                onChange={setAnnouncementFilter}
+                items={ANNOUNCEMENT_FILTERS}
+              />
+              <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 Read-only · Published by Tuition Centre Admin
               </span>
             </div>
 
             {filteredAnnouncements.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-8 text-center space-y-2">
+              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
                 <Megaphone
-                  className="w-5 h-5 text-[#687086] dark:text-[#A6B0C3] mx-auto"
+                  className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
                   aria-hidden="true"
                 />
-                <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
                   No announcements match this filter
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                 {filteredAnnouncements.map((item) => {
                   const ann = item.announcement;
                   const scopeLabel =
@@ -468,8 +423,8 @@ export function StudentNotificationsModule({
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-                            <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                               {ann.announcementId}
                             </span>
                             <span aria-hidden="true">·</span>
@@ -485,7 +440,7 @@ export function StudentNotificationsModule({
                               </>
                             )}
                           </div>
-                          <h2 className="text-base font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                          <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                             {ann.title}
                           </h2>
                         </div>
@@ -509,7 +464,7 @@ export function StudentNotificationsModule({
                         </div>
                       </div>
 
-                      <p className="text-sm text-[#434960] dark:text-[#D4DCEB] whitespace-pre-line leading-relaxed">
+                      <p className="text-sm text-[#343C42] dark:text-[#D5E0DD] whitespace-pre-line leading-relaxed">
                         {ann.content}
                       </p>
                     </article>

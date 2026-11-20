@@ -1,5 +1,5 @@
 import { useState, type FormEvent } from 'react';
-import { Pencil, Plus, Power, Search, X } from 'lucide-react';
+import { Pencil, Plus, Power } from 'lucide-react';
 import { academicService } from '../../services';
 import { AcademicServiceError } from '../../services/contracts/academicService';
 import type {
@@ -10,9 +10,13 @@ import type {
   SubjectRecord,
   TeacherAssignment,
 } from '../../types';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { IconButton } from '../ui/IconButton';
 import { Modal } from '../ui/Modal';
+import { SearchInput } from '../ui/SearchInput';
+import { Select } from '../ui/Select';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
 
@@ -164,7 +168,7 @@ export function AssignmentsSection({
       key: 'assignmentId',
       header: 'Assignment ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
           {row.assignmentId}
         </span>
       ),
@@ -176,10 +180,10 @@ export function AssignmentsSection({
         const t = teacherMap.get(row.teacherAccountId.toUpperCase());
         return (
           <div>
-            <p className="font-medium text-slate-900 dark:text-slate-100">
+            <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
               {t?.name ?? row.teacherAccountId}
             </p>
-            <p className="font-mono text-xs text-slate-500 dark:text-slate-400">
+            <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
               {row.teacherAccountId}
             </p>
           </div>
@@ -190,7 +194,7 @@ export function AssignmentsSection({
       key: 'subject',
       header: 'Subject',
       render: (row) => (
-        <span className="text-sm text-slate-800 dark:text-slate-200">
+        <span className="text-sm text-[#20262B] dark:text-[#F4F7F6]">
           {subjectMap.get(row.subjectId)?.name ?? row.subjectId}
         </span>
       ),
@@ -200,10 +204,10 @@ export function AssignmentsSection({
       header: 'Class & Batch',
       render: (row) => (
         <div className="text-xs">
-          <p className="font-medium text-slate-800 dark:text-slate-200">
+          <p className="font-medium text-[#20262B] dark:text-[#F4F7F6]">
             {classMap.get(row.classId)?.name ?? row.classId}
           </p>
-          <p className="text-slate-500 dark:text-slate-400">
+          <p className="text-[#68737C] dark:text-[#AAB6B4]">
             {batchMap.get(row.batchId)?.name ?? row.batchId}
           </p>
         </div>
@@ -225,24 +229,22 @@ export function AssignmentsSection({
       align: 'right',
       render: (row) => (
         <div className="inline-flex items-center justify-end gap-1">
-          <button
-            type="button"
-            onClick={() => openEdit(row)}
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`Edit ${row.assignmentId}`}
             title="Edit assignment"
-            aria-label={`Edit ${row.assignmentId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Pencil className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleToggleStatus(row)}
+            onClick={() => openEdit(row)}
+            icon={<Pencil className="w-4 h-4" aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`${row.status === 'active' ? 'Deactivate' : 'Activate'} ${row.assignmentId}`}
             title={row.status === 'active' ? 'Deactivate assignment' : 'Activate assignment'}
-            aria-label={`${row.status === 'active' ? 'Deactivate' : 'Activate'} ${row.assignmentId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Power className="w-4 h-4" aria-hidden="true" />
-          </button>
+            onClick={() => void handleToggleStatus(row)}
+            icon={<Power className="w-4 h-4" aria-hidden="true" />}
+          />
         </div>
       ),
     },
@@ -267,41 +269,15 @@ export function AssignmentsSection({
       }
     >
       <div className="space-y-4">
-        <div className="flex items-center gap-2 max-w-sm">
-          <div className="relative flex-1">
-            <Search
-              className="w-4 h-4 text-[#687086] dark:text-[#A6B0C3] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-              aria-hidden="true"
-            />
-            <input
-              type="search"
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              placeholder="Search teacher or subject..."
-              aria-label="Search teacher assignments"
-              className="w-full min-h-[40px] rounded-xl pl-9 pr-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
-          {searchQuery && (
-            <button
-              type="button"
-              onClick={() => setSearchQuery('')}
-              className="min-h-[40px] px-2.5 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center gap-1 cursor-pointer"
-            >
-              <X className="w-3.5 h-3.5" aria-hidden="true" />
-              <span>Clear</span>
-            </button>
-          )}
-        </div>
+        <SearchInput
+          value={searchQuery}
+          onValueChange={setSearchQuery}
+          placeholder="Search teacher or subject…"
+          aria-label="Search teacher assignments"
+          containerClassName="max-w-sm"
+        />
 
-        {actionError && (
-          <div
-            role="alert"
-            className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3.5 text-xs sm:text-sm text-red-800 dark:text-red-300"
-          >
-            {actionError}
-          </div>
-        )}
+        {actionError && <Alert tone="error">{actionError}</Alert>}
 
         <div className="hidden md:block">
           <Table
@@ -316,7 +292,7 @@ export function AssignmentsSection({
 
         <div className="md:hidden space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">
+            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
               No matching assignments found.
             </p>
           ) : (
@@ -325,18 +301,18 @@ export function AssignmentsSection({
               return (
                 <div
                   key={asg.assignmentId}
-                  className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-2.5 bg-white dark:bg-[#101426]/65"
+                  className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                      <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
                         {asg.assignmentId} · {asg.teacherAccountId}
                       </p>
-                      <p className="font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
                         {t?.name ?? asg.teacherAccountId} —{' '}
                         {subjectMap.get(asg.subjectId)?.name ?? asg.subjectId}
                       </p>
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                         {classMap.get(asg.classId)?.name ?? asg.classId} ·{' '}
                         {batchMap.get(asg.batchId)?.name ?? asg.batchId}
                       </p>
@@ -376,95 +352,68 @@ export function AssignmentsSection({
         subtitle="Requires an active teacher account, active subject linked to the class, and active batch."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {formError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-800 dark:text-red-300"
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-slate-800 dark:text-slate-200">
-              Active Teacher
-            </label>
-            <select
-              value={teacherId}
-              onChange={(e) => setTeacherId(e.target.value)}
-              required
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            >
-              {activeTeachers.map((t) => (
-                <option key={t.accountId} value={t.accountId}>
-                  {t.accountId} — {t.name}
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Active Teacher"
+            value={teacherId}
+            onChange={(e) => setTeacherId(e.target.value)}
+            required
+          >
+            {activeTeachers.map((t) => (
+              <option key={t.accountId} value={t.accountId}>
+                {t.accountId} — {t.name}
+              </option>
+            ))}
+          </Select>
 
-          <div className="space-y-1.5">
-            <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-              Class
-            </label>
-            <select
-              value={classId}
-              onChange={(e) => handleClassChange(e.target.value)}
-              required
-              className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            >
-              {activeClasses.map((c) => (
-                <option key={c.classId} value={c.classId}>
-                  {c.name} ({c.classId})
-                </option>
-              ))}
-            </select>
-          </div>
+          <Select
+            label="Class"
+            value={classId}
+            onChange={(e) => handleClassChange(e.target.value)}
+            required
+          >
+            {activeClasses.map((c) => (
+              <option key={c.classId} value={c.classId}>
+                {c.name} ({c.classId})
+              </option>
+            ))}
+          </Select>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                Batch
-              </label>
-              <select
-                value={batchId}
-                onChange={(e) => setBatchId(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              >
-                {availableBatches.length === 0 ? (
-                  <option value="">No active batches</option>
-                ) : (
-                  availableBatches.map((b) => (
-                    <option key={b.batchId} value={b.batchId}>
-                      {b.name}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
+            <Select
+              label="Batch"
+              value={batchId}
+              onChange={(e) => setBatchId(e.target.value)}
+              required
+            >
+              {availableBatches.length === 0 ? (
+                <option value="">No active batches</option>
+              ) : (
+                availableBatches.map((b) => (
+                  <option key={b.batchId} value={b.batchId}>
+                    {b.name}
+                  </option>
+                ))
+              )}
+            </Select>
 
-            <div className="space-y-1.5">
-              <label className="block text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">
-                Subject
-              </label>
-              <select
-                value={subjectId}
-                onChange={(e) => setSubjectId(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl px-3.5 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              >
-                {availableSubjects.length === 0 ? (
-                  <option value="">No linked subjects</option>
-                ) : (
-                  availableSubjects.map((s) => (
-                    <option key={s.subjectId} value={s.subjectId}>
-                      {s.name}
-                    </option>
-                  ))
-                )}
-              </select>
-            </div>
+            <Select
+              label="Subject"
+              value={subjectId}
+              onChange={(e) => setSubjectId(e.target.value)}
+              required
+            >
+              {availableSubjects.length === 0 ? (
+                <option value="">No linked subjects</option>
+              ) : (
+                availableSubjects.map((s) => (
+                  <option key={s.subjectId} value={s.subjectId}>
+                    {s.name}
+                  </option>
+                ))
+              )}
+            </Select>
           </div>
 
           <div className="flex justify-end gap-2 pt-2">

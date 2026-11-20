@@ -23,7 +23,7 @@ export function LoadingSpinner({ size = 'md', label, className }: LoadingSpinner
         aria-hidden="true"
       />
       {label ? (
-        <span className="text-sm text-slate-600 dark:text-slate-400">{label}</span>
+        <span className="text-sm text-[#68737C] dark:text-[#AAB6B4]">{label}</span>
       ) : (
         <span className="sr-only">Loading</span>
       )}

@@ -75,42 +75,54 @@ async function resolvePrincipalFromFirebaseUser(
     let adminSnap = await getDoc(adminRef).catch(() => null);
     let userSnap = await getDoc(userRef).catch(() => null);
 
-    if (!adminSnap?.exists() || !userSnap?.exists()) {
+    if (
+      adminSnap?.data()?.status === 'deactivated' ||
+      userSnap?.data()?.status === 'deactivated'
+    ) {
+      return {
+        uid: user.uid,
+        loginId: String(adminSnap?.data()?.accountId || 'ADM-0001'),
+        role: 'admin',
+        fullName: String(userSnap?.data()?.name || 'Centre Administrator'),
+        status: 'deactivated',
+      };
+    }
+
+    if (!adminSnap?.exists()) {
       const nowIso = new Date().toISOString();
-      await setDoc(
-        adminRef,
-        {
-          uid: user.uid,
-          accountId: 'ADM-0001',
-          email,
-          status: 'active',
-          createdAt: nowIso,
-          updatedAt: nowIso,
-        },
-        { merge: true }
-      );
-      await setDoc(
-        userRef,
-        {
-          uid: user.uid,
-          accountId: 'ADM-0001',
-          role: 'admin',
-          name:
-            user.displayName && user.displayName.trim().length >= 2
-              ? user.displayName.trim().slice(0, 100)
-              : 'Centre Administrator',
-          phone: '',
-          email,
-          status: 'active',
-          adminUids: [user.uid],
-          createdAt: nowIso,
-          updatedAt: nowIso,
-        },
-        { merge: true }
-      );
-      await setDoc(
-        doc(db, 'authIdMappings', 'ADM-0001'),
-        {
+      await setDoc(adminRef, {
+        uid: user.uid,
+        accountId: 'ADM-0001',
+        email,
+        status: 'active',
+        createdAt: nowIso,
+        updatedAt: nowIso,
+      });
+      clearAdminUidsCache();
+      adminSnap = await getDoc(adminRef).catch(() => null);
+    }
+
+    if (!userSnap?.exists()) {
+      const nowIso = new Date().toISOString();
+      await setDoc(userRef, {
+        uid: user.uid,
+        accountId: 'ADM-0001',
+        role: 'admin',
+        name:
+          user.displayName && user.displayName.trim().length >= 2
+            ? user.displayName.trim().slice(0, 100)
+            : 'Centre Administrator',
+        phone: '',
+        email,
+        status: 'active',
+        adminUids: [user.uid],
+        createdAt: nowIso,
+        updatedAt: nowIso,
+      });
+      const mappingRef = doc(db, 'authIdMappings', 'ADM-0001');
+      const mappingSnap = await getDoc(mappingRef).catch(() => null);
+      if (!mappingSnap?.exists()) {
+        await setDoc(mappingRef, {
           loginId: 'ADM-0001',
           uid: user.uid,
           authEmail: email,
@@ -118,11 +130,9 @@ async function resolvePrincipalFromFirebaseUser(
           status: 'active',
           createdAt: nowIso,
           updatedAt: nowIso,
-        },
-        { merge: true }
-      ).catch(() => undefined);
+        }).catch(() => undefined);
+      }
       clearAdminUidsCache();
-      adminSnap = await getDoc(adminRef).catch(() => null);
       userSnap = await getDoc(userRef).catch(() => null);
     }
 
@@ -387,11 +397,11 @@ export class FirebaseAuthService implements IAuthService {
         });
       }
 
-      if (credentials.portalScope === 'member_portal' && principal.role === 'admin') {
+      if (principal.role === 'admin') {
         await firebaseSignOut(auth).catch(() => undefined);
         throw new AuthServiceException({
           code: 'INVALID_CREDENTIALS',
-          message: 'Invalid Account ID or password. Please verify your Teacher ID or Student ID.',
+          message: 'Administrator access requires Google Sign-In.',
           field: 'form',
         });
       }

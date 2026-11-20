@@ -9,12 +9,13 @@ interface StatTileProps {
   caption?: string;
   icon?: ReactNode;
   accent?: boolean;
+  tone?: 'default' | 'charcoal' | 'mint';
   className?: string;
 }
 
 /**
  * Tabular-nums KPI tile with lightweight animated number settle for numeric metrics
- * and clean direct rendering for formatted strings (e.g., "66.7%" or "Not available").
+ * and clean direct rendering for formatted strings.
  */
 export function StatTile({
   label,
@@ -24,8 +25,10 @@ export function StatTile({
   caption,
   icon,
   accent = false,
+  tone,
   className,
 }: StatTileProps) {
+  const resolvedTone = tone ?? (accent ? 'mint' : 'default');
   const [displayValue, setDisplayValue] = useState<number>(
     typeof value === 'number' ? value : 0
   );
@@ -45,7 +48,7 @@ export function StatTile({
     }
 
     let frameId = 0;
-    const duration = 360;
+    const duration = 320;
     const startTime = performance.now();
     const startVal = 0;
 
@@ -67,36 +70,69 @@ export function StatTile({
       ? new Intl.NumberFormat('en-IN').format(displayValue)
       : value;
 
+  const isCharcoal = resolvedTone === 'charcoal';
+  const isMint = resolvedTone === 'mint';
+
   return (
     <div
       className={cn(
         'rounded-2xl border p-4 sm:p-5 transition-colors duration-150',
-        accent
-          ? 'bg-[#F1EEFA] dark:bg-[#202844] border-[#7552D9]/25 dark:border-[#8B5CF6]/35'
-          : 'bg-white dark:bg-[#171D34] border-[#E5E7EF] dark:border-[#303A55] shadow-[0_1px_2px_rgba(23,23,43,0.03)] dark:shadow-none',
+        isCharcoal
+          ? 'bg-[#20262B] dark:bg-[#252E33] border-[#343C42] dark:border-[#344047] text-[#F4F7F6]'
+          : isMint
+            ? 'bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 border-[#B8EBD8] dark:border-[#316453]'
+            : 'bg-white dark:bg-[#1D2429] border-[#E2E8E5] dark:border-[#344047] shadow-[0_1px_2px_rgba(23,29,33,0.03)] dark:shadow-none',
         className
       )}
     >
       <div className="flex items-center justify-between gap-2">
-        <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
+        <p
+          className={cn(
+            'text-xs font-medium',
+            isCharcoal
+              ? 'text-[#AAB6B4]'
+              : isMint
+                ? 'text-[#168A63] dark:text-[#42DDA9]'
+                : 'text-[#68737C] dark:text-[#AAB6B4]'
+          )}
+        >
           {label}
         </p>
         {icon && (
           <span
-            className="w-8 h-8 rounded-lg bg-[#F1EEFA] dark:bg-[#202844] text-[#7552D9] dark:text-[#A78BFA] inline-flex items-center justify-center shrink-0"
+            className={cn(
+              'w-8 h-8 rounded-lg inline-flex items-center justify-center shrink-0',
+              isCharcoal
+                ? 'bg-[#343C42] text-[#42DDA9]'
+                : isMint
+                  ? 'bg-white/90 dark:bg-[#1D2429] text-[#168A63] dark:text-[#42DDA9] border border-[#B8EBD8]/70 dark:border-[#316453]'
+                  : 'bg-[#F0F4F2] dark:bg-[#252E33] text-[#343C42] dark:text-[#AAB6B4]'
+            )}
             aria-hidden="true"
           >
             {icon}
           </span>
         )}
       </div>
-      <p className="mt-2 text-2xl sm:text-3xl font-semibold tracking-tight text-[#17172B] dark:text-[#F8FAFC] font-mono tabular-nums">
+      <p
+        className={cn(
+          'mt-2.5 text-2xl sm:text-[28px] font-semibold tracking-tight font-mono tabular-nums leading-none',
+          isCharcoal ? 'text-[#F4F7F6]' : 'text-[#171D21] dark:text-[#F4F7F6]'
+        )}
+      >
         {prefix}
         {renderedValue}
         {suffix}
       </p>
       {caption && (
-        <p className="mt-1.5 text-xs text-[#687086] dark:text-[#A6B0C3]">
+        <p
+          className={cn(
+            'mt-2 text-xs leading-snug',
+            isCharcoal
+              ? 'text-[#AAB6B4]'
+              : 'text-[#68737C] dark:text-[#AAB6B4]'
+          )}
+        >
           {caption}
         </p>
       )}

@@ -30,13 +30,20 @@ import type {
   TestAttempt,
   TestResultReleaseMode,
 } from '../../types';
-import { cn } from '../../utils/cn';
 import { formatDateTime, formatShortDate } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Checkbox } from '../ui/Checkbox';
+import { IconButton } from '../ui/IconButton';
+import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { PageHeader } from '../ui/PageHeader';
+import { Select } from '../ui/Select';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
+import { Tabs } from '../ui/Tabs';
+import { Textarea } from '../ui/Textarea';
 
 type TeacherAssessmentSubTab = 'tests' | 'examinations' | 'results';
 
@@ -193,11 +200,9 @@ export function TeacherTestsExaminationsModule() {
 
   if (!principal || principal.role !== 'teacher') {
     return (
-      <Card title="Access Restricted">
-        <p className="text-sm text-[#D94C5C] dark:text-[#F16B75]">
-          Tests, examinations, and marks entry are restricted to active Teacher accounts.
-        </p>
-      </Card>
+      <Alert tone="error" title="Access Restricted">
+        Tests, examinations, and marks entry are restricted to active Teacher accounts.
+      </Alert>
     );
   }
 
@@ -550,17 +555,17 @@ export function TeacherTestsExaminationsModule() {
       header: 'Objective Test',
       render: (row) => (
         <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-            <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+          <div className="flex items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
               {row.test.id}
             </span>
             <span aria-hidden="true">·</span>
             <span>{row.subjectName}</span>
           </div>
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
             {row.test.title}
           </p>
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -571,11 +576,11 @@ export function TeacherTestsExaminationsModule() {
       header: 'Questions & Window',
       render: (row) => (
         <div className="text-xs space-y-0.5">
-          <p className="font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
             {row.test.questions.length} MCQs · {row.test.totalMarks} marks ·{' '}
             {row.test.durationMinutes} min
           </p>
-          <p className="text-[#687086] dark:text-[#A6B0C3] tabular-nums">
+          <p className="text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
             {formatShortDate(row.test.startsAt)} – {formatShortDate(row.test.endsAt)}
           </p>
         </div>
@@ -596,7 +601,7 @@ export function TeacherTestsExaminationsModule() {
             }
             label={row.effectiveStatus.toUpperCase()}
           />
-          <p className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
             {row.attemptCount} attempts ·{' '}
             {row.test.manualResultsReleased ||
             row.test.resultReleaseMode === 'auto_after_submission'
@@ -671,17 +676,17 @@ export function TeacherTestsExaminationsModule() {
       header: 'Examination',
       render: (row) => (
         <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-            <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+          <div className="flex items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
               {row.examination.id}
             </span>
             <span aria-hidden="true">·</span>
             <span>{row.subjectName}</span>
           </div>
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
             {row.examination.title}
           </p>
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -692,11 +697,11 @@ export function TeacherTestsExaminationsModule() {
       header: 'Schedule & Marks',
       render: (row) => (
         <div className="text-xs space-y-0.5 font-mono tabular-nums">
-          <p className="text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="text-[#171D21] dark:text-[#F4F7F6]">
             {formatShortDate(row.examination.examDate)} · {row.examination.startsAt}–
             {row.examination.endsAt}
           </p>
-          <p className="text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-[#68737C] dark:text-[#AAB6B4]">
             Max {row.examination.maximumMarks}
             {row.examination.passingMarks !== undefined
               ? ` · Pass ${row.examination.passingMarks}`
@@ -726,7 +731,7 @@ export function TeacherTestsExaminationsModule() {
                   : row.examination.status.toUpperCase()
             }
           />
-          <p className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
             {row.marksEnteredCount} / {row.eligibleStudentCount} marks recorded
           </p>
         </div>
@@ -784,84 +789,49 @@ export function TeacherTestsExaminationsModule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Teacher Assessments · Objective Auto-Evaluation & Written Exams
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            Online Tests, Examinations & Marks
-          </h1>
-        </div>
-        <div className="flex flex-wrap items-center gap-2">
-          <Button
-            variant="secondary"
-            onClick={openCreateExam}
-            disabled={assignments.length === 0}
-            iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
-          >
-            Schedule Exam
-          </Button>
-          <Button
-            variant="primary"
-            onClick={openCreateTest}
-            disabled={assignments.length === 0}
-            iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
-          >
-            Create Online Test
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow="Teacher Assessments · Objective Auto-Evaluation & Written Exams"
+        title="Online Tests, Examinations & Marks"
+        rightSlot={
+          <div className="flex flex-wrap items-center gap-2">
+            <Button
+              variant="secondary"
+              onClick={openCreateExam}
+              disabled={assignments.length === 0}
+              iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
+            >
+              Schedule Exam
+            </Button>
+            <Button
+              variant="primary"
+              onClick={openCreateTest}
+              disabled={assignments.length === 0}
+              iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
+            >
+              Create Online Test
+            </Button>
+          </div>
+        }
+      />
 
-      {/* Sub-navigation Tabs */}
-      <div className="flex overflow-x-auto gap-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844] p-1">
-        {(
-          [
-            { id: 'tests', label: `Objective Tests (${tests.length})` },
-            { id: 'examinations', label: `Examinations & Marks (${exams.length})` },
-            { id: 'results', label: 'Results Workspace' },
-          ] as const
-        ).map((tab) => (
-          <button
-            key={tab.id}
-            type="button"
-            onClick={() => setSubTab(tab.id)}
-            className={cn(
-              'min-h-[40px] px-4 rounded-lg text-sm font-medium whitespace-nowrap shrink-0 cursor-pointer transition-colors',
-              subTab === tab.id
-                ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-                : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-            )}
-          >
-            {tab.label}
-          </button>
-        ))}
-      </div>
+      <Tabs
+        ariaLabel="Teacher test and examination views"
+        value={subTab}
+        onChange={setSubTab}
+        items={[
+          { id: 'tests', label: 'Objective Tests', count: tests.length },
+          { id: 'examinations', label: 'Examinations & Marks', count: exams.length },
+          { id: 'results', label: 'Results Workspace' },
+        ]}
+      />
 
       {banner && (
-        <div
-          role="status"
-          className="rounded-xl border border-[#168A62]/30 dark:border-[#22C58B]/30 bg-[#168A62]/10 dark:bg-[#22C58B]/15 p-3.5 text-sm text-[#168A62] dark:text-[#22C58B] flex items-center justify-between gap-3"
-        >
-          <span>{banner}</span>
-          <button
-            type="button"
-            onClick={() => setBanner(null)}
-            className="text-xs font-medium underline cursor-pointer shrink-0"
-          >
-            Dismiss
-          </button>
-        </div>
+        <Alert tone="success" onDismiss={() => setBanner(null)}>
+          {banner}
+        </Alert>
       )}
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3.5 text-sm text-[#D94C5C] dark:text-[#F16B75]"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
       {subTab === 'tests' && (
         <Card
@@ -879,13 +849,13 @@ export function TeacherTestsExaminationsModule() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-xs font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                    <p className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       {row.test.id} · {row.subjectName}
                     </p>
-                    <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                       {row.test.title}
                     </p>
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       {row.className} · {row.batchName}
                     </p>
                   </div>
@@ -900,7 +870,7 @@ export function TeacherTestsExaminationsModule() {
                     label={row.effectiveStatus.toUpperCase()}
                   />
                 </div>
-                <p className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                   {row.test.questions.length} MCQs · {row.test.totalMarks} marks ·{' '}
                   {row.test.durationMinutes} min · {row.attemptCount} attempts
                 </p>
@@ -959,13 +929,13 @@ export function TeacherTestsExaminationsModule() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-xs font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                    <p className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       {row.examination.id} · {row.subjectName}
                     </p>
-                    <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                       {row.examination.title}
                     </p>
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       {row.className} · {row.batchName}
                     </p>
                   </div>
@@ -986,7 +956,7 @@ export function TeacherTestsExaminationsModule() {
                     }
                   />
                 </div>
-                <p className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                   {formatShortDate(row.examination.examDate)} · {row.examination.startsAt}–
                   {row.examination.endsAt} · {row.marksEnteredCount}/{row.eligibleStudentCount} marks
                 </p>
@@ -1028,23 +998,23 @@ export function TeacherTestsExaminationsModule() {
             subtitle="Evaluated online test attempts across your assigned batches."
           >
             {resultsWorkspace.testResults.every((t) => t.attempts.length === 0) ? (
-              <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
                 No student test attempts recorded yet.
               </p>
             ) : (
-              <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
                 {resultsWorkspace.testResults.map((group) => (
                   <div key={group.test.id} className="py-3 space-y-2">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                         {group.test.title} ({group.subjectName} · {group.batchName})
                       </p>
-                      <span className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                      <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                         {group.attempts.length} attempt(s)
                       </span>
                     </div>
                     {group.attempts.length > 0 && (
-                      <ul className="space-y-1 text-xs text-[#687086] dark:text-[#A6B0C3]">
+                      <ul className="space-y-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                         {group.attempts.map((a) => (
                           <li key={a.id} className="font-mono tabular-nums">
                             {a.studentName} ({a.studentId}) · Attempt #{a.attemptNumber} ·{' '}
@@ -1065,20 +1035,20 @@ export function TeacherTestsExaminationsModule() {
             title="Examination Marks Summary"
             subtitle="Marks recorded and pending student counts per examination."
           >
-            <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
               {resultsWorkspace.examinationResults.map((group) => (
                 <div key={group.examination.id} className="py-3 space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                       {group.examination.title} ({group.subjectName} · {group.batchName})
                     </p>
-                    <span className="text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                    <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                       Recorded: {group.marks.length} · Pending: {group.pendingStudentCount} ·{' '}
                       {group.examination.resultsReleased ? 'Released' : 'Not Released'}
                     </span>
                   </div>
                   {group.marks.length > 0 && (
-                    <ul className="space-y-1 text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <ul className="space-y-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       {group.marks.map((m) => (
                         <li key={m.id} className="font-mono tabular-nums">
                           {m.studentName} ({m.studentId}): {m.marksObtained}/
@@ -1103,220 +1073,152 @@ export function TeacherTestsExaminationsModule() {
         maxWidthClass="max-w-3xl"
       >
         <form onSubmit={handleSaveTest} className="space-y-4">
-          {testFormError && (
-            <div
-              role="alert"
-              className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-            >
-              {testFormError}
-            </div>
-          )}
+          {testFormError && <Alert tone="error">{testFormError}</Alert>}
 
           {!editingTest && (
             <div className="grid gap-3 sm:grid-cols-3">
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Class
-                </label>
-                <select
-                  value={testClassId}
-                  onChange={(e) => {
-                    const nextC = e.target.value;
-                    setTestClassId(nextC);
-                    const match = assignments.find((a) => a.classId === nextC);
-                    setTestBatchId(match?.batchId ?? '');
-                    setTestSubjectId(match?.subjectId ?? '');
-                  }}
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {(scope?.classes ?? []).map((c) => (
-                    <option key={c.classId} value={c.classId}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Batch
-                </label>
-                <select
-                  value={testBatchId}
-                  onChange={(e) => {
-                    const nextB = e.target.value;
-                    setTestBatchId(nextB);
-                    const match = assignments.find(
-                      (a) => a.classId === testClassId && a.batchId === nextB
-                    );
-                    setTestSubjectId(match?.subjectId ?? '');
-                  }}
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {getBatchesFor(testClassId).map((b) => (
-                    <option key={b.batchId} value={b.batchId}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Subject
-                </label>
-                <select
-                  value={testSubjectId}
-                  onChange={(e) => setTestSubjectId(e.target.value)}
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {getSubjectsFor(testClassId, testBatchId).map((s) => (
-                    <option key={s.subjectId} value={s.subjectId}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Class"
+                value={testClassId}
+                onChange={(e) => {
+                  const nextC = e.target.value;
+                  setTestClassId(nextC);
+                  const match = assignments.find((a) => a.classId === nextC);
+                  setTestBatchId(match?.batchId ?? '');
+                  setTestSubjectId(match?.subjectId ?? '');
+                }}
+              >
+                {(scope?.classes ?? []).map((c) => (
+                  <option key={c.classId} value={c.classId}>
+                    {c.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Batch"
+                value={testBatchId}
+                onChange={(e) => {
+                  const nextB = e.target.value;
+                  setTestBatchId(nextB);
+                  const match = assignments.find(
+                    (a) => a.classId === testClassId && a.batchId === nextB
+                  );
+                  setTestSubjectId(match?.subjectId ?? '');
+                }}
+              >
+                {getBatchesFor(testClassId).map((b) => (
+                  <option key={b.batchId} value={b.batchId}>
+                    {b.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Subject"
+                value={testSubjectId}
+                onChange={(e) => setTestSubjectId(e.target.value)}
+              >
+                {getSubjectsFor(testClassId, testBatchId).map((s) => (
+                  <option key={s.subjectId} value={s.subjectId}>
+                    {s.name}
+                  </option>
+                ))}
+              </Select>
             </div>
           )}
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Test Title
-              </label>
-              <input
-                type="text"
-                value={testTitle}
-                onChange={(e) => setTestTitle(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Result Release Mode
-              </label>
-              <select
-                value={testReleaseMode}
-                onChange={(e) =>
-                  setTestReleaseMode(e.target.value as TestResultReleaseMode)
-                }
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              >
-                <option value="auto_after_submission">Auto Immediately After Submission</option>
-                <option value="manual_teacher_release">Manual Teacher Release</option>
-                <option value="scheduled_after_end">Scheduled After End Time</option>
-              </select>
-            </div>
+            <Input
+              label="Test Title"
+              type="text"
+              value={testTitle}
+              onChange={(e) => setTestTitle(e.target.value)}
+              required
+            />
+            <Select
+              label="Result Release Mode"
+              value={testReleaseMode}
+              onChange={(e) =>
+                setTestReleaseMode(e.target.value as TestResultReleaseMode)
+              }
+            >
+              <option value="auto_after_submission">Auto Immediately After Submission</option>
+              <option value="manual_teacher_release">Manual Teacher Release</option>
+              <option value="scheduled_after_end">Scheduled After End Time</option>
+            </Select>
           </div>
 
-          <div>
-            <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-              Instructions
-            </label>
-            <textarea
-              rows={2}
-              value={testInstructions}
-              onChange={(e) => setTestInstructions(e.target.value)}
+          <Textarea
+            label="Instructions"
+            rows={2}
+            value={testInstructions}
+            onChange={(e) => setTestInstructions(e.target.value)}
+            required
+          />
+
+          <div className="grid gap-3 sm:grid-cols-4">
+            <Input
+              label="Duration (Mins)"
+              type="number"
+              min={1}
+              value={testDuration}
+              onChange={(e) => setTestDuration(e.target.value)}
+              className="tabular-nums"
               required
-              className="w-full rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] p-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+            />
+            <Input
+              label="Max Attempts"
+              type="number"
+              min={1}
+              value={testMaxAttempts}
+              onChange={(e) => setTestMaxAttempts(e.target.value)}
+              className="tabular-nums"
+              required
+            />
+            <Input
+              label="Window Opens"
+              type="datetime-local"
+              value={testStartsAt}
+              onChange={(e) => setTestStartsAt(e.target.value)}
+              required
+            />
+            <Input
+              label="Window Closes"
+              type="datetime-local"
+              value={testEndsAt}
+              onChange={(e) => setTestEndsAt(e.target.value)}
+              required
             />
           </div>
 
-          <div className="grid gap-3 sm:grid-cols-4">
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Duration (Mins)
-              </label>
-              <input
-                type="number"
-                min={1}
-                value={testDuration}
-                onChange={(e) => setTestDuration(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Max Attempts
-              </label>
-              <input
-                type="number"
-                min={1}
-                value={testMaxAttempts}
-                onChange={(e) => setTestMaxAttempts(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Window Opens
-              </label>
-              <input
-                type="datetime-local"
-                value={testStartsAt}
-                onChange={(e) => setTestStartsAt(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-xs text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Window Closes
-              </label>
-              <input
-                type="datetime-local"
-                value={testEndsAt}
-                onChange={(e) => setTestEndsAt(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-xs text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-          </div>
-
           {testReleaseMode === 'scheduled_after_end' && (
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Scheduled Result Release Date & Time
-              </label>
-              <input
-                type="datetime-local"
-                value={testScheduledRelease}
-                onChange={(e) => setTestScheduledRelease(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
+            <Input
+              label="Scheduled Result Release Date & Time"
+              type="datetime-local"
+              value={testScheduledRelease}
+              onChange={(e) => setTestScheduledRelease(e.target.value)}
+              required
+            />
           )}
 
-          <div className="flex flex-wrap items-center gap-4 text-xs text-[#17172B] dark:text-[#F8FAFC]">
-            <label className="inline-flex items-center gap-2 cursor-pointer">
-              <input
-                type="checkbox"
-                checked={testShowAnswers}
-                onChange={(e) => setTestShowAnswers(e.target.checked)}
-                className="w-4 h-4 accent-[#7552D9] dark:accent-[#8B5CF6]"
-              />
-              <span>Show correct answers & explanations after result release</span>
-            </label>
+          <div className="flex flex-wrap items-center gap-4">
+            <Checkbox
+              checked={testShowAnswers}
+              onChange={setTestShowAnswers}
+              label="Show correct answers & explanations after result release"
+            />
             {!editingTest && (
-              <label className="inline-flex items-center gap-2 cursor-pointer">
-                <input
-                  type="checkbox"
-                  checked={testPublishNow}
-                  onChange={(e) => setTestPublishNow(e.target.checked)}
-                  className="w-4 h-4 accent-[#7552D9] dark:accent-[#8B5CF6]"
-                />
-                <span>Publish immediately</span>
-              </label>
+              <Checkbox
+                checked={testPublishNow}
+                onChange={setTestPublishNow}
+                label="Publish immediately"
+              />
             )}
           </div>
 
           {/* Question List Builder */}
-          <div className="border-t border-[#E5E7EF] dark:border-[#303A55] pt-4 space-y-4">
+          <div className="border-t border-[#E2E8E5] dark:border-[#344047] pt-4 space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 MCQ Questions ({testQuestions.length}) · Auto Total Marks:{' '}
                 <span className="font-mono tabular-nums">{liveTestTotalMarks}</span>
               </p>
@@ -1331,45 +1233,42 @@ export function TeacherTestsExaminationsModule() {
               </Button>
             </div>
 
-            <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
               {testQuestions.map((q, qIdx) => (
                 <div key={qIdx} className="py-4 first:pt-0 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-mono font-semibold text-[#7552D9] dark:text-[#C4B5FD]">
+                    <span className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       Question {qIdx + 1}
                     </span>
                     <div className="flex items-center gap-1">
-                      <button
-                        type="button"
+                      <IconButton
+                        label={`Move question ${qIdx + 1} up`}
+                        size="sm"
+                        variant="ghost"
                         onClick={() => moveQuestion(qIdx, -1)}
                         disabled={qIdx === 0}
-                        aria-label={`Move question ${qIdx + 1} up`}
-                        className="min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg text-[#687086] dark:text-[#A6B0C3] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] disabled:opacity-40 cursor-pointer"
-                      >
-                        <ArrowUp className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
+                        icon={<ArrowUp className="w-3.5 h-3.5" aria-hidden="true" />}
+                      />
+                      <IconButton
+                        label={`Move question ${qIdx + 1} down`}
+                        size="sm"
+                        variant="ghost"
                         onClick={() => moveQuestion(qIdx, 1)}
                         disabled={qIdx === testQuestions.length - 1}
-                        aria-label={`Move question ${qIdx + 1} down`}
-                        className="min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg text-[#687086] dark:text-[#A6B0C3] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] disabled:opacity-40 cursor-pointer"
-                      >
-                        <ArrowDown className="w-3.5 h-3.5" />
-                      </button>
-                      <button
-                        type="button"
+                        icon={<ArrowDown className="w-3.5 h-3.5" aria-hidden="true" />}
+                      />
+                      <IconButton
+                        label={`Remove question ${qIdx + 1}`}
+                        size="sm"
+                        variant="danger"
                         onClick={() =>
                           setTestQuestions((prev) =>
                             prev.length > 1 ? prev.filter((_, i) => i !== qIdx) : prev
                           )
                         }
                         disabled={testQuestions.length <= 1}
-                        aria-label={`Remove question ${qIdx + 1}`}
-                        className="min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg text-[#D94C5C] dark:text-[#F16B75] hover:bg-[#D94C5C]/10 dark:hover:bg-[#F16B75]/15 disabled:opacity-40 cursor-pointer"
-                      >
-                        <Trash2 className="w-3.5 h-3.5" />
-                      </button>
+                        icon={<Trash2 className="w-3.5 h-3.5" aria-hidden="true" />}
+                      />
                     </div>
                   </div>
 
@@ -1385,8 +1284,9 @@ export function TeacherTestsExaminationsModule() {
                           }))
                         }
                         placeholder="Enter question text..."
+                        aria-label={`Question ${qIdx + 1} text`}
                         required
-                        className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                        className="w-full min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                       />
                     </div>
                     <div>
@@ -1402,14 +1302,15 @@ export function TeacherTestsExaminationsModule() {
                           }))
                         }
                         placeholder="Marks"
+                        aria-label={`Question ${qIdx + 1} marks`}
                         required
-                        className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm tabular-nums text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                        className="w-full min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm tabular-nums text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <div className="flex items-center justify-between text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       <span>Options (Select radio button for the 1 correct answer)</span>
                       <button
                         type="button"
@@ -1419,7 +1320,7 @@ export function TeacherTestsExaminationsModule() {
                             options: [...prev.options, { text: '' }],
                           }))
                         }
-                        className="text-[#7552D9] dark:text-[#C4B5FD] font-medium underline cursor-pointer"
+                        className="text-[#168A63] dark:text-[#42DDA9] font-medium underline cursor-pointer"
                       >
                         + Add Option
                       </button>
@@ -1437,7 +1338,7 @@ export function TeacherTestsExaminationsModule() {
                             }))
                           }
                           aria-label={`Mark option ${oIdx + 1} correct`}
-                          className="w-4 h-4 accent-[#7552D9] dark:accent-[#8B5CF6]"
+                          className="w-4 h-4 accent-[#168A63] dark:accent-[#42DDA9]"
                         />
                         <input
                           type="text"
@@ -1451,29 +1352,30 @@ export function TeacherTestsExaminationsModule() {
                             }))
                           }
                           placeholder={`Option ${oIdx + 1}`}
+                          aria-label={`Question ${qIdx + 1} option ${oIdx + 1}`}
                           required
-                          className="flex-1 min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                          className="flex-1 min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                         />
-                        <button
-                          type="button"
+                        <IconButton
+                          label="Move option up"
+                          size="sm"
+                          variant="ghost"
                           onClick={() => moveOption(qIdx, oIdx, -1)}
                           disabled={oIdx === 0}
-                          className="min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg text-[#687086] dark:text-[#A6B0C3] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] disabled:opacity-30 cursor-pointer"
-                          aria-label="Move option up"
-                        >
-                          <ArrowUp className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
+                          icon={<ArrowUp className="w-3.5 h-3.5" aria-hidden="true" />}
+                        />
+                        <IconButton
+                          label="Move option down"
+                          size="sm"
+                          variant="ghost"
                           onClick={() => moveOption(qIdx, oIdx, 1)}
                           disabled={oIdx === q.options.length - 1}
-                          className="min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg text-[#687086] dark:text-[#A6B0C3] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] disabled:opacity-30 cursor-pointer"
-                          aria-label="Move option down"
-                        >
-                          <ArrowDown className="w-3.5 h-3.5" />
-                        </button>
-                        <button
-                          type="button"
+                          icon={<ArrowDown className="w-3.5 h-3.5" aria-hidden="true" />}
+                        />
+                        <IconButton
+                          label="Remove option"
+                          size="sm"
+                          variant="danger"
                           onClick={() =>
                             updateQuestion(qIdx, (prev) => {
                               if (prev.options.length <= 2) return prev;
@@ -1490,11 +1392,8 @@ export function TeacherTestsExaminationsModule() {
                             })
                           }
                           disabled={q.options.length <= 2}
-                          className="min-w-[36px] min-h-[36px] inline-flex items-center justify-center rounded-lg text-[#D94C5C] dark:text-[#F16B75] hover:bg-[#D94C5C]/10 dark:hover:bg-[#F16B75]/15 disabled:opacity-30 cursor-pointer"
-                          aria-label="Remove option"
-                        >
-                          <Trash2 className="w-3.5 h-3.5" />
-                        </button>
+                          icon={<Trash2 className="w-3.5 h-3.5" aria-hidden="true" />}
+                        />
                       </div>
                     ))}
                   </div>
@@ -1509,7 +1408,7 @@ export function TeacherTestsExaminationsModule() {
                       }))
                     }
                     placeholder="Optional answer explanation (shown after result release)"
-                    className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-xs text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                    className="w-full min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3 text-xs text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C] dark:placeholder:text-[#AAB6B4] focus:outline-none focus:ring-2 focus:ring-[#168A63]/35 dark:focus:ring-[#42DDA9]/45"
                   />
                 </div>
               ))}
@@ -1545,25 +1444,25 @@ export function TeacherTestsExaminationsModule() {
       >
         {previewTest && (
           <div className="space-y-4">
-            <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
               {previewTest.test.instructions}
             </p>
-            <ol className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] space-y-3">
+            <ol className="divide-y divide-[#E2E8E5] dark:divide-[#344047] space-y-3">
               {previewTest.test.questions.map((q, idx) => (
                 <li key={q.id} className="pt-3 first:pt-0 space-y-1.5">
-                  <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                     Q{idx + 1}. {q.questionText}{' '}
-                    <span className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3] tabular-nums">
+                    <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
                       ({q.marks} marks)
                     </span>
                   </p>
-                  <ul className="space-y-1 pl-4 text-xs text-[#687086] dark:text-[#A6B0C3]">
+                  <ul className="space-y-1 pl-4 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                     {q.options.map((opt) => (
                       <li
                         key={opt.id}
                         className={
                           opt.id === q.correctOptionId
-                            ? 'font-semibold text-[#168A62] dark:text-[#22C58B]'
+                            ? 'font-semibold text-[#168A63] dark:text-[#42DDA9]'
                             : ''
                         }
                       >
@@ -1591,28 +1490,28 @@ export function TeacherTestsExaminationsModule() {
         {attemptsModalTest && (
           <div className="space-y-4">
             {testAttempts.length === 0 ? (
-              <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
                 No student has attempted this test yet.
               </p>
             ) : (
-              <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] text-sm">
+              <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-sm">
                 {testAttempts.map((a) => (
                   <li key={a.id} className="py-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                         {a.studentName} ({a.studentId})
                       </p>
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                         Attempt #{a.attemptNumber} · Started {formatDateTime(a.startedAt)}
                       </p>
                     </div>
                     <div className="text-right font-mono tabular-nums text-xs">
                       {a.status === 'evaluated' ? (
-                        <p className="font-semibold text-[#168A62] dark:text-[#22C58B]">
+                        <p className="font-semibold text-[#168A63] dark:text-[#42DDA9]">
                           {a.marksObtained} / {a.totalMarks} ({a.percentage}%)
                         </p>
                       ) : (
-                        <p className="text-[#B7791F] dark:text-[#F5B942]">In Progress</p>
+                        <p className="text-[#A67317] dark:text-[#E5B04D]">In Progress</p>
                       )}
                     </div>
                   </li>
@@ -1636,185 +1535,126 @@ export function TeacherTestsExaminationsModule() {
         maxWidthClass="max-w-xl"
       >
         <form onSubmit={handleSaveExam} className="space-y-4">
-          {examFormError && (
-            <div
-              role="alert"
-              className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-            >
-              {examFormError}
-            </div>
-          )}
+          {examFormError && <Alert tone="error">{examFormError}</Alert>}
 
           {!editingExam && (
             <div className="grid gap-3 sm:grid-cols-3">
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Class
-                </label>
-                <select
-                  value={examClassId}
-                  onChange={(e) => {
-                    const nextC = e.target.value;
-                    setExamClassId(nextC);
-                    const match = assignments.find((a) => a.classId === nextC);
-                    setExamBatchId(match?.batchId ?? '');
-                    setExamSubjectId(match?.subjectId ?? '');
-                  }}
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {(scope?.classes ?? []).map((c) => (
-                    <option key={c.classId} value={c.classId}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Batch
-                </label>
-                <select
-                  value={examBatchId}
-                  onChange={(e) => {
-                    const nextB = e.target.value;
-                    setExamBatchId(nextB);
-                    const match = assignments.find(
-                      (a) => a.classId === examClassId && a.batchId === nextB
-                    );
-                    setExamSubjectId(match?.subjectId ?? '');
-                  }}
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {getBatchesFor(examClassId).map((b) => (
-                    <option key={b.batchId} value={b.batchId}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Subject
-                </label>
-                <select
-                  value={examSubjectId}
-                  onChange={(e) => setExamSubjectId(e.target.value)}
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {getSubjectsFor(examClassId, examBatchId).map((s) => (
-                    <option key={s.subjectId} value={s.subjectId}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Class"
+                value={examClassId}
+                onChange={(e) => {
+                  const nextC = e.target.value;
+                  setExamClassId(nextC);
+                  const match = assignments.find((a) => a.classId === nextC);
+                  setExamBatchId(match?.batchId ?? '');
+                  setExamSubjectId(match?.subjectId ?? '');
+                }}
+              >
+                {(scope?.classes ?? []).map((c) => (
+                  <option key={c.classId} value={c.classId}>
+                    {c.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Batch"
+                value={examBatchId}
+                onChange={(e) => {
+                  const nextB = e.target.value;
+                  setExamBatchId(nextB);
+                  const match = assignments.find(
+                    (a) => a.classId === examClassId && a.batchId === nextB
+                  );
+                  setExamSubjectId(match?.subjectId ?? '');
+                }}
+              >
+                {getBatchesFor(examClassId).map((b) => (
+                  <option key={b.batchId} value={b.batchId}>
+                    {b.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Subject"
+                value={examSubjectId}
+                onChange={(e) => setExamSubjectId(e.target.value)}
+              >
+                {getSubjectsFor(examClassId, examBatchId).map((s) => (
+                  <option key={s.subjectId} value={s.subjectId}>
+                    {s.name}
+                  </option>
+                ))}
+              </Select>
             </div>
           )}
 
-          <div>
-            <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-              Examination Title
-            </label>
-            <input
-              type="text"
-              value={examTitle}
-              onChange={(e) => setExamTitle(e.target.value)}
-              required
-              placeholder="e.g., Unit Test 2 — Written Paper"
-              className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
+          <Input
+            label="Examination Title"
+            type="text"
+            value={examTitle}
+            onChange={(e) => setExamTitle(e.target.value)}
+            required
+            placeholder="e.g., Unit Test 2 — Written Paper"
+          />
 
           <div className="grid gap-3 sm:grid-cols-3">
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Exam Date
-              </label>
-              <input
-                type="date"
-                value={examDate}
-                onChange={(e) => setExamDate(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Start Time (HH:MM)
-              </label>
-              <input
-                type="time"
-                value={examStartsAt}
-                onChange={(e) => setExamStartsAt(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                End Time (HH:MM)
-              </label>
-              <input
-                type="time"
-                value={examEndsAt}
-                onChange={(e) => setExamEndsAt(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
+            <Input
+              label="Exam Date"
+              type="date"
+              value={examDate}
+              onChange={(e) => setExamDate(e.target.value)}
+              required
+            />
+            <Input
+              label="Start Time (HH:MM)"
+              type="time"
+              value={examStartsAt}
+              onChange={(e) => setExamStartsAt(e.target.value)}
+              required
+            />
+            <Input
+              label="End Time (HH:MM)"
+              type="time"
+              value={examEndsAt}
+              onChange={(e) => setExamEndsAt(e.target.value)}
+              required
+            />
           </div>
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Maximum Marks
-              </label>
-              <input
-                type="number"
-                min={1}
-                value={examMaxMarks}
-                onChange={(e) => setExamMaxMarks(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm tabular-nums text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Passing Marks (Optional)
-              </label>
-              <input
-                type="number"
-                min={0}
-                value={examPassingMarks}
-                onChange={(e) => setExamPassingMarks(e.target.value)}
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm tabular-nums text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-          </div>
-
-          <div>
-            <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-              Instructions / Syllabus Scope
-            </label>
-            <textarea
-              rows={3}
-              value={examInstructions}
-              onChange={(e) => setExamInstructions(e.target.value)}
+            <Input
+              label="Maximum Marks"
+              type="number"
+              min={1}
+              value={examMaxMarks}
+              onChange={(e) => setExamMaxMarks(e.target.value)}
+              className="tabular-nums"
               required
-              className="w-full rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] p-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+            />
+            <Input
+              label="Passing Marks (Optional)"
+              type="number"
+              min={0}
+              value={examPassingMarks}
+              onChange={(e) => setExamPassingMarks(e.target.value)}
+              className="tabular-nums"
             />
           </div>
 
+          <Textarea
+            label="Instructions / Syllabus Scope"
+            rows={3}
+            value={examInstructions}
+            onChange={(e) => setExamInstructions(e.target.value)}
+            required
+          />
+
           {!editingExam && (
-            <label className="inline-flex items-center gap-2 text-sm text-[#17172B] dark:text-[#F8FAFC] cursor-pointer">
-              <input
-                type="checkbox"
-                checked={examPublishNow}
-                onChange={(e) => setExamPublishNow(e.target.checked)}
-                className="w-4 h-4 accent-[#7552D9] dark:accent-[#8B5CF6]"
-              />
-              <span>Publish exam schedule immediately</span>
-            </label>
+            <Checkbox
+              checked={examPublishNow}
+              onChange={setExamPublishNow}
+              label="Publish exam schedule immediately"
+            />
           )}
 
           <div className="flex justify-end gap-2">
@@ -1854,32 +1694,25 @@ export function TeacherTestsExaminationsModule() {
       >
         {marksRoster && (
           <div className="space-y-5">
-            {marksError && (
-              <div
-                role="alert"
-                className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-              >
-                {marksError}
-              </div>
-            )}
+            {marksError && <Alert tone="error">{marksError}</Alert>}
 
             {marksRoster.marks.length === 0 ? (
               <div className="space-y-4">
-                <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                   Enter marks for every eligible batch student ({marksRoster.eligibleStudents.length} active student(s)).
                 </p>
 
-                <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] border-t border-b border-[#E5E7EF] dark:border-[#303A55]">
+                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
                   {marksRoster.eligibleStudents.map((stu) => (
                     <div
                       key={stu.studentId}
                       className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div>
-                        <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                           {stu.studentName}
                         </p>
-                        <p className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           {stu.studentId} · {stu.enrolmentId}
                         </p>
                       </div>
@@ -1899,9 +1732,9 @@ export function TeacherTestsExaminationsModule() {
                           disabled={bulkReviewStep}
                           placeholder={`0–${marksRoster.examination.maximumMarks}`}
                           aria-label={`Marks for ${stu.studentName}`}
-                          className="w-28 min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm tabular-nums font-mono text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                          className="w-28 min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm tabular-nums font-mono text-[#171D21] dark:text-[#F4F7F6] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
                         />
-                        <span className="text-xs font-mono text-[#687086] dark:text-[#A6B0C3] tabular-nums">
+                        <span className="text-xs font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
                           / {marksRoster.examination.maximumMarks}
                         </span>
                       </div>
@@ -1909,16 +1742,12 @@ export function TeacherTestsExaminationsModule() {
                   ))}
                 </div>
 
-                <label className="inline-flex items-center gap-2 text-xs text-[#17172B] dark:text-[#F8FAFC] cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={bulkReleaseNow}
-                    onChange={(e) => setBulkReleaseNow(e.target.checked)}
-                    disabled={bulkReviewStep}
-                    className="w-4 h-4 accent-[#7552D9] dark:accent-[#8B5CF6]"
-                  />
-                  <span>Release marks immediately to students & parents</span>
-                </label>
+                <Checkbox
+                  checked={bulkReleaseNow}
+                  onChange={setBulkReleaseNow}
+                  disabled={bulkReviewStep}
+                  label="Release marks immediately to students & parents"
+                />
 
                 {!bulkReviewStep ? (
                   <div className="flex justify-end gap-2">
@@ -1949,8 +1778,8 @@ export function TeacherTestsExaminationsModule() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="rounded-xl border border-[#B7791F]/30 dark:border-[#F5B942]/30 bg-[#B7791F]/10 dark:bg-[#F5B942]/15 p-3.5 space-y-3">
-                    <p className="text-xs font-semibold text-[#B7791F] dark:text-[#F5B942]">
+                  <div className="rounded-xl border border-[#A67317]/30 dark:border-[#E5B04D]/30 bg-[#A67317]/10 dark:bg-[#E5B04D]/15 p-3.5 space-y-3">
+                    <p className="text-xs font-semibold text-[#A67317] dark:text-[#E5B04D]">
                       Confirm marks submission for {marksRoster.eligibleStudents.length} student(s). Subsequent edits require a mandatory audit reason.
                     </p>
                     <div className="flex justify-end gap-2">
@@ -1998,20 +1827,20 @@ export function TeacherTestsExaminationsModule() {
                   )}
                 </div>
 
-                <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] border-t border-b border-[#E5E7EF] dark:border-[#303A55]">
+                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
                   {marksRoster.marks.map((m) => (
                     <div
                       key={m.id}
                       className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div>
-                        <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                           {m.studentName}{' '}
-                          <span className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+                          <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                             ({m.studentId})
                           </span>
                         </p>
-                        <p className="font-mono text-xs tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                           {m.marksObtained} / {m.maximumMarks} ({m.percentage}% ·{' '}
                           {m.resultStatus.toUpperCase()})
                           {m.corrected ? ' · Corrected' : ''}
@@ -2036,39 +1865,32 @@ export function TeacherTestsExaminationsModule() {
                 {correctingMark && (
                   <form
                     onSubmit={handleSaveMarkCorrection}
-                    className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-4 space-y-3"
+                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/65 p-4 space-y-3"
                   >
-                    <p className="text-xs font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <p className="text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                       Audited Marks Correction: {correctingMark.studentName} (Current:{' '}
                       {correctingMark.marksObtained})
                     </p>
                     <div className="grid gap-3 sm:grid-cols-3">
-                      <div>
-                        <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                          Corrected Marks (0–{marksRoster.examination.maximumMarks})
-                        </label>
-                        <input
-                          type="number"
-                          min={0}
-                          max={marksRoster.examination.maximumMarks}
-                          step="0.5"
-                          value={correctNewMarks}
-                          onChange={(e) => setCorrectNewMarks(e.target.value)}
-                          required
-                          className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm tabular-nums text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                        />
-                      </div>
+                      <Input
+                        label={`Corrected Marks (0–${marksRoster.examination.maximumMarks})`}
+                        type="number"
+                        min={0}
+                        max={marksRoster.examination.maximumMarks}
+                        step="0.5"
+                        value={correctNewMarks}
+                        onChange={(e) => setCorrectNewMarks(e.target.value)}
+                        className="tabular-nums"
+                        required
+                      />
                       <div className="sm:col-span-2">
-                        <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                          Mandatory Correction Reason (Min 5 characters)
-                        </label>
-                        <input
+                        <Input
+                          label="Mandatory Correction Reason (Min 5 characters)"
                           type="text"
                           value={correctReason}
                           onChange={(e) => setCorrectReason(e.target.value)}
                           required
                           placeholder="e.g., Rechecked Question 3 totaling error"
-                          className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
                         />
                       </div>
                     </div>
@@ -2090,13 +1912,13 @@ export function TeacherTestsExaminationsModule() {
 
                 {marksRoster.auditEntries.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-semibold text-[#687086] dark:text-[#A6B0C3] mb-1.5">
+                    <h4 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-1.5">
                       Marks Audit Trail ({marksRoster.auditEntries.length})
                     </h4>
-                    <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] text-xs">
+                    <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs">
                       {marksRoster.auditEntries.map((aud) => (
-                        <li key={aud.id} className="py-1.5 text-[#687086] dark:text-[#A6B0C3]">
-                          <span className="font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                        <li key={aud.id} className="py-1.5 text-[#68737C] dark:text-[#AAB6B4]">
+                          <span className="font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                             {aud.id}
                           </span>{' '}
                           · {aud.studentId}: {aud.previousMarks} → {aud.newMarks} by{' '}

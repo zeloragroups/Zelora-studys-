@@ -28,6 +28,7 @@ import { StudentFeesModule } from '../components/finance/StudentFeesModule';
 import { TeacherSalaryModule } from '../components/finance/TeacherSalaryModule';
 import { RoleProfileView } from '../components/profile/RoleProfileView';
 import { AdminSettingsModule } from '../components/settings/AdminSettingsModule';
+import { MemberSettingsModule } from '../components/settings/MemberSettingsModule';
 import { ROLE_PERMISSION_MATRIX } from '../types';
 
 interface InterfaceScaffoldViewProps {
@@ -130,16 +131,8 @@ export function InterfaceScaffoldView({
     if (activeNavId === 'profile') {
       return (
         <RoleProfileView
-          interfaceId={interfaceId}
           roleLabel={roleLabel}
           roleAccessSummary={roleAccessSummary}
-          onSelectNav={
-            interfaceId === 'student-webapp'
-              ? handleStudentNavigate
-              : principal?.role === 'admin'
-                ? handleAdminNavigate
-                : setActiveNavId
-          }
           onSignOut={onSignOut}
         />
       );
@@ -229,6 +222,16 @@ export function InterfaceScaffoldView({
       if (activeNavId === 'salary') {
         return <TeacherSalaryModule />;
       }
+      if (activeNavId === 'settings') {
+        return (
+          <MemberSettingsModule
+            roleLabel={roleLabel}
+            roleAccessSummary={roleAccessSummary}
+            onNavigate={setActiveNavId}
+            onSignOut={onSignOut}
+          />
+        );
+      }
     }
 
     if (principal?.role === 'student' && interfaceId === 'student-webapp') {
@@ -267,16 +270,26 @@ export function InterfaceScaffoldView({
           />
         );
       }
+      if (activeNavId === 'settings') {
+        return (
+          <MemberSettingsModule
+            roleLabel={roleLabel}
+            roleAccessSummary={roleAccessSummary}
+            onNavigate={handleStudentNavigate}
+            onSignOut={onSignOut}
+          />
+        );
+      }
     }
 
     return (
       <div className="space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
+            <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
               {spec.audience} · {spec.primaryFormFactors}
             </p>
-            <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] text-balance">
               {currentSection.sectionTitle}
             </h1>
           </div>
@@ -303,37 +316,38 @@ export function InterfaceScaffoldView({
         >
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <h3 className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <h3 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 Interface Responsibility
               </h3>
-              <p className="mt-1.5 text-sm text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
+              <p className="mt-1.5 text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
                 {spec.responsibility}
               </p>
-              <p className="mt-3 text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="mt-3 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 Module implementation scheduled for Phase {currentSection.plannedPhase}.
               </p>
             </div>
 
-            <div className="sm:border-l sm:border-[#E5E7EF] dark:sm:border-[#303A55] sm:pl-6">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+            <div className="sm:border-l sm:border-[#E2E8E5] dark:sm:border-[#344047] sm:pl-6">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 <ShieldCheck
-                  className="w-4 h-4 text-[#7552D9] dark:text-[#A78BFA] shrink-0"
+                  className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9] shrink-0"
+                  strokeWidth={1.75}
                   aria-hidden="true"
                 />
                 <span>Role & Session Boundary ({roleLabel})</span>
               </div>
-              <p className="mt-1.5 text-sm text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
+              <p className="mt-1.5 text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
                 {roleAccessSummary}
               </p>
               {principal && (
-                <p className="mt-3 text-xs font-mono text-[#687086] dark:text-[#A6B0C3] tabular-nums">
+                <p className="mt-3 text-xs font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
                   Permissions granted: {permissionCount} · Session mode: {session.dataSourceMode}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="mt-6 pt-5 border-t border-[#E5E7EF] dark:border-[#303A55] flex flex-wrap items-center justify-between gap-3 text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <div className="mt-6 pt-5 border-t border-[#E2E8E5] dark:border-[#344047] flex flex-wrap items-center justify-between gap-3 text-xs text-[#68737C] dark:text-[#AAB6B4]">
             <span>
               {session.dataSourceMode === 'firebase_connected'
                 ? 'Firebase Status: Connected (academy-0007)'

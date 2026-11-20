@@ -3,6 +3,7 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   query,
   setDoc,
   updateDoc,
@@ -206,7 +207,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
           : query(collection(db, 'attendanceRecords'), where('teacherUid', '==', actor.uid))
       ),
       actor.role === 'admin'
-        ? getDocs(collection(db, 'attendanceAudit')).catch(() => null)
+        ? getDocs(query(collection(db, 'attendanceAudit'), limit(250))).catch(() => null)
         : Promise.resolve(null),
       getDocs(
         actor.role === 'admin'
@@ -449,6 +450,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
       action: submit ? 'session_submitted' : 'session_draft_saved',
       actorId: actor.loginId,
       actorRole: actor.role,
+      teacherUid: actor.uid,
       timestamp: nowIso,
       adminUids,
       createdAt: nowIso,
@@ -491,7 +493,11 @@ export class FirebaseAttendanceService implements IAttendanceService {
     if (!snap.exists()) {
       throw new AttendanceServiceError('NOT_FOUND', `Attendance session "${sessionId}" not found.`);
     }
-    const details = await this.buildSessionDetails(db, [snap.data() as AttendanceSession], teacher);
+    const session = snap.data() as AttendanceSession & { teacherUid?: string };
+    if (teacher.role === 'teacher' && session.teacherUid !== teacher.uid) {
+      throw new AttendanceServiceError('UNAUTHORIZED', 'You may only access attendance sessions you created.');
+    }
+    const details = await this.buildSessionDetails(db, [session], teacher);
     return details[0];
   }
 
@@ -527,6 +533,12 @@ export class FirebaseAttendanceService implements IAttendanceService {
       studentUid: string;
       teacherUid: string;
     };
+    if (activeActor.role === 'teacher' && existing.teacherUid !== activeActor.uid) {
+      throw new AttendanceServiceError(
+        'UNAUTHORIZED',
+        'You may only correct attendance records for sessions you created.'
+      );
+    }
     const nowIso = new Date().toISOString();
 
     const batch = writeBatch(db);
@@ -550,6 +562,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
       newValue: input.newStatus,
       actorId: activeActor.loginId,
       actorRole: activeActor.role,
+      teacherUid: existing.teacherUid,
       reason,
       timestamp: nowIso,
       adminUids,
@@ -704,7 +717,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
       getDocs(collection(db, 'attendanceSessions')),
       getDocs(collection(db, 'attendanceRecords')),
       getDocs(collection(db, 'classes')),
-      getDocs(collection(db, 'attendanceNotifications')),
+      getDocs(query(collection(db, 'attendanceNotifications'), limit(250))),
     ]);
     const sessions = sesSnap.docs.map((d) => d.data() as AttendanceSession);
     const records = recSnap.docs.map((d) => d.data() as AttendanceRecord);
@@ -792,8 +805,12 @@ export class FirebaseAttendanceService implements IAttendanceService {
     const db = requireFirestoreDb();
     const snap = await getDocs(
       sessionId
-        ? query(collection(db, 'attendanceAudit'), where('attendanceSessionId', '==', sessionId))
-        : collection(db, 'attendanceAudit')
+        ? query(
+            collection(db, 'attendanceAudit'),
+            where('attendanceSessionId', '==', sessionId),
+            limit(250)
+          )
+        : query(collection(db, 'attendanceAudit'), limit(250))
     );
     return snap.docs
       .map((d) => d.data() as AttendanceAuditEntry)
@@ -805,7 +822,7 @@ export class FirebaseAttendanceService implements IAttendanceService {
   ): Promise<AbsenceNotification[]> {
     this.ensureAdmin(actor);
     const db = requireFirestoreDb();
-    const snap = await getDocs(collection(db, 'attendanceNotifications'));
+    const snap = await getDocs(query(collection(db, 'attendanceNotifications'), limit(250)));
     return snap.docs
       .map((d) => d.data() as AbsenceNotification)
       .sort((a, b) => b.createdAt.localeCompare(a.createdAt));

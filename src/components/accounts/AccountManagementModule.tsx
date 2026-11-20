@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Eye, KeyRound, Pencil, Plus, Power, Search, X } from 'lucide-react';
+import { Eye, KeyRound, Pencil, Plus, Power } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { accountService, isFirebaseConnectedMode } from '../../services';
 import type {
@@ -9,12 +9,16 @@ import type {
   ManagedAccountRole,
 } from '../../types';
 import { formatShortDate } from '../../utils/formatters';
-import { cn } from '../../utils/cn';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { IconButton } from '../ui/IconButton';
+import { PageHeader } from '../ui/PageHeader';
+import { SearchInput } from '../ui/SearchInput';
 import { StatTile } from '../ui/StatTile';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
+import { Tabs } from '../ui/Tabs';
 import { CreateAccountModal } from './CreateAccountModal';
 import { AccountDetailsModal } from './AccountDetailsModal';
 import { EditAccountModal } from './EditAccountModal';
@@ -94,11 +98,9 @@ export function AccountManagementModule() {
 
   if (!principal || principal.role !== 'admin') {
     return (
-      <Card title="Access Restricted">
-        <p className="text-sm text-red-700 dark:text-red-400">
-          Only authenticated Admin accounts can access Account Management.
-        </p>
-      </Card>
+      <Alert tone="error" title="Access Restricted">
+        Only authenticated Admin accounts can access Account Management.
+      </Alert>
     );
   }
 
@@ -117,7 +119,7 @@ export function AccountManagementModule() {
         <button
           type="button"
           onClick={() => setDetailAccount(row)}
-          className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
+          className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
         >
           {row.accountId}
         </button>
@@ -128,9 +130,9 @@ export function AccountManagementModule() {
       header: 'Name',
       render: (row) => (
         <div>
-          <p className="font-medium text-slate-900 dark:text-slate-100">{row.name}</p>
+          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.name}</p>
           {row.email && (
-            <p className="text-xs text-slate-500 dark:text-slate-400 truncate max-w-[180px]">
+            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[180px]">
               {row.email}
             </p>
           )}
@@ -141,7 +143,7 @@ export function AccountManagementModule() {
       key: 'role',
       header: 'Type',
       render: (row) => (
-        <span className="capitalize text-xs font-medium text-slate-700 dark:text-slate-300">
+        <span className="capitalize text-xs font-medium text-[#343C42] dark:text-[#D4DDDC]">
           {row.role}
         </span>
       ),
@@ -151,17 +153,17 @@ export function AccountManagementModule() {
       header: 'Class & Batch',
       render: (row) =>
         row.role === 'student' ? (
-          <span className="text-xs text-slate-600 dark:text-slate-300">
+          <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {row.className ?? '—'} · {row.batchName ?? '—'}
           </span>
         ) : (
-          <span className="text-xs text-slate-400">—</span>
+          <span className="text-xs text-[#68737C]/60 dark:text-[#AAB6B4]/60">—</span>
         ),
     },
     {
       key: 'phone',
       header: 'Phone',
-      render: (row) => <span className="font-mono text-xs">{row.phone}</span>,
+      render: (row) => <span className="font-mono text-xs tabular-nums">{row.phone}</span>,
     },
     {
       key: 'status',
@@ -177,7 +179,7 @@ export function AccountManagementModule() {
       key: 'createdAt',
       header: 'Created',
       render: (row) => (
-        <span className="font-mono text-xs text-slate-500 dark:text-slate-400 whitespace-nowrap">
+        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4] whitespace-nowrap">
           {formatShortDate(row.createdAt)}
         </span>
       ),
@@ -187,48 +189,39 @@ export function AccountManagementModule() {
       header: 'Actions',
       align: 'right',
       render: (row) => (
-        <div className="inline-flex items-center justify-end gap-1">
-          <button
-            type="button"
+        <div className="inline-flex items-center justify-end gap-1.5">
+          <IconButton
+            size="sm"
+            variant="ghost"
             onClick={() => setDetailAccount(row)}
+            label={`View details for ${row.accountId}`}
             title="View details"
-            aria-label={`View details for ${row.accountId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Eye className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
+            icon={<Eye className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant="ghost"
             onClick={() => setEditAccount(row)}
+            label={`Edit ${row.accountId}`}
             title="Edit account"
-            aria-label={`Edit ${row.accountId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Pencil className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
+            icon={<Pencil className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant="ghost"
             onClick={() => setResetDialogAccount(row)}
+            label={`Reset password for ${row.accountId}`}
             title={isFirebaseConnectedMode() ? 'Password reset procedure' : 'Initiate password reset (Demo)'}
-            aria-label={`Reset password for ${row.accountId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <KeyRound className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
+            icon={<KeyRound className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant={row.status === 'active' ? 'danger' : 'mint'}
             onClick={() => setStatusDialogAccount(row)}
+            label={`${row.status === 'active' ? 'Deactivate' : 'Reactivate'} ${row.accountId}`}
             title={row.status === 'active' ? 'Deactivate account' : 'Reactivate account'}
-            aria-label={`${row.status === 'active' ? 'Deactivate' : 'Reactivate'} ${row.accountId}`}
-            className={cn(
-              'w-8 h-8 inline-flex items-center justify-center rounded-lg cursor-pointer transition-colors',
-              row.status === 'active'
-                ? 'text-[#D94C5C] hover:bg-[#D94C5C]/10 dark:text-[#F16B75] dark:hover:bg-[#F16B75]/15'
-                : 'text-[#168A62] hover:bg-[#168A62]/10 dark:text-[#22C58B] dark:hover:bg-[#22C58B]/15'
-            )}
-          >
-            <Power className="w-4 h-4" aria-hidden="true" />
-          </button>
+            icon={<Power className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
+          />
         </div>
       ),
     },
@@ -236,43 +229,35 @@ export function AccountManagementModule() {
 
   return (
     <div className="space-y-6">
-      {/* Header Row */}
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-slate-500 dark:text-slate-400">
-            Admin Account Management · {isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Development Adapter'}
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-slate-900 dark:text-slate-50 text-balance">
-            Teacher & Student Accounts
-          </h1>
-        </div>
-
-        <div className="flex flex-wrap items-center gap-2.5">
-          <Button
-            variant="secondary"
-            size="sm"
-            onClick={() => setCreateRoleModal('teacher')}
-            iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
-          >
-            New Teacher
-          </Button>
-          <Button
-            size="sm"
-            onClick={() => setCreateRoleModal('student')}
-            iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
-          >
-            New Student
-          </Button>
-        </div>
-      </div>
+      <PageHeader
+        eyebrow={`Admin Account Management · ${isFirebaseConnectedMode() ? 'Firebase Connected' : 'Local Development Adapter'}`}
+        title="Teacher & Student Accounts"
+        subtitle="Create role IDs, inspect profiles, update contact or batch details, and manage sign-in status."
+        rightSlot={
+          <div className="flex flex-wrap items-center gap-2.5">
+            <Button
+              variant="secondary"
+              size="sm"
+              onClick={() => setCreateRoleModal('teacher')}
+              iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
+            >
+              New Teacher
+            </Button>
+            <Button
+              size="sm"
+              onClick={() => setCreateRoleModal('student')}
+              iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
+            >
+              New Student
+            </Button>
+          </div>
+        }
+      />
 
       {toastMessage && (
-        <div
-          role="status"
-          className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 px-4 py-2.5 text-xs font-medium text-emerald-900 dark:text-emerald-200"
-        >
+        <Alert tone="success" onDismiss={() => setToastMessage(null)}>
           {toastMessage}
-        </div>
+        </Alert>
       )}
 
       {/* Overview KPIs */}
@@ -293,77 +278,35 @@ export function AccountManagementModule() {
         <div className="space-y-5">
           {/* Tabs & Search */}
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-            <div
-              className="inline-flex flex-wrap items-center gap-1 p-1 rounded-xl bg-[#F1EEFA] dark:bg-[#202844]"
-              role="tablist"
-              aria-label="Account category filters"
-            >
-              {(
-                [
-                  { id: 'all', label: 'All Accounts' },
-                  { id: 'teachers', label: 'Teachers' },
-                  { id: 'students', label: 'Students' },
-                  { id: 'inactive', label: 'Inactive' },
-                ] as const
-              ).map((tab) => {
-                const active = activeTab === tab.id;
-                return (
-                  <button
-                    key={tab.id}
-                    type="button"
-                    role="tab"
-                    aria-selected={active}
-                    onClick={() => setActiveTab(tab.id)}
-                    className={cn(
-                      'px-3 py-1.5 text-xs font-semibold rounded-lg transition-colors whitespace-nowrap cursor-pointer',
-                      active
-                        ? 'bg-[#7552D9] dark:bg-[#8B5CF6] text-white shadow-xs'
-                        : 'text-[#687086] dark:text-[#A6B0C3] hover:text-[#17172B] dark:hover:text-[#F8FAFC]'
-                    )}
-                  >
-                    {tab.label}
-                  </button>
-                );
-              })}
-            </div>
+            <Tabs
+              ariaLabel="Account category filters"
+              value={activeTab}
+              onChange={setActiveTab}
+              items={[
+                { id: 'all', label: 'All Accounts' },
+                { id: 'teachers', label: 'Teachers' },
+                { id: 'students', label: 'Students' },
+                { id: 'inactive', label: 'Inactive' },
+              ]}
+            />
 
-            <div className="flex items-center gap-2 w-full md:w-72">
-              <div className="relative flex-1">
-                <Search
-                  className="w-4 h-4 text-[#687086] dark:text-[#A6B0C3] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                  aria-hidden="true"
-                />
-                <input
-                  type="search"
-                  value={searchQuery}
-                  onChange={(e) => setSearchQuery(e.target.value)}
-                  placeholder="Search ID or name..."
-                  aria-label="Search accounts by ID or name"
-                  className="w-full min-h-[40px] rounded-xl pl-9 pr-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                />
-              </div>
+            <div className="flex items-center gap-2 w-full md:w-80">
+              <SearchInput
+                value={searchQuery}
+                onValueChange={setSearchQuery}
+                placeholder="Search ID or name…"
+                aria-label="Search accounts by ID or name"
+                containerClassName="flex-1"
+              />
               {hasFilters && (
-                <button
-                  type="button"
-                  onClick={handleClearFilters}
-                  aria-label="Clear filters"
-                  className="min-h-[40px] px-2.5 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
-                >
-                  <X className="w-3.5 h-3.5" aria-hidden="true" />
-                  <span>Clear</span>
-                </button>
+                <Button variant="secondary" size="sm" onClick={handleClearFilters}>
+                  Reset
+                </Button>
               )}
             </div>
           </div>
 
-          {error && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-4 text-sm text-red-800 dark:text-red-300"
-            >
-              {error}
-            </div>
-          )}
+          {error && <Alert tone="error">{error}</Alert>}
 
           {/* Desktop Table */}
           <div className="hidden md:block">
@@ -395,13 +338,13 @@ export function AccountManagementModule() {
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="h-28 rounded-xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse"
+                    className="h-28 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
                   />
                 ))}
               </div>
             ) : accounts.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-6 text-center space-y-3">
-                <p className="text-sm font-medium text-[#17172B] dark:text-[#F8FAFC]">No matching accounts found</p>
+              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-3">
+                <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">No matching accounts found</p>
                 {hasFilters && (
                   <Button variant="secondary" size="sm" onClick={handleClearFilters}>
                     Clear Filters
@@ -412,21 +355,21 @@ export function AccountManagementModule() {
               accounts.map((acc) => (
                 <div
                   key={acc.accountId}
-                  className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-3 bg-white dark:bg-[#101426]/65"
+                  className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-3 bg-white dark:bg-[#151A1E]/70"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <button
                         type="button"
                         onClick={() => setDetailAccount(acc)}
-                        className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
+                        className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
                       >
                         {acc.accountId}
                       </button>
-                      <p className="mt-0.5 font-medium text-[#17172B] dark:text-[#F8FAFC]">
+                      <p className="mt-0.5 font-medium text-[#171D21] dark:text-[#F4F7F6]">
                         {acc.name}
                       </p>
-                      <p className="text-xs text-[#687086] dark:text-[#A6B0C3] capitalize">
+                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
                         {acc.role}
                         {acc.role === 'student' && acc.className
                           ? ` · ${acc.className} · ${acc.batchName ?? ''}`
@@ -439,7 +382,7 @@ export function AccountManagementModule() {
                     />
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E5E7EF] dark:border-[#303A55] text-xs text-[#687086] dark:text-[#A6B0C3]">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E2E8E5] dark:border-[#344047] text-xs text-[#68737C] dark:text-[#AAB6B4]">
                     <span className="font-mono">{acc.phone}</span>
                     <span>{formatShortDate(acc.createdAt)}</span>
                   </div>
@@ -481,23 +424,23 @@ export function AccountManagementModule() {
           subtitle={isFirebaseConnectedMode() ? 'Latest provisioned IDs in Cloud Firestore' : 'Latest provisioned IDs in the local development adapter'}
           padding="sm"
         >
-          <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55]">
+          <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
             {overview.recentAccounts.map((acc) => (
               <li key={acc.accountId} className="py-2.5 flex flex-wrap items-center justify-between gap-2 text-sm">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setDetailAccount(acc)}
-                    className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
+                    className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
                   >
                     {acc.accountId}
                   </button>
-                  <span className="font-medium text-[#17172B] dark:text-[#F8FAFC]">{acc.name}</span>
-                  <span className="text-xs text-[#687086] dark:text-[#A6B0C3] capitalize">
+                  <span className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{acc.name}</span>
+                  <span className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
                     {acc.role}
                   </span>
                 </div>
-                <span className="font-mono text-xs text-[#687086] dark:text-[#A6B0C3]">
+                <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
                   {formatShortDate(acc.createdAt)}
                 </span>
               </li>

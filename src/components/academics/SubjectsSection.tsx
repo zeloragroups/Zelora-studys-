@@ -1,12 +1,17 @@
 import { useState, type FormEvent } from 'react';
-import { Pencil, Plus, Power, Search, X } from 'lucide-react';
+import { Pencil, Plus, Power, X } from 'lucide-react';
 import { academicService } from '../../services';
 import { AcademicServiceError } from '../../services/contracts/academicService';
 import type { AuthPrincipal, ClassRecord, SubjectRecord } from '../../types';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Checkbox } from '../ui/Checkbox';
+import { IconButton } from '../ui/IconButton';
 import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { SearchInput } from '../ui/SearchInput';
+import { Select } from '../ui/Select';
 import { StatusText } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
 
@@ -123,7 +128,7 @@ export function SubjectsSection({
       key: 'subjectId',
       header: 'Subject ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
           {row.subjectId}
         </span>
       ),
@@ -133,9 +138,9 @@ export function SubjectsSection({
       header: 'Subject',
       render: (row) => (
         <div>
-          <p className="font-medium text-slate-900 dark:text-slate-100">{row.name}</p>
+          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.name}</p>
           {row.code && (
-            <p className="font-mono text-xs text-slate-500 dark:text-slate-400">{row.code}</p>
+            <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">{row.code}</p>
           )}
         </div>
       ),
@@ -144,7 +149,7 @@ export function SubjectsSection({
       key: 'classes',
       header: 'Associated Classes',
       render: (row) => (
-        <span className="text-xs text-slate-600 dark:text-slate-300">
+        <span className="text-xs text-[#343C42] dark:text-[#D4DDDC]">
           {formatClassesLabel(row.classIds)}
         </span>
       ),
@@ -165,24 +170,22 @@ export function SubjectsSection({
       align: 'right',
       render: (row) => (
         <div className="inline-flex items-center justify-end gap-1">
-          <button
-            type="button"
-            onClick={() => openEdit(row)}
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`Edit ${row.subjectId}`}
             title="Edit subject"
-            aria-label={`Edit ${row.subjectId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Pencil className="w-4 h-4" aria-hidden="true" />
-          </button>
-          <button
-            type="button"
-            onClick={() => void handleToggleStatus(row)}
+            onClick={() => openEdit(row)}
+            icon={<Pencil className="w-4 h-4" aria-hidden="true" />}
+          />
+          <IconButton
+            size="sm"
+            variant="ghost"
+            label={`${row.status === 'active' ? 'Deactivate' : 'Activate'} ${row.subjectId}`}
             title={row.status === 'active' ? 'Deactivate subject' : 'Activate subject'}
-            aria-label={`${row.status === 'active' ? 'Deactivate' : 'Activate'} ${row.subjectId}`}
-            className="w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#687086] hover:text-[#17172B] hover:bg-[#F1EEFA] dark:text-[#A6B0C3] dark:hover:text-[#F8FAFC] dark:hover:bg-[#202844] cursor-pointer transition-colors"
-          >
-            <Power className="w-4 h-4" aria-hidden="true" />
-          </button>
+            onClick={() => void handleToggleStatus(row)}
+            icon={<Power className="w-4 h-4" aria-hidden="true" />}
+          />
         </div>
       ),
     },
@@ -206,40 +209,33 @@ export function SubjectsSection({
       <div className="space-y-4">
         <div className="flex flex-col sm:flex-row gap-2.5 sm:items-center justify-between">
           <div className="flex items-center gap-2 flex-1 max-w-md">
-            <div className="relative flex-1">
-              <Search
-                className="w-4 h-4 text-[#687086] dark:text-[#A6B0C3] absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none"
-                aria-hidden="true"
-              />
-              <input
-                type="search"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search subject name, ID, or code..."
-                aria-label="Search subjects"
-                className="w-full min-h-[40px] rounded-xl pl-9 pr-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            {(searchQuery || classFilter !== 'all') && (
-              <button
-                type="button"
+            <SearchInput
+              value={searchQuery}
+              onValueChange={setSearchQuery}
+              placeholder="Search subject name, ID, or code…"
+              aria-label="Search subjects"
+              containerClassName="flex-1"
+            />
+            {classFilter !== 'all' && (
+              <Button
+                variant="secondary"
+                size="sm"
                 onClick={() => {
                   setSearchQuery('');
                   setClassFilter('all');
                 }}
-                className="min-h-[40px] px-2.5 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] hover:bg-[#F1EEFA] dark:hover:bg-[#202844] inline-flex items-center gap-1 cursor-pointer"
+                iconLeft={<X className="w-3.5 h-3.5" aria-hidden="true" />}
               >
-                <X className="w-3.5 h-3.5" aria-hidden="true" />
-                <span>Clear</span>
-              </button>
+                Reset
+              </Button>
             )}
           </div>
 
-          <select
+          <Select
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
             aria-label="Filter subjects by class"
-            className="min-h-[40px] rounded-xl px-3 py-2 text-sm bg-white dark:bg-[#101426] border border-[#E5E7EF] dark:border-[#303A55] text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+            containerClassName="sm:w-52"
           >
             <option value="all">All Classes</option>
             {classes.map((c) => (
@@ -247,7 +243,7 @@ export function SubjectsSection({
                 {c.name}
               </option>
             ))}
-          </select>
+          </Select>
         </div>
 
         <div className="hidden md:block">
@@ -263,22 +259,22 @@ export function SubjectsSection({
 
         <div className="md:hidden space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-sm text-slate-500 dark:text-slate-400 py-4 text-center">
+            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
               No matching subjects found.
             </p>
           ) : (
             filtered.map((sub) => (
               <div
                 key={sub.subjectId}
-                className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-4 space-y-2.5 bg-white dark:bg-[#101426]/65"
+                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       {sub.subjectId} {sub.code ? `· ${sub.code}` : ''}
                     </p>
-                    <p className="font-medium text-[#17172B] dark:text-[#F8FAFC]">{sub.name}</p>
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{sub.name}</p>
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       {formatClassesLabel(sub.classIds)}
                     </p>
                   </div>
@@ -314,14 +310,7 @@ export function SubjectsSection({
         subtitle="Prevented from duplicating the same subject name within the same class."
       >
         <form onSubmit={handleSubmit} className="space-y-4">
-          {formError && (
-            <div
-              role="alert"
-              className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 p-3 text-xs text-red-800 dark:text-red-300"
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
           <Input
             label="Subject Name"
             value={name}
@@ -336,28 +325,19 @@ export function SubjectsSection({
             placeholder="e.g. MTH-10"
           />
           <div className="space-y-2">
-            <span className="block text-sm font-medium text-slate-800 dark:text-slate-200">
+            <span className="block text-sm font-medium text-[#20262B] dark:text-[#F4F7F6]">
               Associated Classes
             </span>
-            <div className="space-y-2 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426] p-3 max-h-44 overflow-y-auto">
+            <div className="space-y-2.5 rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E] p-3.5 max-h-44 overflow-y-auto">
               {classes.map((c) => {
                 const checked = selectedClassIds.includes(c.classId);
                 return (
-                  <label
+                  <Checkbox
                     key={c.classId}
-                    className="flex items-center gap-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] cursor-pointer"
-                  >
-                    <input
-                      type="checkbox"
-                      checked={checked}
-                      onChange={() => toggleClassId(c.classId)}
-                      className="w-4 h-4 rounded accent-[#7552D9] dark:accent-[#8B5CF6]"
-                    />
-                    <span>
-                      {c.name}{' '}
-                      <span className="font-mono text-xs text-slate-500">({c.classId})</span>
-                    </span>
-                  </label>
+                    checked={checked}
+                    onChange={() => toggleClassId(c.classId)}
+                    label={`${c.name} (${c.classId})`}
+                  />
                 );
               })}
             </div>

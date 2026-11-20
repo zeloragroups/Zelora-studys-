@@ -1,0 +1,623 @@
+SCHOLARS ACADEMY — FINAL SECURITY AUDIT & PRODUCTION READINESS
+
+Mission
+
+Perform a comprehensive, independent security and privacy audit of the existing Scholars Academy Tuition Centre Management Ecosystem.
+
+The application has completed Phases 1–10 and its Mint, Charcoal and Crisp White UI/UX redesign.
+
+Your task is now to identify vulnerabilities, verify authorization boundaries, protect student and teacher information, review Firebase configuration and determine whether the application is genuinely safe for controlled production use.
+
+This is a security audit and necessary security-hardening task.
+
+Do not redesign the UI. Do not add new features. Do not change the existing visual identity. Do not remove working functionality.
+
+The application must remain compatible with the Firebase Spark free plan wherever possible.
+
+---
+
+1. STRICT PROJECT PRESERVATION
+
+Before changing anything:
+
+1. Inspect the entire repository.
+2. Inspect Firebase configuration.
+3. Inspect Firestore Security Rules.
+4. Inspect Storage Security Rules.
+5. Inspect Authentication implementation.
+6. Inspect every service in "src/services/firebase/".
+7. Inspect Cloud Functions source without assuming it is deployed.
+8. Inspect Admin, Teacher and Student authorization logic.
+9. Inspect account creation and password-reset workflows.
+10. Inspect environment variables and deployment documentation.
+11. Inspect existing security tests.
+12. Create a list of identified vulnerabilities and their severity.
+
+Preserve:
+
+- React 19.
+- TypeScript.
+- Vite 8.
+- Tailwind CSS v4.
+- Motion.
+- Lucide React.
+- Firebase Authentication.
+- Cloud Firestore.
+- Firebase Storage.
+- Existing service architecture.
+- Existing database schema.
+- Existing UI and navigation.
+- Existing application features.
+
+Do not introduce PostgreSQL, paid AI APIs, external authentication providers or unnecessary third-party services.
+
+---
+
+2. AUTHENTICATION SECURITY
+
+There are exactly three application roles.
+
+Admin
+
+Admin authentication must use Google Sign-In only.
+
+The only authorized Admin Gmail is:
+
+"07alphabro@gmail.com"
+
+Requirements:
+
+- Only this authorized account can access Admin.
+- Other Google accounts must be denied.
+- Do not allow public Admin registration.
+- Do not trust frontend email checks as the sole authorization mechanism.
+- Verify the authenticated Google identity through Firebase Authentication.
+- Enforce Admin authorization through trusted authorization checks and Firestore Security Rules.
+- Verify the Admin account is active.
+- Do not permit unauthorized users to create their own Admin privileges.
+- Prevent unauthorized modification of Admin allowlists.
+- Protect changes to the Authorized Admin Gmail setting.
+- Require secure reauthentication and a trusted authorization process before changing the authorized Gmail.
+
+Check whether Admin authorization is based on a stable Firebase UID, rather than relying only on an editable email field.
+
+If the existing implementation uses an unsafe bootstrap process, report and correct it without locking out the legitimate Admin.
+
+Teacher
+
+Teacher authentication must remain:
+
+- Teacher ID + Password.
+- No Google Sign-In.
+- No public registration.
+- No access to Admin pages.
+- No ability to create Admin accounts.
+
+Student
+
+Student authentication must remain:
+
+- Student ID + Password.
+- No Google Sign-In.
+- No public registration.
+- No access to Admin pages.
+- No ability to access another Student's private information.
+
+Session security
+
+Audit:
+
+- Firebase authentication state.
+- Token validation.
+- Session expiration.
+- Deactivated accounts.
+- Revoked access.
+- Logout behaviour.
+- Authentication race conditions.
+- Role changes during active sessions.
+- Direct route access without authorization.
+
+Do not rely on hiding navigation links to protect routes.
+
+Every protected operation must enforce authorization independently.
+
+---
+
+3. FIREBASE FIRESTORE SECURITY RULES
+
+Perform a complete review of "firestore.rules".
+
+Use deny-by-default rules.
+
+Check every collection and nested document.
+
+Verify:
+
+- Authentication is required for protected data.
+- Admin-only collections are Admin-only.
+- Teacher queries are restricted to assigned classes and permitted records.
+- Students can access only their own records.
+- Students cannot modify fee balances.
+- Students cannot verify payments.
+- Teachers cannot modify Admin settings.
+- Teachers cannot access other Teachers' private records.
+- Teachers cannot access unrelated Students.
+- Students cannot access examination answer keys.
+- Students cannot access private teacher notes.
+- Unreleased marks remain private.
+- Payment verification remains Admin-only.
+- Audit records cannot be modified or deleted by unauthorized users.
+- Account mappings cannot be modified by clients.
+- Role and ownership fields cannot be changed by unauthorized users.
+
+Review all operations separately:
+
+- get
+- list
+- create
+- update
+- delete
+
+Do not assume that a secure "get" rule automatically makes a "list" query secure.
+
+Firestore queries must satisfy the security rules for every possible returned document.
+
+Review array-based ownership checks carefully, including "teacherUids" and "studentUid".
+
+Do not weaken authorization merely to make a query work.
+
+Check for:
+
+- Missing field validation.
+- Unexpected fields.
+- Type confusion.
+- Invalid UID values.
+- Unauthorized ownership changes.
+- Privilege escalation.
+- Unrestricted collection queries.
+- Unsafe wildcard matches.
+- Rules that accidentally grant broad access.
+
+Preserve legitimate application workflows while correcting vulnerabilities.
+
+---
+
+4. FIREBASE STORAGE SECURITY
+
+Review "storage.rules".
+
+Verify:
+
+- Only authorized Admins can upload centre branding.
+- Only permitted image types are accepted.
+- File size limits are enforced.
+- Unauthorized users cannot overwrite protected files.
+- Unauthorized users cannot delete branding files.
+- Students and Teachers cannot upload arbitrary files.
+- Private files are not publicly exposed.
+- Download permissions are appropriate.
+- Storage paths cannot be manipulated to access unrelated resources.
+
+Check whether the Storage rules rely on trustworthy authorization data.
+
+Do not make private files public merely to simplify the frontend.
+
+---
+
+5. ACCOUNT CREATION AND PASSWORD SECURITY
+
+Audit the complete account lifecycle.
+
+Admin must be the only role allowed to manage Teacher and Student accounts.
+
+Check:
+
+- Unique Teacher IDs.
+- Unique Student IDs.
+- Account creation.
+- Account activation.
+- Account deactivation.
+- Password reset.
+- Password changes.
+- Duplicate account prevention.
+- Account deletion.
+- Authentication mapping.
+- UID ownership.
+- Audit history.
+
+Never store plaintext passwords in Firestore, localStorage or logs.
+
+Never expose password hashes or authentication tokens.
+
+Never allow a user to modify their own role by changing a client-side request.
+
+Inspect the current Firebase Spark-compatible account creation implementation.
+
+Do not falsely claim that Cloud Functions are deployed.
+
+Do not require Blaze as part of this audit.
+
+If a secure account-management operation cannot be completed under the current Spark architecture, document the limitation honestly and provide a safe alternative.
+
+Do not replace secure authentication with a weak custom password system.
+
+---
+
+6. FRONTEND SECURITY
+
+Search the entire frontend codebase for:
+
+- Firebase Admin SDK imports.
+- Service-account credentials.
+- Private API keys.
+- Hardcoded passwords.
+- Authentication tokens.
+- Sensitive configuration.
+- Unprotected Admin routes.
+- Client-side role escalation.
+- Direct unauthorized Firestore access.
+- Sensitive information in browser logs.
+- Unsafe HTML rendering.
+- Dangerous use of "dangerouslySetInnerHTML".
+- Unsafe URL handling.
+- Unvalidated user input.
+- Insecure localStorage usage.
+
+Firebase Web configuration is public client configuration and is not equivalent to a private service-account credential.
+
+However:
+
+- Do not expose private service-account keys.
+- Do not expose backend secrets.
+- Do not embed private credentials in frontend environment variables.
+- Do not expose passwords, tokens or personal information in logs.
+
+Inspect the production build output for accidental secrets.
+
+Do not remove required public Firebase client configuration.
+
+---
+
+7. DATA PRIVACY AND ROLE ISOLATION
+
+Student and Teacher information is sensitive.
+
+Review the following data:
+
+- Student names.
+- Student IDs.
+- Attendance.
+- Academic performance.
+- Examination marks.
+- Homework submissions.
+- Fees.
+- Payment claims.
+- Receipts.
+- Teacher assignments.
+- Teacher salary.
+- Account records.
+- Notifications.
+- Audit records.
+
+Enforce least privilege.
+
+A Student must never be able to access another Student's private information.
+
+A Teacher must only access information required for their assigned responsibilities.
+
+An Admin must access administrative information only through the authenticated Admin role.
+
+Verify that unauthorized data is not accidentally exposed through:
+
+- Dashboard summaries.
+- Search results.
+- Charts.
+- Notifications.
+- Query listeners.
+- Shared application settings.
+- Error messages.
+- Browser storage.
+
+Do not place private Student or Teacher information in publicly readable application settings.
+
+---
+
+8. ADMIN SETTINGS SECURITY
+
+Audit the existing Admin Settings module.
+
+The following settings must remain editable only by the authorized Admin:
+
+- Authorized Admin Gmail.
+- UPI ID.
+- Application name.
+- Application tagline.
+- Centre details.
+- Logo and branding.
+- Academic defaults.
+- Theme preferences.
+- Other existing system settings.
+
+Verify:
+
+- Teachers cannot change settings.
+- Students cannot change settings.
+- Unauthenticated users cannot change settings.
+- Frontend-only checks are not the only protection.
+- Sensitive settings cannot be modified through direct Firestore requests.
+- Changes are validated.
+- Important changes are recorded in audit history.
+- Admin Gmail changes require secure reauthentication and authorization.
+
+Do not let the Admin Gmail setting itself become an unrestricted way to grant Admin access.
+
+---
+
+9. FINANCIAL AND UPI SECURITY
+
+Preserve the existing direct UPI workflow.
+
+There must be no Razorpay or payment gateway.
+
+Review:
+
+- Fee configurations.
+- Student fee balances.
+- UPI configuration.
+- Payment claims.
+- UTR references.
+- Admin verification.
+- Payment receipts.
+- Financial audit records.
+- Teacher salary information.
+
+Verify that:
+
+- Students cannot modify their fee balance.
+- Students cannot mark their own payments as verified.
+- Teachers cannot approve payments.
+- Only authorized Admins can verify claims.
+- Receipts are generated only after successful verification.
+- Duplicate payment claims are handled safely.
+- Payment status cannot be changed through unauthorized client requests.
+- Financial audit records cannot be tampered with by unauthorized users.
+
+Never treat a screenshot or submitted UTR as proof of successful payment.
+
+Admin must independently verify payments.
+
+---
+
+10. APPLICATION CONFIGURATION AND FIREBASE COSTS
+
+Keep the application compatible with Firebase Spark.
+
+Preserve:
+
+"VITE_FIREBASE_FUNCTIONS_ENABLED=false"
+
+Do not activate paid Cloud Functions.
+
+Do not require a Blaze upgrade.
+
+Review:
+
+- Firebase initialization.
+- Environment variable validation.
+- Firestore listeners.
+- Listener cleanup.
+- Query limits.
+- Unnecessary reads.
+- Repeated requests.
+- Large document writes.
+- Unbounded list queries.
+- Storage access.
+- Authentication configuration.
+
+Avoid excessive Firestore reads and writes.
+
+Use pagination and limits where appropriate.
+
+Do not remove existing functionality just to reduce usage.
+
+Clearly document features that cannot be securely supported under the current free-plan architecture.
+
+Never silently fall back from production Firebase mode to local demo data.
+
+---
+
+11. TESTING — SECURITY ATTACK SCENARIOS
+
+Create or improve automated security tests.
+
+Test at least the following scenarios:
+
+1. Unauthenticated user reads private Student data.
+2. Unauthenticated user reads Teacher data.
+3. Unauthorized Google account accesses Admin.
+4. Student accesses another Student's record.
+5. Teacher accesses an unassigned class.
+6. Teacher accesses another Teacher's private records.
+7. Student changes their own role.
+8. Teacher changes their own role.
+9. Student modifies their fee balance.
+10. Student verifies their own payment.
+11. Teacher approves a payment claim.
+12. Unauthorized user changes the Admin Gmail.
+13. Unauthorized user changes UPI settings.
+14. Student reads examination answer keys.
+15. Student reads private teacher notes.
+16. Unauthorized user changes audit records.
+17. Unauthorized user modifies account mappings.
+18. Deactivated account accesses protected data.
+19. User accesses an Admin route directly.
+20. Malicious or unexpected input attempts to bypass validation.
+
+For each scenario, verify that the unauthorized operation is rejected.
+
+Also test legitimate workflows to prevent accidental lockouts.
+
+Use Firebase Emulator tests where possible.
+
+If Java is required and unavailable, report that the emulator tests were not executed. Do not claim they passed.
+
+Do not deploy new security rules without reviewing their impact and verifying legitimate application queries.
+
+---
+
+12. SEVERITY-BASED SECURITY REPORT
+
+Classify findings as:
+
+- CRITICAL — Immediate risk of account takeover, privilege escalation or sensitive data exposure.
+- HIGH — Serious unauthorized access or data modification risk.
+- MEDIUM — Meaningful weakness requiring correction.
+- LOW — Limited security or privacy concern.
+- INFORMATIONAL — Improvement recommendation.
+
+For every finding provide:
+
+1. Finding ID.
+2. Severity.
+3. Affected file or component.
+4. Explanation.
+5. Potential impact.
+6. Reproduction method.
+7. Recommended correction.
+8. Whether the correction was implemented.
+9. Test evidence.
+
+Do not report a vulnerability as fixed unless the relevant code was actually changed and verified.
+
+---
+
+13. IMPLEMENTATION RULES
+
+Fix verified security vulnerabilities carefully.
+
+Do not:
+
+- Redesign the application.
+- Change the Mint/Charcoal/White palette.
+- Modify the existing navigation.
+- Add Quick Actions.
+- Add new application features.
+- Change authentication providers.
+- Change the authorized Admin Gmail.
+- Remove existing business modules.
+- Introduce paid services.
+- Weaken Firestore rules.
+- Remove security tests.
+- Delete existing user data.
+- Perform destructive database migrations.
+- Claim that unexecuted tests passed.
+
+If a change could lock out the legitimate Admin or affect production data, stop and explain the risk before applying it.
+
+Preserve a clear record of every security-related code change.
+
+---
+
+14. FINAL VERIFICATION
+
+Run all available checks:
+
+- TypeScript.
+- Production build.
+- ESLint.
+- Existing Phase 2–10 verification suites.
+- Firebase configuration checks.
+- Firestore rules tests.
+- Storage rules review.
+- Authentication tests.
+- Role isolation tests.
+- Frontend secret scans.
+- Responsive regression checks.
+
+Review the final changes for unintended effects.
+
+If a test cannot run, explain exactly why.
+
+---
+
+15. FINAL PRODUCTION READINESS REPORT
+
+At completion, provide:
+
+A. Overall status
+
+Choose one:
+
+- NOT SAFE FOR PRODUCTION.
+- CONDITIONALLY READY.
+- READY FOR CONTROLLED PRODUCTION USE.
+
+Never claim fully secure or impossible to hack.
+
+B. Security findings
+
+List all Critical, High, Medium, Low and Informational findings.
+
+C. Fixes implemented
+
+List exact files changed and the security improvement made.
+
+D. Authentication
+
+Confirm the status of:
+
+- Admin Google Sign-In.
+- Authorized Gmail restriction.
+- Teacher ID/password.
+- Student ID/password.
+- Account deactivation.
+- Session handling.
+
+E. Firebase security
+
+Report:
+
+- Firestore Rules.
+- Storage Rules.
+- Role isolation.
+- Admin settings protection.
+- Payment verification protection.
+
+F. Testing
+
+List every executed test and its actual result.
+
+Clearly separate executed tests from tests that could not run.
+
+G. Firebase costs
+
+Confirm whether the application remains Spark-compatible.
+
+Identify any feature that requires Blaze or another paid service.
+
+H. Remaining risks
+
+List everything that must be completed manually before broad deployment.
+
+I. Final recommendation
+
+Explain whether the application is suitable for:
+
+- Private Admin testing.
+- Limited Teacher testing.
+- Limited Student testing.
+- Wider production deployment.
+
+---
+
+FINAL COMMAND
+
+Start the audit now.
+
+Inspect the existing codebase before changing anything.
+
+Prioritize authentication, Firestore Rules, role isolation, account management and data privacy.
+
+Fix verified vulnerabilities without changing the existing UI/UX or business functionality.
+
+Be technically honest. Security is more important than reporting a successful completion.

@@ -21,11 +21,18 @@ import type {
   TeacherSubmissionViewItem,
 } from '../../types';
 import { formatDateTime } from '../../utils/formatters';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { Checkbox } from '../ui/Checkbox';
+import { Input } from '../ui/Input';
 import { Modal } from '../ui/Modal';
+import { PageHeader } from '../ui/PageHeader';
+import { SearchInput } from '../ui/SearchInput';
+import { Select } from '../ui/Select';
 import { StatusText, type SemanticTone } from '../ui/StatusText';
 import { Table, type TableColumn } from '../ui/Table';
+import { Textarea } from '../ui/Textarea';
 
 const INDICATOR_META: Record<
   HomeworkComputedIndicator,
@@ -157,11 +164,9 @@ export function TeacherHomeworkModule() {
 
   if (!principal || principal.role !== 'teacher') {
     return (
-      <Card title="Access Restricted">
-        <p className="text-sm text-[#D94C5C] dark:text-[#F16B75]">
-          Homework management is restricted to active Teacher accounts.
-        </p>
-      </Card>
+      <Alert tone="error" title="Access Restricted">
+        Homework management is restricted to active Teacher accounts.
+      </Alert>
     );
   }
 
@@ -327,17 +332,17 @@ export function TeacherHomeworkModule() {
       header: 'Homework',
       render: (row) => (
         <div className="space-y-0.5 max-w-xs">
-          <div className="flex items-center gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
-            <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+          <div className="flex items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
               {row.homework.id}
             </span>
             <span aria-hidden="true">·</span>
             <span>{row.subjectName}</span>
           </div>
-          <p className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
             {row.homework.title}
           </p>
-          <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -350,7 +355,7 @@ export function TeacherHomeworkModule() {
         const meta = INDICATOR_META[row.indicator];
         return (
           <div className="space-y-1">
-            <p className="text-xs font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+            <p className="text-xs font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
               {formatDateTime(row.homework.dueAt)}
             </p>
             <StatusText tone={meta.tone} label={meta.label} />
@@ -363,10 +368,10 @@ export function TeacherHomeworkModule() {
       header: 'Submissions',
       render: (row) => (
         <div className="text-xs space-y-0.5 tabular-nums font-mono">
-          <p className="text-[#17172B] dark:text-[#F8FAFC]">
+          <p className="text-[#171D21] dark:text-[#F4F7F6]">
             Submitted: {row.submittedCount} / {row.totalAssignedStudents}
           </p>
-          <p className="text-[#687086] dark:text-[#A6B0C3]">
+          <p className="text-[#68737C] dark:text-[#AAB6B4]">
             Reviewed: {row.reviewedCount} · Pending: {row.pendingCount}
           </p>
         </div>
@@ -448,68 +453,44 @@ export function TeacherHomeworkModule() {
 
   return (
     <div className="space-y-6">
-      <div className="flex flex-wrap items-start justify-between gap-4">
-        <div>
-          <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
-            Teacher Operations · Text-Only Homework (No File/PDF Uploads)
-          </p>
-          <h1 className="mt-1 text-2xl font-bold tracking-tight text-[#17172B] dark:text-[#F8FAFC] text-balance">
-            Homework Management & Submission Review
-          </h1>
-        </div>
-        <Button
-          variant="primary"
-          onClick={openCreateModal}
-          disabled={assignedCombinations.length === 0}
-          iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
-        >
-          Assign Homework
-        </Button>
-      </div>
+      <PageHeader
+        eyebrow="Teacher Operations · Text-Only Homework (No File/PDF Uploads)"
+        title="Homework Management & Submission Review"
+        rightSlot={
+          <Button
+            variant="primary"
+            onClick={openCreateModal}
+            disabled={assignedCombinations.length === 0}
+            iconLeft={<Plus className="w-4 h-4" aria-hidden="true" />}
+          >
+            Assign Homework
+          </Button>
+        }
+      />
 
       {feedbackBanner && (
-        <div
-          role="status"
-          className="rounded-xl border border-[#168A62]/30 dark:border-[#22C58B]/30 bg-[#168A62]/10 dark:bg-[#22C58B]/15 p-3.5 text-sm text-[#168A62] dark:text-[#22C58B] flex items-center justify-between gap-3"
-        >
-          <span>{feedbackBanner}</span>
-          <button
-            type="button"
-            onClick={() => setFeedbackBanner(null)}
-            className="text-xs font-medium underline cursor-pointer shrink-0"
-          >
-            Dismiss
-          </button>
-        </div>
+        <Alert tone="success" onDismiss={() => setFeedbackBanner(null)}>
+          {feedbackBanner}
+        </Alert>
       )}
 
-      {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3.5 text-sm text-[#D94C5C] dark:text-[#F16B75]"
-        >
-          {error}
-        </div>
-      )}
+      {error && <Alert tone="error">{error}</Alert>}
 
       <Card
         title="Assigned Homework List"
         subtitle="Draft, publish, close, archive, and review text responses from assigned batch students."
       >
         <div className="grid gap-3 sm:grid-cols-3 mb-5">
-          <input
-            type="search"
+          <SearchInput
             value={searchText}
-            onChange={(e) => setSearchText(e.target.value)}
+            onValueChange={setSearchText}
             placeholder="Search by ID, title, or instructions..."
             aria-label="Search homework"
-            className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
           />
-          <select
+          <Select
             value={classFilter}
             onChange={(e) => setClassFilter(e.target.value)}
             aria-label="Filter by class"
-            className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
           >
             <option value="all">All Assigned Classes</option>
             {(scope?.classes ?? []).map((cls) => (
@@ -517,19 +498,18 @@ export function TeacherHomeworkModule() {
                 {cls.name}
               </option>
             ))}
-          </select>
-          <select
+          </Select>
+          <Select
             value={statusFilter}
             onChange={(e) => setStatusFilter(e.target.value as 'all' | HomeworkStatus)}
             aria-label="Filter by status"
-            className="min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
           >
             <option value="all">All Statuses</option>
             <option value="draft">Draft</option>
             <option value="published">Published</option>
             <option value="closed">Closed</option>
             <option value="archived">Archived</option>
-          </select>
+          </Select>
         </div>
 
         <Table
@@ -545,19 +525,19 @@ export function TeacherHomeworkModule() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-xs font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                    <p className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                       {row.homework.id} · {row.subjectName}
                     </p>
-                    <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                       {row.homework.title}
                     </p>
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                       {row.className} · {row.batchName}
                     </p>
                   </div>
                   <StatusText tone={meta.tone} label={meta.label} />
                 </div>
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
                   <span>Due {formatDateTime(row.homework.dueAt)}</span>
                   <span>
                     {row.submittedCount}/{row.totalAssignedStudents} submitted · {row.reviewedCount} reviewed
@@ -613,138 +593,93 @@ export function TeacherHomeworkModule() {
         maxWidthClass="max-w-xl"
       >
         <form onSubmit={handleSaveHomework} className="space-y-4">
-          {formError && (
-            <div
-              role="alert"
-              className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-3 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-            >
-              {formError}
-            </div>
-          )}
+          {formError && <Alert tone="error">{formError}</Alert>}
 
           {!editingHomework && (
             <div className="grid gap-3 sm:grid-cols-3">
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Class
-                </label>
-                <select
-                  value={formClassId}
-                  onChange={(e) => handleClassChange(e.target.value)}
-                  required
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {(scope?.classes ?? []).map((c) => (
-                    <option key={c.classId} value={c.classId}>
-                      {c.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Batch
-                </label>
-                <select
-                  value={formBatchId}
-                  onChange={(e) => handleBatchChange(e.target.value)}
-                  required
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {availableBatchesForClass.map((b) => (
-                    <option key={b.batchId} value={b.batchId}>
-                      {b.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-              <div>
-                <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                  Subject
-                </label>
-                <select
-                  value={formSubjectId}
-                  onChange={(e) => setFormSubjectId(e.target.value)}
-                  required
-                  className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                >
-                  {availableSubjectsForCombo.map((s) => (
-                    <option key={s.subjectId} value={s.subjectId}>
-                      {s.name}
-                    </option>
-                  ))}
-                </select>
-              </div>
+              <Select
+                label="Class"
+                value={formClassId}
+                onChange={(e) => handleClassChange(e.target.value)}
+                required
+              >
+                {(scope?.classes ?? []).map((c) => (
+                  <option key={c.classId} value={c.classId}>
+                    {c.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Batch"
+                value={formBatchId}
+                onChange={(e) => handleBatchChange(e.target.value)}
+                required
+              >
+                {availableBatchesForClass.map((b) => (
+                  <option key={b.batchId} value={b.batchId}>
+                    {b.name}
+                  </option>
+                ))}
+              </Select>
+              <Select
+                label="Subject"
+                value={formSubjectId}
+                onChange={(e) => setFormSubjectId(e.target.value)}
+                required
+              >
+                {availableSubjectsForCombo.map((s) => (
+                  <option key={s.subjectId} value={s.subjectId}>
+                    {s.name}
+                  </option>
+                ))}
+              </Select>
             </div>
           )}
 
-          <div>
-            <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-              Homework Title
-            </label>
-            <input
-              type="text"
-              value={formTitle}
-              onChange={(e) => setFormTitle(e.target.value)}
-              required
-              placeholder="e.g., Chapter 4 Quadratic Formula Practice"
-              className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
+          <Input
+            label="Homework Title"
+            type="text"
+            value={formTitle}
+            onChange={(e) => setFormTitle(e.target.value)}
+            required
+            placeholder="e.g., Chapter 4 Quadratic Formula Practice"
+          />
 
-          <div>
-            <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-              Text Instructions
-            </label>
-            <textarea
-              rows={4}
-              value={formInstructions}
-              onChange={(e) => setFormInstructions(e.target.value)}
-              required
-              placeholder="Write clear, step-by-step instructions. Students will reply with text only."
-              className="w-full rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] p-3 text-sm text-[#17172B] dark:text-[#F8FAFC] placeholder:text-[#687086] dark:placeholder:text-[#A6B0C3] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-            />
-          </div>
+          <Textarea
+            label="Text Instructions"
+            rows={4}
+            value={formInstructions}
+            onChange={(e) => setFormInstructions(e.target.value)}
+            required
+            placeholder="Write clear, step-by-step instructions. Students will reply with text only."
+          />
 
           <div className="grid gap-3 sm:grid-cols-2">
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Due Date & Time
-              </label>
-              <input
-                type="datetime-local"
-                value={formDueAt}
-                onChange={(e) => setFormDueAt(e.target.value)}
-                required
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
-            <div>
-              <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                Maximum Marks (Optional)
-              </label>
-              <input
-                type="number"
-                min={1}
-                step="1"
-                value={formMaxMarks}
-                onChange={(e) => setFormMaxMarks(e.target.value)}
-                placeholder="Leave blank if ungraded"
-                className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-              />
-            </div>
+            <Input
+              label="Due Date & Time"
+              type="datetime-local"
+              value={formDueAt}
+              onChange={(e) => setFormDueAt(e.target.value)}
+              required
+            />
+            <Input
+              label="Maximum Marks (Optional)"
+              type="number"
+              min={1}
+              step="1"
+              value={formMaxMarks}
+              onChange={(e) => setFormMaxMarks(e.target.value)}
+              placeholder="Leave blank if ungraded"
+              className="tabular-nums"
+            />
           </div>
 
           {!editingHomework && (
-            <label className="flex items-center gap-2 text-sm text-[#17172B] dark:text-[#F8FAFC] cursor-pointer">
-              <input
-                type="checkbox"
-                checked={formPublish}
-                onChange={(e) => setFormPublish(e.target.checked)}
-                className="w-4 h-4 rounded border-[#E5E7EF] dark:border-[#303A55] accent-[#7552D9] dark:accent-[#8B5CF6]"
-              />
-              <span>Publish immediately to enrolled batch students</span>
-            </label>
+            <Checkbox
+              checked={formPublish}
+              onChange={setFormPublish}
+              label="Publish immediately to enrolled batch students"
+            />
           )}
 
           <div className="flex justify-end gap-2 pt-2">
@@ -772,20 +707,20 @@ export function TeacherHomeworkModule() {
         {previewItem && (
           <div className="space-y-4">
             <div>
-              <h3 className="text-base font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+              <h3 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                 {previewItem.homework.title}
               </h3>
-              <p className="mt-1 text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 Due {formatDateTime(previewItem.homework.dueAt)}
                 {previewItem.homework.maximumMarks
                   ? ` · Maximum Marks: ${previewItem.homework.maximumMarks}`
                   : ' · Qualitative Review (No Numeric Marks)'}
               </p>
             </div>
-            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-4 text-sm text-[#17172B] dark:text-[#F8FAFC] whitespace-pre-line">
+            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/65 p-4 text-sm text-[#171D21] dark:text-[#F4F7F6] whitespace-pre-line">
               {previewItem.homework.instructions}
             </div>
-            <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
               Students see a text-only response box here. File/PDF/image uploads are disabled across the platform.
             </p>
           </div>
@@ -809,20 +744,20 @@ export function TeacherHomeworkModule() {
         maxWidthClass="max-w-3xl"
       >
         {rosterLoading || !rosterData ? (
-          <div className="h-32 rounded-xl bg-[#F1EEFA] dark:bg-[#202844] animate-pulse" />
+          <div className="h-32 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse" />
         ) : (
           <div className="space-y-6">
             {/* Pending Students */}
             <div>
-              <h3 className="text-xs font-semibold text-[#687086] dark:text-[#A6B0C3] mb-2">
+              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
                 Not Yet Submitted ({rosterData.pendingStudents.length})
               </h3>
               {rosterData.pendingStudents.length === 0 ? (
-                <p className="text-xs text-[#168A62] dark:text-[#22C58B]">
+                <p className="text-xs text-[#168A63] dark:text-[#42DDA9]">
                   All eligible batch students have submitted a response.
                 </p>
               ) : (
-                <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                   {rosterData.pendingStudents
                     .map((s) => `${s.studentName} (${s.studentId})`)
                     .join(', ')}
@@ -832,28 +767,28 @@ export function TeacherHomeworkModule() {
 
             {/* Received Submissions */}
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold text-[#687086] dark:text-[#A6B0C3]">
+              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
                 Received Submissions ({rosterData.submissions.length})
               </h3>
               {rosterData.submissions.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-[#E5E7EF] dark:border-[#303A55] p-5 text-center text-xs text-[#687086] dark:text-[#A6B0C3]">
+                <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-5 text-center text-xs text-[#68737C] dark:text-[#AAB6B4]">
                   No student responses submitted yet.
                 </div>
               ) : (
-                <div className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] border-t border-b border-[#E5E7EF] dark:border-[#303A55]">
+                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
                   {rosterData.submissions.map((item) => (
                     <div
                       key={item.submission.id}
                       className="py-3 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
                     >
                       <div className="space-y-1 min-w-0">
-                        <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                           {item.studentName}{' '}
-                          <span className="font-mono text-xs text-[#7552D9] dark:text-[#A78BFA]">
+                          <span className="font-mono text-xs text-[#168A63] dark:text-[#42DDA9]">
                             ({item.submission.studentId})
                           </span>
                         </p>
-                        <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
+                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
                           Rev #{item.submission.revisionNumber} ·{' '}
                           {formatDateTime(item.submission.submittedAt)} · Status:{' '}
                           <span className="font-medium capitalize">
@@ -864,7 +799,7 @@ export function TeacherHomeworkModule() {
                               item.maximumMarks ? ` / ${item.maximumMarks}` : ''
                             }`}
                         </p>
-                        <p className="text-xs text-[#17172B] dark:text-[#F8FAFC] whitespace-pre-line">
+                        <p className="text-xs text-[#171D21] dark:text-[#F4F7F6] whitespace-pre-line">
                           {item.submission.responseText}
                         </p>
                       </div>
@@ -885,113 +820,83 @@ export function TeacherHomeworkModule() {
             {activeSubmission && (
               <form
                 onSubmit={handleSubmitReview}
-                className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/65 p-4 space-y-3"
+                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/65 p-4 space-y-3"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <h4 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                     Review {activeSubmission.studentName} ({activeSubmission.submission.id})
                   </h4>
                   <button
                     type="button"
                     onClick={() => setActiveSubmission(null)}
-                    className="text-xs text-[#7552D9] dark:text-[#A78BFA] underline cursor-pointer"
+                    className="text-xs text-[#168A63] dark:text-[#42DDA9] underline cursor-pointer"
                   >
                     Close form
                   </button>
                 </div>
 
-                {reviewError && (
-                  <div
-                    role="alert"
-                    className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/30 bg-[#D94C5C]/10 dark:bg-[#F16B75]/15 p-2.5 text-xs text-[#D94C5C] dark:text-[#F16B75]"
-                  >
-                    {reviewError}
-                  </div>
-                )}
+                {reviewError && <Alert tone="error">{reviewError}</Alert>}
 
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div>
-                    <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                      Review Decision
-                    </label>
-                    <select
-                      value={reviewAction}
-                      onChange={(e) =>
-                        setReviewAction(
-                          e.target.value as
-                            | 'reviewed'
-                            | 'returned_for_correction'
-                            | 'reopened'
-                        )
-                      }
-                      className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                    >
-                      <option value="reviewed">Mark as Reviewed</option>
-                      <option value="returned_for_correction">Return for Correction</option>
-                      <option value="reopened">Reopen for Resubmission</option>
-                    </select>
-                  </div>
+                  <Select
+                    label="Review Decision"
+                    value={reviewAction}
+                    onChange={(e) =>
+                      setReviewAction(
+                        e.target.value as
+                          | 'reviewed'
+                          | 'returned_for_correction'
+                          | 'reopened'
+                      )
+                    }
+                  >
+                    <option value="reviewed">Mark as Reviewed</option>
+                    <option value="returned_for_correction">Return for Correction</option>
+                    <option value="reopened">Reopen for Resubmission</option>
+                  </Select>
 
-                  <div>
-                    <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                      Marks Awarded
-                      {activeSubmission.maximumMarks !== undefined
-                        ? ` (0–${activeSubmission.maximumMarks})`
-                        : ''}
-                    </label>
-                    <input
-                      type="number"
-                      min={0}
-                      max={activeSubmission.maximumMarks}
-                      step="0.5"
-                      value={reviewMarks}
-                      onChange={(e) => setReviewMarks(e.target.value)}
-                      disabled={reviewAction === 'reopened'}
-                      placeholder="Optional numeric marks"
-                      className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] tabular-nums focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                    />
-                  </div>
-                </div>
-
-                <div>
-                  <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                    Feedback Visible to Student & Parent
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={reviewFeedback}
-                    onChange={(e) => setReviewFeedback(e.target.value)}
-                    placeholder="Constructive feedback shown after review or return..."
-                    className="w-full rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] p-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
+                  <Input
+                    label={
+                      activeSubmission.maximumMarks !== undefined
+                        ? `Marks Awarded (0–${activeSubmission.maximumMarks})`
+                        : 'Marks Awarded'
+                    }
+                    type="number"
+                    min={0}
+                    max={activeSubmission.maximumMarks}
+                    step="0.5"
+                    value={reviewMarks}
+                    onChange={(e) => setReviewMarks(e.target.value)}
+                    disabled={reviewAction === 'reopened'}
+                    placeholder="Optional numeric marks"
+                    className="tabular-nums"
                   />
                 </div>
 
-                <div>
-                  <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                    Private Teacher Note (Strictly Hidden from Student)
-                  </label>
-                  <textarea
-                    rows={2}
-                    value={reviewPrivateNote}
-                    onChange={(e) => setReviewPrivateNote(e.target.value)}
-                    placeholder="Internal observation visible only to Teachers and Admin..."
-                    className="w-full rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] p-2.5 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                  />
-                </div>
+                <Textarea
+                  label="Feedback Visible to Student & Parent"
+                  rows={2}
+                  value={reviewFeedback}
+                  onChange={(e) => setReviewFeedback(e.target.value)}
+                  placeholder="Constructive feedback shown after review or return..."
+                />
+
+                <Textarea
+                  label="Private Teacher Note (Strictly Hidden from Student)"
+                  rows={2}
+                  value={reviewPrivateNote}
+                  onChange={(e) => setReviewPrivateNote(e.target.value)}
+                  placeholder="Internal observation visible only to Teachers and Admin..."
+                />
 
                 {activeSubmission.submission.status === 'reviewed' && (
-                  <div>
-                    <label className="block text-xs font-medium text-[#17172B] dark:text-[#F8FAFC] mb-1">
-                      Correction Reason (Required if changing previously reviewed marks)
-                    </label>
-                    <input
-                      type="text"
-                      value={reviewCorrectionReason}
-                      onChange={(e) => setReviewCorrectionReason(e.target.value)}
-                      placeholder="Document reason for modifying existing reviewed marks..."
-                      className="w-full min-h-[44px] rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426] px-3 text-sm text-[#17172B] dark:text-[#F8FAFC] focus:outline-none focus:ring-2 focus:ring-[#7552D9]/35 dark:focus:ring-[#8B5CF6]/45"
-                    />
-                  </div>
+                  <Input
+                    label="Correction Reason (Required if changing previously reviewed marks)"
+                    type="text"
+                    value={reviewCorrectionReason}
+                    onChange={(e) => setReviewCorrectionReason(e.target.value)}
+                    placeholder="Document reason for modifying existing reviewed marks..."
+                  />
                 )}
 
                 <div className="flex justify-end gap-2">
@@ -1010,13 +915,13 @@ export function TeacherHomeworkModule() {
             {/* Review Audit Trail */}
             {rosterData.auditEntries.length > 0 && (
               <div>
-                <h4 className="text-xs font-semibold text-[#687086] dark:text-[#A6B0C3] mb-2">
+                <h4 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
                   Review Audit History
                 </h4>
-                <ul className="divide-y divide-[#E5E7EF] dark:divide-[#303A55] text-xs">
+                <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs">
                   {rosterData.auditEntries.map((aud) => (
-                    <li key={aud.id} className="py-2 text-[#687086] dark:text-[#A6B0C3]">
-                      <span className="font-mono font-semibold text-[#7552D9] dark:text-[#A78BFA]">
+                    <li key={aud.id} className="py-2 text-[#68737C] dark:text-[#AAB6B4]">
+                      <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
                         {aud.id}
                       </span>{' '}
                       · {aud.action.replace(/_/g, ' ')} by {aud.actorId} on{' '}

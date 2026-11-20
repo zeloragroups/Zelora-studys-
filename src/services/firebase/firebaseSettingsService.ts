@@ -3,7 +3,9 @@ import {
   doc,
   getDoc,
   getDocs,
+  limit,
   onSnapshot,
+  query,
   setDoc,
 } from 'firebase/firestore';
 import { isCloudFunctionsEnabled, validateAndResolveFirebaseConfig } from '../../lib/firebase/config';
@@ -41,6 +43,67 @@ import {
 const SETTINGS_DOC_ID = 'APP-SETTINGS-001';
 const FIREBASE_LOGO_NOTICE =
   'Stored in Firebase Storage & Firestore — synchronized across authorized devices.';
+const PHONE_REGEX = /^[+\d\s().-]{7,20}$/;
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+const PIN_REGEX = /^[A-Za-z0-9\s-]{4,10}$/;
+const ALLOWED_LOGO_DATA_URL_REGEX = /^data:image\/(png|jpeg|webp);base64,[A-Za-z0-9+/=]+$/i;
+
+function validateOptionalPhone(value: string, label: string): string {
+  const trimmed = (value ?? '').trim();
+  if (!trimmed) return '';
+  const digits = trimmed.replace(/\D/g, '');
+  if (!PHONE_REGEX.test(trimmed) || digits.length < 7 || digits.length > 15) {
+    throw new SettingsServiceError(
+      'VALIDATION_ERROR',
+      `${label} must be a valid phone number (7–15 digits) or left blank.`
+    );
+  }
+  return trimmed;
+}
+
+function validateOptionalEmail(value: string): string {
+  const trimmed = (value ?? '').trim();
+  if (!trimmed) return '';
+  if (trimmed.length > 160 || !EMAIL_REGEX.test(trimmed)) {
+    throw new SettingsServiceError(
+      'VALIDATION_ERROR',
+      'Public contact email must be a valid email address or left blank.'
+    );
+  }
+  return trimmed;
+}
+
+function validateOptionalUrl(value: string): string {
+  const trimmed = (value ?? '').trim();
+  if (!trimmed) return '';
+  if (trimmed.length > 250 || !/^https?:\/\//i.test(trimmed)) {
+    throw new SettingsServiceError(
+      'VALIDATION_ERROR',
+      'Website URL must start with http:// or https:// or be left blank.'
+    );
+  }
+  try {
+    const parsed = new URL(trimmed);
+    if (!parsed.hostname) {
+      throw new Error('Invalid host');
+    }
+  } catch {
+    throw new SettingsServiceError('VALIDATION_ERROR', 'Website URL must be a valid web address.');
+  }
+  return trimmed;
+}
+
+function validateOptionalPin(value: string): string {
+  const trimmed = (value ?? '').trim();
+  if (!trimmed) return '';
+  if (!PIN_REGEX.test(trimmed)) {
+    throw new SettingsServiceError(
+      'VALIDATION_ERROR',
+      'PIN / postal code must be 4–10 characters or left blank.'
+    );
+  }
+  return trimmed;
+}
 
 function createDefaultFirebaseSettings(): ApplicationSettings {
   const base = createDefaultApplicationSettings();
@@ -210,13 +273,47 @@ export class FirebaseSettingsService implements IApplicationSettingsService {
     input: CentreProfile
   ): Promise<ApplicationSettings> {
     const admin = this.ensureAdmin(actor);
-    if (!input.centreName.trim() || !input.shortName.trim()) {
-      throw new SettingsServiceError('VALIDATION_ERROR', 'Centre name and short name are required.');
+    const centreName = (input.centreName ?? '').trim();
+    const shortName = (input.shortName ?? '').trim();
+    const tagline = (input.tagline ?? '').trim();
+    if (centreName.length < 2 || centreName.length > 100) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Centre name must be between 2 and 100 characters.'
+      );
     }
+    if (shortName.length < 2 || shortName.length > 30) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Short name must be between 2 and 30 characters.'
+      );
+    }
+    if (tagline.length > 160) {
+      throw new SettingsServiceError('VALIDATION_ERROR', 'Tagline cannot exceed 160 characters.');
+    }
+
+    const validatedProfile: CentreProfile = {
+      centreName,
+      shortName,
+      tagline,
+      contactNumber: validateOptionalPhone(input.contactNumber, 'Primary contact number'),
+      secondaryContactNumber: validateOptionalPhone(
+        input.secondaryContactNumber,
+        'Secondary contact number'
+      ),
+      publicEmail: validateOptionalEmail(input.publicEmail),
+      address: (input.address ?? '').trim().slice(0, 300),
+      city: (input.city ?? '').trim().slice(0, 100),
+      state: (input.state ?? '').trim().slice(0, 100),
+      pinCode: validateOptionalPin(input.pinCode),
+      country: (input.country ?? '').trim().slice(0, 100),
+      websiteUrl: validateOptionalUrl(input.websiteUrl),
+    };
+
     const current = await this.getApplicationSettings(actor);
     const updated: ApplicationSettings = {
       ...current,
-      centreProfile: { ...input, centreName: input.centreName.trim(), shortName: input.shortName.trim() },
+      centreProfile: validatedProfile,
     };
     return this.persistSettingsAndAudit(
       admin,
@@ -234,12 +331,52 @@ export class FirebaseSettingsService implements IApplicationSettingsService {
     input: ApplicationBranding
   ): Promise<ApplicationSettings> {
     const admin = this.ensureAdmin(actor);
-    if (!input.displayName.trim() || !input.shortName.trim()) {
-      throw new SettingsServiceError('VALIDATION_ERROR', 'Display name and short name are required.');
+    const displayName = (input.displayName ?? '').trim();
+    const shortName = (input.shortName ?? '').trim();
+    const tagline = (input.tagline ?? '').trim();
+    const loginWelcomeHeading = (input.loginWelcomeHeading ?? '').trim();
+    const loginDescription = (input.loginDescription ?? '').trim();
+    if (displayName.length < 2 || displayName.length > 100) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Application display name must be between 2 and 100 characters.'
+      );
+    }
+    if (shortName.length < 2 || shortName.length > 30) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Short name must be between 2 and 30 characters.'
+      );
+    }
+    if (tagline.length > 160) {
+      throw new SettingsServiceError('VALIDATION_ERROR', 'Tagline cannot exceed 160 characters.');
+    }
+    if (loginWelcomeHeading.length > 120 || loginDescription.length > 400) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Login heading or description exceeds maximum allowed length.'
+      );
     }
     const current = await this.getApplicationSettings(actor);
 
     const normalizedLogo = { ...input.logoConfiguration };
+    if (normalizedLogo.dataUrl) {
+      if (
+        !ALLOWED_LOGO_DATA_URL_REGEX.test(normalizedLogo.dataUrl) ||
+        normalizedLogo.dataUrl.length > 400_000
+      ) {
+        throw new SettingsServiceError(
+          'VALIDATION_ERROR',
+          'Logo image must be a valid PNG, JPEG, or WebP file within size limits.'
+        );
+      }
+    }
+    if (normalizedLogo.downloadUrl && !/^https:\/\/.+/i.test(normalizedLogo.downloadUrl)) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Logo download URL must use HTTPS.'
+      );
+    }
     if (
       normalizedLogo.mode === 'custom_local_image' &&
       normalizedLogo.dataUrl &&
@@ -271,8 +408,11 @@ export class FirebaseSettingsService implements IApplicationSettingsService {
       ...current,
       applicationBranding: {
         ...input,
-        displayName: input.displayName.trim(),
-        shortName: input.shortName.trim(),
+        displayName,
+        shortName,
+        tagline,
+        loginWelcomeHeading,
+        loginDescription,
         logoConfiguration: normalizedLogo,
       },
     };
@@ -372,7 +512,7 @@ export class FirebaseSettingsService implements IApplicationSettingsService {
     this.ensureAdmin(actor);
     const db = requireFirestoreDb();
     return withFirestoreErrorHandling(OperationType.LIST, 'settingsAudit', async () => {
-      const snap = await getDocs(collection(db, 'settingsAudit'));
+      const snap = await getDocs(query(collection(db, 'settingsAudit'), limit(250)));
       return snap.docs
         .map((d) => {
           const data = d.data();

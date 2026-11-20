@@ -4,7 +4,6 @@ import {
   BookOpen,
   CalendarClock,
   ClipboardCheck,
-  FileSpreadsheet,
   GraduationCap,
   IndianRupee,
   Megaphone,
@@ -18,6 +17,7 @@ import {
   accountService,
   assessmentService,
   attendanceService,
+  financialReportService,
   isFirebaseConnectedMode,
 } from '../../services';
 import type {
@@ -25,7 +25,16 @@ import type {
   AccountOverviewStats,
   AdminAssessmentOverviewData,
   AdminAttendanceOverview,
+  AdminFinancialDashboardData,
 } from '../../types';
+import { formatInrFromPaise } from '../../utils/currency';
+import {
+  ComparisonBarChart,
+  DistributionDonutChart,
+  type BarChartDatum,
+  type DonutSegment,
+} from '../charts/AnalyticsCharts';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { PageHeader } from '../ui/PageHeader';
@@ -49,6 +58,7 @@ export function AdminOverviewSection({
   const [accountStats, setAccountStats] = useState<AccountOverviewStats | null>(null);
   const [attendanceStats, setAttendanceStats] = useState<AdminAttendanceOverview | null>(null);
   const [assessmentStats, setAssessmentStats] = useState<AdminAssessmentOverviewData['stats'] | null>(null);
+  const [financeStats, setFinanceStats] = useState<AdminFinancialDashboardData | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -61,16 +71,18 @@ export function AdminOverviewSection({
     setLoading(true);
     setError(null);
     try {
-      const [acad, acct, att, assess] = await Promise.all([
+      const [acad, acct, att, assess, fin] = await Promise.all([
         academicService.getAcademicOverview(principal),
         accountService.getAccountOverview(principal),
         attendanceService.getAdminAttendanceOverview(principal),
         assessmentService.getAdminAssessmentOverview(principal),
+        financialReportService.getAdminFinancialDashboard(principal).catch(() => null),
       ]);
       setAcademicStats(acad);
       setAccountStats(acct);
       setAttendanceStats(att);
       setAssessmentStats(assess.stats);
+      setFinanceStats(fin);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unable to compute centre overview.');
     } finally {
@@ -84,6 +96,81 @@ export function AdminOverviewSection({
 
   const accountsTarget = mode === 'website' ? 'accounts' : 'lookup';
   const noticesTarget = mode === 'website' ? 'announcements' : 'notices';
+
+  const classAttendanceBars: BarChartDatum[] = (attendanceStats?.byClass ?? []).map((cls) => {
+    const pct = cls.summary.percentage ?? 0;
+    return {
+      id: cls.classId,
+      label: cls.className,
+      value: pct,
+      maxValue: 100,
+      displayValue: cls.summary.displayPercentage,
+      helperText: `${cls.submittedSessions} sessions`,
+      tone: pct >= 75 ? 'mint' : pct >= 50 ? 'warning' : 'danger',
+    };
+  });
+
+  const hasFinanceData =
+    financeStats !== null &&
+    financeStats.totalVerifiedCollectionsPaise +
+      financeStats.pendingPaymentClaimsPaise +
+      financeStats.totalOutstandingStudentFeesPaise >
+      0;
+
+  const financeDonutSegments: DonutSegment[] = financeStats
+    ? [
+        {
+          id: 'verified',
+          label: 'Verified Collections',
+          value: financeStats.totalVerifiedCollectionsPaise,
+          displayValue: formatInrFromPaise(financeStats.totalVerifiedCollectionsPaise),
+          colorLight: '#35D6A0',
+          colorDark: '#42DDA9',
+        },
+        {
+          id: 'pending-claims',
+          label: 'Pending Claims',
+          value: financeStats.pendingPaymentClaimsPaise,
+          displayValue: formatInrFromPaise(financeStats.pendingPaymentClaimsPaise),
+          colorLight: '#D69B35',
+          colorDark: '#E5B04D',
+        },
+        {
+          id: 'outstanding',
+          label: 'Outstanding Student Fees',
+          value: financeStats.totalOutstandingStudentFeesPaise,
+          displayValue: formatInrFromPaise(financeStats.totalOutstandingStudentFeesPaise),
+          colorLight: '#20262B',
+          colorDark: '#AAB6B4',
+        },
+      ]
+    : [];
+
+  const attendanceDonutSegments: DonutSegment[] = attendanceStats
+    ? [
+        {
+          id: 'present',
+          label: 'Present',
+          value: attendanceStats.presentCount,
+          colorLight: '#35D6A0',
+          colorDark: '#42DDA9',
+        },
+        {
+          id: 'late',
+          label: 'Late',
+          value: attendanceStats.lateCount,
+          colorLight: '#D69B35',
+          colorDark: '#E5B04D',
+        },
+        {
+          id: 'absent',
+          label: 'Absent',
+          value: attendanceStats.absentCount,
+          colorLight: '#D64C55',
+          colorDark: '#EF6D75',
+        },
+      ]
+    : [];
 
   return (
     <div className="space-y-6">
@@ -100,58 +187,100 @@ export function AdminOverviewSection({
         }
         subtitle={
           variant === 'home'
-            ? 'Quick actions, daily attendance pulse, and live centre metrics across classes, teachers, and students.'
-            : 'Detailed breakdown of active classes, attendance percentages, assessments, and operational readiness.'
+            ? 'Daily attendance pulse, financial collections, and live centre metrics across classes, teachers, and students.'
+            : 'Detailed breakdown of active classes, attendance percentages, financial balances, assessments, and operational readiness.'
         }
         rightSlot={
           <StatusText
             tone="nominal"
-            label={`${principal?.loginId ?? 'Admin'} · Live Local State`}
+            label={`${principal?.loginId ?? 'Admin'} · ${isFirebaseConnectedMode() ? 'Spark Connected' : 'Local Adapter'}`}
           />
         }
       />
 
       {error && (
-        <div
-          role="alert"
-          className="rounded-xl border border-[#D94C5C]/30 dark:border-[#F16B75]/40 bg-[#D94C5C]/8 dark:bg-[#F16B75]/12 p-4 text-sm text-[#D94C5C] dark:text-[#F16B75]"
-        >
+        <Alert tone="error" onDismiss={() => setError(null)}>
           {error}
-        </div>
+        </Alert>
       )}
 
       {loading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-          {[0, 1, 2, 3].map((i) => (
-            <div
-              key={i}
-              className="h-28 rounded-2xl bg-[#F1EEFA] dark:bg-[#202844]/70 animate-pulse"
-            />
-          ))}
+        <div className="space-y-4">
+          <div className="h-32 rounded-2xl bg-[#E2E8E5] dark:bg-[#252E33] animate-pulse" />
+          <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+            {[0, 1, 2, 3].map((i) => (
+              <div
+                key={i}
+                className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+              />
+            ))}
+          </div>
         </div>
       ) : (
         academicStats &&
         accountStats && (
           <>
+            {/* Executive Charcoal Hero Pulse */}
+            <Card variant="charcoal" padding="md">
+              <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
+                <div className="space-y-1.5 min-w-0">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#42DDA9]">
+                    Live Centre Pulse · {publicSettings.academicDefaults.academicYearDisplay}
+                  </p>
+                  <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-[#F4F7F6] truncate">
+                    {branding.centreName}
+                  </h2>
+                  <p className="text-xs sm:text-sm text-[#AAB6B4]">
+                    {accountStats.activeAccounts} active member accounts across {academicStats.activeClasses} classes and {academicStats.activeBatches} batches.
+                  </p>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 pt-3 lg:pt-0 border-t lg:border-t-0 lg:border-l border-[#343C42] lg:pl-6 shrink-0">
+                  <div>
+                    <p className="text-[11px] text-[#AAB6B4]">Verified Collections</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#42DDA9]">
+                      {financeStats
+                        ? formatInrFromPaise(financeStats.totalVerifiedCollectionsPaise)
+                        : '—'}
+                    </p>
+                  </div>
+                  <div>
+                    <p className="text-[11px] text-[#AAB6B4]">Pending Claims</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#F4F7F6]">
+                      {financeStats
+                        ? `${financeStats.pendingPaymentClaimsCount} (${formatInrFromPaise(financeStats.pendingPaymentClaimsPaise)})`
+                        : '—'}
+                    </p>
+                  </div>
+                  <div className="col-span-2 sm:col-span-1">
+                    <p className="text-[11px] text-[#AAB6B4]">Attendance Rate</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#F4F7F6]">
+                      {attendanceStats?.overallSummary.displayPercentage ?? '—'}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </Card>
+
             {/* Top 4 Executive KPIs */}
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <StatTile
                 label="Total Students"
                 value={accountStats.totalStudents}
                 caption={`${academicStats.enrolledStudents} actively enrolled`}
-                icon={<GraduationCap className="w-4 h-4" />}
+                icon={<GraduationCap className="w-4 h-4" strokeWidth={1.75} />}
               />
               <StatTile
                 label="Total Teachers"
                 value={accountStats.totalTeachers}
                 caption={`${academicStats.activeAssignments} subject assignments`}
-                icon={<Users className="w-4 h-4" />}
+                icon={<Users className="w-4 h-4" strokeWidth={1.75} />}
               />
               <StatTile
                 label="Active Classes"
                 value={academicStats.activeClasses}
                 caption={`${academicStats.activeBatches} active batches`}
-                icon={<BookOpen className="w-4 h-4" />}
+                icon={<BookOpen className="w-4 h-4" strokeWidth={1.75} />}
               />
               <StatTile
                 label="Overall Attendance"
@@ -161,78 +290,12 @@ export function AdminOverviewSection({
                     ? `${attendanceStats.submittedSessions} submitted · ${attendanceStats.unreadNotificationCount} unread alerts`
                     : `${academicStats.activeTimetableSessions} weekly sessions`
                 }
-                icon={<ClipboardCheck className="w-4 h-4" />}
-                accent
+                icon={<ClipboardCheck className="w-4 h-4" strokeWidth={1.75} />}
+                tone="mint"
               />
             </div>
 
-            {/* Quick Action Bar */}
-            {variant === 'home' && (
-              <Card
-                title="Quick Management Actions"
-                subtitle="Jump straight into core centre operations."
-                padding="sm"
-              >
-                <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-6 gap-2.5">
-                  <Button
-                    variant="primary"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => onNavigate('finance')}
-                    iconLeft={<IndianRupee className="w-4 h-4" aria-hidden="true" />}
-                  >
-                    Fees & Salaries
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => onNavigate(accountsTarget)}
-                    iconLeft={<Users className="w-4 h-4" aria-hidden="true" />}
-                  >
-                    Accounts
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => onNavigate('academics')}
-                    iconLeft={<BookOpen className="w-4 h-4" aria-hidden="true" />}
-                  >
-                    Academics
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => onNavigate('attendance')}
-                    iconLeft={<ClipboardCheck className="w-4 h-4" aria-hidden="true" />}
-                  >
-                    Attendance
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => onNavigate('assessments')}
-                    iconLeft={<FileSpreadsheet className="w-4 h-4" aria-hidden="true" />}
-                  >
-                    Assessments
-                  </Button>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    className="w-full justify-start"
-                    onClick={() => onNavigate(noticesTarget)}
-                    iconLeft={<Megaphone className="w-4 h-4" aria-hidden="true" />}
-                  >
-                    Notices
-                  </Button>
-                </div>
-              </Card>
-            )}
-
-            {/* Class Attendance Breakdown + Assessment Summary */}
+            {/* Data-Driven Analytics Charts */}
             <div className="grid gap-5 lg:grid-cols-2">
               <Card
                 title="Class Attendance Breakdown"
@@ -251,37 +314,61 @@ export function AdminOverviewSection({
                   </Button>
                 }
               >
-                {attendanceStats && attendanceStats.byClass.length > 0 ? (
-                  <div className="space-y-3.5">
-                    {attendanceStats.byClass.map((cls) => {
-                      const pct = cls.summary.percentage ?? 0;
-                      return (
-                        <div key={cls.classId} className="space-y-1.5">
-                          <div className="flex items-center justify-between text-xs">
-                            <span className="font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-                              {cls.className}
-                            </span>
-                            <span className="font-mono tabular-nums text-[#687086] dark:text-[#A6B0C3]">
-                              {cls.summary.displayPercentage} ({cls.submittedSessions} sessions)
-                            </span>
-                          </div>
-                          <div className="h-2 rounded-full bg-[#F1EEFA] dark:bg-[#202844] overflow-hidden">
-                            <div
-                              className="h-full rounded-full bg-[#7552D9] dark:bg-[#8B5CF6] transition-[width] duration-300"
-                              style={{ width: `${Math.min(100, Math.max(0, pct))}%` }}
-                            />
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                ) : (
-                  <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
-                    Attendance percentages will appear here after teachers submit sessions.
-                  </p>
-                )}
+                <ComparisonBarChart
+                  data={classAttendanceBars}
+                  emptyTitle="No attendance sessions yet"
+                  emptyDescription="Class attendance bars will appear here after teachers submit sessions."
+                  ariaLabel="Class attendance breakdown"
+                />
               </Card>
 
+              {hasFinanceData && financeStats ? (
+                <Card
+                  title="Fee Collection & Claims Mix"
+                  subtitle={`Current period: ${financeStats.currentPeriod}`}
+                  action={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onNavigate('finance')}
+                    >
+                      Finance
+                    </Button>
+                  }
+                >
+                  <DistributionDonutChart
+                    centerLabel="Verified"
+                    centerValue={formatInrFromPaise(financeStats.totalVerifiedCollectionsPaise)}
+                    segments={financeDonutSegments}
+                  />
+                </Card>
+              ) : (
+                <Card
+                  title="Attendance Distribution"
+                  subtitle="Cumulative breakdown across all recorded sessions"
+                  action={
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => onNavigate('attendance')}
+                    >
+                      Attendance
+                    </Button>
+                  }
+                >
+                  <DistributionDonutChart
+                    centerLabel="Sessions"
+                    centerValue={String(attendanceStats?.submittedSessions ?? 0)}
+                    segments={attendanceDonutSegments}
+                    emptyTitle="No distribution records yet"
+                    emptyDescription="Distribution metrics render automatically once attendance or fee records exist."
+                  />
+                </Card>
+              )}
+            </div>
+
+            {/* Assessments & Financial Summary */}
+            <div className="grid gap-5 lg:grid-cols-2">
               <Card
                 title="Assessments & Notices Snapshot"
                 subtitle="Live status across homework, online tests, exams & centre notices"
@@ -296,41 +383,118 @@ export function AdminOverviewSection({
                 }
               >
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5">
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Homework Published</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Homework Published</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
                       {assessmentStats?.publishedHomework ?? 0}
                     </p>
-                    <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3] mt-0.5">
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
                       {assessmentStats?.pendingHomeworkSubmissions ?? 0} pending submissions
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5">
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Online Tests</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Online Tests</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
                       {assessmentStats?.publishedTests ?? 0}
                     </p>
-                    <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3] mt-0.5">
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
                       {assessmentStats?.completedTestAttempts ?? 0} completed attempts
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5">
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Examinations</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Examinations</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
                       {(assessmentStats?.upcomingExaminations ?? 0) +
                         (assessmentStats?.completedExaminations ?? 0)}
                     </p>
-                    <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3] mt-0.5">
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
                       {assessmentStats?.pendingMarksEntry ?? 0} pending marks entry
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5">
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">Live Notices</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#17172B] dark:text-[#F8FAFC]">
+                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Live Notices</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
                       {academicStats.publishedAnnouncements}
                     </p>
-                    <p className="text-[11px] text-[#687086] dark:text-[#A6B0C3] mt-0.5">
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
                       {accountStats.activeAccounts} active accounts
+                    </p>
+                  </div>
+                </div>
+              </Card>
+
+              <Card
+                title="Financial & Payroll Summary"
+                subtitle={
+                  financeStats
+                    ? `Net recorded balance · ${financeStats.verifiedPaymentsCount} verified payment(s)`
+                    : 'Fee collections, pending claims, and teacher salaries'
+                }
+                action={
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    onClick={() => onNavigate('finance')}
+                  >
+                    Open Finance
+                  </Button>
+                }
+              >
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 p-3.5">
+                    <p className="text-xs text-[#168A63] dark:text-[#42DDA9] font-medium">
+                      Verified Fees
+                    </p>
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                      {financeStats
+                        ? formatInrFromPaise(financeStats.totalVerifiedCollectionsPaise)
+                        : '₹0'}
+                    </p>
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                      {financeStats
+                        ? `${formatInrFromPaise(financeStats.currentMonthCollectionsPaise)} this month`
+                        : 'No collections yet'}
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      Pending Verification
+                    </p>
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                      {financeStats
+                        ? formatInrFromPaise(financeStats.pendingPaymentClaimsPaise)
+                        : '₹0'}
+                    </p>
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                      {financeStats?.pendingPaymentClaimsCount ?? 0} awaiting verification
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      Outstanding Fees
+                    </p>
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                      {financeStats
+                        ? formatInrFromPaise(financeStats.totalOutstandingStudentFeesPaise)
+                        : '₹0'}
+                    </p>
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                      Student ledger balance
+                    </p>
+                  </div>
+                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
+                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      Teacher Salaries Paid
+                    </p>
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                      {financeStats
+                        ? formatInrFromPaise(financeStats.totalTeacherSalaryPaidPaise)
+                        : '₹0'}
+                    </p>
+                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                      {financeStats
+                        ? `${formatInrFromPaise(financeStats.pendingTeacherSalaryPaise)} pending`
+                        : 'Payroll tracking'}
                     </p>
                   </div>
                 </div>
@@ -344,14 +508,14 @@ export function AdminOverviewSection({
                 subtitle={`${accountStats.activeAccounts} active · ${accountStats.inactiveAccounts} inactive`}
               >
                 <div className="space-y-4">
-                  <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
                     Provision unique Teacher (TCH-xxxx) and Student (STU-xxxx) IDs, edit records, or toggle login eligibility.
                   </p>
                   <Button
                     variant="secondary"
                     size="sm"
                     onClick={() => onNavigate(accountsTarget)}
-                    iconLeft={<Users className="w-4 h-4" aria-hidden="true" />}
+                    iconLeft={<Users className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
                   >
                     <span className="inline-flex items-center gap-1.5">
                       <span>Open Accounts</span>
@@ -366,14 +530,14 @@ export function AdminOverviewSection({
                 subtitle={`${academicStats.totalClasses} classes · ${academicStats.totalBatches} batches · ${academicStats.totalSubjects} subjects`}
               >
                 <div className="space-y-4">
-                  <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
+                  <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
                     Manage classes, batch cohorts, subjects, student enrolments, teacher assignments, and weekly timetables.
                   </p>
                   <Button
                     variant="secondary"
                     size="sm"
                     onClick={() => onNavigate('academics')}
-                    iconLeft={<BookOpen className="w-4 h-4" aria-hidden="true" />}
+                    iconLeft={<BookOpen className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
                   >
                     <span className="inline-flex items-center gap-1.5">
                       <span>Open Academics</span>
@@ -384,24 +548,31 @@ export function AdminOverviewSection({
               </Card>
 
               <Card
-                title="Announcements"
-                subtitle={`${academicStats.publishedAnnouncements} currently live`}
+                title="Announcements & Finance"
+                subtitle={`${academicStats.publishedAnnouncements} live notices · UPI & payroll`}
               >
                 <div className="space-y-4">
-                  <p className="text-sm text-[#687086] dark:text-[#A6B0C3]">
-                    Draft, publish, unpublish, or archive text-only announcements targeted to teachers, students, classes, or batches.
+                  <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+                    Draft text-only announcements targeted to teachers or classes, or open Fee & Salary verification.
                   </p>
-                  <Button
-                    variant="secondary"
-                    size="sm"
-                    onClick={() => onNavigate(noticesTarget)}
-                    iconLeft={<Megaphone className="w-4 h-4" aria-hidden="true" />}
-                  >
-                    <span className="inline-flex items-center gap-1.5">
-                      <span>Manage Notices</span>
-                      <ArrowRight className="w-3.5 h-3.5" aria-hidden="true" />
-                    </span>
-                  </Button>
+                  <div className="flex flex-wrap gap-2">
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => onNavigate(noticesTarget)}
+                      iconLeft={<Megaphone className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
+                    >
+                      <span>Notices</span>
+                    </Button>
+                    <Button
+                      variant="secondary"
+                      size="sm"
+                      onClick={() => onNavigate('finance')}
+                      iconLeft={<IndianRupee className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
+                    >
+                      <span>Finance</span>
+                    </Button>
+                  </div>
                 </div>
               </Card>
             </div>
@@ -410,7 +581,7 @@ export function AdminOverviewSection({
               title="Active Centre Scope & Settings"
               subtitle={
                 isFirebaseConnectedMode()
-                  ? 'All Auth, Accounts, Academics, Attendance, Assessments, Finance/Salaries, Student Portal & Settings connected to Firebase academy-0007.'
+                  ? 'All Auth, Accounts, Academics, Attendance, Assessments, Finance/Salaries, Student Portal & Settings connected to Firebase academy-0007 (Spark Plan).'
                   : 'All ecosystem modules active in Explicit LOCAL_DEMO Development Mode.'
               }
               padding="sm"
@@ -419,20 +590,20 @@ export function AdminOverviewSection({
                   variant="secondary"
                   size="sm"
                   onClick={() => onNavigate('settings')}
-                  iconLeft={<Settings className="w-3.5 h-3.5" aria-hidden="true" />}
+                  iconLeft={<Settings className="w-3.5 h-3.5" strokeWidth={1.75} aria-hidden="true" />}
                 >
                   Open Settings
                 </Button>
               }
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 <span className="inline-flex items-center gap-1.5">
-                  <CalendarClock className="w-4 h-4 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
+                  <CalendarClock className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
                   <span>
                     Configure centre identity, dynamic app branding, theme defaults, academic session, and notification controls in Settings.
                   </span>
                 </span>
-                <span>
+                <span className="font-mono">
                   {isFirebaseConnectedMode()
                     ? 'Firebase: Connected (academy-0007)'
                     : 'Firebase: Local Demo Mode'}

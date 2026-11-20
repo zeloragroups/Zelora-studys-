@@ -22,8 +22,8 @@ interface RouteGuardProps {
 /**
  * Reusable Role-Based Route Guard.
  * - Blocks unauthenticated access to protected routes and redirects to appropriate login.
- * - Blocks cross-role access (e.g., Teacher opening Admin/Student routes) with explicit denial screen.
- * - Note: Frontend guards complement (and never replace) backend security rules once Firebase is connected.
+ * - Blocks cross-role access with explicit denial screen.
+ * - Complements Firestore Security Rules without replacing backend enforcement.
  */
 export function RouteGuard({
   currentPath,
@@ -70,7 +70,7 @@ export function RouteGuard({
 
   if (isRestoring) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FC] dark:bg-[#101426] p-6">
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F9F8] dark:bg-[#151A1E] p-6">
         <LoadingSpinner size="md" label="Checking session..." />
       </div>
     );
@@ -78,7 +78,7 @@ export function RouteGuard({
 
   if (requiresAuth && (!isAuthenticated || !principal)) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FC] dark:bg-[#101426] p-6">
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F9F8] dark:bg-[#151A1E] p-6">
         <LoadingSpinner size="sm" label="Redirecting to sign in..." />
       </div>
     );
@@ -93,21 +93,22 @@ export function RouteGuard({
     const authorizedHome = getDefaultRouteForRole(principal.role);
 
     return (
-      <div className="min-h-screen flex items-center justify-center bg-[#F8F9FC] dark:bg-[#101426] p-4 sm:p-6">
+      <div className="min-h-screen flex items-center justify-center bg-[#F7F9F8] dark:bg-[#151A1E] p-4 sm:p-6">
         <div className="w-full max-w-md">
           <Card
             title="Access Restricted"
             subtitle="Your account role does not permit viewing this route."
           >
             <div className="space-y-4">
-              <div className="flex items-start gap-3 text-sm text-[#687086] dark:text-[#A6B0C3]">
+              <div className="flex items-start gap-3 text-sm text-[#68737C] dark:text-[#AAB6B4]">
                 <ShieldAlert
-                  className="w-5 h-5 text-[#D94C5C] dark:text-[#F16B75] shrink-0 mt-0.5"
+                  className="w-5 h-5 text-[#D64C55] dark:text-[#EF6D75] shrink-0 mt-0.5"
+                  strokeWidth={1.75}
                   aria-hidden="true"
                 />
                 <p>
                   Signed in as{' '}
-                  <span className="font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <span className="font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">
                     {principal.loginId}
                   </span>{' '}
                   ({principal.role}). Access to{' '}

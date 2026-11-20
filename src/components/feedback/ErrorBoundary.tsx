@@ -15,7 +15,6 @@ interface ErrorBoundaryState {
 function parseFriendlyError(error: unknown): { title: string; message: string } {
   const rawMessage = error instanceof Error ? error.message : String(error ?? 'Unexpected error');
 
-  // Detect structured FirestoreErrorInfo JSON emitted by handleFirestoreError
   if (rawMessage.startsWith('{') && rawMessage.includes('"operationType"')) {
     try {
       const parsed = JSON.parse(rawMessage) as {
@@ -97,28 +96,28 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
 
     return (
-      <div className="min-h-screen bg-[#F8F9FC] dark:bg-[#101426] text-[#17172B] dark:text-[#F8FAFC] flex items-center justify-center p-6">
-        <div className="max-w-lg w-full rounded-2xl border border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#171D34] p-7 shadow-sm space-y-5">
+      <div className="min-h-screen bg-[#F7F9F8] dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] flex items-center justify-center p-6">
+        <div className="max-w-lg w-full rounded-2xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] p-7 shadow-sm space-y-5">
           <div className="flex items-start gap-3.5">
-            <span className="w-11 h-11 rounded-xl bg-[#D94C5C]/12 dark:bg-[#F16B75]/18 text-[#D94C5C] dark:text-[#F16B75] flex items-center justify-center shrink-0">
-              <AlertTriangle className="w-5 h-5" aria-hidden="true" />
+            <span className="w-11 h-11 rounded-xl bg-[#D64C55]/12 dark:bg-[#EF6D75]/18 text-[#D64C55] dark:text-[#EF6D75] flex items-center justify-center shrink-0">
+              <AlertTriangle className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
             </span>
             <div className="space-y-1">
-              <h1 className="text-lg font-bold tracking-tight">
+              <h1 className="text-lg font-semibold tracking-tight">
                 {this.state.friendlyTitle}
               </h1>
-              <p className="text-sm text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
+              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
                 {this.state.friendlyMessage}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-[#E5E7EF] dark:border-[#303A55]">
+          <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-[#E2E8E5] dark:border-[#344047]">
             <Button
               variant="primary"
               size="sm"
               onClick={this.handleReload}
-              iconLeft={<RotateCcw className="w-4 h-4" aria-hidden="true" />}
+              iconLeft={<RotateCcw className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
             >
               Reload Application
             </Button>

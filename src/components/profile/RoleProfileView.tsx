@@ -1,22 +1,11 @@
 import { useEffect, useState, type FormEvent } from 'react';
 import {
-  ArrowRight,
-  Banknote,
-  BookOpen,
-  CalendarCheck2,
-  CheckCircle2,
-  FileSpreadsheet,
-  GraduationCap,
-  IndianRupee,
   KeyRound,
   LogOut,
-  Megaphone,
   Moon,
-  Settings,
   ShieldCheck,
   Sun,
   UserCircle2,
-  Users,
 } from 'lucide-react';
 import { useAuth } from '../../context/AuthContext';
 import { useInterface } from '../../context/InterfaceContext';
@@ -26,6 +15,7 @@ import { studentPortalService } from '../../services';
 import type { StudentProfileSummary } from '../../services/contracts/studentPortalService';
 import type { TeacherWorkspaceData } from '../../types';
 import { cn } from '../../utils/cn';
+import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
 import { Input } from '../ui/Input';
@@ -33,18 +23,14 @@ import { PageHeader } from '../ui/PageHeader';
 import { StatusText } from '../ui/StatusText';
 
 interface RoleProfileViewProps {
-  interfaceId: 'admin-website' | 'admin-webapp' | 'teacher-webapp' | 'student-webapp';
   roleLabel: string;
   roleAccessSummary: string;
-  onSelectNav: (navId: string, subTab?: string) => void;
   onSignOut?: () => void;
 }
 
 export function RoleProfileView({
-  interfaceId,
   roleLabel,
   roleAccessSummary,
-  onSelectNav,
   onSignOut,
 }: RoleProfileViewProps) {
   const { principal, session, changeMyPassword } = useAuth();
@@ -129,100 +115,12 @@ export function RoleProfileView({
     }
   };
 
-  const shortcuts =
-    principal.role === 'admin'
-      ? [
-          {
-            navId: 'settings',
-            label: 'Application Settings & Branding',
-            description: 'Centre profile, dynamic app name, logo preview & system controls',
-            icon: Settings,
-          },
-          {
-            navId: 'finance',
-            label: 'Fees & Teacher Salaries',
-            description: 'Verify UPI claims, issue receipts & manage payroll',
-            icon: IndianRupee,
-          },
-          {
-            navId: interfaceId === 'admin-website' ? 'accounts' : 'lookup',
-            label: 'Manage Accounts',
-            description: 'Create & manage Teacher and Student IDs',
-            icon: Users,
-          },
-          {
-            navId: 'attendance',
-            label: 'Attendance & Alerts',
-            description: 'Monitor sessions and audited corrections',
-            icon: CalendarCheck2,
-          },
-          {
-            navId: interfaceId === 'admin-website' ? 'announcements' : 'notices',
-            label: 'Centre Notices',
-            description: 'Draft and publish announcements',
-            icon: Megaphone,
-          },
-        ]
-      : principal.role === 'teacher'
-        ? [
-            {
-              navId: 'salary',
-              label: 'My Salary & Payouts',
-              description: 'Inspect monthly calculated salary & payment history',
-              icon: Banknote,
-            },
-            {
-              navId: 'assessments',
-              label: 'Tests, Exams & Marks',
-              description: 'Build online MCQ tests, exams & enter marks',
-              icon: FileSpreadsheet,
-            },
-            {
-              navId: 'notices',
-              label: 'Centre Notices',
-              description: 'Read announcements for your classes',
-              icon: Megaphone,
-            },
-            {
-              navId: 'classes',
-              label: 'Classes & Timetable',
-              description: 'Review assigned batches and weekly timetable',
-              icon: BookOpen,
-            },
-          ]
-        : [
-            {
-              navId: 'fees',
-              label: 'Fees & Receipts',
-              description: 'View balance, Pay Now via UPI & print verified receipts',
-              icon: IndianRupee,
-            },
-            {
-              navId: 'notices',
-              label: 'Notices & Alerts',
-              description: 'Absence notifications, test alerts & announcements',
-              icon: Megaphone,
-            },
-            {
-              navId: 'homework',
-              label: 'My Homework',
-              description: 'View text-only homework & submit work',
-              icon: BookOpen,
-            },
-            {
-              navId: 'assessments',
-              label: 'Tests, Exams & Results',
-              description: 'Attempt online tests and view released marks',
-              icon: FileSpreadsheet,
-            },
-          ];
-
   return (
     <div className="space-y-6">
       <PageHeader
         eyebrow={`${branding.centreName} · ${branding.academicYearLabel}`}
         title="Account & Preferences"
-        subtitle="Manage your theme preference, review your role scope, and jump quickly across sections."
+        subtitle="Manage your theme preference, review your role scope, and update your session settings."
         rightSlot={
           <StatusText
             tone="nominal"
@@ -236,30 +134,30 @@ export function RoleProfileView({
         <Card title="Profile Identity" subtitle="Authenticated session details">
           <div className="space-y-4">
             <div className="flex items-center gap-3.5">
-              <div className="w-12 h-12 rounded-2xl bg-[#F1EEFA] dark:bg-[#202844] text-[#7552D9] dark:text-[#C4B5FD] flex items-center justify-center shrink-0 border border-[#7552D9]/20 dark:border-[#8B5CF6]/30">
+              <div className="w-12 h-12 rounded-2xl bg-[#20262B] dark:bg-[#244B3E] text-[#35D6A0] dark:text-[#42DDA9] flex items-center justify-center shrink-0 border border-[#343C42] dark:border-[#316453] shadow-xs">
                 <UserCircle2 className="w-6 h-6" aria-hidden="true" />
               </div>
               <div className="min-w-0">
-                <p className="text-base font-semibold text-[#17172B] dark:text-[#F8FAFC] truncate">
+                <p className="text-base font-semibold text-[#20262B] dark:text-[#F4F7F6] truncate">
                   {principal.fullName}
                 </p>
-                <p className="text-xs font-mono text-[#687086] dark:text-[#A6B0C3]">
+                <p className="text-xs font-mono text-[#68737C] dark:text-[#AAB6B4]">
                   {principal.loginId} · Role: {roleLabel}
                 </p>
               </div>
             </div>
 
             {principal.role === 'student' && studentProfile && (
-              <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5 space-y-3">
+              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 p-3.5 space-y-3">
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs">
                   <div>
-                    <p className="text-[#687086] dark:text-[#A6B0C3]">Student ID</p>
-                    <p className="mt-0.5 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <p className="text-[#68737C] dark:text-[#AAB6B4]">Student ID</p>
+                    <p className="mt-0.5 font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                       {studentProfile.studentId}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[#687086] dark:text-[#A6B0C3]">Account Status</p>
+                    <p className="text-[#68737C] dark:text-[#AAB6B4]">Account Status</p>
                     <div className="mt-0.5">
                       <StatusText
                         tone={studentProfile.accountStatus === 'active' ? 'nominal' : 'danger'}
@@ -268,13 +166,13 @@ export function RoleProfileView({
                     </div>
                   </div>
                   <div>
-                    <p className="text-[#687086] dark:text-[#A6B0C3]">Registered Phone</p>
-                    <p className="mt-0.5 font-mono font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                    <p className="text-[#68737C] dark:text-[#AAB6B4]">Registered Phone</p>
+                    <p className="mt-0.5 font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                       {studentProfile.phone}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[#687086] dark:text-[#A6B0C3]">Enrolment Status</p>
+                    <p className="text-[#68737C] dark:text-[#AAB6B4]">Enrolment Status</p>
                     <div className="mt-0.5">
                       <StatusText
                         tone={
@@ -296,24 +194,24 @@ export function RoleProfileView({
                   </div>
                 </div>
 
-                <div className="pt-2.5 border-t border-[#E5E7EF] dark:border-[#303A55] space-y-1">
-                  <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
+                <div className="pt-2.5 border-t border-[#E2E8E5] dark:border-[#344047] space-y-1">
+                  <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
                     Class & Batch Placement
                   </p>
-                  <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                     {studentProfile.enrolmentStatus === 'active'
                       ? `${studentProfile.className ?? studentProfile.classId} · ${studentProfile.batchName ?? studentProfile.batchId}`
                       : 'Not currently enrolled in an active batch'}
                   </p>
                   {studentProfile.enrolmentId && (
-                    <p className="text-[11px] font-mono text-[#687086] dark:text-[#A6B0C3]">
+                    <p className="text-[11px] font-mono text-[#68737C] dark:text-[#AAB6B4]">
                       Enrolment ID: {studentProfile.enrolmentId}
                       {studentProfile.enrolmentDate ? ` · Since ${studentProfile.enrolmentDate}` : ''}
                     </p>
                   )}
                 </div>
 
-                <div className="pt-2 border-t border-[#E5E7EF] dark:border-[#303A55] space-y-1 text-xs text-[#687086] dark:text-[#A6B0C3]">
+                <div className="pt-2 border-t border-[#E2E8E5] dark:border-[#344047] space-y-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                   <p>{studentProfile.immutableNotice}</p>
                   <p>Parents share this Student ID and password to inspect attendance, marks, fees, and notifications.</p>
                 </div>
@@ -321,26 +219,26 @@ export function RoleProfileView({
             )}
 
             {principal.role === 'teacher' && teacherWs && (
-              <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 p-3.5 space-y-1">
-                <p className="text-xs font-medium text-[#687086] dark:text-[#A6B0C3]">
+              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 p-3.5 space-y-1">
+                <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
                   Assigned Teaching Scope
                 </p>
-                <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC] tabular-nums">
+                <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6] tabular-nums">
                   {teacherWs.assignments.length} active subject-batch assignment(s) ·{' '}
                   {teacherWs.timetable.length} weekly session(s)
                 </p>
               </div>
             )}
 
-            <div className="rounded-xl border border-[#E5E7EF] dark:border-[#303A55] p-3.5 space-y-1.5">
-              <div className="flex items-center gap-2 text-xs font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-                <ShieldCheck className="w-4 h-4 text-[#7552D9] dark:text-[#A78BFA]" aria-hidden="true" />
+            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 space-y-1.5">
+              <div className="flex items-center gap-2 text-xs font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                <ShieldCheck className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
                 <span>Access & Security Policy</span>
               </div>
-              <p className="text-xs text-[#687086] dark:text-[#A6B0C3] leading-relaxed">
+              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
                 {roleAccessSummary}
               </p>
-              <p className="text-[11px] font-mono text-[#687086] dark:text-[#A6B0C3] pt-1">
+              <p className="text-[11px] font-mono text-[#68737C] dark:text-[#AAB6B4] pt-1">
                 Session:{' '}
                 {session.dataSourceMode === 'firebase_connected'
                   ? 'Firebase Production Connected (academy-0007 · Spark Free Plan)'
@@ -357,8 +255,8 @@ export function RoleProfileView({
           title="Appearance & Session"
           subtitle={
             allowPersonalThemePreference
-              ? `Switch between Light and Dark Navy themes (Centre default: ${defaultTheme === 'dark' ? 'Dark Navy' : 'Light Mode'})`
-              : `Locked to Centre Default (${defaultTheme === 'dark' ? 'Dark Navy' : 'Light Mode'}) by Administrator`
+              ? `Switch between Light and Dark themes (Centre default: ${defaultTheme === 'dark' ? 'Dark Charcoal' : 'Light Mode'})`
+              : `Locked to Centre Default (${defaultTheme === 'dark' ? 'Dark Charcoal' : 'Light Mode'}) by Administrator`
           }
         >
           <div className="space-y-5">
@@ -373,22 +271,22 @@ export function RoleProfileView({
                   'rounded-xl border p-4 text-left transition-all space-y-2',
                   allowPersonalThemePreference ? 'cursor-pointer' : 'opacity-65 cursor-not-allowed',
                   theme === 'light'
-                    ? 'border-[#7552D9] bg-[#F1EEFA] ring-2 ring-[#7552D9]/20'
-                    : 'border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426]/60 hover:bg-[#F8F9FC] dark:hover:bg-[#202844]'
+                    ? 'border-[#35D6A0] bg-[#DDF8EE]/70 ring-2 ring-[#35D6A0]/25'
+                    : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E]/70 hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <Sun className="w-4 h-4 text-[#7552D9]" aria-hidden="true" />
+                  <Sun className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
                   {theme === 'light' && (
-                    <span className="text-[11px] font-semibold text-[#7552D9]">Active</span>
+                    <span className="text-[11px] font-semibold text-[#168A63]">Active</span>
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
+                  <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
                     Light Mode
                   </p>
-                  <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
-                    Crisp soft white & lavender
+                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    Crisp white, charcoal & mint
                   </p>
                 </div>
               </button>
@@ -403,44 +301,44 @@ export function RoleProfileView({
                   'rounded-xl border p-4 text-left transition-all space-y-2',
                   allowPersonalThemePreference ? 'cursor-pointer' : 'opacity-65 cursor-not-allowed',
                   theme === 'dark'
-                    ? 'border-[#8B5CF6] bg-[#202844] ring-2 ring-[#8B5CF6]/25'
-                    : 'border-[#E5E7EF] dark:border-[#303A55] bg-white dark:bg-[#101426]/60 hover:bg-[#F8F9FC] dark:hover:bg-[#202844]'
+                    ? 'border-[#42DDA9] bg-[#244B3E] ring-2 ring-[#42DDA9]/25'
+                    : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E]/70 hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
                 )}
               >
                 <div className="flex items-center justify-between">
-                  <Moon className="w-4 h-4 text-[#A78BFA]" aria-hidden="true" />
+                  <Moon className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
                   {theme === 'dark' && (
-                    <span className="text-[11px] font-semibold text-[#C4B5FD]">Active</span>
+                    <span className="text-[11px] font-semibold text-[#42DDA9]">Active</span>
                   )}
                 </div>
                 <div>
-                  <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC]">
-                    Dark Navy
+                  <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    Dark Charcoal
                   </p>
-                  <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
-                    Deep navy & electric purple
+                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    Deep slate & emerald mint
                   </p>
                 </div>
               </button>
             </div>
 
             {allowPersonalThemePreference && hasPersonalPreference && (
-              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#687086] dark:text-[#A6B0C3]">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
                 <span>Using personal theme override on this device.</span>
                 <button
                   type="button"
                   onClick={resetToDefaultTheme}
-                  className="font-medium text-[#7552D9] dark:text-[#A78BFA] hover:underline cursor-pointer"
+                  className="font-medium text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
                 >
-                  Follow Centre Default ({defaultTheme === 'dark' ? 'Dark Navy' : 'Light Mode'})
+                  Follow Centre Default ({defaultTheme === 'dark' ? 'Dark Charcoal' : 'Light Mode'})
                 </button>
               </div>
             )}
 
             {onSignOut && (
-              <div className="pt-4 border-t border-[#E5E7EF] dark:border-[#303A55] flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs text-[#687086] dark:text-[#A6B0C3]">
-                  Signed in as <span className="font-mono font-semibold">{principal.loginId}</span>
+              <div className="pt-4 border-t border-[#E2E8E5] dark:border-[#344047] flex flex-wrap items-center justify-between gap-3">
+                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  Signed in as <span className="font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">{principal.loginId}</span>
                 </p>
                 <Button
                   variant="danger"
@@ -463,23 +361,8 @@ export function RoleProfileView({
           subtitle="Update your own sign-in password securely after verifying your current password."
         >
           <form onSubmit={handlePasswordChange} className="space-y-4" noValidate>
-            {pwError && (
-              <div
-                role="alert"
-                className="rounded-lg border border-red-200 dark:border-red-900/60 bg-red-50 dark:bg-red-950/30 px-3.5 py-2.5 text-xs font-medium text-red-700 dark:text-red-400"
-              >
-                {pwError}
-              </div>
-            )}
-            {pwSuccess && (
-              <div
-                role="status"
-                className="rounded-lg border border-emerald-200 dark:border-emerald-900/60 bg-emerald-50 dark:bg-emerald-950/30 px-3.5 py-2.5 text-xs font-medium text-emerald-800 dark:text-emerald-200 flex items-center gap-2"
-              >
-                <CheckCircle2 className="w-4 h-4 shrink-0" aria-hidden="true" />
-                <span>{pwSuccess}</span>
-              </div>
-            )}
+            {pwError && <Alert tone="error">{pwError}</Alert>}
+            {pwSuccess && <Alert tone="success">{pwSuccess}</Alert>}
             <div className="grid gap-4 sm:grid-cols-3">
               <Input
                 label="Current Password"
@@ -519,44 +402,6 @@ export function RoleProfileView({
           </form>
         </Card>
       )}
-
-      {/* Quick Navigation Shortcuts */}
-      <Card
-        title="Quick Workspace Shortcuts"
-        subtitle="Open secondary modules and full tools in one tap."
-      >
-        <div className="grid gap-3 sm:grid-cols-2">
-          {shortcuts.map((item) => {
-            const Icon = item.icon;
-            return (
-              <button
-                key={item.navId}
-                type="button"
-                onClick={() => onSelectNav(item.navId)}
-                className="flex items-center justify-between gap-3 rounded-xl border border-[#E5E7EF] dark:border-[#303A55] bg-[#F8F9FC] dark:bg-[#101426]/60 hover:bg-[#F1EEFA] dark:hover:bg-[#202844] p-4 text-left transition-colors cursor-pointer group"
-              >
-                <div className="flex items-start gap-3 min-w-0">
-                  <span className="w-9 h-9 rounded-xl bg-white dark:bg-[#171D34] border border-[#E5E7EF] dark:border-[#303A55] text-[#7552D9] dark:text-[#A78BFA] inline-flex items-center justify-center shrink-0">
-                    <Icon className="w-4 h-4" aria-hidden="true" />
-                  </span>
-                  <div className="min-w-0">
-                    <p className="text-sm font-semibold text-[#17172B] dark:text-[#F8FAFC] truncate">
-                      {item.label}
-                    </p>
-                    <p className="text-xs text-[#687086] dark:text-[#A6B0C3] mt-0.5">
-                      {item.description}
-                    </p>
-                  </div>
-                </div>
-                <ArrowRight
-                  className="w-4 h-4 text-[#687086] dark:text-[#A6B0C3] group-hover:text-[#7552D9] dark:group-hover:text-[#C4B5FD] shrink-0 transition-transform group-hover:translate-x-0.5"
-                  aria-hidden="true"
-                />
-              </button>
-            );
-          })}
-        </div>
-      </Card>
     </div>
   );
 }
