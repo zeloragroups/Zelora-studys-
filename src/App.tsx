@@ -62,6 +62,7 @@ function AppRouter() {
       case ROUTES.HOME:
         return <PortalSelectorPage onNavigate={navigate} />;
       case ROUTES.ADMIN_LOGIN:
+      case '/admin/login':
         return <AdminLoginPage onNavigate={navigate} />;
       case ROUTES.PORTAL_LOGIN:
         return <PortalLoginPage onNavigate={navigate} />;

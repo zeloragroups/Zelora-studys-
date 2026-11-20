@@ -7,6 +7,7 @@ import {
 import {
   findRoutePolicy,
   getDefaultRouteForRole,
+  getLoginRouteForPath,
   ROUTES,
 } from '../src/router/routes';
 
@@ -117,6 +118,12 @@ async function runTests() {
   assert.equal(adminPolicy?.allowedRoles?.includes('teacher'), false);
   assert.equal(teacherPolicy?.allowedRoles?.includes('student'), false);
   assert.equal(studentPolicy?.allowedRoles?.includes('admin'), false);
+
+  assert.equal(ROUTES.ADMIN_LOGIN, '/admin-login');
+  assert.equal(findRoutePolicy('/admin-login')?.requiresAuth, false);
+  assert.equal(findRoutePolicy('/admin-login')?.portalScope, 'admin_portal');
+  assert.equal(getLoginRouteForPath(ROUTES.ADMIN_DASHBOARD), '/admin-login');
+  assert.equal(getLoginRouteForPath(ROUTES.PORTAL_TEACHER), ROUTES.PORTAL_LOGIN);
 
   // 16 & 17. Session expiry detection & logout
   const validSession = await auth.signInWithId({

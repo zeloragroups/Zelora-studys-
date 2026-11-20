@@ -1,4 +1,4 @@
-import { ArrowRight, Globe, GraduationCap, Mail, MapPin, Phone, Shield } from 'lucide-react';
+import { ArrowRight, BookOpen, Globe, GraduationCap, Mail, MapPin, Phone } from 'lucide-react';
 import { useInterface } from '../context/InterfaceContext';
 import { ROUTES, type AppRoutePath } from '../router/routes';
 import { BrandLogoMark } from '../components/ui/BrandLogoMark';
@@ -11,9 +11,8 @@ interface PortalSelectorPageProps {
 }
 
 /**
- * Clean entry point separating the two web applications:
- * 1. Admin Web App (Dedicated Google-verified Admin portal)
- * 2. Teacher & Student Portal (Shared login with automatic role routing)
+ * Public portal homepage presenting ONLY Student Login and Teacher Login.
+ * Never links to or surfaces the dedicated Administrator sign-in route.
  */
 export function PortalSelectorPage({ onNavigate }: PortalSelectorPageProps) {
   const { branding, publicSettings } = useInterface();
@@ -62,45 +61,20 @@ export function PortalSelectorPage({ onNavigate }: PortalSelectorPageProps) {
               {branding.tagline ? ` · ${branding.tagline}` : ''}
             </p>
             <h1 className="text-3xl sm:text-4xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] text-balance">
-              Select Your Application Portal
+              Student &amp; Teacher Portal
             </h1>
             <p className="text-sm sm:text-base text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
               {centreProfile.centreName !== branding.centreName
                 ? `${centreProfile.centreName} — `
                 : ''}
-              Unified academic, attendance, assessment, and financial operations backed by strict role-based access control.
+              Sign in with your assigned Student ID or Teacher ID and password to access your academic workspace.
             </p>
           </div>
 
           <div className="grid gap-5 md:grid-cols-2">
             <Card
-              variant="charcoal"
-              title="Admin Web App"
-              subtitle="Dedicated centre management application"
-            >
-              <div className="space-y-5">
-                <div className="flex items-start gap-3 text-sm text-[#AAB6B4] leading-relaxed">
-                  <span className="w-9 h-9 rounded-xl bg-[#343C42] text-[#35D6A0] dark:text-[#42DDA9] inline-flex items-center justify-center shrink-0">
-                    <Shield className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
-                  </span>
-                  <p>
-                    Unified responsive Admin workspace across desktop, tablet, and mobile for authorized administrators.
-                  </p>
-                </div>
-                <Button
-                  variant="primary"
-                  className="w-full justify-between"
-                  onClick={() => onNavigate(ROUTES.ADMIN_LOGIN)}
-                >
-                  <span>Open Admin Login</span>
-                  <ArrowRight className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
-                </Button>
-              </div>
-            </Card>
-
-            <Card
-              title="Teacher & Student Portal"
-              subtitle="Shared login with automatic role routing"
+              title="Student Login"
+              subtitle="Students & Parents · Academic Portal"
             >
               <div className="space-y-5">
                 <div className="flex items-start gap-3 text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
@@ -108,7 +82,31 @@ export function PortalSelectorPage({ onNavigate }: PortalSelectorPageProps) {
                     <GraduationCap className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
                   </span>
                   <p>
-                    Single login for Teachers, Students, and Parents (using Student ID). Automatically opens the right dashboard after sign-in.
+                    Sign in with your assigned Student ID and password to view class attendance, homework, online tests, exam results, and fee records.
+                  </p>
+                </div>
+                <Button
+                  variant="primary"
+                  className="w-full justify-between"
+                  onClick={() => onNavigate(ROUTES.PORTAL_LOGIN)}
+                >
+                  <span>Student Login</span>
+                  <ArrowRight className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
+                </Button>
+              </div>
+            </Card>
+
+            <Card
+              title="Teacher Login"
+              subtitle="Faculty Workspace · Teaching Portal"
+            >
+              <div className="space-y-5">
+                <div className="flex items-start gap-3 text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                  <span className="w-9 h-9 rounded-xl bg-[#DDF8EE] dark:bg-[#244B3E] text-[#168A63] dark:text-[#42DDA9] inline-flex items-center justify-center shrink-0">
+                    <BookOpen className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
+                  </span>
+                  <p>
+                    Sign in with your assigned Teacher ID and password to record batch attendance, publish homework, review submissions, and enter marks.
                   </p>
                 </div>
                 <Button
@@ -116,7 +114,7 @@ export function PortalSelectorPage({ onNavigate }: PortalSelectorPageProps) {
                   className="w-full justify-between"
                   onClick={() => onNavigate(ROUTES.PORTAL_LOGIN)}
                 >
-                  <span>Open Portal Login</span>
+                  <span>Teacher Login</span>
                   <ArrowRight className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
                 </Button>
               </div>

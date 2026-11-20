@@ -239,15 +239,33 @@ function runAdminAuthSeparationChecks() {
   assert.equal(adminLoginSrc.includes('PORTAL_LOGIN'), false);
   assert.equal(adminLoginSrc.includes('ADMIN_FORGOT_PASSWORD'), false);
 
+  const portalSelectorSrc = fs.readFileSync(
+    path.join(rootDir, 'src/pages/PortalSelectorPage.tsx'),
+    'utf8'
+  );
+  assert.ok(portalSelectorSrc.includes('Student Login'));
+  assert.ok(portalSelectorSrc.includes('Teacher Login'));
+  assert.equal(portalSelectorSrc.includes('ADMIN_LOGIN'), false);
+  assert.equal(portalSelectorSrc.includes('/admin-login'), false);
+  assert.equal(portalSelectorSrc.includes('Admin Login'), false);
+  assert.equal(portalSelectorSrc.includes('Admin Web App'), false);
+  assert.equal(portalSelectorSrc.includes('Google'), false);
+
   const portalLoginSrc = fs.readFileSync(
     path.join(rootDir, 'src/pages/auth/PortalLoginPage.tsx'),
     'utf8'
   );
   assert.equal(portalLoginSrc.includes('ADMIN_LOGIN'), false);
+  assert.equal(portalLoginSrc.includes('/admin-login'), false);
   assert.equal(portalLoginSrc.includes('Admin Portal'), false);
+  assert.equal(portalLoginSrc.includes('Google'), false);
 
   const routesSrc = fs.readFileSync(path.join(rootDir, 'src/router/routes.ts'), 'utf8');
+  assert.ok(routesSrc.includes("ADMIN_LOGIN: '/admin-login'"));
   assert.equal(routesSrc.includes('ADMIN_FORGOT_PASSWORD'), false);
+
+  const redirectsSrc = fs.readFileSync(path.join(rootDir, 'public/_redirects'), 'utf8');
+  assert.ok(redirectsSrc.includes('/* /index.html 200'));
 }
 
 function runSparkPlanOnlyChecks() {
