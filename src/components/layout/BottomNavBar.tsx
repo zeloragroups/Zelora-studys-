@@ -12,7 +12,7 @@ interface BottomNavBarProps {
 /**
  * Mobile & tablet 5-slot bottom navigation bar.
  * Position 3 (exact middle) is always the slightly elevated Home destination.
- * Uses Scholars Academy Charcoal + Mint + Crisp White / Dark Navy-Slate tokens.
+ * Uses ZELORA STUDYS Charcoal + Mint + Crisp White / Dark palettes.
  */
 export function BottomNavBar({
   slots,

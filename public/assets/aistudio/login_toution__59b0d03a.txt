@@ -1,0 +1,1153 @@
+ZELORA STUDYS — UNIFIED STUDENT & TEACHER LOGIN, PREMIUM DARK THEME AND ANIMATED STARTUP EXPERIENCE
+
+PROJECT OBJECTIVE
+
+Upgrade the existing tuition management application into a polished, professional education platform branded as ZELORA STUDYS.
+
+This is an enhancement to an existing working application, NOT a new application. Carefully inspect the existing repository, architecture, authentication implementation, navigation, Firebase configuration, design system, and all existing features before making changes.
+
+The primary objective is to create:
+
+1. One unified login page for Students and Teachers.
+2. Automatic role detection using the existing institutional ID and password authentication.
+3. Automatic redirection to the correct Student or Teacher application.
+4. A premium, professional dark theme as the default across Admin, Teacher, and Student applications.
+5. A fully functional Light Theme option.
+6. A professional animated startup/loading screen branded ZELORA STUDYS.
+7. A consistent, responsive design experience across mobile, tablet, laptop, and desktop.
+
+The application name must always be written as:
+
+ZELORA STUDYS
+
+Use uppercase letters and bold visual treatment wherever the brand name appears prominently. Do not use the old academy name or any alternative application name.
+
+---
+
+PART 1 — STRICT EXISTING PROJECT PRESERVATION
+
+Before modifying code, inspect the complete project.
+
+Existing technology stack
+
+Preserve the existing stack:
+
+- React 19
+- TypeScript
+- Vite 8
+- Tailwind CSS v4
+- Motion
+- lucide-react
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
+
+Do not migrate the application to another framework or database.
+
+Firebase restrictions
+
+The project uses Firebase project:
+
+"academy-0007"
+
+The application must continue operating on the Firebase Spark plan.
+
+Strictly preserve:
+
+- Firebase Authentication.
+- Firestore.
+- Firebase Storage.
+- Existing Firebase security rules.
+- Existing authentication services.
+- Existing role permissions.
+- Existing Firestore collections and document structures.
+- Existing environment variable names.
+- Existing application routing and protected routes.
+
+Keep:
+
+"VITE_FIREBASE_FUNCTIONS_ENABLED=false"
+
+Do not introduce:
+
+- Cloud Functions.
+- Firebase Blaze requirements.
+- Paid authentication services.
+- PostgreSQL.
+- MySQL.
+- Supabase.
+- Other external databases.
+- OpenAI or Gemini APIs.
+- Third-party AI services.
+- Razorpay or other payment gateways.
+- SMS, WhatsApp, email, or push-notification integrations.
+
+Do not create a new authentication architecture merely to implement the login UI.
+
+Important: The existing Teacher and Student authentication must remain compatible with the current Firebase Spark implementation. Do not introduce a new backend dependency or claim that Firebase Authentication supports arbitrary username/password login without an existing compatible implementation.
+
+If the existing institutional ID authentication relies on a current secure mapping or authentication service, preserve and improve that implementation rather than replacing it.
+
+---
+
+PART 2 — ONE UNIFIED LOGIN PAGE
+
+2.1 Core requirement
+
+Create only ONE public login page for Students and Teachers.
+
+There must not be separate Student Login and Teacher Login pages.
+
+There must not be separate Student and Teacher login cards.
+
+There must not be a role-selection screen.
+
+There must not be a Student/Teacher selection dropdown.
+
+There must not be two different login buttons.
+
+Both user types must enter their institutional ID and password into the same login form.
+
+The application must automatically identify the account type after successful authentication.
+
+Login behaviour
+
+User| Login ID format| Destination
+Student| STU-xxxx| Student application
+Teacher| TCH-xxxx| Teacher application
+
+Example:
+
+- Student enters "STU-1024" and their password.
+- The system authenticates the account.
+- The system identifies the account as Student.
+- The system redirects to the Student dashboard.
+
+Another example:
+
+- Teacher enters "TCH-2048" and their password.
+- The system authenticates the account.
+- The system identifies the account as Teacher.
+- The system redirects to the Teacher dashboard.
+
+The user must never need to manually select their role.
+
+2.2 Login page design
+
+Create a professional education-platform login interface.
+
+The visual quality should be comparable to modern, established education and school-management platforms.
+
+The design must feel:
+
+- Professional.
+- Premium.
+- Trustworthy.
+- Clean.
+- Modern.
+- Human-designed.
+- Easy to understand.
+- Suitable for students and teachers.
+
+Avoid an ordinary generic login form.
+
+Suggested layout
+
+Desktop:
+
+Use a carefully balanced two-section composition.
+
+Left section:
+
+- ZELORA STUDYS branding.
+- A short educational platform statement.
+- A tasteful academic visual or abstract educational illustration.
+- A subtle decorative background treatment.
+- A professional visual hierarchy.
+
+Right section:
+
+- Login form.
+- Welcome heading.
+- Short supporting text.
+- Institutional ID field.
+- Password field.
+- Show/hide password control.
+- Remember-me option only if compatible with the existing secure session design.
+- Primary Sign In button.
+- Small support text for users who cannot access their accounts.
+
+Do not add unnecessary elements.
+
+Mobile:
+
+Use a single-column layout.
+
+- Compact brand area.
+- Login heading.
+- ID field.
+- Password field.
+- Sign In button.
+- Appropriate spacing.
+- Comfortable touch targets.
+- No horizontal scrolling.
+- No unnecessary decorative sections that push the form below the screen.
+
+The login form must remain immediately understandable.
+
+2.3 Login form requirements
+
+Institutional ID
+
+Label:
+
+"Student / Teacher ID"
+
+Placeholder:
+
+"Enter your institutional ID"
+
+Requirements:
+
+- Accept valid Student and Teacher IDs.
+- Normalize unnecessary leading or trailing whitespace.
+- Validate the expected ID format.
+- Do not reveal whether an account exists before authentication.
+- Display helpful validation messages.
+- Do not expose internal database information.
+
+Password
+
+Label:
+
+"Password"
+
+Requirements:
+
+- Secure password input.
+- Show/hide password button.
+- Keyboard accessibility.
+- Proper focus state.
+- Clear validation.
+- Never display the actual password in error messages.
+- Never log passwords.
+- Never store passwords in localStorage or sessionStorage.
+
+Sign In button
+
+Label:
+
+"Sign In"
+
+States:
+
+1. Default.
+2. Hover.
+3. Pressed.
+4. Loading.
+5. Disabled.
+6. Error.
+
+While authentication is running:
+
+- Prevent duplicate submissions.
+- Display a small loading indicator.
+- Disable the button.
+- Do not show fake success messages.
+
+Error handling
+
+Provide professional messages such as:
+
+- Invalid ID or password.
+- Your account is currently inactive.
+- Your session has expired.
+- Unable to connect. Please try again.
+- Your account does not have permission to access this area.
+
+Do not reveal whether an account ID is registered.
+
+Do not reveal internal Firebase errors or database paths.
+
+---
+
+PART 3 — AUTOMATIC ROLE DETECTION AND REDIRECTION
+
+This is one of the most important requirements.
+
+The application must determine the role using trusted authentication data, not merely the prefix typed by the user.
+
+Authentication flow
+
+1. User opens the unified login page.
+2. User enters institutional ID.
+3. User enters password.
+4. Existing authentication service verifies credentials.
+5. The application retrieves the authenticated user's authorised profile.
+6. The system verifies the account's active status.
+7. The system determines the trusted role.
+8. The system loads the correct application.
+9. The user is redirected to the correct dashboard.
+
+Student flow
+
+"Login → Authenticate → Verify Student Role → Student Dashboard"
+
+Teacher flow
+
+"Login → Authenticate → Verify Teacher Role → Teacher Dashboard"
+
+Security requirements
+
+- Never trust the client-provided role.
+- Never trust an ID prefix as the sole authorization mechanism.
+- Never allow a Student to access Teacher routes.
+- Never allow a Teacher to access Student routes.
+- Do not rely on hidden navigation items for authorization.
+- Preserve existing RouteGuard and role-protection logic.
+- Revalidate the authenticated account and role when appropriate.
+- Reject inactive accounts.
+- Reject accounts with missing or invalid role information.
+- Do not automatically grant a role based on a missing Firestore field.
+- Preserve existing account status and permission checks.
+
+If role verification fails, show a safe error and do not redirect.
+
+Session persistence
+
+Preserve the existing Firebase Authentication session strategy.
+
+On application refresh:
+
+- Check the current authenticated session.
+- Verify the user's role.
+- Redirect to the appropriate dashboard.
+- Prevent unauthorized route access.
+- Avoid unnecessary repeated login screens.
+
+When a user signs out:
+
+- Clear the authenticated session using the existing AuthContext sign-out implementation.
+- Clear role-specific in-memory state.
+- Redirect to the unified Student/Teacher login page.
+- Do not leave private dashboard content accessible through browser history.
+
+---
+
+PART 4 — ADMIN LOGIN MUST REMAIN SEPARATE
+
+Do not combine Admin authentication with the Student/Teacher login form.
+
+Admin must continue using the existing dedicated route:
+
+"/admin-login"
+
+Admin authentication requirements
+
+Preserve:
+
+- Google Sign-In only.
+- Existing authorised Admin Gmail allowlist.
+- Initial allowlisted Gmail: "07alphabro@gmail.com".
+- Google provider verification.
+- Email verification requirement.
+- Active "admins/{uid}" document verification.
+- Unauthorized account rejection.
+- Immediate sign-out for unauthorized accounts.
+- Existing Admin route protection.
+
+Do not add an Admin login card to the public Student/Teacher login page.
+
+Do not add an Admin role-selection option.
+
+Do not weaken Admin authorization.
+
+The Admin login page must also follow the new default dark theme and ZELORA STUDYS branding.
+
+---
+
+PART 5 — PREMIUM DEFAULT DARK THEME
+
+5.1 Main requirement
+
+Make Dark Theme the default appearance for the entire application.
+
+This applies to:
+
+- Public login page.
+- Admin application.
+- Teacher application.
+- Student application.
+- Settings.
+- Profile.
+- Tables.
+- Forms.
+- Dialogs.
+- Navigation.
+- Drawers.
+- Notifications.
+- Reports.
+- Loading states.
+- Empty states.
+- Error states.
+
+The application must have one consistent design language.
+
+Do not redesign each role independently with unrelated colors.
+
+5.2 Dark palette
+
+Use the following palette as the starting point.
+
+Design role| HEX
+Main background| #151A1E
+Primary surface| #1D2429
+Secondary surface| #252E33
+Elevated surface| #2B353A
+Main text| #F4F7F6
+Secondary text| #A8B4B0
+Muted text| #82918C
+Border| #35413F
+Primary mint| #42DDA9
+Strong mint| #18B985
+Dark mint| #168A63
+Error| #EF6464
+Warning| #E7B75A
+Success| #42DDA9
+
+Use mint carefully.
+
+Do not make every button, icon, heading, border, and background mint.
+
+The application must look premium rather than overly colourful.
+
+Use mint primarily for:
+
+- Primary actions.
+- Selected navigation states.
+- Important status indicators.
+- Focus states.
+- Small brand accents.
+- Progress indicators.
+
+5.3 Visual design rules
+
+Avoid:
+
+- Excessive gradients.
+- Neon green.
+- Excessive glowing effects.
+- Glassmorphism everywhere.
+- Excessive rounded cards.
+- Too many shadows.
+- Unnecessary icons.
+- Large decorative illustrations.
+- Flashy animations.
+- Overcrowded dashboards.
+- Generic AI-generated dashboard layouts.
+
+Use:
+
+- Clear visual hierarchy.
+- Consistent spacing.
+- Carefully designed typography.
+- Natural contrast.
+- Subtle borders.
+- Restrained shadows.
+- Clean tables.
+- Consistent button sizes.
+- Appropriate whitespace.
+- Purposeful motion.
+
+5.4 Typography
+
+Use the existing font-loading architecture where possible.
+
+Recommended typography:
+
+- Display headings: Plus Jakarta Sans.
+- General body text: DM Sans.
+- Institutional IDs and numerical data: JetBrains Mono.
+
+Typography must be readable on small mobile screens.
+
+Do not use excessively large headings or inconsistent font weights.
+
+---
+
+PART 6 — LIGHT THEME SUPPORT
+
+Dark Theme must be selected by default.
+
+However, retain the ability for users to switch to Light Theme.
+
+Light palette
+
+Design role| HEX
+Main background| #F7F9F8
+Primary surface| #FFFFFF
+Secondary surface| #F0F4F2
+Elevated surface| #FFFFFF
+Main text| #20262B
+Secondary text| #66736D
+Muted text| #87938D
+Border| #E2E8E5
+Primary mint| #18B985
+Strong mint| #168A63
+Dark mint| #116B50
+
+Theme switching
+
+Provide the theme option in the existing Settings interface.
+
+Requirements:
+
+- Dark Theme is the initial default.
+- Light Theme can be selected manually.
+- Theme changes must apply throughout the entire application.
+- Theme selection must persist across reloads.
+- Theme preference should be scoped to the authenticated user where the existing architecture supports it.
+- Avoid a visible flash of Light Theme before Dark Theme loads.
+- Ensure the login page also uses the default Dark Theme.
+- Preserve the existing settings navigation and categories.
+
+Do not introduce a new settings section unnecessarily if a suitable appearance setting already exists.
+
+Theme implementation
+
+Use the central design tokens and CSS variables.
+
+Do not hardcode unrelated dark colors inside individual components.
+
+All reusable UI components must respect the active theme.
+
+Check:
+
+- Inputs.
+- Select fields.
+- Textareas.
+- Dropdowns.
+- Tables.
+- Modal backgrounds.
+- Confirmation dialogs.
+- Tooltips.
+- Navigation.
+- Charts.
+- Status labels.
+- Disabled controls.
+- Focus outlines.
+- Scrollbars.
+
+Ensure sufficient contrast in both themes.
+
+---
+
+PART 7 — ZELORA STUDYS STARTUP LOADING SCREEN
+
+Create a premium startup/loading experience for ZELORA STUDYS.
+
+The loading screen must appear when the application starts and while initial authentication/session checks are running.
+
+Branding
+
+Display:
+
+ZELORA STUDYS
+
+Use bold uppercase branding.
+
+Use the existing logo asset if available.
+
+If an existing logo is unavailable, create a restrained text-based brand treatment rather than inventing a completely different logo identity.
+
+Visual direction
+
+- Main background: #151A1E.
+- Brand text: #F4F7F6.
+- Mint accent: #42DDA9.
+- Minimal, professional layout.
+- Carefully balanced spacing.
+- Subtle animation.
+- No excessive glow.
+- No flashy effects.
+- No unnecessary illustrations.
+
+Suggested animation
+
+1. Dark background appears.
+2. Brand mark fades in.
+3. ZELORA STUDYS appears with a subtle opacity and movement transition.
+4. A slim mint loading indicator appears.
+5. Authentication/session initialization takes place.
+6. The application smoothly transitions to the correct screen.
+
+Use Motion for animations where appropriate.
+
+Loading behaviour
+
+The loading screen must be connected to real application initialization.
+
+It must not:
+
+- Use a fake percentage counter.
+- Pretend to load when nothing is happening.
+- Add unnecessary fixed delays.
+- Remain visible after initialization has finished.
+- Hide actual errors.
+- Block the user indefinitely.
+
+Handle:
+
+- Firebase initialization.
+- Authentication state restoration.
+- Role verification.
+- Initial user profile retrieval.
+- Theme initialization.
+- Dashboard routing.
+
+Display an appropriate error state if initialization fails.
+
+Include a retry option where practical.
+
+Route-aware startup
+
+If the user is already authenticated:
+
+- Student → Student dashboard.
+- Teacher → Teacher dashboard.
+- Admin → Admin dashboard.
+
+If no user is authenticated:
+
+- Public application → unified login page.
+- Direct "/admin-login" access → Admin login page.
+
+Never redirect an authenticated Admin into the Student/Teacher application.
+
+---
+
+PART 8 — APPLICATION-WIDE DESIGN CONSISTENCY
+
+Apply the new design system across all three roles.
+
+Do not limit the update to the login page.
+
+Admin application
+
+Preserve the existing Admin features and workflows.
+
+Apply:
+
+- Default Dark Theme.
+- Consistent typography.
+- Improved navigation contrast.
+- Clean dashboard layout.
+- Professional data tables.
+- Consistent forms.
+- Proper modal design.
+- Clear status indicators.
+- Responsive layouts.
+
+Teacher application
+
+Preserve existing Teacher functionality.
+
+Apply:
+
+- Default Dark Theme.
+- Clear dashboard hierarchy.
+- Consistent navigation.
+- Improved homework and assessment views.
+- Professional attendance tables.
+- Clean batch and student information.
+- Consistent forms and dialogs.
+
+Student application
+
+Preserve existing Student functionality.
+
+Apply:
+
+- Default Dark Theme.
+- Clear dashboard hierarchy.
+- Readable attendance information.
+- Professional homework presentation.
+- Clean assessment and result screens.
+- Proper fee and payment information.
+- Responsive layouts.
+
+Navigation preservation
+
+Preserve the existing navigation structure.
+
+Specifically:
+
+- Five bottom navigation slots.
+- Home in the centered position.
+- Profile must not become a bottom navigation item.
+- Profile remains accessible from the top-right area.
+- Desktop sidebar remains functional.
+- Mobile and tablet navigation drawer remains functional.
+- Sign Out remains in the appropriate dashboard menu/footer.
+- Existing confirmation dialog remains functional.
+
+Do not introduce a new navigation system unnecessarily.
+
+---
+
+PART 9 — RESPONSIVE DESIGN
+
+The complete application must work across:
+
+1. Android phones.
+2. iPhones.
+3. Small tablets.
+4. Large tablets.
+5. Laptops.
+6. Desktop monitors.
+
+Mobile requirements
+
+- No horizontal overflow.
+- Appropriate touch targets.
+- Readable text.
+- Properly spaced forms.
+- Responsive tables.
+- Drawer navigation.
+- Correct bottom navigation placement.
+- No content hidden behind system navigation areas.
+- Avoid oversized dashboard cards.
+- Avoid excessively tall login layouts.
+
+Tablet requirements
+
+- Balanced content width.
+- Appropriate grid layout.
+- Drawer navigation when required.
+- Proper spacing.
+- Readable data tables.
+
+Desktop requirements
+
+- Professional sidebar layout.
+- Appropriate maximum content width.
+- Consistent alignment.
+- Balanced dashboard columns.
+- Proper use of available screen space.
+
+Test at representative widths, including:
+
+- 360px.
+- 390px.
+- 430px.
+- 768px.
+- 1024px.
+- 1366px.
+- 1440px.
+
+---
+
+PART 10 — SECURITY AND PRIVACY
+
+Authentication and authorization must remain secure.
+
+Perform a security review before and after implementation.
+
+Authentication security
+
+- Preserve Firebase Authentication.
+- Preserve the current secure institutional ID mapping.
+- Never store passwords in browser storage.
+- Never expose authentication secrets.
+- Never log passwords.
+- Never place private credentials in frontend code.
+- Do not create insecure client-side role overrides.
+
+Authorization
+
+- Deny access by default.
+- Verify roles using trusted account data.
+- Preserve strict Student/Teacher/Admin separation.
+- Preserve existing Firestore security rules.
+- Preserve teacher ownership restrictions.
+- Preserve student data isolation.
+- Preserve financial data protections.
+- Preserve assessment and result permissions.
+
+Route security
+
+Check direct navigation to:
+
+- "/login"
+- "/admin-login"
+- "/admin"
+- Student routes.
+- Teacher routes.
+
+A user must not gain access simply by entering another role's URL.
+
+Data protection
+
+- Avoid exposing sensitive student information.
+- Avoid unnecessary user profile data in the browser.
+- Do not expose internal Firebase errors.
+- Do not store credentials in localStorage.
+- Keep existing audit logging.
+- Avoid logging sensitive personal information.
+
+Do not weaken Firestore or Storage rules to make the new UI work.
+
+---
+
+PART 11 — ACCESSIBILITY AND USER EXPERIENCE
+
+Ensure:
+
+- Keyboard navigation.
+- Proper form labels.
+- Visible focus indicators.
+- Accessible buttons.
+- Screen-reader-friendly controls.
+- Sufficient colour contrast.
+- Clear validation messages.
+- Consistent loading indicators.
+- Proper disabled states.
+- Appropriate error messages.
+
+The login experience must be usable without a mouse.
+
+Do not rely only on colour to communicate success, errors, or account status.
+
+---
+
+PART 12 — PERFORMANCE
+
+The new interface must remain lightweight.
+
+Requirements:
+
+- Avoid unnecessary dependencies.
+- Reuse existing UI components.
+- Avoid loading large decorative assets.
+- Use efficient CSS transitions.
+- Avoid unnecessary component re-renders.
+- Avoid duplicate Firebase listeners.
+- Clean up authentication subscriptions.
+- Prevent memory leaks.
+- Avoid unnecessary network requests.
+- Do not add heavy animation libraries when Motion already exists.
+
+The startup screen must not slow down application initialization.
+
+The login page should render quickly even on slower mobile devices.
+
+---
+
+PART 13 — REQUIRED IMPLEMENTATION WORKFLOW
+
+Follow this order.
+
+Step 1: Repository audit
+
+Inspect:
+
+- Project structure.
+- Existing authentication flow.
+- AuthContext.
+- Login components.
+- Route configuration.
+- RouteGuard.
+- Admin authentication.
+- Theme provider.
+- Design tokens.
+- Settings.
+- Navigation.
+- Loading components.
+- Firebase services.
+- Firestore rules.
+
+Create a short internal implementation plan before modifying code.
+
+Step 2: Unified login implementation
+
+- Replace the public Student/Teacher selection experience.
+- Implement one shared login form.
+- Connect it to the existing authentication service.
+- Add trusted role detection.
+- Add correct role-based redirection.
+- Preserve validation and error handling.
+
+Step 3: Theme implementation
+
+- Set Dark Theme as default.
+- Update central design tokens.
+- Update reusable UI components.
+- Verify Admin, Teacher and Student screens.
+- Preserve Light Theme.
+- Persist user preference.
+
+Step 4: Startup loading screen
+
+- Implement the branded loading experience.
+- Connect it to Firebase initialization.
+- Connect it to session restoration.
+- Connect it to role verification.
+- Connect it to route selection.
+- Handle loading failures.
+
+Step 5: Responsive refinement
+
+Test mobile, tablet and desktop layouts.
+
+Step 6: Security verification
+
+Review authentication, route guards, role separation and Firebase rules.
+
+Step 7: Automated testing
+
+Run the existing project checks.
+
+---
+
+PART 14 — TESTING REQUIREMENTS
+
+Do not consider the work complete simply because the application compiles.
+
+Run all existing project tests.
+
+Build checks
+
+- TypeScript compilation.
+- ESLint.
+- Vite production build.
+- Existing automated verification scripts.
+- Existing security audit tests.
+- Existing Phase 2–10 verification tests.
+
+Do not delete or weaken tests to obtain a passing result.
+
+Login tests
+
+Test the following scenarios:
+
+1. Valid Student ID and password.
+2. Valid Teacher ID and password.
+3. Invalid ID.
+4. Invalid password.
+5. Inactive Student account.
+6. Inactive Teacher account.
+7. Missing role.
+8. Invalid role.
+9. Network failure.
+10. Duplicate Sign In submission.
+11. Existing authenticated Student session.
+12. Existing authenticated Teacher session.
+13. Existing authenticated Admin session.
+14. Sign-out behaviour.
+15. Direct unauthorized route access.
+
+Theme tests
+
+Verify:
+
+- First-time visitor receives Dark Theme.
+- Login page uses Dark Theme.
+- Admin uses Dark Theme.
+- Teacher uses Dark Theme.
+- Student uses Dark Theme.
+- Light Theme can be selected.
+- Theme preference persists after reload.
+- Theme switching updates all visible components.
+- No white background flashes during initialization.
+
+Startup screen tests
+
+Verify:
+
+- Startup screen appears when initialization is required.
+- Correct branding is displayed.
+- Loading state ends when initialization completes.
+- Authenticated users reach the correct dashboard.
+- Unauthenticated users reach the login page.
+- Admin reaches the Admin application.
+- Initialization errors are handled properly.
+- No infinite loading state occurs.
+
+Visual testing
+
+Use a real browser where available.
+
+Inspect:
+
+- Mobile login.
+- Desktop login.
+- Student dashboard.
+- Teacher dashboard.
+- Admin dashboard.
+- Navigation drawer.
+- Sidebar.
+- Settings.
+- Modals.
+- Tables.
+- Loading screen.
+
+If live browser testing is unavailable, explicitly state that it was not performed.
+
+Do not claim that a visual or live authentication test passed if it was not actually executed.
+
+---
+
+PART 15 — STRICTLY FORBIDDEN CHANGES
+
+Do not:
+
+1. Rebuild the entire application.
+2. Replace Firebase.
+3. Change the Firebase project ID.
+4. Introduce a paid Firebase requirement.
+5. Enable Cloud Functions or Blaze.
+6. Remove existing application features.
+7. Remove existing Firestore collections.
+8. Weaken security rules.
+9. Replace the Admin Google login.
+10. Add Admin to the public login form.
+11. Create separate Student and Teacher login pages.
+12. Add Student/Teacher selection cards.
+13. Add role selection dropdowns.
+14. Trust the typed ID prefix as authorization.
+15. Store passwords in browser storage.
+16. Add AI APIs.
+17. Add payment gateways.
+18. Add unnecessary external services.
+19. Add fake loading progress.
+20. Add unnecessary animations.
+21. Change the existing bottom navigation structure.
+22. Remove the existing Profile access.
+23. Remove Sign Out functionality.
+24. Change the application's business logic without necessity.
+25. Delete existing tests.
+26. Replace working services with mock data.
+27. Use fake authentication for demonstration.
+28. Use placeholder dashboard data in production.
+29. Introduce a new unrelated branding identity.
+30. Use the previous academy name anywhere in the new interface.
+
+---
+
+PART 16 — FINAL COMPLETION REPORT
+
+After implementation, provide a detailed report.
+
+Use this exact structure:
+
+1. Implementation Summary
+
+Explain what changed.
+
+2. Unified Login
+
+Explain how Student and Teacher authentication works.
+
+3. Role Detection
+
+Explain how trusted role verification and redirection work.
+
+4. Admin Login
+
+Confirm that "/admin-login" and Google authentication remain unchanged.
+
+5. Dark Theme
+
+List the design tokens and explain how Dark Theme became the default.
+
+6. Light Theme
+
+Explain how users can switch themes and how preferences persist.
+
+7. Startup Screen
+
+Explain the animation, initialization flow and routing behaviour.
+
+8. Responsive Design
+
+Report which screen sizes were tested.
+
+9. Security
+
+Explain the authentication, authorization and route-protection checks.
+
+10. Files Modified
+
+List every important file created, updated or removed, with its purpose.
+
+11. Tests
+
+Report actual results for:
+
+- TypeScript.
+- ESLint.
+- Production build.
+- Existing automated tests.
+- Authentication tests.
+- Responsive tests.
+- Visual browser tests.
+- Firebase rules tests, if available.
+
+12. Firebase Configuration
+
+Confirm that:
+
+- Project ID remains "academy-0007".
+- Firebase Spark architecture is preserved.
+- "VITE_FIREBASE_FUNCTIONS_ENABLED=false" remains unchanged.
+- No paid service was introduced.
+- No private secrets were exposed.
+
+13. Pending Work
+
+Clearly list anything that could not be tested or completed.
+
+---
+
+FINAL ACCEPTANCE CRITERIA
+
+The implementation is complete only when all the following conditions are satisfied:
+
+- [ ] One unified public login page exists.
+- [ ] No separate Student/Teacher login pages exist.
+- [ ] No Student/Teacher role selection is required.
+- [ ] Student ID and password authenticate Students.
+- [ ] Teacher ID and password authenticate Teachers.
+- [ ] Role detection uses trusted account information.
+- [ ] Students reach the Student application.
+- [ ] Teachers reach the Teacher application.
+- [ ] Admin login remains separate at "/admin-login".
+- [ ] Admin Google authorization remains secure.
+- [ ] ZELORA STUDYS is used consistently in uppercase.
+- [ ] Dark Theme is the default across all roles.
+- [ ] Light Theme remains available.
+- [ ] Theme preferences persist.
+- [ ] Startup loading screen is implemented.
+- [ ] Startup loading reflects actual initialization.
+- [ ] Mobile layout works correctly.
+- [ ] Tablet layout works correctly.
+- [ ] Desktop layout works correctly.
+- [ ] Existing navigation is preserved.
+- [ ] Existing business features remain functional.
+- [ ] Firebase Spark restrictions remain intact.
+- [ ] Existing security protections remain intact.
+- [ ] Existing tests continue to pass.
+
+FINAL INSTRUCTION
+
+Work directly on the existing repository.
+
+Inspect before modifying. Reuse existing services and components wherever possible. Make controlled, incremental changes. Do not rewrite working modules unnecessarily.
+
+Prioritize functional correctness, security, design quality, responsive behaviour and performance.
+
+The final result must feel like a professionally developed education management platform with a unified Student/Teacher login experience, a premium dark interface, and a polished ZELORA STUDYS startup experience.
+
+Do not stop after creating the visual design. Implement and connect every required interaction to the existing application logic.
+
+If a requirement conflicts with the existing Firebase Spark architecture or current security model, preserve security and the existing architecture, explain the conflict, and implement the safest compatible solution.

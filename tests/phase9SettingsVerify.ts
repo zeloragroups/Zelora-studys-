@@ -136,7 +136,7 @@ async function runPhase9Tests() {
   const publicDefaults = await settingsService.getPublicBrandingAndSettings();
   assert.equal(publicDefaults.centreProfile.centreName, DEFAULT_BRANDING_CONFIG.centreName);
   assert.equal(publicDefaults.applicationBranding.logoConfiguration.mode, 'default_icon');
-  assert.equal(publicDefaults.appearanceDefaults.defaultTheme, 'light');
+  assert.equal(publicDefaults.appearanceDefaults.defaultTheme, 'dark');
   assert.equal(publicDefaults.appearanceDefaults.allowPersonalThemePreference, true);
   assert.equal(publicDefaults.notificationPreferences.externalChannelsStatus, 'disabled_local_demo');
   assert.equal(publicDefaults.environmentMode, 'local_demo_adapter');

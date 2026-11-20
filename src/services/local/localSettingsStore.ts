@@ -30,14 +30,14 @@ export function createDefaultApplicationSettings(): ApplicationSettings {
       tagline: DEFAULT_BRANDING_CONFIG.tagline,
       loginWelcomeHeading: 'Welcome Back',
       loginDescription:
-        "Sign in with your assigned Teacher ID or Student ID. Parents use their child's Student ID and password.",
+        'Enter your institutional ID and password to access your Student or Teacher workspace.',
       logoConfiguration: {
         mode: 'default_icon',
         storageNotice: LOCAL_LOGO_NOTICE,
       },
     },
     appearanceDefaults: {
-      defaultTheme: 'light',
+      defaultTheme: DEFAULT_BRANDING_CONFIG.defaultTheme === 'light' ? 'light' : 'dark',
       allowPersonalThemePreference: true,
     },
     academicDefaults: {
@@ -121,8 +121,14 @@ function sanitizeRestoredSettings(raw: unknown): ApplicationSettings {
 
   const str = (v: unknown, fallback: string) =>
     typeof v === 'string' ? v : fallback;
-  const nonEmptyStr = (v: unknown, fallback: string) =>
-    typeof v === 'string' && v.trim().length > 0 ? v : fallback;
+  const nonEmptyStr = (v: unknown, fallback: string) => {
+    if (typeof v !== 'string') return fallback;
+    const trimmed = v.trim();
+    if (!trimmed) return fallback;
+    if (trimmed === 'Scholars Academy') return DEFAULT_BRANDING_CONFIG.centreName;
+    if (trimmed === 'Scholars') return DEFAULT_BRANDING_CONFIG.shortName;
+    return v;
+  };
 
   const validLogo =
     logoRaw.mode === 'custom_local_image' &&
@@ -183,7 +189,7 @@ function sanitizeRestoredSettings(raw: unknown): ApplicationSettings {
           },
     },
     appearanceDefaults: {
-      defaultTheme: ap.defaultTheme === 'dark' ? 'dark' : 'light',
+      defaultTheme: ap.defaultTheme === 'light' ? 'light' : 'dark',
       allowPersonalThemePreference:
         typeof ap.allowPersonalThemePreference === 'boolean'
           ? ap.allowPersonalThemePreference

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { ThemeProvider } from './context/ThemeContext';
+import { ThemeProvider, useTheme } from './context/ThemeContext';
 import { InterfaceProvider, useInterface } from './context/InterfaceContext';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import { ErrorBoundary } from './components/feedback/ErrorBoundary';
@@ -7,7 +7,6 @@ import { FirebaseConfigErrorScreen } from './components/feedback/FirebaseConfigE
 import { StartupSplash } from './components/feedback/StartupSplash';
 import { validateAndResolveFirebaseConfig } from './lib/firebase/config';
 import { runStartupFirestoreConnectionCheck } from './lib/firebase/firestore';
-import { PortalSelectorPage } from './pages/PortalSelectorPage';
 import { AdminLoginPage } from './pages/auth/AdminLoginPage';
 import { PortalLoginPage } from './pages/auth/PortalLoginPage';
 import { ForgotPasswordPage } from './pages/auth/ForgotPasswordPage';
@@ -24,11 +23,17 @@ import {
 
 function AppRouter() {
   const { branding, publicSettings } = useInterface();
-  const { signOut } = useAuth();
+  const { signOut, isRestoring, principal, setAuthNotice } = useAuth();
+  const { setUserThemeScope } = useTheme();
   const [splashDone, setSplashDone] = useState(false);
+  const [retryKey, setRetryKey] = useState(0);
   const [currentPath, setCurrentPath] = useState<string>(() =>
     typeof window !== 'undefined' ? normalizePath(window.location.pathname) : ROUTES.HOME
   );
+
+  useEffect(() => {
+    setUserThemeScope(principal?.uid ?? null);
+  }, [principal?.uid, setUserThemeScope]);
 
   const navigate = useCallback((to: AppRoutePath) => {
     const next = normalizePath(to);
@@ -55,19 +60,20 @@ function AppRouter() {
 
   const renderRouteContent = () => {
     if (!policy) {
-      return <PortalSelectorPage onNavigate={navigate} />;
+      return <PortalLoginPage onNavigate={navigate} />;
     }
 
     switch (policy.path) {
       case ROUTES.HOME:
-        return <PortalSelectorPage onNavigate={navigate} />;
+      case '/login':
+      case ROUTES.PORTAL_LOGIN:
+        return <PortalLoginPage onNavigate={navigate} />;
       case ROUTES.ADMIN_LOGIN:
       case '/admin/login':
         return <AdminLoginPage onNavigate={navigate} />;
-      case ROUTES.PORTAL_LOGIN:
-        return <PortalLoginPage onNavigate={navigate} />;
       case ROUTES.PORTAL_FORGOT_PASSWORD:
         return <ForgotPasswordPage onNavigate={navigate} />;
+      case '/admin':
       case ROUTES.ADMIN_DASHBOARD:
       case ROUTES.ADMIN_WEBSITE:
       case ROUTES.ADMIN_APP:
@@ -104,21 +110,26 @@ function AppRouter() {
           </RouteGuard>
         );
       default:
-        return <PortalSelectorPage onNavigate={navigate} />;
+        return <PortalLoginPage onNavigate={navigate} />;
     }
   };
 
   return (
-    <>
+    <div key={retryKey}>
       {!splashDone && (
         <StartupSplash
           branding={branding}
           logoConfiguration={publicSettings.applicationBranding.logoConfiguration}
+          isReady={!isRestoring}
+          onRetry={() => {
+            setAuthNotice(null);
+            setRetryKey((prev) => prev + 1);
+          }}
           onComplete={() => setSplashDone(true)}
         />
       )}
       {renderRouteContent()}
-    </>
+    </div>
   );
 }
 

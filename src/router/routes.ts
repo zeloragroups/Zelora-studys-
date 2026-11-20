@@ -23,10 +23,17 @@ export interface RoutePolicy {
 
 export const ROUTE_POLICIES: readonly RoutePolicy[] = [
   { path: ROUTES.HOME, requiresAuth: false },
+  { path: '/login', requiresAuth: false, portalScope: 'member_portal' },
   { path: ROUTES.ADMIN_LOGIN, requiresAuth: false, portalScope: 'admin_portal' },
   { path: '/admin/login', requiresAuth: false, portalScope: 'admin_portal' },
   { path: ROUTES.PORTAL_LOGIN, requiresAuth: false, portalScope: 'member_portal' },
   { path: ROUTES.PORTAL_FORGOT_PASSWORD, requiresAuth: false, portalScope: 'member_portal' },
+  {
+    path: '/admin',
+    requiresAuth: true,
+    allowedRoles: ['admin'],
+    portalScope: 'admin_portal',
+  },
   {
     path: ROUTES.ADMIN_DASHBOARD,
     requiresAuth: true,

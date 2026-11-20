@@ -100,7 +100,7 @@ async function runTests() {
     (err: unknown) => err instanceof AuthServiceException && err.code === 'INACTIVE_ACCOUNT'
   );
 
-  // Teacher blocked from Admin Portal login
+  // Teacher blocked from Admin Portal login; Admin ID blocked from public Student/Teacher login
   await assert.rejects(
     () =>
       auth.signInWithId({
@@ -110,12 +110,26 @@ async function runTests() {
       }),
     (err: unknown) => err instanceof AuthServiceException && err.code === 'PORTAL_ROLE_MISMATCH'
   );
+  await assert.rejects(
+    () =>
+      auth.signInWithId({
+        loginId: 'ADM-0001',
+        password: 'Admin@2026',
+        portalScope: 'member_portal',
+      }),
+    (err: unknown) => err instanceof AuthServiceException && err.code === 'PORTAL_ROLE_MISMATCH'
+  );
 
   // 11, 12, 13. Route policy cross-role checks
   const adminPolicy = findRoutePolicy(ROUTES.ADMIN_DASHBOARD);
+  const adminRootPolicy = findRoutePolicy('/admin');
+  const loginPolicy = findRoutePolicy('/login');
   const teacherPolicy = findRoutePolicy(ROUTES.PORTAL_TEACHER);
   const studentPolicy = findRoutePolicy(ROUTES.PORTAL_STUDENT);
   assert.equal(adminPolicy?.allowedRoles?.includes('teacher'), false);
+  assert.equal(adminRootPolicy?.requiresAuth, true);
+  assert.equal(adminRootPolicy?.allowedRoles?.includes('admin'), true);
+  assert.equal(loginPolicy?.requiresAuth, false);
   assert.equal(teacherPolicy?.allowedRoles?.includes('student'), false);
   assert.equal(studentPolicy?.allowedRoles?.includes('admin'), false);
 
@@ -123,6 +137,7 @@ async function runTests() {
   assert.equal(findRoutePolicy('/admin-login')?.requiresAuth, false);
   assert.equal(findRoutePolicy('/admin-login')?.portalScope, 'admin_portal');
   assert.equal(getLoginRouteForPath(ROUTES.ADMIN_DASHBOARD), '/admin-login');
+  assert.equal(getLoginRouteForPath('/admin'), '/admin-login');
   assert.equal(getLoginRouteForPath(ROUTES.PORTAL_TEACHER), ROUTES.PORTAL_LOGIN);
 
   // 16 & 17. Session expiry detection & logout

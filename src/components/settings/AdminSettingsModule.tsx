@@ -509,7 +509,7 @@ export function AdminSettingsModule({
       description: 'Application display name, portal welcome copy, custom logo upload, and live preview.',
       summary: isPreviewActive
         ? 'Live preview active'
-        : settings?.applicationBranding.displayName ?? 'Scholars Academy',
+        : settings?.applicationBranding.displayName ?? 'ZELORA STUDYS',
       group: 'Centre & Brand',
       keywords: ['logo', 'preview', 'welcome', 'display name'],
       icon: ImagePlus,
@@ -709,7 +709,7 @@ export function AdminSettingsModule({
                   onChange={(e) =>
                     setCentreDraft({ ...centreDraft, centreName: e.target.value })
                   }
-                  placeholder="e.g., Scholars Academy"
+                  placeholder="e.g., ZELORA STUDYS"
                   error={fieldError === 'centreName' ? error ?? undefined : undefined}
                 />
                 <Input
@@ -719,7 +719,7 @@ export function AdminSettingsModule({
                   onChange={(e) =>
                     setCentreDraft({ ...centreDraft, shortName: e.target.value })
                   }
-                  placeholder="e.g., Scholars"
+                  placeholder="e.g., ZELORA"
                   error={fieldError === 'shortName' ? error ?? undefined : undefined}
                 />
                 <div className="sm:col-span-2">

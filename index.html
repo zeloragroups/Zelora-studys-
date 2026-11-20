@@ -1,17 +1,17 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" class="dark">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
-    <title>Tuition Centre Management Ecosystem</title>
+    <title>ZELORA STUDYS</title>
     <meta
       name="description"
-      content="Four-interface tuition centre management ecosystem covering Admin Website, Admin Web App, Teacher Web App, and Student Web App."
+      content="ZELORA STUDYS unified education management platform for students, teachers, and administrators."
     />
-    <meta property="og:title" content="Tuition Centre Management Ecosystem" />
+    <meta property="og:title" content="ZELORA STUDYS" />
     <meta
       property="og:description"
-      content="Four-interface tuition centre management ecosystem covering Admin Website, Admin Web App, Teacher Web App, and Student Web App."
+      content="ZELORA STUDYS unified education management platform for students, teachers, and administrators."
     />
     <meta property="og:type" content="website" />
     <meta name="twitter:card" content="summary_large_image" />
@@ -22,7 +22,7 @@
           var settingsKey = 'tuition_ecosystem_dev_app_settings_v1';
           var saved = window.localStorage.getItem(personalKey);
           var allowPersonal = true;
-          var adminDefault = null;
+          var adminDefault = 'dark';
           var rawSettings = window.localStorage.getItem(settingsKey);
           if (rawSettings) {
             try {
@@ -38,18 +38,11 @@
               }
             } catch (err) {}
           }
-          var prefersDark =
-            window.matchMedia &&
-            window.matchMedia('(prefers-color-scheme: dark)').matches;
           var theme;
           if (allowPersonal && (saved === 'light' || saved === 'dark')) {
             theme = saved;
-          } else if (adminDefault) {
-            theme = adminDefault;
-          } else if (saved === 'light' || saved === 'dark') {
-            theme = saved;
           } else {
-            theme = prefersDark ? 'dark' : 'light';
+            theme = adminDefault;
           }
           var root = document.documentElement;
           if (theme === 'dark') {
@@ -68,7 +61,7 @@
       rel="stylesheet"
     />
   </head>
-  <body class="antialiased selection:bg-[#35D6A0]/25 selection:text-[#171D21] dark:selection:bg-[#42DDA9]/25 dark:selection:text-[#F4F7F6]">
+  <body class="antialiased selection:bg-[#42DDA9]/25 selection:text-[#F4F7F6] dark:selection:bg-[#42DDA9]/25 dark:selection:text-[#F4F7F6]">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

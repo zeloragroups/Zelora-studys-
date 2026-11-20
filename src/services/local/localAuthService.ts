@@ -246,7 +246,15 @@ export class LocalDevAuthService implements IAuthService {
       throw new AuthServiceException({
         code: 'PORTAL_ROLE_MISMATCH',
         message:
-          'Only Admin accounts may sign in to the Admin Portal. Please use the Teacher & Student Portal.',
+          'Only Admin accounts may sign in to the Admin Portal. Please use the Student & Teacher Login page.',
+        field: 'form',
+      });
+    }
+
+    if (credentials.portalScope === 'member_portal' && actualRole === 'admin') {
+      throw new AuthServiceException({
+        code: 'PORTAL_ROLE_MISMATCH',
+        message: 'Invalid ID or password. Please check your credentials.',
         field: 'form',
       });
     }

@@ -124,20 +124,42 @@ function createDefaultFirebaseSettings(): ApplicationSettings {
   };
 }
 
-function toPublicSettings(s: ApplicationSettings): PublicApplicationSettings {
+function upgradeLegacyBrandDefaults(s: ApplicationSettings): ApplicationSettings {
+  const replaceBrand = (val: string | undefined, next: string) =>
+    !val || val.trim() === 'Scholars Academy' ? next : val;
+  const replaceShort = (val: string | undefined, next: string) =>
+    !val || val.trim() === 'Scholars' ? next : val;
+  const base = createDefaultFirebaseSettings();
   return {
-    centreProfile: { ...s.centreProfile },
+    ...s,
+    centreProfile: {
+      ...s.centreProfile,
+      centreName: replaceBrand(s.centreProfile?.centreName, base.centreProfile.centreName),
+      shortName: replaceShort(s.centreProfile?.shortName, base.centreProfile.shortName),
+    },
     applicationBranding: {
       ...s.applicationBranding,
-      logoConfiguration: { ...s.applicationBranding.logoConfiguration },
+      displayName: replaceBrand(s.applicationBranding?.displayName, base.applicationBranding.displayName),
+      shortName: replaceShort(s.applicationBranding?.shortName, base.applicationBranding.shortName),
     },
-    appearanceDefaults: { ...s.appearanceDefaults },
-    academicDefaults: { ...s.academicDefaults },
+  };
+}
+
+function toPublicSettings(s: ApplicationSettings): PublicApplicationSettings {
+  const normalized = upgradeLegacyBrandDefaults(s);
+  return {
+    centreProfile: { ...normalized.centreProfile },
+    applicationBranding: {
+      ...normalized.applicationBranding,
+      logoConfiguration: { ...normalized.applicationBranding.logoConfiguration },
+    },
+    appearanceDefaults: { ...normalized.appearanceDefaults },
+    academicDefaults: { ...normalized.academicDefaults },
     notificationPreferences: {
-      ...s.notificationPreferences,
-      enabledCategories: { ...s.notificationPreferences.enabledCategories },
+      ...normalized.notificationPreferences,
+      enabledCategories: { ...normalized.notificationPreferences.enabledCategories },
     },
-    updatedAt: s.updatedAt,
+    updatedAt: normalized.updatedAt,
     environmentMode: 'firebase_connected',
   };
 }
@@ -211,12 +233,12 @@ export class FirebaseSettingsService implements IApplicationSettingsService {
         if (!snap.exists()) {
           return createDefaultFirebaseSettings();
         }
-        return {
+        return upgradeLegacyBrandDefaults({
           ...createDefaultFirebaseSettings(),
           ...(snap.data() as Partial<ApplicationSettings>),
           id: SETTINGS_DOC_ID,
           environmentMode: 'firebase_connected',
-        };
+        });
       }
     );
   }

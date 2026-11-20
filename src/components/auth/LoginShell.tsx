@@ -31,9 +31,9 @@ export function LoginShell({
   onNavigateHome,
 }: LoginShellProps) {
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F9F8] dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6]">
+    <div className="min-h-screen flex flex-col bg-[#F7F9F8] dark:bg-[#151A1E] text-[#20262B] dark:text-[#F4F7F6]">
       {/* Compact Top Bar */}
-      <header className="h-14 px-4 sm:px-6 border-b border-[#E2E8E5] dark:border-[#344047] bg-white/95 dark:bg-[#1D2429]/95 backdrop-blur-md">
+      <header className="h-14 px-4 sm:px-6 border-b border-[#E2E8E5] dark:border-[#35413F] bg-white/95 dark:bg-[#1D2429]/95 backdrop-blur-md">
         <div className="max-w-5xl mx-auto h-full flex items-center justify-between gap-4">
           <button
             type="button"
@@ -45,7 +45,7 @@ export function LoginShell({
               alt={branding.centreName}
               size="sm"
             />
-            <span className="font-display text-sm sm:text-base font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] whitespace-nowrap">
+            <span className="font-display text-sm sm:text-base font-bold tracking-[0.06em] uppercase text-[#20262B] dark:text-[#F4F7F6] whitespace-nowrap">
               {branding.centreName}
             </span>
           </button>

@@ -239,29 +239,32 @@ function runAdminAuthSeparationChecks() {
   assert.equal(adminLoginSrc.includes('PORTAL_LOGIN'), false);
   assert.equal(adminLoginSrc.includes('ADMIN_FORGOT_PASSWORD'), false);
 
-  const portalSelectorSrc = fs.readFileSync(
-    path.join(rootDir, 'src/pages/PortalSelectorPage.tsx'),
-    'utf8'
+  assert.equal(
+    fs.existsSync(path.join(rootDir, 'src/pages/PortalSelectorPage.tsx')),
+    false,
+    'Separate Student/Teacher selector page must be replaced by one unified login page'
   );
-  assert.ok(portalSelectorSrc.includes('Student Login'));
-  assert.ok(portalSelectorSrc.includes('Teacher Login'));
-  assert.equal(portalSelectorSrc.includes('ADMIN_LOGIN'), false);
-  assert.equal(portalSelectorSrc.includes('/admin-login'), false);
-  assert.equal(portalSelectorSrc.includes('Admin Login'), false);
-  assert.equal(portalSelectorSrc.includes('Admin Web App'), false);
-  assert.equal(portalSelectorSrc.includes('Google'), false);
 
   const portalLoginSrc = fs.readFileSync(
     path.join(rootDir, 'src/pages/auth/PortalLoginPage.tsx'),
     'utf8'
   );
+  assert.ok(portalLoginSrc.includes('Student / Teacher ID'));
+  assert.equal(portalLoginSrc.includes('<select'), false);
   assert.equal(portalLoginSrc.includes('ADMIN_LOGIN'), false);
   assert.equal(portalLoginSrc.includes('/admin-login'), false);
   assert.equal(portalLoginSrc.includes('Admin Portal'), false);
   assert.equal(portalLoginSrc.includes('Google'), false);
+  assert.equal(portalLoginSrc.includes('Scholars Academy'), false);
+
+  const brandingSrc = fs.readFileSync(path.join(rootDir, 'src/config/branding.ts'), 'utf8');
+  assert.ok(brandingSrc.includes("centreName: 'ZELORA STUDYS'"));
+  assert.ok(brandingSrc.includes("defaultTheme: 'dark'"));
 
   const routesSrc = fs.readFileSync(path.join(rootDir, 'src/router/routes.ts'), 'utf8');
   assert.ok(routesSrc.includes("ADMIN_LOGIN: '/admin-login'"));
+  assert.ok(routesSrc.includes("path: '/login'"));
+  assert.ok(routesSrc.includes("path: '/admin'"));
   assert.equal(routesSrc.includes('ADMIN_FORGOT_PASSWORD'), false);
 
   const redirectsSrc = fs.readFileSync(path.join(rootDir, 'public/_redirects'), 'utf8');

@@ -112,7 +112,7 @@ export function ResponsiveShell({
           <div className="flex items-center gap-3">
             <BrandLogoMark logoConfiguration={logoConfiguration} alt={brandName} size="md" />
             <div className="min-w-0 text-left">
-              <span className="block font-display text-sm font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] truncate">
+              <span className="block font-display text-sm font-bold tracking-[0.06em] uppercase text-[#171D21] dark:text-[#F4F7F6] truncate">
                 {brandName}
               </span>
               <span className="block text-xs text-[#68737C] dark:text-[#AAB6B4] truncate">
@@ -332,7 +332,7 @@ export function ResponsiveShell({
               <div className="h-14 px-4 flex items-center justify-between border-b border-[#E2E8E5] dark:border-[#344047]">
                 <div className="flex items-center gap-2.5 min-w-0">
                   <BrandLogoMark logoConfiguration={logoConfiguration} alt={brandName} size="xs" />
-                  <span className="font-display font-semibold text-sm truncate text-[#171D21] dark:text-[#F4F7F6]">
+                  <span className="font-display font-bold tracking-[0.05em] uppercase text-sm truncate text-[#171D21] dark:text-[#F4F7F6]">
                     {brandName}
                   </span>
                 </div>

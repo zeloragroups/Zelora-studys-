@@ -7,79 +7,118 @@ import { BrandLogoMark } from '../ui/BrandLogoMark';
 interface StartupSplashProps {
   branding: BrandingConfig;
   logoConfiguration?: LogoConfiguration;
+  isReady: boolean;
+  initError?: string | null;
+  onRetry?: () => void;
   onComplete: () => void;
 }
 
 /**
- * Animated startup loading screen matching Scholars Academy Mint & Charcoal tokens.
- * Uses GPU-composited opacity and transform transitions only, settles quickly,
- * and allows immediate skip for zero-blocking accessibility.
+ * ZELORA STUDYS Startup Loading Screen.
+ * - Directly tracks real authentication and session restoration (`isReady`).
+ * - Never shows fake percentages or blocks indefinitely once initialization completes.
  */
 export function StartupSplash({
   branding,
   logoConfiguration,
+  isReady,
+  initError = null,
+  onRetry,
   onComplete,
 }: StartupSplashProps) {
   const [visible, setVisible] = useState(true);
+  const [timedOut, setTimedOut] = useState(false);
 
   useEffect(() => {
-    const prefersReduced =
-      typeof window !== 'undefined' &&
-      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (isReady) {
+      setTimedOut(false);
+      const timer = window.setTimeout(() => {
+        setVisible(false);
+      }, 120);
+      return () => window.clearTimeout(timer);
+    }
 
-    const delay = prefersReduced ? 120 : 680;
-    const timer = window.setTimeout(() => {
-      setVisible(false);
-    }, delay);
+    const guardTimer = window.setTimeout(() => {
+      setTimedOut(true);
+    }, 10000);
+    return () => window.clearTimeout(guardTimer);
+  }, [isReady]);
 
-    return () => window.clearTimeout(timer);
-  }, []);
+  const brandTitle = (branding.centreName || 'ZELORA STUDYS').toUpperCase();
 
   return (
     <AnimatePresence onExitComplete={onComplete}>
       {visible && (
         <motion.div
-          key="startup-splash"
+          key="zelora-startup-splash"
           initial={{ opacity: 1 }}
-          exit={{ opacity: 0, transition: { duration: 0.2, ease: [0.16, 1, 0.3, 1] } }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#F7F9F8] dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6]"
+          exit={{ opacity: 0, transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] } }}
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#151A1E] text-[#F4F7F6]"
           role="status"
-          aria-label="Preparing workspace"
+          aria-live="polite"
+          aria-label="Initializing ZELORA STUDYS workspace"
         >
           <motion.div
-            initial={{ opacity: 0, y: 8, scale: 0.97 }}
-            animate={{ opacity: 1, y: 0, scale: 1 }}
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.26, ease: [0.16, 1, 0.3, 1] }}
-            className="flex flex-col items-center text-center max-w-sm"
+            className="flex flex-col items-center text-center max-w-sm w-full"
           >
             <BrandLogoMark
               logoConfiguration={logoConfiguration}
-              alt={branding.centreName}
+              alt={brandTitle}
               size="lg"
-              className="shadow-[0_10px_28px_rgba(23,29,33,0.16)] dark:shadow-[0_10px_28px_rgba(0,0,0,0.45)]"
+              className="border-[#35413F] bg-[#1D2429] text-[#42DDA9]"
             />
-            <h1 className="mt-4 text-xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6]">
-              {branding.centreName}
+
+            <h1 className="mt-5 font-display text-2xl sm:text-[26px] font-bold tracking-[0.14em] uppercase text-[#F4F7F6]">
+              {brandTitle}
             </h1>
-            <p className="mt-1 text-sm text-[#68737C] dark:text-[#AAB6B4]">
-              {branding.tagline}
+
+            <p className="mt-1.5 text-xs sm:text-sm text-[#A8B4B0]">
+              {initError
+                ? initError
+                : timedOut
+                  ? 'Taking longer than expected to verify your session.'
+                  : 'Verifying session and preparing your workspace'}
             </p>
-            <div className="mt-6 w-44 h-1.5 rounded-full bg-[#E2E8E5] dark:bg-[#252E33] overflow-hidden">
-              <motion.div
-                initial={{ scaleX: 0 }}
-                animate={{ scaleX: 1 }}
-                transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
-                style={{ transformOrigin: 'left' }}
-                className="h-full w-full bg-[#35D6A0] dark:bg-[#42DDA9]"
-              />
-            </div>
-            <button
-              type="button"
-              onClick={() => setVisible(false)}
-              className="mt-5 text-xs font-medium text-[#68737C] hover:text-[#168A63] dark:text-[#AAB6B4] dark:hover:text-[#42DDA9] transition-colors cursor-pointer"
-            >
-              Enter Workspace
-            </button>
+
+            {!initError && !timedOut ? (
+              <div
+                className="mt-6 w-48 h-1 rounded-full bg-[#252E33] overflow-hidden"
+                aria-hidden="true"
+              >
+                <motion.div
+                  initial={{ x: '-65%' }}
+                  animate={{ x: '135%' }}
+                  transition={{
+                    duration: 1.15,
+                    repeat: Infinity,
+                    ease: [0.16, 1, 0.3, 1],
+                  }}
+                  className="h-full w-1/2 rounded-full bg-[#42DDA9]"
+                />
+              </div>
+            ) : (
+              <div className="mt-5 flex items-center gap-3">
+                {onRetry && (
+                  <button
+                    type="button"
+                    onClick={onRetry}
+                    className="min-h-[40px] px-4 py-2 rounded-xl bg-[#42DDA9] text-[#151A1E] text-xs font-semibold hover:bg-[#18B985] transition-colors cursor-pointer"
+                  >
+                    Retry
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={() => setVisible(false)}
+                  className="min-h-[40px] px-4 py-2 rounded-xl border border-[#35413F] bg-[#1D2429] text-xs font-medium text-[#F4F7F6] hover:bg-[#252E33] transition-colors cursor-pointer"
+                >
+                  Continue to Sign In
+                </button>
+              </div>
+            )}
           </motion.div>
         </motion.div>
       )}

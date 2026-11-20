@@ -8,7 +8,7 @@
     --font-sans: 'DM Sans', system-ui, -apple-system, sans-serif;
     --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, monospace;
 
-    /* Scholars Academy 60/30/10 Light Theme Tokens */
+    /* ZELORA STUDYS Light Theme Tokens */
     --bg-canvas: #F7F9F8;
     --bg-surface: #FFFFFF;
     --bg-secondary: #F0F4F2;
@@ -19,16 +19,17 @@
     --charcoal-deep: #171D21;
     --charcoal-secondary: #343C42;
 
-    --text-main: #171D21;
-    --text-secondary: #343C42;
-    --text-muted: #68737C;
+    --text-main: #20262B;
+    --text-secondary: #66736D;
+    --text-muted: #87938D;
 
-    --accent: #35D6A0;
-    --accent-hover: #18B985;
+    --accent: #18B985;
+    --accent-hover: #168A63;
     --accent-text: #168A63;
+    --accent-dark: #116B50;
     --accent-soft: #DDF8EE;
     --accent-border: #B8EBD8;
-    --accent-tint: rgba(53, 214, 160, 0.14);
+    --accent-tint: rgba(24, 185, 133, 0.14);
 
     --status-success: #168A63;
     --status-warning: #D69B35;
@@ -41,31 +42,32 @@
 
   .dark {
     color-scheme: dark;
-    /* Scholars Academy Intentionally Tuned Dark Theme Tokens */
+    /* ZELORA STUDYS Default Dark Theme Tokens */
     --bg-canvas: #151A1E;
     --bg-surface: #1D2429;
     --bg-secondary: #252E33;
     --bg-elevated: #2B353A;
-    --border-subtle: #344047;
+    --border-subtle: #35413F;
 
     --charcoal-primary: #252E33;
     --charcoal-deep: #151A1E;
     --charcoal-secondary: #2B353A;
 
     --text-main: #F4F7F6;
-    --text-secondary: #D4DDDC;
-    --text-muted: #AAB6B4;
+    --text-secondary: #A8B4B0;
+    --text-muted: #82918C;
 
     --accent: #42DDA9;
-    --accent-hover: #35D6A0;
+    --accent-hover: #18B985;
     --accent-text: #42DDA9;
+    --accent-dark: #168A63;
     --accent-soft: #244B3E;
     --accent-border: #316453;
     --accent-tint: rgba(66, 221, 169, 0.16);
 
     --status-success: #42DDA9;
-    --status-warning: #E5B04D;
-    --status-error: #EF6D75;
+    --status-warning: #E7B75A;
+    --status-error: #EF6464;
     --status-info: #62A7C7;
 
     --shadow-subtle: none;

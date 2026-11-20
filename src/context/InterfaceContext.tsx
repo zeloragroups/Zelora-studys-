@@ -139,7 +139,7 @@ export function InterfaceProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     if (typeof document !== 'undefined') {
-      document.title = branding.centreName || 'Tuition Centre Management Ecosystem';
+      document.title = branding.centreName || 'ZELORA STUDYS';
     }
   }, [branding.centreName]);
 

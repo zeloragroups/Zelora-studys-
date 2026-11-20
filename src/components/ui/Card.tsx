@@ -28,7 +28,7 @@ const VARIANT_CLASSES = {
 
 /**
  * Single-elevation structural surface with subtle 1px hairline border matching
- * Scholars Academy 60/30/10 Light and Dark palettes.
+ * ZELORA STUDYS Dark Charcoal and Light palettes.
  */
 export function Card({
   title,

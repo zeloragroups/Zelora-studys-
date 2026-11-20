@@ -1,7 +1,6 @@
 /**
- * Scholars Academy Central Design System Tokens.
- * Visual Direction: Premium fintech-inspired minimalism (60/30/10 Mint, Charcoal & Crisp White)
- * adapted specifically for an education management ecosystem.
+ * ZELORA STUDYS Central Design System Tokens.
+ * Visual Direction: Premium fintech-inspired minimalism with Default Dark Charcoal + Mint and Light support.
  */
 
 export const LIGHT_PALETTE = {
@@ -9,18 +8,19 @@ export const LIGHT_PALETTE = {
   bgCanvas: '#F7F9F8',
   bgSurface: '#FFFFFF',
   bgSecondary: '#F0F4F2',
+  bgElevated: '#FFFFFF',
   borderSubtle: '#E2E8E5',
 
   // 30% Charcoal Structural Contrast
   charcoalPrimary: '#20262B',
   charcoalDeep: '#171D21',
-  charcoalSecondary: '#343C42',
-  textMuted: '#68737C',
+  charcoalSecondary: '#66736D',
+  textMuted: '#87938D',
 
   // 10% Mint Accent
-  mintPrimary: '#35D6A0',
-  mintDeep: '#18B985',
-  mintAccessibleText: '#168A63',
+  mintPrimary: '#18B985',
+  mintDeep: '#168A63',
+  mintAccessibleText: '#116B50',
   mintSoft: '#DDF8EE',
   mintBorder: '#B8EBD8',
 
@@ -37,15 +37,18 @@ export const DARK_PALETTE = {
   bgSecondary: '#252E33',
   bgElevated: '#2B353A',
   textPrimary: '#F4F7F6',
-  textSecondary: '#AAB6B4',
+  textSecondary: '#A8B4B0',
+  textMuted: '#82918C',
   mintPrimary: '#42DDA9',
+  mintStrong: '#18B985',
+  mintDark: '#168A63',
   mintSoft: '#244B3E',
-  border: '#344047',
+  border: '#35413F',
 
   // Supporting Semantic States
   success: '#42DDA9',
-  warning: '#E5B04D',
-  error: '#EF6D75',
+  warning: '#E7B75A',
+  error: '#EF6464',
   info: '#62A7C7',
 } as const;
 
