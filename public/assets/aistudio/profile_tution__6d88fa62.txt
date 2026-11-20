@@ -1,0 +1,136 @@
+SCHOLARS ACADEMY — PROFILE PAGE AND DASHBOARD MENU UPDATE
+
+1. Simplify the Profile Page
+
+Redesign the Profile page to display only two main sections:
+
+1. Name
+   
+   - Display the authenticated user's name.
+   - Use a clean, professional profile header.
+   - Display the appropriate profile identity without unnecessary information.
+
+2. Performance
+   
+   - Display relevant performance information based on the user's role.
+   - Student: academic performance, marks, results, and relevant progress information.
+   - Teacher: relevant teaching performance information, only where genuine data and existing functionality support it.
+   - Admin: relevant administrative performance information, only where genuine data and existing functionality support it.
+
+Performance information must come from existing authorised data sources.
+
+Do not generate fake statistics, dummy charts, or invented performance scores.
+
+Do not expose private information belonging to other users.
+
+Remove unnecessary profile sections, duplicate account information, and unrelated settings from the Profile page.
+
+2. Remove Logout from Profile
+
+- Remove the Logout / Sign Out button from the Profile page.
+- Remove any duplicate logout action inside Profile.
+- Do not remove authentication functionality.
+- Keep secure session handling intact.
+
+3. Add Logout to the Dashboard Bottom Menu
+
+Add a Logout option to the dashboard's bottom navigation/menu experience.
+
+Requirements:
+
+- Make Logout easy to find.
+- Use a suitable lucide-react logout icon and clear text label.
+- Make it visually distinct from normal navigation destinations.
+- Ensure it does not accidentally replace the existing five-slot mobile navigation structure.
+- Preserve Home in the centre position.
+- Do not add Profile back into the bottom navigation.
+- On mobile, place Logout in an accessible dashboard menu or overflow menu associated with the bottom navigation, rather than forcing a sixth crowded navigation item.
+- On desktop, provide Logout in the dashboard navigation menu in a consistent and accessible position.
+
+When Logout is selected:
+
+1. Show a confirmation dialog.
+2. Explain that the user will be signed out.
+3. Provide Cancel and Sign Out actions.
+4. On confirmation, execute the existing Firebase sign-out operation.
+5. Clear the authenticated session through the existing authentication context.
+6. Redirect to the correct login page.
+7. Prevent protected pages from remaining accessible after sign-out.
+
+Do not create a new authentication or logout implementation if an existing secure service already handles this operation.
+
+4. Role-Specific Behaviour
+
+Apply the changes consistently to:
+
+- Admin portal.
+- Teacher portal.
+- Student portal.
+
+Keep role-specific performance information and existing permissions.
+
+Do not expose Admin information to Teachers or Students.
+
+Do not expose one Student's performance information to another Student.
+
+5. Professional UI/UX
+
+Maintain the existing Mint, Charcoal, and Crisp White design system.
+
+Profile page:
+
+- Clean layout.
+- Clear name hierarchy.
+- Well-organised performance section.
+- Appropriate typography and spacing.
+- No unnecessary cards or decorative elements.
+
+Dashboard menu:
+
+- Clear Logout label.
+- Consistent icon treatment.
+- Proper active, hover, focus, and pressed states.
+- Confirmation dialog matching the existing design system.
+- Responsive behaviour across mobile, tablet, laptop, and desktop.
+
+Do not use generic AI-generated dashboard styling, unnecessary gradients, excessive rounded cards, or distracting animations.
+
+6. Preserve Existing Functionality and Security
+
+Do not modify unrelated features.
+
+Preserve:
+
+- Firebase Spark architecture.
+- Admin Google authentication and authorised Gmail allowlist.
+- Teacher and Student ID/password authentication.
+- Existing role-based permissions.
+- Existing Firestore and Storage security.
+- Existing performance and academic data.
+- Existing five-slot bottom navigation.
+- Home in the centre.
+- Top-right Profile access.
+- Separate Settings categories.
+- Removal of Workspace Modules from Settings.
+- Removal of Quick Actions from dashboards.
+
+Do not introduce paid services, Cloud Functions, AI APIs, or new databases.
+
+7. Testing and Completion Report
+
+After implementation:
+
+- Test Profile pages for all three roles.
+- Verify only Name and Performance are displayed.
+- Verify Logout is absent from Profile.
+- Verify Logout appears in the dashboard menu.
+- Test Cancel and Sign Out confirmation actions.
+- Verify Firebase sign-out actually works.
+- Verify redirects for Admin, Teacher, and Student.
+- Verify protected routes cannot be accessed after sign-out.
+- Test responsive layouts.
+- Run TypeScript validation, ESLint, production build, and existing regression tests.
+
+Do not claim success for any operation that has not been tested.
+
+Provide a completion report with modified components, tests executed, results, and any remaining limitations.

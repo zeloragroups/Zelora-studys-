@@ -129,13 +129,7 @@ export function InterfaceScaffoldView({
 
   const renderSectionContent = (): ReactNode => {
     if (activeNavId === 'profile') {
-      return (
-        <RoleProfileView
-          roleLabel={roleLabel}
-          roleAccessSummary={roleAccessSummary}
-          onSignOut={onSignOut}
-        />
-      );
+      return <RoleProfileView roleLabel={roleLabel} />;
     }
 
     if (

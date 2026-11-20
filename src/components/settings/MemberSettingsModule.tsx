@@ -23,6 +23,8 @@ import { cn } from '../../utils/cn';
 import { Alert } from '../ui/Alert';
 import { Button } from '../ui/Button';
 import { Card } from '../ui/Card';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
+import { IconButton } from '../ui/IconButton';
 import { Input } from '../ui/Input';
 import { StatusText } from '../ui/StatusText';
 import { SettingsShell, type SettingsCategoryItem } from './SettingsShell';
@@ -70,10 +72,14 @@ export function MemberSettingsModule({
   const [currentPassword, setCurrentPassword] = useState('');
   const [newPassword, setNewPassword] = useState('');
   const [confirmNewPassword, setConfirmNewPassword] = useState('');
-  const [showPasswords, setShowPasswords] = useState(false);
+  const [showCurrentPassword, setShowCurrentPassword] = useState(false);
+  const [showNewPassword, setShowNewPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const [pwSaving, setPwSaving] = useState(false);
   const [pwError, setPwError] = useState<string | null>(null);
   const [pwSuccess, setPwSuccess] = useState<string | null>(null);
+  const [confirmSignOutOpen, setConfirmSignOutOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   useEffect(() => {
     let cancelled = false;
@@ -364,70 +370,196 @@ export function MemberSettingsModule({
           </Card>
         );
 
-      case 'security':
+      case 'security': {
+        const meetsMinLength = newPassword.length >= 8;
+        const differsFromCurrent =
+          newPassword.length > 0 && (!currentPassword || newPassword !== currentPassword);
+        const matchesConfirm =
+          confirmNewPassword.length > 0 && newPassword === confirmNewPassword;
+        const hasMixedChars =
+          /[A-Za-z]/.test(newPassword) && (/[0-9]/.test(newPassword) || /[^A-Za-z0-9]/.test(newPassword));
+        const strengthLevel: 0 | 1 | 2 | 3 = !newPassword
+          ? 0
+          : !meetsMinLength
+            ? 1
+            : newPassword.length >= 10 && hasMixedChars
+              ? 3
+              : 2;
+        const strengthLabel =
+          strengthLevel === 3
+            ? 'Strong'
+            : strengthLevel === 2
+              ? 'Good'
+              : strengthLevel === 1
+                ? 'Too short'
+                : 'Not entered';
+
         return (
           <div className="space-y-5">
             <Card
               title="Change Password"
-              subtitle="Verify your current password and set a new sign-in password (minimum 8 characters)."
+              subtitle="Verify your current password and choose a strong new password (at least 8 characters)."
               action={
-                <Button
-                  type="button"
-                  variant="ghost"
-                  size="sm"
-                  onClick={() => setShowPasswords((prev) => !prev)}
-                  iconLeft={
-                    showPasswords ? (
-                      <EyeOff className="w-3.5 h-3.5" strokeWidth={1.75} aria-hidden="true" />
-                    ) : (
-                      <Eye className="w-3.5 h-3.5" strokeWidth={1.75} aria-hidden="true" />
-                    )
-                  }
-                >
-                  {showPasswords ? 'Hide' : 'Show'}
-                </Button>
+                <StatusText
+                  tone={strengthLevel === 3 ? 'nominal' : strengthLevel === 2 ? 'info' : 'neutral'}
+                  label={strengthLevel > 0 ? `Strength: ${strengthLabel}` : 'Password Policy'}
+                />
               }
             >
-              <form onSubmit={handlePasswordChange} className="space-y-4" noValidate>
+              <form onSubmit={handlePasswordChange} className="space-y-5 max-w-2xl" noValidate>
                 {pwError && <Alert tone="error">{pwError}</Alert>}
                 {pwSuccess && <Alert tone="success">{pwSuccess}</Alert>}
 
-                <div className="grid gap-4 sm:grid-cols-3">
-                  <Input
-                    label="Current Password"
-                    type={showPasswords ? 'text' : 'password'}
-                    autoComplete="current-password"
-                    required
-                    value={currentPassword}
-                    onChange={(e) => setCurrentPassword(e.target.value)}
-                    placeholder="Enter current password"
-                  />
+                <Input
+                  label="Current Password"
+                  type={showCurrentPassword ? 'text' : 'password'}
+                  autoComplete="current-password"
+                  required
+                  value={currentPassword}
+                  onChange={(e) => {
+                    setCurrentPassword(e.target.value);
+                    if (pwError) setPwError(null);
+                  }}
+                  placeholder="Enter your current password"
+                  rightElement={
+                    <IconButton
+                      size="sm"
+                      variant="ghost"
+                      label={showCurrentPassword ? 'Hide current password' : 'Show current password'}
+                      onClick={() => setShowCurrentPassword((prev) => !prev)}
+                      icon={
+                        showCurrentPassword ? (
+                          <EyeOff className="w-4 h-4" strokeWidth={1.75} />
+                        ) : (
+                          <Eye className="w-4 h-4" strokeWidth={1.75} />
+                        )
+                      }
+                    />
+                  }
+                />
+
+                <div className="grid gap-4 sm:grid-cols-2">
                   <Input
                     label="New Password"
-                    type={showPasswords ? 'text' : 'password'}
+                    type={showNewPassword ? 'text' : 'password'}
                     autoComplete="new-password"
                     required
                     value={newPassword}
-                    onChange={(e) => setNewPassword(e.target.value)}
+                    onChange={(e) => {
+                      setNewPassword(e.target.value);
+                      if (pwError) setPwError(null);
+                    }}
                     placeholder="Minimum 8 characters"
+                    successMessage={
+                      meetsMinLength && differsFromCurrent
+                        ? 'Meets minimum length requirement'
+                        : undefined
+                    }
+                    rightElement={
+                      <IconButton
+                        size="sm"
+                        variant="ghost"
+                        label={showNewPassword ? 'Hide new password' : 'Show new password'}
+                        onClick={() => setShowNewPassword((prev) => !prev)}
+                        icon={
+                          showNewPassword ? (
+                            <EyeOff className="w-4 h-4" strokeWidth={1.75} />
+                          ) : (
+                            <Eye className="w-4 h-4" strokeWidth={1.75} />
+                          )
+                        }
+                      />
+                    }
                   />
                   <Input
                     label="Confirm New Password"
-                    type={showPasswords ? 'text' : 'password'}
+                    type={showConfirmPassword ? 'text' : 'password'}
                     autoComplete="new-password"
                     required
                     value={confirmNewPassword}
-                    onChange={(e) => setConfirmNewPassword(e.target.value)}
+                    onChange={(e) => {
+                      setConfirmNewPassword(e.target.value);
+                      if (pwError) setPwError(null);
+                    }}
                     placeholder="Re-enter new password"
+                    error={
+                      confirmNewPassword.length > 0 && !matchesConfirm
+                        ? 'Passwords do not match'
+                        : undefined
+                    }
+                    successMessage={
+                      matchesConfirm && meetsMinLength ? 'Passwords match' : undefined
+                    }
+                    rightElement={
+                      <IconButton
+                        size="sm"
+                        variant="ghost"
+                        label={showConfirmPassword ? 'Hide confirmation password' : 'Show confirmation password'}
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                        icon={
+                          showConfirmPassword ? (
+                            <EyeOff className="w-4 h-4" strokeWidth={1.75} />
+                          ) : (
+                            <Eye className="w-4 h-4" strokeWidth={1.75} />
+                          )
+                        }
+                      />
+                    }
                   />
                 </div>
 
-                <div className="flex justify-end">
+                {/* Password Strength & Requirement Checklist */}
+                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 space-y-3">
+                  <div className="flex items-center justify-between gap-2 text-xs">
+                    <span className="font-medium text-[#343C42] dark:text-[#D4DDDC]">
+                      Password readiness
+                    </span>
+                    <span className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                      {strengthLabel}
+                    </span>
+                  </div>
+                  <div className="grid grid-cols-3 gap-2" aria-hidden="true">
+                    {[1, 2, 3].map((step) => (
+                      <span
+                        key={step}
+                        className={cn(
+                          'h-1.5 rounded-full transition-colors duration-150',
+                          strengthLevel >= step
+                            ? strengthLevel === 3
+                              ? 'bg-[#18B985] dark:bg-[#42DDA9]'
+                              : strengthLevel === 2
+                                ? 'bg-[#35D6A0] dark:bg-[#42DDA9]'
+                                : 'bg-[#D69B35] dark:bg-[#E5B04D]'
+                            : 'bg-[#E2E8E5] dark:bg-[#344047]'
+                        )}
+                      />
+                    ))}
+                  </div>
+                  <div className="grid gap-1.5 sm:grid-cols-3 text-xs pt-0.5">
+                    <StatusText
+                      tone={meetsMinLength ? 'nominal' : 'neutral'}
+                      label="8+ characters"
+                    />
+                    <StatusText
+                      tone={differsFromCurrent ? 'nominal' : 'neutral'}
+                      label="Differs from current"
+                    />
+                    <StatusText
+                      tone={matchesConfirm ? 'nominal' : 'neutral'}
+                      label="Confirmation matches"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
+                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    Changes apply immediately on your next sign-in.
+                  </p>
                   <Button
                     type="submit"
-                    size="sm"
+                    size="md"
                     loading={pwSaving}
-                    iconLeft={<KeyRound className="w-3.5 h-3.5" strokeWidth={1.75} aria-hidden="true" />}
+                    iconLeft={<KeyRound className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
                   >
                     Update Password
                   </Button>
@@ -447,7 +579,7 @@ export function MemberSettingsModule({
                   <Button
                     variant="danger"
                     size="sm"
-                    onClick={onSignOut}
+                    onClick={() => setConfirmSignOutOpen(true)}
                     iconLeft={<LogOut className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />}
                   >
                     Sign Out
@@ -457,6 +589,7 @@ export function MemberSettingsModule({
             )}
           </div>
         );
+      }
 
       case 'notifications':
         return (
@@ -565,17 +698,43 @@ export function MemberSettingsModule({
   };
 
   return (
-    <SettingsShell
-      eyebrow={`${branding.centreName} · ${roleLabel}`}
-      title="Settings"
-      subtitle="Browse your account details, theme preferences, password security, notification visibility, and application details."
-      rightSlot={<StatusText tone="nominal" label={`${principal.loginId} · ${roleLabel}`} />}
-      categories={categories}
-      activeCategoryId={activeCategory}
-      onSelectCategory={setActiveCategory}
-      searchQuery={searchQuery}
-      onSearchChange={setSearchQuery}
-      renderCategoryContent={renderCategoryContent}
-    />
+    <>
+      <SettingsShell
+        eyebrow={`${branding.centreName} · ${roleLabel}`}
+        title="Settings"
+        subtitle="Browse your account details, theme preferences, password security, notification visibility, and application details."
+        rightSlot={<StatusText tone="nominal" label={`${principal.loginId} · ${roleLabel}`} />}
+        categories={categories}
+        activeCategoryId={activeCategory}
+        onSelectCategory={setActiveCategory}
+        searchQuery={searchQuery}
+        onSearchChange={setSearchQuery}
+        renderCategoryContent={renderCategoryContent}
+      />
+      {onSignOut && (
+        <ConfirmDialog
+          open={confirmSignOutOpen}
+          onClose={() => {
+            if (!signingOut) setConfirmSignOutOpen(false);
+          }}
+          onConfirm={async () => {
+            setSigningOut(true);
+            try {
+              await Promise.resolve(onSignOut());
+            } finally {
+              setSigningOut(false);
+              setConfirmSignOutOpen(false);
+            }
+          }}
+          title="Sign Out of Your Account?"
+          description={`You will be signed out of ${branding.centreName} on this device and redirected to the sign-in screen.`}
+          cancelLabel="Cancel"
+          confirmLabel="Sign Out"
+          confirmVariant="danger"
+          tone="danger"
+          loading={signingOut}
+        />
+      )}
+    </>
   );
 }

@@ -5,6 +5,7 @@ import type { BottomNavSlot, NavItemConfig } from '../../config/navigation';
 import type { AuthPrincipal, LogoConfiguration } from '../../types';
 import { cn } from '../../utils/cn';
 import { BrandLogoMark } from '../ui/BrandLogoMark';
+import { ConfirmDialog } from '../ui/ConfirmDialog';
 import { ThemeToggle } from '../ui/ThemeToggle';
 import { BottomNavBar } from './BottomNavBar';
 import { NavIcon } from './NavIcon';
@@ -45,6 +46,27 @@ export function ResponsiveShell({
   showBottomThumbBar = true,
 }: ResponsiveShellProps) {
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const [confirmSignOutOpen, setConfirmSignOutOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
+
+  const handleRequestSignOut = () => {
+    setDrawerOpen(false);
+    setConfirmSignOutOpen(true);
+  };
+
+  const handleConfirmSignOut = async () => {
+    if (!onSignOut) {
+      setConfirmSignOutOpen(false);
+      return;
+    }
+    setSigningOut(true);
+    try {
+      await Promise.resolve(onSignOut());
+    } finally {
+      setSigningOut(false);
+      setConfirmSignOutOpen(false);
+    }
+  };
 
   const handleNavClick = (id: string) => {
     onSelectNav(id);
@@ -161,17 +183,23 @@ export function ResponsiveShell({
               </p>
             </button>
           )}
-          <div className="flex items-center gap-2">
-            <ThemeToggle className="flex-1" />
+          <div className="space-y-2.5">
+            <ThemeToggle className="w-full" />
             {onSignOut && (
               <button
                 type="button"
-                onClick={onSignOut}
-                aria-label="Sign out"
-                title="Sign out"
-                className="min-h-[40px] px-3 py-2 inline-flex items-center justify-center rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#252E33] text-[#20262B] dark:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#2B353A] transition-colors cursor-pointer focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]"
+                onClick={handleRequestSignOut}
+                aria-label="Sign Out"
+                className={cn(
+                  'w-full min-h-[42px] px-3.5 py-2 inline-flex items-center justify-center gap-2 rounded-xl text-sm font-semibold',
+                  'border border-[#F5C6CA] dark:border-[#5D3338] bg-[#FCEBEC]/70 dark:bg-[#3B2125]/60',
+                  'text-[#B93840] dark:text-[#EF6D75] hover:bg-[#FCEBEC] dark:hover:bg-[#3B2125]',
+                  'transition-all duration-150 active:scale-[0.985] cursor-pointer',
+                  'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D64C55] dark:focus-visible:outline-[#EF6D75]'
+                )}
               >
-                <LogOut className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
+                <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                <span>Sign Out</span>
               </button>
             )}
           </div>
@@ -366,11 +394,45 @@ export function ResponsiveShell({
                   </div>
                 )}
                 <ThemeToggle className="w-full" />
+                {onSignOut && (
+                  <button
+                    type="button"
+                    onClick={handleRequestSignOut}
+                    aria-label="Sign Out"
+                    className={cn(
+                      'w-full min-h-[44px] px-3.5 py-2 inline-flex items-center justify-center gap-2 rounded-xl text-sm font-semibold',
+                      'border border-[#F5C6CA] dark:border-[#5D3338] bg-[#FCEBEC]/70 dark:bg-[#3B2125]/60',
+                      'text-[#B93840] dark:text-[#EF6D75] hover:bg-[#FCEBEC] dark:hover:bg-[#3B2125]',
+                      'transition-all duration-150 active:scale-[0.985] cursor-pointer',
+                      'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#D64C55] dark:focus-visible:outline-[#EF6D75]'
+                    )}
+                  >
+                    <LogOut className="w-4 h-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
+                    <span>Sign Out</span>
+                  </button>
+                )}
               </div>
             </motion.aside>
           </div>
         )}
       </AnimatePresence>
+
+      {onSignOut && (
+        <ConfirmDialog
+          open={confirmSignOutOpen}
+          onClose={() => {
+            if (!signingOut) setConfirmSignOutOpen(false);
+          }}
+          onConfirm={handleConfirmSignOut}
+          title="Sign Out of Your Account?"
+          description={`You will be signed out of ${brandName} on this device and redirected to the sign-in screen.`}
+          cancelLabel="Cancel"
+          confirmLabel="Sign Out"
+          confirmVariant="danger"
+          tone="danger"
+          loading={signingOut}
+        />
+      )}
     </div>
   );
 }

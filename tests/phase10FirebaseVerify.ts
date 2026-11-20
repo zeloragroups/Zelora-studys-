@@ -294,11 +294,25 @@ function runSparkPlanOnlyChecks() {
   assert.ok(createModalSrc.includes('spark_secondary_auth'));
   assert.ok(createModalSrc.includes('manual_console_uid'));
 
+  const memberSettingsSrc = fs.readFileSync(
+    path.join(rootDir, 'src/components/settings/MemberSettingsModule.tsx'),
+    'utf8'
+  );
+  assert.ok(memberSettingsSrc.includes('changeMyPassword'));
+
   const profileSrc = fs.readFileSync(
     path.join(rootDir, 'src/components/profile/RoleProfileView.tsx'),
     'utf8'
   );
-  assert.ok(profileSrc.includes('changeMyPassword'));
+  assert.equal(profileSrc.includes('Sign Out'), false);
+  assert.equal(profileSrc.includes('changeMyPassword'), false);
+
+  const shellSrc = fs.readFileSync(
+    path.join(rootDir, 'src/components/layout/ResponsiveShell.tsx'),
+    'utf8'
+  );
+  assert.ok(shellSrc.includes('ConfirmDialog'));
+  assert.ok(shellSrc.includes('Sign Out'));
 }
 
 runConfigAndRegistryTests();

@@ -113,6 +113,8 @@ export function AdminSettingsModule({
   const [confirmResetBrandingOpen, setConfirmResetBrandingOpen] = useState(false);
   const [confirmNotifDisableOpen, setConfirmNotifDisableOpen] = useState(false);
   const [confirmClearPrefsOpen, setConfirmClearPrefsOpen] = useState(false);
+  const [confirmSignOutOpen, setConfirmSignOutOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
   const showToast = (msg: string) => {
     setToast(msg);
@@ -618,7 +620,7 @@ export function AdminSettingsModule({
                       <Button
                         variant="danger"
                         size="sm"
-                        onClick={onSignOut}
+                        onClick={() => setConfirmSignOutOpen(true)}
                         iconLeft={<LogOut className="w-4 h-4" aria-hidden="true" />}
                       >
                         Sign Out Admin Session
@@ -1773,6 +1775,31 @@ export function AdminSettingsModule({
         confirmVariant="primary"
         tone="neutral"
       />
+
+      {onSignOut && (
+        <ConfirmDialog
+          open={confirmSignOutOpen}
+          onClose={() => {
+            if (!signingOut) setConfirmSignOutOpen(false);
+          }}
+          onConfirm={async () => {
+            setSigningOut(true);
+            try {
+              await Promise.resolve(onSignOut());
+            } finally {
+              setSigningOut(false);
+              setConfirmSignOutOpen(false);
+            }
+          }}
+          title="Sign Out of Admin Session?"
+          description="You will be signed out of the Admin portal on this device and redirected to the Admin sign-in screen."
+          cancelLabel="Cancel"
+          confirmLabel="Sign Out"
+          confirmVariant="danger"
+          tone="danger"
+          loading={signingOut}
+        />
+      )}
     </>
   );
 }
