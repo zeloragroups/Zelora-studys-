@@ -144,12 +144,12 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
 
       {loading ? (
         <div className="space-y-4">
-          <div className="h-32 rounded-2xl bg-[#E2E8E5] dark:bg-[#252E33] animate-pulse" />
+          <div className="h-32 rounded-2xl bg-[var(--surface-secondary)] animate-pulse" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+                className="h-28 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
               />
             ))}
           </div>
@@ -161,33 +161,33 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
             <Card variant="charcoal" padding="md">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                 <div className="space-y-1.5 min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#42DDA9]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--hero-accent)]">
                     {todayWeekday ? `${todayWeekday} Teaching Focus` : 'Teaching Workspace'} · {principal.loginId}
                   </p>
-                  <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-[#F4F7F6] truncate">
+                  <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-[var(--hero-text)] truncate">
                     {uniqueClasses} Assigned Class{uniqueClasses === 1 ? '' : 'es'} · {uniqueSubjects} Subject{uniqueSubjects === 1 ? '' : 's'}
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#AAB6B4]">
+                  <p className="text-xs sm:text-sm text-[var(--hero-muted)]">
                     {workspace.assignments.length} active batch assignment(s) and {workspace.timetable.length} scheduled weekly session(s).
                   </p>
                 </div>
 
-                <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-3 lg:pt-0 border-t lg:border-t-0 lg:border-l border-[#343C42] lg:pl-6 shrink-0">
+                <div className="grid grid-cols-3 gap-4 sm:gap-6 pt-3 lg:pt-0 border-t lg:border-t-0 lg:border-l border-[var(--hero-border)] lg:pl-6 shrink-0">
                   <div>
-                    <p className="text-[11px] text-[#AAB6B4]">Today’s Classes</p>
-                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#F4F7F6]">
+                    <p className="text-[11px] text-[var(--hero-muted)]">Today’s Classes</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[var(--hero-text)]">
                       {todaySlots.length}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-[#AAB6B4]">Pending Reviews</p>
-                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#42DDA9]">
+                    <p className="text-[11px] text-[var(--hero-muted)]">Pending Reviews</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[var(--hero-accent)]">
                       {pendingHwReviews}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-[#AAB6B4]">Tests & Exams</p>
-                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#F4F7F6]">
+                    <p className="text-[11px] text-[var(--hero-muted)]">Tests & Exams</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[var(--hero-text)]">
                       {activeTestsCount + upcomingExamsCount}
                     </p>
                   </div>
@@ -253,17 +253,17 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
                     {todaySlots.map((slot) => (
                       <div
                         key={slot.entry.entryId}
-                        className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 flex items-center justify-between gap-3"
+                        className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 flex items-center justify-between gap-3"
                       >
                         <div>
-                          <p className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
+                          <p className="font-mono text-xs font-semibold tabular-nums text-[var(--accent-text)]">
                             {slot.entry.startTime}–{slot.entry.endTime}
                             {slot.entry.room ? ` · ${slot.entry.room}` : ''}
                           </p>
-                          <p className="mt-0.5 text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                          <p className="mt-0.5 text-sm font-semibold text-[var(--text-primary)]">
                             {slot.subjectName}
                           </p>
-                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="text-xs text-[var(--text-muted)]">
                             {slot.className} · {slot.batchName}
                           </p>
                         </div>
@@ -279,7 +279,7 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
                   </div>
                 ) : sortedTimetable.length > 0 ? (
                   <div className="space-y-2.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {todayWeekday
                         ? `No sessions scheduled on ${todayWeekday}. Showing upcoming weekly sessions:`
                         : 'Weekend — showing upcoming weekly sessions:'}
@@ -287,22 +287,22 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
                     {sortedTimetable.slice(0, 3).map((slot) => (
                       <div
                         key={slot.entry.entryId}
-                        className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5"
+                        className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5"
                       >
-                        <p className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
+                        <p className="font-mono text-xs font-semibold tabular-nums text-[var(--accent-text)]">
                           {slot.entry.dayOfWeek} · {slot.entry.startTime}–{slot.entry.endTime}
                         </p>
-                        <p className="mt-0.5 text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <p className="mt-0.5 text-sm font-semibold text-[var(--text-primary)]">
                           {slot.subjectName}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {slot.className} · {slot.batchName}
                         </p>
                       </div>
                     ))}
                   </div>
                 ) : (
-                  <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+                  <p className="text-sm text-[var(--text-muted)] py-4 text-center">
                     No active teaching sessions scheduled yet.
                   </p>
                 )}
@@ -315,7 +315,7 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
                   subtitle="Subjects actively linked to your Teacher ID"
                 >
                   {workspace.assignments.length === 0 ? (
-                    <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-sm text-[var(--text-muted)]">
                       No active assignments yet.
                     </p>
                   ) : (
@@ -323,17 +323,17 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
                       {workspace.assignments.slice(0, 4).map((item) => (
                         <div
                           key={item.assignment.assignmentId}
-                          className="flex items-center justify-between gap-3 rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] px-3.5 py-2.5"
+                          className="flex items-center justify-between gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] px-3.5 py-2.5"
                         >
                           <div className="min-w-0">
-                            <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
+                            <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                               {item.subjectRecord.name}
                             </p>
-                            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] truncate">
+                            <p className="text-xs text-[var(--text-muted)] truncate">
                               {item.classRecord.name} · {item.batchRecord.name}
                             </p>
                           </div>
-                          <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9] shrink-0">
+                          <span className="font-mono text-xs font-semibold text-[var(--accent-text)] shrink-0">
                             {item.assignment.assignmentId}
                           </span>
                         </div>
@@ -351,23 +351,23 @@ export function TeacherHomeDashboard({ onNavigate }: TeacherHomeDashboardProps) 
                   }
                 >
                   {workspace.announcements.length === 0 ? (
-                    <div className="flex items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
                       <Megaphone className="w-4 h-4 shrink-0" aria-hidden="true" />
                       <span>No active announcements right now.</span>
                     </div>
                   ) : (
-                    <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                    <div className="divide-y divide-[var(--border)]">
                       {workspace.announcements.slice(0, 2).map((ann) => (
                         <div key={ann.announcementId} className="py-2.5 first:pt-0 last:pb-0">
                           <div className="flex items-center justify-between gap-2">
-                            <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
+                            <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                               {ann.title}
                             </p>
-                            <span className="font-mono tabular-nums text-xs text-[#68737C] dark:text-[#AAB6B4] shrink-0">
+                            <span className="font-mono tabular-nums text-xs text-[var(--text-muted)] shrink-0">
                               {formatShortDate(ann.publishedAt ?? ann.createdAt)}
                             </span>
                           </div>
-                          <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4] line-clamp-2">
+                          <p className="mt-1 text-xs text-[var(--text-muted)] line-clamp-2">
                             {ann.content}
                           </p>
                         </div>

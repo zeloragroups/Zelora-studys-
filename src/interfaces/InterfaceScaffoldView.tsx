@@ -280,10 +280,10 @@ export function InterfaceScaffoldView({
       <div className="space-y-6">
         <div className="flex flex-wrap items-start justify-between gap-4">
           <div>
-            <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-xs font-medium text-[var(--text-muted)]">
               {spec.audience} · {spec.primaryFormFactors}
             </p>
-            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] text-balance">
+            <h1 className="mt-1 text-2xl font-semibold tracking-tight text-[var(--text-primary)] text-balance">
               {currentSection.sectionTitle}
             </h1>
           </div>
@@ -310,38 +310,38 @@ export function InterfaceScaffoldView({
         >
           <div className="grid gap-6 sm:grid-cols-2">
             <div>
-              <h3 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                 Interface Responsibility
               </h3>
-              <p className="mt-1.5 text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+              <p className="mt-1.5 text-sm text-[var(--text-muted)] leading-relaxed">
                 {spec.responsibility}
               </p>
-              <p className="mt-3 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="mt-3 text-xs text-[var(--text-muted)]">
                 Module implementation scheduled for Phase {currentSection.plannedPhase}.
               </p>
             </div>
 
-            <div className="sm:border-l sm:border-[#E2E8E5] dark:sm:border-[#344047] sm:pl-6">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+            <div className="sm:border-l sm:border-[var(--border)] sm:pl-6">
+              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
                 <ShieldCheck
-                  className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9] shrink-0"
+                  className="w-4 h-4 text-[var(--accent-text)] shrink-0"
                   strokeWidth={1.75}
                   aria-hidden="true"
                 />
                 <span>Role & Session Boundary ({roleLabel})</span>
               </div>
-              <p className="mt-1.5 text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+              <p className="mt-1.5 text-sm text-[var(--text-muted)] leading-relaxed">
                 {roleAccessSummary}
               </p>
               {principal && (
-                <p className="mt-3 text-xs font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                <p className="mt-3 text-xs font-mono text-[var(--text-muted)] tabular-nums">
                   Permissions granted: {permissionCount} · Session mode: {session.dataSourceMode}
                 </p>
               )}
             </div>
           </div>
 
-          <div className="mt-6 pt-5 border-t border-[#E2E8E5] dark:border-[#344047] flex flex-wrap items-center justify-between gap-3 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <div className="mt-6 pt-5 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--text-muted)]">
             <span>
               {session.dataSourceMode === 'firebase_connected'
                 ? 'Firebase Status: Connected (academy-0007)'

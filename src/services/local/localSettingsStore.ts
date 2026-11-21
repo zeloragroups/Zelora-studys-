@@ -1,4 +1,5 @@
 import { DEFAULT_BRANDING_CONFIG } from '../../config/branding';
+import { normalizeAccentPaletteId } from '../../design/palettes';
 import type { ApplicationSettings, SettingsAuditEntry } from '../../types';
 
 export const APP_SETTINGS_STORAGE_KEY = 'tuition_ecosystem_dev_app_settings_v1';
@@ -38,6 +39,7 @@ export function createDefaultApplicationSettings(): ApplicationSettings {
     },
     appearanceDefaults: {
       defaultTheme: DEFAULT_BRANDING_CONFIG.defaultTheme === 'light' ? 'light' : 'dark',
+      defaultAccentPalette: DEFAULT_BRANDING_CONFIG.defaultAccentPalette,
       allowPersonalThemePreference: true,
     },
     academicDefaults: {
@@ -190,6 +192,7 @@ function sanitizeRestoredSettings(raw: unknown): ApplicationSettings {
     },
     appearanceDefaults: {
       defaultTheme: ap.defaultTheme === 'light' ? 'light' : 'dark',
+      defaultAccentPalette: normalizeAccentPaletteId(ap.defaultAccentPalette),
       allowPersonalThemePreference:
         typeof ap.allowPersonalThemePreference === 'boolean'
           ? ap.allowPersonalThemePreference

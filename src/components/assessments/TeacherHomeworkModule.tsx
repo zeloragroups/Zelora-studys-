@@ -332,17 +332,17 @@ export function TeacherHomeworkModule() {
       header: 'Homework',
       render: (row) => (
         <div className="space-y-0.5 max-w-xs">
-          <div className="flex items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <span className="font-mono font-semibold text-[var(--accent-text)]">
               {row.homework.id}
             </span>
             <span aria-hidden="true">·</span>
             <span>{row.subjectName}</span>
           </div>
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-semibold text-[var(--text-primary)]">
             {row.homework.title}
           </p>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs text-[var(--text-muted)]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -355,7 +355,7 @@ export function TeacherHomeworkModule() {
         const meta = INDICATOR_META[row.indicator];
         return (
           <div className="space-y-1">
-            <p className="text-xs font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+            <p className="text-xs font-mono tabular-nums text-[var(--text-primary)]">
               {formatDateTime(row.homework.dueAt)}
             </p>
             <StatusText tone={meta.tone} label={meta.label} />
@@ -368,10 +368,10 @@ export function TeacherHomeworkModule() {
       header: 'Submissions',
       render: (row) => (
         <div className="text-xs space-y-0.5 tabular-nums font-mono">
-          <p className="text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="text-[var(--text-primary)]">
             Submitted: {row.submittedCount} / {row.totalAssignedStudents}
           </p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-[var(--text-muted)]">
             Reviewed: {row.reviewedCount} · Pending: {row.pendingCount}
           </p>
         </div>
@@ -525,19 +525,19 @@ export function TeacherHomeworkModule() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div className="min-w-0">
-                    <p className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="text-xs font-mono font-semibold text-[var(--accent-text)]">
                       {row.homework.id} · {row.subjectName}
                     </p>
-                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {row.homework.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {row.className} · {row.batchName}
                     </p>
                   </div>
                   <StatusText tone={meta.tone} label={meta.label} />
                 </div>
-                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                <div className="flex flex-wrap items-center justify-between gap-2 text-xs font-mono tabular-nums text-[var(--text-muted)]">
                   <span>Due {formatDateTime(row.homework.dueAt)}</span>
                   <span>
                     {row.submittedCount}/{row.totalAssignedStudents} submitted · {row.reviewedCount} reviewed
@@ -707,20 +707,20 @@ export function TeacherHomeworkModule() {
         {previewItem && (
           <div className="space-y-4">
             <div>
-              <h3 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+              <h3 className="text-base font-semibold text-[var(--text-primary)]">
                 {previewItem.homework.title}
               </h3>
-              <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="mt-1 text-xs text-[var(--text-muted)]">
                 Due {formatDateTime(previewItem.homework.dueAt)}
                 {previewItem.homework.maximumMarks
                   ? ` · Maximum Marks: ${previewItem.homework.maximumMarks}`
                   : ' · Qualitative Review (No Numeric Marks)'}
               </p>
             </div>
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/65 p-4 text-sm text-[#171D21] dark:text-[#F4F7F6] whitespace-pre-line">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 text-sm text-[var(--text-primary)] whitespace-pre-line">
               {previewItem.homework.instructions}
             </div>
-            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-xs text-[var(--text-muted)]">
               Students see a text-only response box here. File/PDF/image uploads are disabled across the platform.
             </p>
           </div>
@@ -744,20 +744,20 @@ export function TeacherHomeworkModule() {
         maxWidthClass="max-w-3xl"
       >
         {rosterLoading || !rosterData ? (
-          <div className="h-32 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse" />
+          <div className="h-32 rounded-xl bg-[var(--surface-secondary)] animate-pulse" />
         ) : (
           <div className="space-y-6">
             {/* Pending Students */}
             <div>
-              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
+              <h3 className="text-xs font-semibold text-[var(--text-muted)] mb-2">
                 Not Yet Submitted ({rosterData.pendingStudents.length})
               </h3>
               {rosterData.pendingStudents.length === 0 ? (
-                <p className="text-xs text-[#168A63] dark:text-[#42DDA9]">
+                <p className="text-xs text-[var(--accent-text)]">
                   All eligible batch students have submitted a response.
                 </p>
               ) : (
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs text-[var(--text-muted)]">
                   {rosterData.pendingStudents
                     .map((s) => `${s.studentName} (${s.studentId})`)
                     .join(', ')}
@@ -767,28 +767,28 @@ export function TeacherHomeworkModule() {
 
             {/* Received Submissions */}
             <div className="space-y-2">
-              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
+              <h3 className="text-xs font-semibold text-[var(--text-muted)]">
                 Received Submissions ({rosterData.submissions.length})
               </h3>
               {rosterData.submissions.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-5 text-center text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <div className="rounded-xl border border-dashed border-[var(--border)] p-5 text-center text-xs text-[var(--text-muted)]">
                   No student responses submitted yet.
                 </div>
               ) : (
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
+                <div className="divide-y divide-[var(--border)] border-t border-b border-[var(--border)]">
                   {rosterData.submissions.map((item) => (
                     <div
                       key={item.submission.id}
                       className="py-3 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
                     >
                       <div className="space-y-1 min-w-0">
-                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">
                           {item.studentName}{' '}
-                          <span className="font-mono text-xs text-[#168A63] dark:text-[#42DDA9]">
+                          <span className="font-mono text-xs text-[var(--accent-text)]">
                             ({item.submission.studentId})
                           </span>
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           Rev #{item.submission.revisionNumber} ·{' '}
                           {formatDateTime(item.submission.submittedAt)} · Status:{' '}
                           <span className="font-medium capitalize">
@@ -799,7 +799,7 @@ export function TeacherHomeworkModule() {
                               item.maximumMarks ? ` / ${item.maximumMarks}` : ''
                             }`}
                         </p>
-                        <p className="text-xs text-[#171D21] dark:text-[#F4F7F6] whitespace-pre-line">
+                        <p className="text-xs text-[var(--text-primary)] whitespace-pre-line">
                           {item.submission.responseText}
                         </p>
                       </div>
@@ -820,16 +820,16 @@ export function TeacherHomeworkModule() {
             {activeSubmission && (
               <form
                 onSubmit={handleSubmitReview}
-                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/65 p-4 space-y-3"
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-3"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <h4 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <h4 className="text-sm font-semibold text-[var(--text-primary)]">
                     Review {activeSubmission.studentName} ({activeSubmission.submission.id})
                   </h4>
                   <button
                     type="button"
                     onClick={() => setActiveSubmission(null)}
-                    className="text-xs text-[#168A63] dark:text-[#42DDA9] underline cursor-pointer"
+                    className="text-xs text-[var(--accent-text)] underline cursor-pointer"
                   >
                     Close form
                   </button>
@@ -915,13 +915,13 @@ export function TeacherHomeworkModule() {
             {/* Review Audit Trail */}
             {rosterData.auditEntries.length > 0 && (
               <div>
-                <h4 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
+                <h4 className="text-xs font-semibold text-[var(--text-muted)] mb-2">
                   Review Audit History
                 </h4>
-                <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs">
+                <ul className="divide-y divide-[var(--border)] text-xs">
                   {rosterData.auditEntries.map((aud) => (
-                    <li key={aud.id} className="py-2 text-[#68737C] dark:text-[#AAB6B4]">
-                      <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <li key={aud.id} className="py-2 text-[var(--text-muted)]">
+                      <span className="font-mono font-semibold text-[var(--accent-text)]">
                         {aud.id}
                       </span>{' '}
                       · {aud.action.replace(/_/g, ' ')} by {aud.actorId} on{' '}

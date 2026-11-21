@@ -35,7 +35,7 @@ export function Table<T>({
         {[0, 1, 2].map((idx) => (
           <div
             key={idx}
-            className="h-12 w-full rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+            className="h-12 w-full rounded-xl bg-[var(--surface-secondary)] animate-pulse"
           />
         ))}
       </div>
@@ -44,11 +44,11 @@ export function Table<T>({
 
   if (rows.length === 0) {
     return (
-      <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8]/60 dark:bg-[#151A1E]/40 p-8 text-center">
-        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+      <div className="rounded-xl border border-dashed border-[var(--border)] bg-[var(--background)]/75 p-8 text-center">
+        <p className="text-sm font-semibold text-[var(--text-primary)]">
           {emptyTitle}
         </p>
-        <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4] max-w-md mx-auto">
+        <p className="mt-1 text-xs text-[var(--text-secondary)] max-w-md mx-auto">
           {emptyDescription}
         </p>
         {emptyAction && <div className="mt-4">{emptyAction}</div>}
@@ -63,7 +63,7 @@ export function Table<T>({
           {rows.map((row) => (
             <div
               key={rowKey(row)}
-              className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/70 p-4"
+              className="rounded-xl border border-[var(--border)] bg-[var(--background)]/80 p-4"
             >
               {mobileCardRender(row)}
             </div>
@@ -73,15 +73,15 @@ export function Table<T>({
 
       <div className={cn('overflow-x-auto -mx-5 sm:mx-0', mobileCardRender && 'hidden md:block')}>
         <div className="inline-block min-w-full align-middle px-5 sm:px-0">
-          <table className="min-w-full divide-y divide-[#E2E8E5] dark:divide-[#344047] text-sm">
+          <table className="min-w-full divide-y divide-[var(--border)] text-sm">
             <thead>
-              <tr className="bg-[#F0F4F2]/80 dark:bg-[#252E33]/80">
+              <tr className="bg-[var(--surface-secondary)]/85">
                 {columns.map((col, idx) => (
                   <th
                     key={col.key}
                     scope="col"
                     className={cn(
-                      'py-3 px-3.5 text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] whitespace-nowrap',
+                      'py-3 px-3.5 text-xs font-semibold text-[var(--text-secondary)] whitespace-nowrap',
                       idx === 0 && 'rounded-l-lg',
                       idx === columns.length - 1 && 'rounded-r-lg',
                       col.align === 'right' ? 'text-right' : 'text-left'
@@ -92,17 +92,17 @@ export function Table<T>({
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#E2E8E5]/80 dark:divide-[#344047]/80">
+            <tbody className="divide-y divide-[var(--border)]/80">
               {rows.map((row) => (
                 <tr
                   key={rowKey(row)}
-                  className="hover:bg-[#F7F9F8] dark:hover:bg-[#252E33]/55 transition-colors duration-150"
+                  className="hover:bg-[var(--surface-secondary)]/55 transition-colors duration-150"
                 >
                   {columns.map((col) => (
                     <td
                       key={col.key}
                       className={cn(
-                        'py-3.5 px-3.5 text-[#171D21] dark:text-[#F4F7F6] align-middle',
+                        'py-3.5 px-3.5 text-[var(--text-primary)] align-middle',
                         col.align === 'right' ? 'text-right tabular-nums font-mono' : 'text-left'
                       )}
                     >

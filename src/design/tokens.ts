@@ -1,55 +1,53 @@
+import { ACCENT_PALETTE_MAP, NEUTRAL_THEME_TOKENS } from './palettes';
+
 /**
  * ZELORA STUDYS Central Design System Tokens.
- * Visual Direction: Premium fintech-inspired minimalism with Default Dark Charcoal + Mint and Light support.
+ * Visual Direction: Luxury Academic Editorial — Deep Graphite + Champagne Gold (default Dark)
+ * and Warm Ivory + Deep Charcoal (Light), paired with 10 selectable accent palettes.
  */
 
 export const LIGHT_PALETTE = {
-  // 60% Primary Neutral Surfaces
-  bgCanvas: '#F7F9F8',
-  bgSurface: '#FFFFFF',
-  bgSecondary: '#F0F4F2',
-  bgElevated: '#FFFFFF',
-  borderSubtle: '#E2E8E5',
+  bgCanvas: NEUTRAL_THEME_TOKENS.light.background,
+  bgSurface: NEUTRAL_THEME_TOKENS.light.surface,
+  bgSecondary: NEUTRAL_THEME_TOKENS.light.surfaceSecondary,
+  bgElevated: NEUTRAL_THEME_TOKENS.light.surfaceElevated,
+  borderSubtle: NEUTRAL_THEME_TOKENS.light.border,
 
-  // 30% Charcoal Structural Contrast
-  charcoalPrimary: '#20262B',
-  charcoalDeep: '#171D21',
-  charcoalSecondary: '#66736D',
-  textMuted: '#87938D',
+  charcoalPrimary: '#202329',
+  charcoalDeep: '#17191D',
+  charcoalSecondary: NEUTRAL_THEME_TOKENS.light.textSecondary,
+  textPrimary: NEUTRAL_THEME_TOKENS.light.textPrimary,
+  textMuted: NEUTRAL_THEME_TOKENS.light.textMuted,
 
-  // 10% Mint Accent
-  mintPrimary: '#18B985',
-  mintDeep: '#168A63',
-  mintAccessibleText: '#116B50',
-  mintSoft: '#DDF8EE',
-  mintBorder: '#B8EBD8',
+  accentPrimary: ACCENT_PALETTE_MAP.gold.light.accent,
+  accentHover: ACCENT_PALETTE_MAP.gold.light.accentHover,
+  accentAccessibleText: ACCENT_PALETTE_MAP.gold.light.accentText,
+  accentSoft: ACCENT_PALETTE_MAP.gold.light.accentSoft,
+  accentBorder: ACCENT_PALETTE_MAP.gold.light.accentBorder,
 
-  // Supporting Semantic States
-  success: '#168A63',
-  warning: '#D69B35',
-  error: '#D64C55',
-  info: '#4285A5',
+  success: NEUTRAL_THEME_TOKENS.light.success,
+  warning: NEUTRAL_THEME_TOKENS.light.warning,
+  error: NEUTRAL_THEME_TOKENS.light.error,
+  info: NEUTRAL_THEME_TOKENS.light.info,
 } as const;
 
 export const DARK_PALETTE = {
-  bgCanvas: '#151A1E',
-  bgSurface: '#1D2429',
-  bgSecondary: '#252E33',
-  bgElevated: '#2B353A',
-  textPrimary: '#F4F7F6',
-  textSecondary: '#A8B4B0',
-  textMuted: '#82918C',
-  mintPrimary: '#42DDA9',
-  mintStrong: '#18B985',
-  mintDark: '#168A63',
-  mintSoft: '#244B3E',
-  border: '#35413F',
+  bgCanvas: NEUTRAL_THEME_TOKENS.dark.background,
+  bgSurface: NEUTRAL_THEME_TOKENS.dark.surface,
+  bgSecondary: NEUTRAL_THEME_TOKENS.dark.surfaceSecondary,
+  bgElevated: NEUTRAL_THEME_TOKENS.dark.surfaceElevated,
+  textPrimary: NEUTRAL_THEME_TOKENS.dark.textPrimary,
+  textSecondary: NEUTRAL_THEME_TOKENS.dark.textSecondary,
+  textMuted: NEUTRAL_THEME_TOKENS.dark.textMuted,
+  accentPrimary: ACCENT_PALETTE_MAP.gold.dark.accent,
+  accentHover: ACCENT_PALETTE_MAP.gold.dark.accentHover,
+  accentSoft: ACCENT_PALETTE_MAP.gold.dark.accentSoft,
+  border: NEUTRAL_THEME_TOKENS.dark.border,
 
-  // Supporting Semantic States
-  success: '#42DDA9',
-  warning: '#E7B75A',
-  error: '#EF6464',
-  info: '#62A7C7',
+  success: NEUTRAL_THEME_TOKENS.dark.success,
+  warning: NEUTRAL_THEME_TOKENS.dark.warning,
+  error: NEUTRAL_THEME_TOKENS.dark.error,
+  info: NEUTRAL_THEME_TOKENS.dark.info,
 } as const;
 
 export const SURFACE_TOKENS = {
@@ -93,9 +91,9 @@ export const RADIUS_SCALE = {
 } as const;
 
 export const SHADOW_SCALE = {
-  subtle: 'shadow-[0_1px_2px_rgba(23,29,33,0.03)] dark:shadow-none',
-  card: 'shadow-[0_1px_3px_rgba(23,29,33,0.04)] dark:shadow-none',
-  charcoal: 'shadow-[0_2px_8px_rgba(23,29,33,0.08)] dark:shadow-none',
+  subtle: 'shadow-[0_1px_2px_rgba(23,25,29,0.04)] dark:shadow-none',
+  card: 'shadow-[0_1px_3px_rgba(23,25,29,0.05)] dark:shadow-none',
+  charcoal: 'shadow-[0_4px_14px_rgba(23,25,29,0.10)] dark:shadow-none',
   dialog: 'shadow-xl',
 } as const;
 

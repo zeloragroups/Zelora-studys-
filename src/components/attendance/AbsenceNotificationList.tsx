@@ -43,7 +43,7 @@ export function AbsenceNotificationList({
       }
       action={
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+          <span className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
             {unreadCount} unread
           </span>
           {unreadCount > 0 && (
@@ -66,7 +66,7 @@ export function AbsenceNotificationList({
           description="Absence alerts appear only when attendance is formally submitted with an Absent status."
         />
       ) : (
-        <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+        <ul className="divide-y divide-[var(--border)]">
           {visibleList.map((notif) => {
             const read = isRead(notif);
             const isCorrected = notif.resolutionStatus === 'corrected_not_absent';
@@ -76,8 +76,8 @@ export function AbsenceNotificationList({
                 className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
               >
                 <div className="space-y-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                    <span className="font-mono font-semibold text-[#343C42] dark:text-[#D4DDDC]">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                    <span className="font-mono font-semibold text-[var(--text-secondary)]">
                       {notif.id}
                     </span>
                     <span aria-hidden="true">·</span>
@@ -92,10 +92,10 @@ export function AbsenceNotificationList({
                     <span>Created {formatShortDate(notif.createdAt)}</span>
                   </div>
 
-                  <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">
                     {notif.studentName} ({notif.studentId}) — {notif.subjectName}
                   </p>
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-xs text-[var(--text-muted)]">
                     {notif.className} · {notif.batchName}
                   </p>
 

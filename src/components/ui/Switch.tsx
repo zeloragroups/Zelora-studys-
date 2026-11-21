@@ -34,12 +34,12 @@ export function Switch({
           )}
         >
           {label && (
-            <span className="block text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+            <span className="block text-sm font-medium text-[var(--text-primary)]">
               {label}
             </span>
           )}
           {description && (
-            <span className="block mt-0.5 text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+            <span className="block mt-0.5 text-xs text-[var(--text-secondary)] leading-relaxed">
               {description}
             </span>
           )}
@@ -54,18 +54,20 @@ export function Switch({
         onClick={() => onChange(!checked)}
         className={cn(
           'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full border transition-colors duration-150',
-          'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
+          'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]',
           disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer',
           checked
-            ? 'bg-[#35D6A0] dark:bg-[#42DDA9] border-[#18B985] dark:border-[#42DDA9]'
-            : 'bg-[#E2E8E5] dark:bg-[#2B353A] border-[#CED8D3] dark:border-[#344047]'
+            ? 'bg-[var(--accent)] border-[var(--accent)]'
+            : 'bg-[var(--surface-secondary)] border-[var(--border)]'
         )}
       >
         <span
           aria-hidden="true"
           className={cn(
-            'inline-block h-4 w-4 rounded-full bg-white dark:bg-[#151A1E] shadow-xs transition-transform duration-150 ease-out',
-            checked ? 'translate-x-[22px]' : 'translate-x-[3px]'
+            'inline-block h-4 w-4 rounded-full shadow-xs transition-transform duration-150 ease-out',
+            checked
+              ? 'translate-x-[22px] bg-[var(--accent-contrast)]'
+              : 'translate-x-[3px] bg-white dark:bg-[var(--text-secondary)]'
           )}
         />
       </button>

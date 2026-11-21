@@ -48,7 +48,7 @@ export function AssessmentNotificationList({
       subtitle={subtitle}
       action={
         <div className="flex items-center gap-3">
-          <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+          <span className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
             {unreadCount} unread
           </span>
           {!readOnly && unreadCount > 0 && onMarkAllRead && (
@@ -65,17 +65,17 @@ export function AssessmentNotificationList({
       }
     >
       {visibleList.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
-          <Bell className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
-          <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+        <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center space-y-2">
+          <Bell className="w-5 h-5 text-[var(--text-muted)] mx-auto" aria-hidden="true" />
+          <p className="text-sm font-medium text-[var(--text-primary)]">
             No assessment notifications right now
           </p>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs text-[var(--text-muted)]">
             Notifications appear here when homework, online tests, exams, or released scores are published.
           </p>
         </div>
       ) : (
-        <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+        <ul className="divide-y divide-[var(--border)]">
           {visibleList.map((notif) => {
             const isRead = Boolean(notif.readAt);
             const typeMeta = TYPE_META[notif.type];
@@ -85,8 +85,8 @@ export function AssessmentNotificationList({
                 className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-3"
               >
                 <div className="space-y-1 min-w-0">
-                  <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                    <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                  <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                    <span className="font-mono font-semibold text-[var(--accent-text)]">
                       {notif.id}
                     </span>
                     <span aria-hidden="true">·</span>
@@ -97,10 +97,10 @@ export function AssessmentNotificationList({
                     <span className="tabular-nums">{formatDateTime(notif.createdAt)}</span>
                   </div>
 
-                  <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">
                     {notif.title}
                   </p>
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-xs text-[var(--text-muted)]">
                     {notif.message}
                   </p>
                 </div>

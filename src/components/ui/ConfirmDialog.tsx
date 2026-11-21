@@ -37,20 +37,20 @@ export function ConfirmDialog({
             <span
               className={
                 tone === 'danger'
-                  ? 'w-9 h-9 rounded-xl bg-[#FCEBEC] dark:bg-[#3B2125] text-[#D64C55] dark:text-[#EF6D75] flex items-center justify-center shrink-0'
-                  : 'w-9 h-9 rounded-xl bg-[#FDF6E7] dark:bg-[#352A18] text-[#A67317] dark:text-[#E5B04D] flex items-center justify-center shrink-0'
+                  ? 'w-9 h-9 rounded-xl bg-[var(--error-soft)] border border-[var(--error-border)] text-[var(--error)] flex items-center justify-center shrink-0'
+                  : 'w-9 h-9 rounded-xl bg-[var(--warning-soft)] border border-[var(--warning-border)] text-[var(--warning)] flex items-center justify-center shrink-0'
               }
               aria-hidden="true"
             >
               <AlertTriangle className="w-4 h-4" strokeWidth={2} />
             </span>
           )}
-          <p className="text-sm text-[#343C42] dark:text-[#D4DDDC] leading-relaxed">
+          <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
             {description}
           </p>
         </div>
 
-        <div className="flex flex-wrap items-center justify-end gap-2.5 pt-2 border-t border-[#E2E8E5] dark:border-[#344047]">
+        <div className="flex flex-wrap items-center justify-end gap-2.5 pt-2 border-t border-[var(--border)]">
           <Button variant="secondary" size="sm" onClick={onClose} disabled={loading}>
             {cancelLabel}
           </Button>

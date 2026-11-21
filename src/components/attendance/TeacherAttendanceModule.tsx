@@ -396,11 +396,11 @@ export function TeacherAttendanceModule() {
       />
 
       {loading ? (
-        <div className="h-44 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse" />
+        <div className="h-44 rounded-2xl bg-[var(--surface-secondary)] animate-pulse" />
       ) : activeTab === 'mark' ? (
         options && options.assignments.length === 0 ? (
           <Card title="No Active Teaching Assignments">
-            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-sm text-[var(--text-muted)]">
               You have no active class, batch, or subject assignments. Contact the tuition centre Admin to assign your classes before marking attendance.
             </p>
           </Card>
@@ -412,7 +412,7 @@ export function TeacherAttendanceModule() {
             >
               <div className="space-y-4">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4] mr-1">
+                  <span className="text-xs font-medium text-[var(--text-muted)] mr-1">
                     Session Type:
                   </span>
                   {(
@@ -433,8 +433,8 @@ export function TeacherAttendanceModule() {
                         className={cn(
                           'min-h-[42px] px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold border transition-colors cursor-pointer whitespace-nowrap',
                           active
-                            ? 'bg-[#20262B] dark:bg-[#42DDA9] text-[#F4F7F6] dark:text-[#151A1E] border-[#20262B] dark:border-[#42DDA9]'
-                            : 'bg-[#F7F9F8] dark:bg-[#151A1E] text-[#343C42] dark:text-[#AAB6B4] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
+                            ? 'bg-[var(--accent)] text-[var(--accent-contrast)] border-[var(--accent)]'
+                            : 'bg-[var(--surface-secondary)] text-[var(--text-secondary)] border-[var(--border)] hover:bg-[var(--surface-secondary)]'
                         )}
                       >
                         {t.label}
@@ -533,7 +533,7 @@ export function TeacherAttendanceModule() {
                     Load Enrolled Students
                   </Button>
                   {draftSessionId && (
-                    <span className="text-xs font-mono text-[#A67317] dark:text-[#E5B04D]">
+                    <span className="text-xs font-mono text-[var(--warning)]">
                       Editing Draft {draftSessionId}
                     </span>
                   )}
@@ -554,24 +554,24 @@ export function TeacherAttendanceModule() {
                 }
               >
                 {roster.length === 0 ? (
-                  <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center text-sm text-[#68737C] dark:text-[#AAB6B4]">
+                  <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center text-sm text-[var(--text-muted)]">
                     No active enrolled students found in this batch. Contact Admin to verify student enrolments.
                   </div>
                 ) : (
                   <div className="space-y-5">
                     {/* Live Status Counter Bar */}
-                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E2E8E5] dark:border-[#344047] text-xs font-mono tabular-nums">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--border)] text-xs font-mono tabular-nums">
                       <div className="flex flex-wrap items-center gap-4">
-                        <span className="text-[#168A63] dark:text-[#42DDA9] font-semibold">
+                        <span className="text-[var(--accent-text)] font-semibold">
                           Present: {liveSummary.presentCount}
                         </span>
-                        <span className="text-[#D64C55] dark:text-[#EF6D75] font-semibold">
+                        <span className="text-[var(--error)] font-semibold">
                           Absent: {liveSummary.absentCount}
                         </span>
-                        <span className="text-[#A67317] dark:text-[#E5B04D] font-semibold">
+                        <span className="text-[var(--warning)] font-semibold">
                           Late: {liveSummary.lateCount}
                         </span>
-                        <span className="text-[#4285A5] dark:text-[#62A7C7] font-semibold">
+                        <span className="text-[var(--info)] font-semibold">
                           Excused: {liveSummary.excusedCount}
                         </span>
                       </div>
@@ -579,8 +579,8 @@ export function TeacherAttendanceModule() {
                         className={cn(
                           'font-semibold',
                           unmarkedStudents.length > 0
-                            ? 'text-[#A67317] dark:text-[#E5B04D]'
-                            : 'text-[#168A63] dark:text-[#42DDA9]'
+                            ? 'text-[var(--warning)]'
+                            : 'text-[var(--accent-text)]'
                         )}
                       >
                         Unmarked: {unmarkedStudents.length}
@@ -593,7 +593,7 @@ export function TeacherAttendanceModule() {
                       </Alert>
                     )}
 
-                    <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                    <div className="divide-y divide-[var(--border)]">
                       {roster.map((stu) => {
                         const current = marksMap[stu.studentId]?.status;
                         const remarks = marksMap[stu.studentId]?.remarks ?? '';
@@ -603,21 +603,21 @@ export function TeacherAttendanceModule() {
                             key={stu.studentId}
                             className={cn(
                               'py-3.5 px-3 -mx-3 rounded-xl flex flex-col lg:flex-row lg:items-center justify-between gap-3 transition-colors',
-                              unmarked && 'bg-[#D69B35]/10 dark:bg-[#E5B04D]/10'
+                              unmarked && 'bg-[var(--warning-soft)]'
                             )}
                           >
                             <div className="min-w-0">
                               <div className="flex items-center gap-2">
-                                <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                                <span className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                                   {stu.studentId}
                                 </span>
                                 {unmarked && (
-                                  <span className="text-[11px] font-medium text-[#A67317] dark:text-[#E5B04D]">
+                                  <span className="text-[11px] font-medium text-[var(--warning)]">
                                     · Unmarked
                                   </span>
                                 )}
                               </div>
-                              <p className="font-medium text-sm text-[#171D21] dark:text-[#F4F7F6]">
+                              <p className="font-medium text-sm text-[var(--text-primary)]">
                                 {stu.studentName}
                               </p>
                             </div>
@@ -640,18 +640,18 @@ export function TeacherAttendanceModule() {
                                         'min-h-[44px] px-3 rounded-xl text-xs font-semibold border transition-colors whitespace-nowrap cursor-pointer',
                                         selected &&
                                           st === 'present' &&
-                                          'bg-[#168A63] text-white border-[#168A63] dark:bg-[#42DDA9] dark:border-[#42DDA9] dark:text-[#151A1E]',
+                                          'bg-[var(--success)] text-[var(--accent-contrast)] border-[var(--success)]',
                                         selected &&
                                           st === 'absent' &&
-                                          'bg-[#D64C55] text-white border-[#D64C55] dark:bg-[#EF6D75] dark:border-[#EF6D75] dark:text-[#151A1E]',
+                                          'bg-[var(--error)] text-white border-[var(--error)]',
                                         selected &&
                                           st === 'late' &&
-                                          'bg-[#A67317] text-white border-[#A67317] dark:bg-[#E5B04D] dark:border-[#E5B04D] dark:text-[#151A1E]',
+                                          'bg-[var(--warning)] text-[var(--accent-contrast)] border-[var(--warning)]',
                                         selected &&
                                           st === 'excused' &&
-                                          'bg-[#4285A5] text-white border-[#4285A5] dark:bg-[#62A7C7] dark:border-[#62A7C7] dark:text-[#151A1E]',
+                                          'bg-[var(--info)] text-[var(--accent-contrast)] border-[var(--info)]',
                                         !selected &&
-                                          'bg-[#FFFFFF] dark:bg-[#1D2429] text-[#171D21] dark:text-[#F4F7F6] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
+                                          'bg-[var(--surface)] text-[var(--text-primary)] border-[var(--border)] hover:bg-[var(--surface-secondary)]'
                                       )}
                                     >
                                       {STATUS_LABELS[st]}
@@ -668,7 +668,7 @@ export function TeacherAttendanceModule() {
                                 }
                                 placeholder="Optional remarks..."
                                 aria-label={`Remarks for ${stu.studentName}`}
-                                className="min-h-[44px] sm:w-44 rounded-xl px-3.5 py-2 text-xs bg-white dark:bg-[#151A1E] border border-[#E2E8E5] dark:border-[#344047] text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                                className="min-h-[44px] sm:w-44 rounded-xl px-3.5 py-2 text-xs bg-[var(--surface)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
                               />
                             </div>
                           </div>
@@ -676,7 +676,7 @@ export function TeacherAttendanceModule() {
                       })}
                     </div>
 
-                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[#E2E8E5] dark:border-[#344047]">
+                    <div className="flex flex-wrap items-center justify-between gap-3 pt-4 border-t border-[var(--border)]">
                       <Button
                         variant="secondary"
                         onClick={() => void handleSaveDraft()}
@@ -715,14 +715,14 @@ export function TeacherAttendanceModule() {
           subtitle="Submitted attendance is locked for teacher edits in this local adapter; contact Admin with a reason if a formal audited correction is required."
         >
           {mySessions.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
-              <CalendarCheck2 className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
-              <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+            <div className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center space-y-2">
+              <CalendarCheck2 className="w-5 h-5 text-[var(--text-muted)] mx-auto" aria-hidden="true" />
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 No attendance sessions recorded yet
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+            <div className="divide-y divide-[var(--border)]">
               {mySessions.map((item) => {
                 const s = item.session;
                 return (
@@ -731,8 +731,8 @@ export function TeacherAttendanceModule() {
                     className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                   >
                     <div className="space-y-1">
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                        <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                        <span className="font-mono font-semibold text-[var(--accent-text)]">
                           {s.id}
                         </span>
                         <span aria-hidden="true">·</span>
@@ -744,10 +744,10 @@ export function TeacherAttendanceModule() {
                             : 'Regular Class'}
                         </span>
                       </div>
-                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">
                         {item.subjectName} — {item.className} ({item.batchName})
                       </p>
-                      <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                         Present: {item.summary.presentCount} · Absent:{' '}
                         {item.summary.absentCount} · Late: {item.summary.lateCount} ·
                         Excused: {item.summary.excusedCount} · Rate:{' '}
@@ -807,23 +807,23 @@ export function TeacherAttendanceModule() {
         subtitle="Absent students will immediately receive an in-app absence notification upon submission."
       >
         <div className="space-y-4">
-          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 text-xs space-y-1 bg-[#F0F4F2] dark:bg-[#252E33]">
-            <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+          <div className="rounded-xl border border-[var(--border)] p-3.5 text-xs space-y-1 bg-[var(--surface-secondary)]">
+            <p className="font-semibold text-[var(--text-primary)]">
               {selectedSubjectObj?.name} — {selectedClassObj?.name} ({selectedBatchObj?.name})
             </p>
-            <p className="text-[#68737C] dark:text-[#AAB6B4] font-mono tabular-nums">
+            <p className="text-[var(--text-muted)] font-mono tabular-nums">
               Date: {sessionDate} · Type:{' '}
               {sessionType === 'examination'
                 ? `Examination (${examTitle})`
                 : 'Regular Class'}
             </p>
-            <p className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6] pt-1">
+            <p className="font-mono tabular-nums text-[var(--text-primary)] pt-1">
               Present: {liveSummary.presentCount} · Absent: {liveSummary.absentCount} ·
               Late: {liveSummary.lateCount} · Excused: {liveSummary.excusedCount}
             </p>
           </div>
 
-          <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] max-h-60 overflow-y-auto">
+          <ul className="divide-y divide-[var(--border)] max-h-60 overflow-y-auto">
             {(roster ?? []).map((stu) => {
               const st = marksMap[stu.studentId]?.status ?? 'present';
               return (
@@ -832,10 +832,10 @@ export function TeacherAttendanceModule() {
                   className="py-2 flex items-center justify-between gap-2 text-sm"
                 >
                   <div>
-                    <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4] mr-2">
+                    <span className="font-mono text-xs text-[var(--text-muted)] mr-2">
                       {stu.studentId}
                     </span>
-                    <span className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                    <span className="font-medium text-[var(--text-primary)]">
                       {stu.studentName}
                     </span>
                   </div>
@@ -872,7 +872,7 @@ export function TeacherAttendanceModule() {
       >
         {detailModal && (
           <div className="space-y-4">
-            <div className="text-xs text-[#68737C] dark:text-[#AAB6B4] space-y-1 font-mono tabular-nums">
+            <div className="text-xs text-[var(--text-muted)] space-y-1 font-mono tabular-nums">
               <p>
                 Date: {detailModal.session.sessionDate} · Submitted:{' '}
                 {formatShortDate(
@@ -886,17 +886,17 @@ export function TeacherAttendanceModule() {
               </p>
             </div>
 
-            <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] max-h-64 overflow-y-auto">
+            <ul className="divide-y divide-[var(--border)] max-h-64 overflow-y-auto">
               {detailModal.records.map((item) => (
                 <li
                   key={item.record.id}
                   className="py-2.5 flex items-center justify-between gap-2 text-sm"
                 >
                   <div>
-                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="font-medium text-[var(--text-primary)]">
                       {item.studentName}
                     </p>
-                    <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="font-mono text-xs text-[var(--text-muted)]">
                       {item.record.studentId}
                       {item.record.remarks ? ` · ${item.record.remarks}` : ''}
                     </p>

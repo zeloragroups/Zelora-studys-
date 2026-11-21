@@ -168,7 +168,7 @@ export function AssignmentsSection({
       key: 'assignmentId',
       header: 'Assignment ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-mono text-xs font-semibold text-[var(--accent-text)]">
           {row.assignmentId}
         </span>
       ),
@@ -180,10 +180,10 @@ export function AssignmentsSection({
         const t = teacherMap.get(row.teacherAccountId.toUpperCase());
         return (
           <div>
-            <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+            <p className="font-medium text-[var(--text-primary)]">
               {t?.name ?? row.teacherAccountId}
             </p>
-            <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="font-mono text-xs text-[var(--text-muted)]">
               {row.teacherAccountId}
             </p>
           </div>
@@ -194,7 +194,7 @@ export function AssignmentsSection({
       key: 'subject',
       header: 'Subject',
       render: (row) => (
-        <span className="text-sm text-[#20262B] dark:text-[#F4F7F6]">
+        <span className="text-sm text-[var(--text-primary)]">
           {subjectMap.get(row.subjectId)?.name ?? row.subjectId}
         </span>
       ),
@@ -204,10 +204,10 @@ export function AssignmentsSection({
       header: 'Class & Batch',
       render: (row) => (
         <div className="text-xs">
-          <p className="font-medium text-[#20262B] dark:text-[#F4F7F6]">
+          <p className="font-medium text-[var(--text-primary)]">
             {classMap.get(row.classId)?.name ?? row.classId}
           </p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-[var(--text-muted)]">
             {batchMap.get(row.batchId)?.name ?? row.batchId}
           </p>
         </div>
@@ -292,7 +292,7 @@ export function AssignmentsSection({
 
         <div className="md:hidden space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+            <p className="text-sm text-[var(--text-muted)] py-4 text-center">
               No matching assignments found.
             </p>
           ) : (
@@ -301,18 +301,18 @@ export function AssignmentsSection({
               return (
                 <div
                   key={asg.assignmentId}
-                  className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
+                  className="rounded-xl border border-[var(--border)] p-4 space-y-2.5 bg-[var(--surface)]"
                 >
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                      <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                         {asg.assignmentId} · {asg.teacherAccountId}
                       </p>
-                      <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="font-medium text-[var(--text-primary)]">
                         {t?.name ?? asg.teacherAccountId} —{' '}
                         {subjectMap.get(asg.subjectId)?.name ?? asg.subjectId}
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="text-xs text-[var(--text-muted)]">
                         {classMap.get(asg.classId)?.name ?? asg.classId} ·{' '}
                         {batchMap.get(asg.batchId)?.name ?? asg.batchId}
                       </p>

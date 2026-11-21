@@ -1,3 +1,4 @@
+import { isValidAccentPaletteId, normalizeAccentPaletteId } from '../../design/palettes';
 import { hasPermission } from '../../types';
 import type {
   AcademicDefaults,
@@ -425,12 +426,26 @@ export class LocalDevApplicationSettingsService implements IApplicationSettingsS
       );
     }
 
+    if (
+      input.defaultAccentPalette !== undefined &&
+      !isValidAccentPaletteId(input.defaultAccentPalette)
+    ) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Default accent palette is invalid.',
+        'defaultAccentPalette'
+      );
+    }
+
+    const prev = this.store.settings.appearanceDefaults;
     const validated: AppearanceDefaults = {
       defaultTheme: input.defaultTheme,
+      defaultAccentPalette:
+        input.defaultAccentPalette ??
+        normalizeAccentPaletteId(prev.defaultAccentPalette),
       allowPersonalThemePreference: Boolean(input.allowPersonalThemePreference),
     };
 
-    const prev = this.store.settings.appearanceDefaults;
     const nowIso = new Date().toISOString();
 
     this.store.settings = {
@@ -445,11 +460,11 @@ export class LocalDevApplicationSettingsService implements IApplicationSettingsS
       admin.loginId,
       'updated_appearance_defaults',
       'appearance_defaults',
-      `Default theme set to ${validated.defaultTheme} (personal override: ${
+      `Default theme set to ${validated.defaultTheme} · palette ${validated.defaultAccentPalette} (personal override: ${
         validated.allowPersonalThemePreference ? 'allowed' : 'locked'
       })`,
-      `theme=${prev.defaultTheme}, personal=${prev.allowPersonalThemePreference}`,
-      `theme=${validated.defaultTheme}, personal=${validated.allowPersonalThemePreference}`
+      `theme=${prev.defaultTheme}, palette=${normalizeAccentPaletteId(prev.defaultAccentPalette)}, personal=${prev.allowPersonalThemePreference}`,
+      `theme=${validated.defaultTheme}, palette=${validated.defaultAccentPalette}, personal=${validated.allowPersonalThemePreference}`
     );
     this.store.save();
 

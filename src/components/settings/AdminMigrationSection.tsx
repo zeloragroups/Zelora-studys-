@@ -138,10 +138,10 @@ export function AdminMigrationSection() {
       header: 'Local Storage Entity',
       render: (row) => (
         <div className="space-y-0.5">
-          <p className="text-xs font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+          <p className="text-xs font-semibold text-[var(--text-primary)]">
             {row.category}
           </p>
-          <p className="text-[11px] font-mono text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-[11px] font-mono text-[var(--text-muted)]">
             → {row.firestoreCollection}
           </p>
         </div>
@@ -152,10 +152,10 @@ export function AdminMigrationSection() {
       header: 'Detected / Custom / Demo',
       render: (row) => (
         <div className="text-xs font-mono tabular-nums space-y-0.5">
-          <p className="text-[#20262B] dark:text-[#F4F7F6]">
+          <p className="text-[var(--text-primary)]">
             {row.totalFound} found · {row.eligibleCustomCount} custom
           </p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-[var(--text-muted)]">
             {row.demoFixturesDetected} demo fixture(s)
           </p>
         </div>
@@ -166,7 +166,7 @@ export function AdminMigrationSection() {
       header: 'Firestore & Auth Status',
       render: (row) => (
         <div className="text-xs space-y-0.5">
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-[var(--text-muted)]">
             {row.alreadyInFirestoreCount} already in Firestore
           </p>
           {row.requiresManualActionCount > 0 && (
@@ -193,38 +193,38 @@ export function AdminMigrationSection() {
         }
       >
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4 text-xs">
-          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-              <Database className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[var(--text-primary)]">
+              <Database className="w-3.5 h-3.5 text-[var(--accent-text)]" aria-hidden="true" />
               <span>Project & Database</span>
             </div>
-            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
+            <p className="font-mono text-[var(--text-primary)]">
               {firebaseDescriptor.projectId ?? 'LOCAL_DEMO'}
             </p>
-            <p className="font-mono text-[11px] text-[#68737C] dark:text-[#AAB6B4] truncate">
+            <p className="font-mono text-[11px] text-[var(--text-muted)] truncate">
               {firebaseDescriptor.firestoreDatabaseId ?? 'Browser storage'}
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-              <ShieldCheck className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[var(--text-primary)]">
+              <ShieldCheck className="w-3.5 h-3.5 text-[var(--accent-text)]" aria-hidden="true" />
               <span>Firestore Connectivity</span>
             </div>
-            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
+            <p className="font-mono text-[var(--text-primary)]">
               {firebaseDescriptor.firestoreState}
             </p>
-            <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-[11px] text-[var(--text-muted)]">
               Strict multi-role Security Rules active
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-              <HardDrive className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[var(--text-primary)]">
+              <HardDrive className="w-3.5 h-3.5 text-[var(--accent-text)]" aria-hidden="true" />
               <span>Firebase Storage</span>
             </div>
-            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
+            <p className="font-mono text-[var(--text-primary)]">
               {!firebaseConnected
                 ? 'Disabled (Local Mode)'
                 : storageProbe === null
@@ -235,7 +235,7 @@ export function AdminMigrationSection() {
                       ? 'Not Initialized (404)'
                       : 'Unavailable'}
             </p>
-            <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-[11px] text-[var(--text-muted)]">
               {!firebaseConnected
                 ? 'Browser local demo mode'
                 : storageProbe?.available
@@ -244,15 +244,15 @@ export function AdminMigrationSection() {
             </p>
           </div>
 
-          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5 space-y-1">
-            <div className="flex items-center gap-1.5 font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-              <UploadCloud className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 space-y-1">
+            <div className="flex items-center gap-1.5 font-semibold text-[var(--text-primary)]">
+              <UploadCloud className="w-3.5 h-3.5 text-[var(--accent-text)]" aria-hidden="true" />
               <span>Cloud Functions</span>
             </div>
-            <p className="font-mono text-[#20262B] dark:text-[#F4F7F6]">
+            <p className="font-mono text-[var(--text-primary)]">
               {firebaseDescriptor.functionsEnabled ? 'Enabled (Callable)' : 'Disabled (Spark Mode)'}
             </p>
-            <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-[11px] text-[var(--text-muted)]">
               {firebaseDescriptor.functionsEnabled
                 ? 'Cloud Functions active'
                 : 'Spark Free Plan — zero Blaze billing required'}
@@ -291,8 +291,8 @@ export function AdminMigrationSection() {
         }
       >
         <div className="space-y-5">
-          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 text-xs text-[#68737C] dark:text-[#AAB6B4] space-y-2 leading-relaxed">
-            <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 text-xs text-[var(--text-secondary)] space-y-2 leading-relaxed">
+            <p className="font-semibold text-[var(--text-primary)]">
               Safety Guarantees
             </p>
             <ul className="list-disc pl-5 space-y-1">
@@ -313,34 +313,34 @@ export function AdminMigrationSection() {
           {preview && (
             <div className="space-y-4">
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
-                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Scanned Records</p>
-                  <p className="mt-1 text-lg font-bold font-mono tabular-nums">
+                <div className="rounded-xl border border-[var(--border)] p-3">
+                  <p className="text-[var(--text-muted)]">Scanned Records</p>
+                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[var(--text-primary)]">
                     {preview.totalRecordsFound}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
-                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Custom Eligible</p>
-                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[#168A63] dark:text-[#42DDA9]">
+                <div className="rounded-xl border border-[var(--border)] p-3">
+                  <p className="text-[var(--text-muted)]">Custom Eligible</p>
+                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[var(--accent-text)]">
                     {preview.totalEligibleCustomRecords}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
-                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Demo Fixtures</p>
-                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[#A67317] dark:text-[#E5B04D]">
+                <div className="rounded-xl border border-[var(--border)] p-3">
+                  <p className="text-[var(--text-muted)]">Demo Fixtures</p>
+                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[var(--warning)]">
                     {preview.totalDemoFixtures}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3">
-                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Already in Firestore</p>
-                  <p className="mt-1 text-lg font-bold font-mono tabular-nums">
+                <div className="rounded-xl border border-[var(--border)] p-3">
+                  <p className="text-[var(--text-muted)]">Already in Firestore</p>
+                  <p className="mt-1 text-lg font-bold font-mono tabular-nums text-[var(--text-primary)]">
                     {preview.totalDuplicatesInFirestore}
                   </p>
                 </div>
               </div>
 
               {preview.warnings.length > 0 && (
-                <div className="rounded-xl border border-[#A67317]/30 dark:border-[#E5B04D]/35 bg-[#A67317]/8 dark:bg-[#E5B04D]/10 p-3.5 space-y-1.5 text-xs text-[#A67317] dark:text-[#E5B04D]">
+                <div className="rounded-xl border border-[var(--warning-border)] bg-[var(--warning-soft)] p-3.5 space-y-1.5 text-xs text-[var(--warning)]">
                   {preview.warnings.map((w, idx) => (
                     <p key={idx} className="flex items-start gap-2">
                       <AlertTriangle className="w-3.5 h-3.5 shrink-0 mt-0.5" aria-hidden="true" />
@@ -359,7 +359,7 @@ export function AdminMigrationSection() {
               />
 
               {preview.hasLocalData && (
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-3">
+                <div className="rounded-xl border border-[var(--border)] p-4 space-y-3">
                   <Checkbox
                     checked={includeDemoFixtures}
                     onChange={setIncludeDemoFixtures}
@@ -403,9 +403,9 @@ export function AdminMigrationSection() {
           )}
 
           {executionReport && (
-            <div className="rounded-xl border border-[#168A63]/30 dark:border-[#42DDA9]/40 bg-[#168A63]/6 dark:bg-[#42DDA9]/10 p-4 space-y-3 text-xs">
+            <div className="rounded-xl border border-[var(--success-border)] bg-[var(--success-soft)] p-4 space-y-3 text-xs">
               <div className="flex flex-wrap items-center justify-between gap-2">
-                <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                <p className="font-semibold text-[var(--text-primary)]">
                   Migration Summary ({formatDateTime(executionReport.executedAt)})
                 </p>
                 <StatusText
@@ -414,7 +414,7 @@ export function AdminMigrationSection() {
                 />
               </div>
 
-              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono tabular-nums">
+              <div className="grid grid-cols-2 sm:grid-cols-5 gap-2 font-mono tabular-nums text-[var(--text-primary)]">
                 <div>Migrated: {executionReport.migratedCount}</div>
                 <div>Duplicates: {executionReport.skippedDuplicateCount}</div>
                 <div>Demo Excluded: {executionReport.excludedDemoCount}</div>
@@ -423,14 +423,14 @@ export function AdminMigrationSection() {
               </div>
 
               {executionReport.manualReviewItems.length > 0 && (
-                <div className="space-y-1.5 pt-2 border-t border-[#E2E8E5] dark:border-[#344047]">
-                  <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                <div className="space-y-1.5 pt-2 border-t border-[var(--border)]">
+                  <p className="font-semibold text-[var(--text-primary)]">
                     Items Requiring Manual Admin Auth Provisioning ({executionReport.manualReviewItems.length})
                   </p>
-                  <ul className="space-y-1 text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
+                  <ul className="space-y-1 text-[11px] text-[var(--text-secondary)]">
                     {executionReport.manualReviewItems.map((item, idx) => (
                       <li key={`${item.recordId}-${idx}`}>
-                        <span className="font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                        <span className="font-mono font-semibold text-[var(--text-primary)]">
                           {item.recordId}
                         </span>{' '}
                         ({item.category}): {item.reason}
@@ -441,7 +441,7 @@ export function AdminMigrationSection() {
               )}
 
               {executionReport.errors.length > 0 && (
-                <div className="space-y-1 pt-2 border-t border-[#D64C55]/30 text-[#D64C55] dark:text-[#EF6D75]">
+                <div className="space-y-1 pt-2 border-t border-[var(--error-border)] text-[var(--error)]">
                   {executionReport.errors.map((errMsg, idx) => (
                     <p key={idx}>{errMsg}</p>
                   ))}

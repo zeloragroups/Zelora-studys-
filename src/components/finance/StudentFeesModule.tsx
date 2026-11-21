@@ -114,7 +114,7 @@ export function StudentFeesModule() {
   if (!principal || principal.role !== 'student') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
+        <p className="text-sm text-[var(--error)]">
           Only authenticated Student / Parent accounts can inspect their fee ledger and receipts.
         </p>
       </Card>
@@ -216,10 +216,10 @@ export function StudentFeesModule() {
       header: 'Fee Period',
       render: (r) => (
         <div>
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-semibold text-[var(--text-primary)]">
             {r.account.periodLabel}
           </p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             Due {formatShortDate(r.account.dueAt)}
           </p>
         </div>
@@ -240,7 +240,7 @@ export function StudentFeesModule() {
       header: 'Verified Paid',
       align: 'right',
       render: (r) => (
-        <span className="font-mono tabular-nums text-[#168A63] dark:text-[#42DDA9] font-semibold">
+        <span className="font-mono tabular-nums text-[var(--accent-text)] font-semibold">
           {formatInrFromPaise(r.account.verifiedAmountPaidPaise)}
         </span>
       ),
@@ -251,7 +251,7 @@ export function StudentFeesModule() {
       align: 'right',
       render: (r) =>
         r.pendingClaimsPaise > 0 ? (
-          <span className="font-mono tabular-nums text-[#A67317] dark:text-[#E5B04D]">
+          <span className="font-mono tabular-nums text-[var(--warning)]">
             {formatInrFromPaise(r.pendingClaimsPaise)}
           </span>
         ) : (
@@ -302,8 +302,8 @@ export function StudentFeesModule() {
       header: 'Period & Date',
       render: (r) => (
         <div className="text-xs">
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">{r.periodLabel}</p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{r.periodLabel}</p>
+          <p className="font-mono text-[var(--text-muted)]">
             Paid {formatShortDate(r.claim.paymentDate)}
           </p>
         </div>
@@ -315,7 +315,7 @@ export function StudentFeesModule() {
       render: (r) => (
         <div className="text-xs font-mono">
           <p className="font-semibold">{r.claim.transactionReference}</p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">{r.claim.paymentReference}</p>
+          <p className="text-[var(--text-muted)]">{r.claim.paymentReference}</p>
         </div>
       ),
     },
@@ -334,7 +334,7 @@ export function StudentFeesModule() {
           <div className="space-y-0.5">
             <StatusText tone={meta.tone} label={meta.label} />
             {r.claim.rejectionReason && (
-              <p className="text-xs text-[#D64C55] dark:text-[#EF6D75]">
+              <p className="text-xs text-[var(--error)]">
                 {r.claim.rejectionReason}
               </p>
             )}
@@ -365,7 +365,7 @@ export function StudentFeesModule() {
             {r.receipt.receiptNumber}
           </Button>
         ) : (
-          <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Pending verification</span>
+          <span className="text-xs text-[var(--text-muted)]">Pending verification</span>
         ),
     },
   ];
@@ -411,7 +411,7 @@ export function StudentFeesModule() {
           {[0, 1, 2, 3].map((i) => (
             <div
               key={i}
-              className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+              className="h-28 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
             />
           ))}
         </div>
@@ -463,21 +463,21 @@ export function StudentFeesModule() {
                   {dashboard.notifications.slice(0, 6).map((n) => (
                     <div
                       key={n.id}
-                      className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 flex flex-wrap items-start justify-between gap-3"
+                      className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 flex flex-wrap items-start justify-between gap-3"
                     >
                       <div className="flex items-start gap-2.5 min-w-0">
                         <Bell
-                          className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9] shrink-0 mt-0.5"
+                          className="w-4 h-4 text-[var(--accent-text)] shrink-0 mt-0.5"
                           aria-hidden="true"
                         />
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">
                             {n.title}
                           </p>
-                          <p className="text-xs text-[#343C42] dark:text-[#D5E0DD] mt-0.5">
+                          <p className="text-xs text-[var(--text-secondary)] mt-0.5">
                             {n.message}
                           </p>
-                          <p className="font-mono text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-1">
+                          <p className="font-mono text-[11px] text-[var(--text-muted)] mt-1">
                             {formatShortDate(n.createdAt)}
                           </p>
                         </div>
@@ -517,7 +517,7 @@ export function StudentFeesModule() {
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-semibold text-sm">{r.account.periodLabel}</p>
-                          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="font-mono text-xs text-[var(--text-muted)]">
                             Due {formatShortDate(r.account.dueAt)}
                           </p>
                         </div>
@@ -525,17 +525,17 @@ export function StudentFeesModule() {
                       </div>
                       <div className="grid grid-cols-3 gap-2 text-xs font-mono tabular-nums">
                         <div>
-                          <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Due</span>
+                          <span className="block font-sans text-[var(--text-muted)]">Due</span>
                           <span>{formatInrFromPaise(r.account.amountDuePaise)}</span>
                         </div>
                         <div>
-                          <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Verified</span>
-                          <span className="text-[#168A63] dark:text-[#42DDA9]">
+                          <span className="block font-sans text-[var(--text-muted)]">Verified</span>
+                          <span className="text-[var(--accent-text)]">
                             {formatInrFromPaise(r.account.verifiedAmountPaidPaise)}
                           </span>
                         </div>
                         <div>
-                          <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Remaining</span>
+                          <span className="block font-sans text-[var(--text-muted)]">Remaining</span>
                           <span className="font-bold">{formatInrFromPaise(r.account.remainingBalancePaise)}</span>
                         </div>
                       </div>
@@ -572,7 +572,7 @@ export function StudentFeesModule() {
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-semibold text-sm">{r.periodLabel}</p>
-                          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="font-mono text-[var(--text-muted)]">
                             UTR: {r.claim.transactionReference}
                           </p>
                         </div>
@@ -621,17 +621,17 @@ export function StudentFeesModule() {
               </Alert>
             )}
 
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 text-xs flex flex-wrap justify-between gap-2 font-mono tabular-nums">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 text-xs flex flex-wrap justify-between gap-2 font-mono tabular-nums">
               <span>
                 Remaining Balance:{' '}
                 <strong>{formatInrFromPaise(payModalAccount.account.remainingBalancePaise)}</strong>
               </span>
               {dashboard?.upiConfig?.status === 'active' ? (
-                <span className="text-[#168A63] dark:text-[#42DDA9]">
+                <span className="text-[var(--accent-text)]">
                   UPI ID: {dashboard.upiConfig.upiId}
                 </span>
               ) : (
-                <span className="text-[#D64C55] dark:text-[#EF6D75]">UPI Disabled</span>
+                <span className="text-[var(--error)]">UPI Disabled</span>
               )}
             </div>
 
@@ -684,13 +684,13 @@ export function StudentFeesModule() {
             ) : (
               <div className="space-y-4">
                 {preparedUpi.upiUri && (
-                  <div className="rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/75 dark:bg-[#244B3E]/75 p-4 space-y-3">
+                  <div className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-4 space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-2">
                       <div>
-                        <p className="text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                        <p className="text-xs font-semibold text-[var(--accent-text)]">
                           UPI Payment Prepared (Payment Ref: {preparedUpi.paymentReference})
                         </p>
-                        <p className="font-mono text-sm font-bold text-[#171D21] dark:text-[#F4F7F6] mt-0.5 tabular-nums">
+                        <p className="font-mono text-sm font-bold text-[var(--text-primary)] mt-0.5 tabular-nums">
                           Amount: {formatInrFromPaise(preparedUpi.amountPaise)} · Payee: {preparedUpi.payeeName}
                         </p>
                       </div>
@@ -698,13 +698,13 @@ export function StudentFeesModule() {
                         <a
                           href={preparedUpi.upiUri}
                           onClick={() => setUpiLaunchedNotice(true)}
-                          className="inline-flex items-center gap-2 min-h-[44px] px-4 py-2 rounded-xl text-xs font-semibold bg-[#20262B] dark:bg-[#42DDA9] text-[#F4F7F6] dark:text-[#151A1E] hover:bg-[#171D21] dark:hover:bg-[#35D6A0] transition-colors"
+                          className="inline-flex items-center gap-2 min-h-[44px] px-4 py-2 rounded-xl text-xs font-semibold bg-[var(--accent)] text-[var(--accent-contrast)] hover:bg-[var(--accent-hover)] transition-colors"
                         >
                           <ExternalLink className="w-4 h-4" aria-hidden="true" />
                           <span>Open UPI App</span>
                         </a>
                       ) : (
-                        <span className="text-xs font-medium text-[#D64C55] dark:text-[#EF6D75]">
+                        <span className="text-xs font-medium text-[var(--error)]">
                           Invalid UPI URI scheme; use the copyable UPI ID below.
                         </span>
                       )}
@@ -715,30 +715,30 @@ export function StudentFeesModule() {
                       <button
                         type="button"
                         onClick={() => handleCopyText('upi', preparedUpi.upiId)}
-                        className="flex items-center justify-between rounded-lg border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] px-3 py-2 cursor-pointer"
+                        className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 cursor-pointer"
                       >
                         <span className="font-mono truncate">{preparedUpi.upiId}</span>
                         {copiedField === 'upi' ? (
-                          <Check className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9] shrink-0" />
+                          <Check className="w-3.5 h-3.5 text-[var(--accent-text)] shrink-0" />
                         ) : (
-                          <Copy className="w-3.5 h-3.5 text-[#68737C] dark:text-[#AAB6B4] shrink-0" />
+                          <Copy className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />
                         )}
                       </button>
                       <button
                         type="button"
                         onClick={() => handleCopyText('ref', preparedUpi.paymentReference)}
-                        className="flex items-center justify-between rounded-lg border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] px-3 py-2 cursor-pointer"
+                        className="flex items-center justify-between rounded-lg border border-[var(--border)] bg-[var(--surface)] px-3 py-2 cursor-pointer"
                       >
                         <span className="font-mono truncate">{preparedUpi.paymentReference}</span>
                         {copiedField === 'ref' ? (
-                          <Check className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9] shrink-0" />
+                          <Check className="w-3.5 h-3.5 text-[var(--accent-text)] shrink-0" />
                         ) : (
-                          <Copy className="w-3.5 h-3.5 text-[#68737C] dark:text-[#AAB6B4] shrink-0" />
+                          <Copy className="w-3.5 h-3.5 text-[var(--text-muted)] shrink-0" />
                         )}
                       </button>
                     </div>
 
-                    <p className="text-[11px] text-[#343C42] dark:text-[#D5E0DD] leading-relaxed">
+                    <p className="text-[11px] text-[var(--text-secondary)] leading-relaxed">
                       <strong>Important:</strong> Opening your UPI app does NOT confirm or mark your fee as paid. Complete the transfer in your UPI app, then submit the UTR / transaction reference below.
                       {upiLaunchedNotice && ' UPI app link triggered — submit your UTR below once completed.'}
                     </p>

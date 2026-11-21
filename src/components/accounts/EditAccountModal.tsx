@@ -128,11 +128,11 @@ export function EditAccountModal({
     >
       <div className="space-y-4">
         {/* Immutable Reference Header */}
-        <div className="rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
-          <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <div className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3.5 py-2.5 flex flex-wrap items-center justify-between gap-2 text-xs">
+          <span className="font-mono font-semibold text-[var(--accent-text)]">
             {account.accountId}
           </span>
-          <span className="text-[#68737C] dark:text-[#AAB6B4] capitalize">
+          <span className="text-[var(--text-muted)] capitalize">
             {account.role} · Created {formatShortDate(account.createdAt)}
           </span>
         </div>
@@ -141,7 +141,7 @@ export function EditAccountModal({
 
         {confirming ? (
           <div className="space-y-4">
-            <p className="text-sm text-[#343C42] dark:text-[#D4DDDC]">
+            <p className="text-sm text-[var(--text-secondary)]">
               Confirm updating profile details for{' '}
               <strong className="font-mono">{account.accountId}</strong> ({name.trim()})?
             </p>

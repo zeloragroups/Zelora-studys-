@@ -184,21 +184,21 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
         <Card>
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-4 min-w-0">
-              <div className="w-14 h-14 rounded-2xl bg-[#20262B] dark:bg-[#244B3E] text-[#35D6A0] dark:text-[#42DDA9] flex items-center justify-center shrink-0 border border-[#343C42] dark:border-[#316453]">
+              <div className="w-14 h-14 rounded-2xl bg-[var(--accent-soft)] text-[var(--accent-text)] flex items-center justify-center shrink-0 border border-[var(--accent-border)]">
                 <UserCircle2 className="w-7 h-7" strokeWidth={1.75} aria-hidden="true" />
               </div>
               <div className="min-w-0">
-                <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs font-medium text-[var(--text-muted)]">
                   Name
                 </p>
                 <h2
                   id="profile-name-heading"
-                  className="mt-0.5 text-xl sm:text-2xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] truncate"
+                  className="mt-0.5 text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-primary)] truncate"
                 >
                   {principal.fullName}
                 </h2>
-                <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4] flex flex-wrap items-center gap-x-2 gap-y-1">
-                  <span className="font-mono font-medium text-[#343C42] dark:text-[#D4DDDC]">
+                <p className="mt-1 text-xs text-[var(--text-muted)] flex flex-wrap items-center gap-x-2 gap-y-1">
+                  <span className="font-mono font-medium text-[var(--text-secondary)]">
                     {principal.loginId}
                   </span>
                   <span aria-hidden="true">·</span>
@@ -227,11 +227,11 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
         <div>
           <h2
             id="profile-performance-heading"
-            className="text-base sm:text-lg font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6]"
+            className="text-base sm:text-lg font-semibold tracking-tight text-[var(--text-primary)]"
           >
             Performance
           </h2>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+          <p className="text-xs text-[var(--text-muted)] mt-0.5">
             {principal.role === 'student'
               ? 'Academic attendance, subject progress, and released assessment results.'
               : principal.role === 'teacher'
@@ -247,7 +247,7 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
             {[0, 1, 2].map((idx) => (
               <div
                 key={idx}
-                className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33]/70 animate-pulse"
+                className="h-28 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
               />
             ))}
           </div>
@@ -297,17 +297,17 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
                   description="Subject scores appear here once assessments or examinations are released for your batch."
                 />
               ) : (
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                <div className="divide-y divide-[var(--border)]">
                   {studentResults.subjectSummaries.map((sub) => (
                     <div
                       key={sub.subjectId}
                       className="py-3 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
+                        <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                           {sub.subjectName}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {sub.availability === 'result_available'
                             ? `${sub.releasedAssessmentsCount} released · ${sub.totalMarksObtained} / ${sub.totalMaximumMarks} marks`
                             : sub.availability === 'result_not_released'
@@ -318,7 +318,7 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
                         </p>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="font-mono text-sm font-semibold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                        <span className="font-mono text-sm font-semibold tabular-nums text-[var(--text-primary)]">
                           {sub.displayPercentage}
                         </span>
                         <StatusText
@@ -351,22 +351,22 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
                 title="Recent Released Results"
                 subtitle="Latest verified examination, test, and homework marks."
               >
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                <div className="divide-y divide-[var(--border)]">
                   {studentResults.results.slice(0, 5).map((item) => (
                     <div
                       key={item.id}
                       className="py-3 first:pt-0 last:pb-0 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
+                        <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                           {item.title}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                        <p className="text-xs text-[var(--text-muted)] tabular-nums">
                           {item.subjectName} · {formatShortDate(item.assessmentDate)}
                         </p>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="font-mono text-xs sm:text-sm font-semibold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                        <span className="font-mono text-xs sm:text-sm font-semibold tabular-nums text-[var(--text-primary)]">
                           {item.marksObtained} / {item.maximumMarks} ({item.percentage}%)
                         </span>
                         <StatusText
@@ -467,17 +467,17 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
                         description="Assigned classes, batches, and subjects appear here once configured by your Administrator."
                       />
                     ) : (
-                      <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                      <div className="divide-y divide-[var(--border)]">
                         {teacherPerf.workspace.assignments.map((item) => (
                           <div
                             key={item.assignment.id}
                             className="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-3"
                           >
                             <div className="min-w-0">
-                              <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
+                              <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                                 {item.subjectRecord.name}
                               </p>
-                              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                              <p className="text-xs text-[var(--text-muted)]">
                                 {item.classRecord.name} · {item.batchRecord.name}
                               </p>
                             </div>
@@ -537,22 +537,22 @@ export function RoleProfileView({ roleLabel }: RoleProfileViewProps) {
                   description="Class-level attendance performance will appear after teachers submit attendance sessions."
                 />
               ) : (
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                <div className="divide-y divide-[var(--border)]">
                   {adminPerf.attendance.byClass.map((cls) => (
                     <div
                       key={cls.classId}
                       className="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-4"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] truncate">
+                        <p className="text-sm font-semibold text-[var(--text-primary)] truncate">
                           {cls.className}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                        <p className="text-xs text-[var(--text-muted)] tabular-nums">
                           {cls.submittedSessions} submitted of {cls.totalSessions} session(s)
                         </p>
                       </div>
                       <div className="flex items-center gap-3 shrink-0">
-                        <span className="font-mono text-sm font-semibold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                        <span className="font-mono text-sm font-semibold tabular-nums text-[var(--text-primary)]">
                           {cls.summary.displayPercentage}
                         </span>
                         <StatusText

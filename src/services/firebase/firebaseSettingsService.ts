@@ -14,6 +14,7 @@ import {
   getFirestoreDb,
   OperationType,
 } from '../../lib/firebase/firestore';
+import { isValidAccentPaletteId, normalizeAccentPaletteId } from '../../design/palettes';
 import { SettingsServiceError, type IApplicationSettingsService } from '../contracts/settingsService';
 import { createDefaultApplicationSettings } from '../local/localSettingsStore';
 import type {
@@ -153,7 +154,12 @@ function toPublicSettings(s: ApplicationSettings): PublicApplicationSettings {
       ...normalized.applicationBranding,
       logoConfiguration: { ...normalized.applicationBranding.logoConfiguration },
     },
-    appearanceDefaults: { ...normalized.appearanceDefaults },
+    appearanceDefaults: {
+      ...normalized.appearanceDefaults,
+      defaultAccentPalette: normalizeAccentPaletteId(
+        normalized.appearanceDefaults?.defaultAccentPalette
+      ),
+    },
     academicDefaults: { ...normalized.academicDefaults },
     notificationPreferences: {
       ...normalized.notificationPreferences,
@@ -454,16 +460,32 @@ export class FirebaseSettingsService implements IApplicationSettingsService {
     input: AppearanceDefaults
   ): Promise<ApplicationSettings> {
     const admin = this.ensureAdmin(actor);
+    if (
+      input.defaultAccentPalette !== undefined &&
+      !isValidAccentPaletteId(input.defaultAccentPalette)
+    ) {
+      throw new SettingsServiceError(
+        'VALIDATION_ERROR',
+        'Default accent palette is invalid.'
+      );
+    }
     const current = await this.getApplicationSettings(actor);
-    const updated: ApplicationSettings = { ...current, appearanceDefaults: { ...input } };
+    const nextAppearance: AppearanceDefaults = {
+      defaultTheme: input.defaultTheme,
+      defaultAccentPalette:
+        input.defaultAccentPalette ??
+        normalizeAccentPaletteId(current.appearanceDefaults.defaultAccentPalette),
+      allowPersonalThemePreference: Boolean(input.allowPersonalThemePreference),
+    };
+    const updated: ApplicationSettings = { ...current, appearanceDefaults: nextAppearance };
     return this.persistSettingsAndAudit(
       admin,
       updated,
       'appearance_defaults',
       'updated_appearance_defaults',
-      `Default theme set to ${input.defaultTheme}`,
-      current.appearanceDefaults.defaultTheme,
-      input.defaultTheme
+      `Default theme set to ${nextAppearance.defaultTheme} · palette ${nextAppearance.defaultAccentPalette}`,
+      `theme=${current.appearanceDefaults.defaultTheme}, palette=${normalizeAccentPaletteId(current.appearanceDefaults.defaultAccentPalette)}`,
+      `theme=${nextAppearance.defaultTheme}, palette=${nextAppearance.defaultAccentPalette}`
     );
   }
 

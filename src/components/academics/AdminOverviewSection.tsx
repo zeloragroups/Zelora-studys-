@@ -124,24 +124,24 @@ export function AdminOverviewSection({
           label: 'Verified Collections',
           value: financeStats.totalVerifiedCollectionsPaise,
           displayValue: formatInrFromPaise(financeStats.totalVerifiedCollectionsPaise),
-          colorLight: '#35D6A0',
-          colorDark: '#42DDA9',
+          colorLight: 'var(--accent)',
+          colorDark: 'var(--accent)',
         },
         {
           id: 'pending-claims',
           label: 'Pending Claims',
           value: financeStats.pendingPaymentClaimsPaise,
           displayValue: formatInrFromPaise(financeStats.pendingPaymentClaimsPaise),
-          colorLight: '#D69B35',
-          colorDark: '#E5B04D',
+          colorLight: 'var(--warning)',
+          colorDark: 'var(--warning)',
         },
         {
           id: 'outstanding',
           label: 'Outstanding Student Fees',
           value: financeStats.totalOutstandingStudentFeesPaise,
           displayValue: formatInrFromPaise(financeStats.totalOutstandingStudentFeesPaise),
-          colorLight: '#20262B',
-          colorDark: '#AAB6B4',
+          colorLight: 'var(--text-secondary)',
+          colorDark: 'var(--text-secondary)',
         },
       ]
     : [];
@@ -152,22 +152,22 @@ export function AdminOverviewSection({
           id: 'present',
           label: 'Present',
           value: attendanceStats.presentCount,
-          colorLight: '#35D6A0',
-          colorDark: '#42DDA9',
+          colorLight: 'var(--accent)',
+          colorDark: 'var(--accent)',
         },
         {
           id: 'late',
           label: 'Late',
           value: attendanceStats.lateCount,
-          colorLight: '#D69B35',
-          colorDark: '#E5B04D',
+          colorLight: 'var(--warning)',
+          colorDark: 'var(--warning)',
         },
         {
           id: 'absent',
           label: 'Absent',
           value: attendanceStats.absentCount,
-          colorLight: '#D64C55',
-          colorDark: '#EF6D75',
+          colorLight: 'var(--error)',
+          colorDark: 'var(--error)',
         },
       ]
     : [];
@@ -206,12 +206,12 @@ export function AdminOverviewSection({
 
       {loading ? (
         <div className="space-y-4">
-          <div className="h-32 rounded-2xl bg-[#E2E8E5] dark:bg-[#252E33] animate-pulse" />
+          <div className="h-32 rounded-2xl bg-[var(--surface-secondary)] animate-pulse" />
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[0, 1, 2, 3].map((i) => (
               <div
                 key={i}
-                className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+                className="h-28 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
               />
             ))}
           </div>
@@ -224,37 +224,37 @@ export function AdminOverviewSection({
             <Card variant="charcoal" padding="md">
               <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
                 <div className="space-y-1.5 min-w-0">
-                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[#42DDA9]">
+                  <p className="text-[11px] font-semibold uppercase tracking-[0.08em] text-[var(--hero-accent)]">
                     Live Centre Pulse · {publicSettings.academicDefaults.academicYearDisplay}
                   </p>
-                  <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-[#F4F7F6] truncate">
+                  <h2 className="text-lg sm:text-xl font-semibold tracking-tight text-[var(--hero-text)] truncate">
                     {branding.centreName}
                   </h2>
-                  <p className="text-xs sm:text-sm text-[#AAB6B4]">
+                  <p className="text-xs sm:text-sm text-[var(--hero-muted)]">
                     {accountStats.activeAccounts} active member accounts across {academicStats.activeClasses} classes and {academicStats.activeBatches} batches.
                   </p>
                 </div>
 
-                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 pt-3 lg:pt-0 border-t lg:border-t-0 lg:border-l border-[#343C42] lg:pl-6 shrink-0">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-6 pt-3 lg:pt-0 border-t lg:border-t-0 lg:border-l border-[var(--hero-border)] lg:pl-6 shrink-0">
                   <div>
-                    <p className="text-[11px] text-[#AAB6B4]">Verified Collections</p>
-                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#42DDA9]">
+                    <p className="text-[11px] text-[var(--hero-muted)]">Verified Collections</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[var(--hero-accent)]">
                       {financeStats
                         ? formatInrFromPaise(financeStats.totalVerifiedCollectionsPaise)
                         : '—'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-[11px] text-[#AAB6B4]">Pending Claims</p>
-                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#F4F7F6]">
+                    <p className="text-[11px] text-[var(--hero-muted)]">Pending Claims</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[var(--hero-text)]">
                       {financeStats
                         ? `${financeStats.pendingPaymentClaimsCount} (${formatInrFromPaise(financeStats.pendingPaymentClaimsPaise)})`
                         : '—'}
                     </p>
                   </div>
                   <div className="col-span-2 sm:col-span-1">
-                    <p className="text-[11px] text-[#AAB6B4]">Attendance Rate</p>
-                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[#F4F7F6]">
+                    <p className="text-[11px] text-[var(--hero-muted)]">Attendance Rate</p>
+                    <p className="mt-1 text-base sm:text-lg font-semibold font-mono tabular-nums text-[var(--hero-text)]">
                       {attendanceStats?.overallSummary.displayPercentage ?? '—'}
                     </p>
                   </div>
@@ -383,40 +383,40 @@ export function AdminOverviewSection({
                 }
               >
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Homework Published</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                    <p className="text-xs text-[var(--text-muted)]">Homework Published</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {assessmentStats?.publishedHomework ?? 0}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {assessmentStats?.pendingHomeworkSubmissions ?? 0} pending submissions
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Online Tests</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                    <p className="text-xs text-[var(--text-muted)]">Online Tests</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {assessmentStats?.publishedTests ?? 0}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {assessmentStats?.completedTestAttempts ?? 0} completed attempts
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Examinations</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                    <p className="text-xs text-[var(--text-muted)]">Examinations</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {(assessmentStats?.upcomingExaminations ?? 0) +
                         (assessmentStats?.completedExaminations ?? 0)}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {assessmentStats?.pendingMarksEntry ?? 0} pending marks entry
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Live Notices</p>
-                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                    <p className="text-xs text-[var(--text-muted)]">Live Notices</p>
+                    <p className="mt-1 text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {academicStats.publishedAnnouncements}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {accountStats.activeAccounts} active accounts
                     </p>
                   </div>
@@ -441,57 +441,57 @@ export function AdminOverviewSection({
                 }
               >
                 <div className="grid grid-cols-2 gap-3">
-                  <div className="rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 p-3.5">
-                    <p className="text-xs text-[#168A63] dark:text-[#42DDA9] font-medium">
+                  <div className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3.5">
+                    <p className="text-xs text-[var(--accent-text)] font-medium">
                       Verified Fees
                     </p>
-                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {financeStats
                         ? formatInrFromPaise(financeStats.totalVerifiedCollectionsPaise)
                         : '₹0'}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {financeStats
                         ? `${formatInrFromPaise(financeStats.currentMonthCollectionsPaise)} this month`
                         : 'No collections yet'}
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                    <p className="text-xs text-[var(--text-muted)]">
                       Pending Verification
                     </p>
-                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {financeStats
                         ? formatInrFromPaise(financeStats.pendingPaymentClaimsPaise)
                         : '₹0'}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {financeStats?.pendingPaymentClaimsCount ?? 0} awaiting verification
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                    <p className="text-xs text-[var(--text-muted)]">
                       Outstanding Fees
                     </p>
-                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {financeStats
                         ? formatInrFromPaise(financeStats.totalOutstandingStudentFeesPaise)
                         : '₹0'}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       Student ledger balance
                     </p>
                   </div>
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5">
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                    <p className="text-xs text-[var(--text-muted)]">
                       Teacher Salaries Paid
                     </p>
-                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="mt-1 text-lg sm:text-xl font-semibold font-mono tabular-nums text-[var(--text-primary)]">
                       {financeStats
                         ? formatInrFromPaise(financeStats.totalTeacherSalaryPaidPaise)
                         : '₹0'}
                     </p>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                    <p className="text-[11px] text-[var(--text-muted)] mt-0.5">
                       {financeStats
                         ? `${formatInrFromPaise(financeStats.pendingTeacherSalaryPaise)} pending`
                         : 'Payroll tracking'}
@@ -508,7 +508,7 @@ export function AdminOverviewSection({
                 subtitle={`${accountStats.activeAccounts} active · ${accountStats.inactiveAccounts} inactive`}
               >
                 <div className="space-y-4">
-                  <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-sm text-[var(--text-muted)]">
                     Provision unique Teacher (TCH-xxxx) and Student (STU-xxxx) IDs, edit records, or toggle login eligibility.
                   </p>
                   <Button
@@ -530,7 +530,7 @@ export function AdminOverviewSection({
                 subtitle={`${academicStats.totalClasses} classes · ${academicStats.totalBatches} batches · ${academicStats.totalSubjects} subjects`}
               >
                 <div className="space-y-4">
-                  <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-sm text-[var(--text-muted)]">
                     Manage classes, batch cohorts, subjects, student enrolments, teacher assignments, and weekly timetables.
                   </p>
                   <Button
@@ -552,7 +552,7 @@ export function AdminOverviewSection({
                 subtitle={`${academicStats.publishedAnnouncements} live notices · UPI & payroll`}
               >
                 <div className="space-y-4">
-                  <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-sm text-[var(--text-muted)]">
                     Draft text-only announcements targeted to teachers or classes, or open Fee & Salary verification.
                   </p>
                   <div className="flex flex-wrap gap-2">
@@ -596,9 +596,9 @@ export function AdminOverviewSection({
                 </Button>
               }
             >
-              <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <div className="flex flex-wrap items-center justify-between gap-3 text-xs text-[var(--text-muted)]">
                 <span className="inline-flex items-center gap-1.5">
-                  <CalendarClock className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+                  <CalendarClock className="w-4 h-4 text-[var(--accent-text)]" aria-hidden="true" />
                   <span>
                     Configure centre identity, dynamic app branding, theme defaults, academic session, and notification controls in Settings.
                   </span>

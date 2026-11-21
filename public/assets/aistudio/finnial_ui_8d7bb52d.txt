@@ -1,0 +1,1434 @@
+ZELORA STUDYS — COMPLETE LUXURY ACADEMIC UI/UX REDESIGN
+
+Full Application Visual Transformation, Theme Customization, Responsive Experience and Functional Interface Audit
+
+1. PROJECT OVERVIEW
+
+You are working on the existing ZELORA STUDYS Tuition Centre Management Ecosystem.
+
+Your task is to perform a complete, application-wide UI/UX redesign that transforms the existing interface into a premium, professional, luxury academic platform.
+
+This is an existing production-oriented application with established authentication, Firebase integration, business logic, application modules, role permissions, navigation and security controls.
+
+This is NOT a request to create a new application.
+
+This is NOT a request to rebuild the backend.
+
+This is NOT a request to remove existing features and replace them with demonstration screens.
+
+Your responsibility is to redesign the entire user experience while preserving the existing application architecture and functionality.
+
+The final product must look and feel like a professionally designed education-management platform, with a consistent visual identity across all user roles and devices.
+
+The application name must always be written exactly as:
+
+ZELORA STUDYS
+
+Use uppercase and bold visual treatment for prominent brand placements, including the login page, startup screen, application identity and relevant branding locations.
+
+Never use an alternative academy name or an outdated project name.
+
+Primary objectives
+
+1. Completely redesign the visual interface of the existing application.
+2. Create a luxury academic visual identity.
+3. Redesign every existing Admin, Teacher and Student screen.
+4. Improve the usability of every existing button, menu, form, dropdown, table, dialog and navigation element.
+5. Provide 10 selectable accent colour palettes.
+6. Support both Dark and Light appearances.
+7. Make Dark Theme the default.
+8. Provide live theme preview and persistent individual user preferences.
+9. Preserve all existing features, workflows, authentication and Firebase functionality.
+10. Ensure complete responsiveness across mobile, tablet, laptop and desktop.
+11. Improve consistency, accessibility, performance and interaction feedback.
+12. Audit the entire interface so that no visible control is decorative or misleading.
+
+2. EXISTING PROJECT ARCHITECTURE — MUST BE PRESERVED
+
+Before changing anything, inspect the repository thoroughly.
+
+The existing technology stack is:
+
+- React 19
+- TypeScript
+- Vite 8
+- Tailwind CSS v4
+- Motion
+- lucide-react
+- Firebase Authentication
+- Cloud Firestore
+- Firebase Storage
+
+Firebase project:
+
+"academy-0007"
+
+The project must remain compatible with the Firebase Spark plan.
+
+Preserve:
+
+- Existing Firebase initialization.
+- Existing authentication services.
+- Existing AuthContext.
+- Existing Firestore services.
+- Existing Firestore collections.
+- Existing Firebase security rules.
+- Existing Storage integration.
+- Existing environment variable names.
+- Existing route configuration.
+- Existing RouteGuard.
+- Existing role permissions.
+- Existing data models.
+- Existing business logic.
+- Existing audit functionality.
+
+Keep:
+
+"VITE_FIREBASE_FUNCTIONS_ENABLED=false"
+
+Do not introduce Cloud Functions, Firebase Blaze requirements, paid backend services, additional databases or unnecessary external services.
+
+Do not introduce PostgreSQL, MySQL, Supabase, OpenAI, Gemini APIs, payment gateways, Razorpay, WhatsApp, SMS, email or push-notification integrations.
+
+Do not change the database architecture simply to make the new interface easier to implement.
+
+Existing roles
+
+The application has three roles:
+
+- Admin
+- Teacher
+- Student
+
+Parents use the Student login. Do not introduce a separate Parent role.
+
+The Admin application must remain separate from the public Student/Teacher login experience.
+
+3. LUXURY ACADEMIC VISUAL IDENTITY
+
+3.1 Design direction
+
+Use a Luxury Academic design philosophy.
+
+The design should communicate:
+
+- Academic excellence.
+- Professional credibility.
+- Trust.
+- Clarity.
+- Organization.
+- Sophistication.
+- Stability.
+- Premium quality.
+
+The interface should resemble a professionally designed educational institution management platform rather than a generic admin template.
+
+Use a restrained visual language.
+
+Do not make the interface flashy, childish, excessively decorative or futuristic.
+
+Avoid generic AI-generated dashboard patterns.
+
+3.2 Primary brand foundation
+
+The default design identity should use:
+
+Deep Graphite + Champagne Gold + Warm Ivory
+
+The primary palette must be:
+
+Purpose| HEX
+Main dark background| #17191D
+Dark primary surface| #202329
+Dark secondary surface| #282C33
+Dark elevated surface| #30353D
+Main dark text| #F5F3EF
+Secondary dark text| #B7B3AA
+Muted dark text| #898A8B
+Dark border| #393D43
+Champagne gold| #C5A46D
+Deep champagne| #A7864F
+Soft gold| #DCC49A
+Main light background| #F8F5EF
+Light primary surface| #FFFFFF
+Light secondary surface| #F0ECE4
+Light elevated surface| #FFFFFF
+Main light text| #272522
+Secondary light text| #6E6A62
+Muted light text| #928C82
+Light border| #E6E0D5
+
+Use champagne gold as a restrained accent.
+
+Do not turn the entire application gold.
+
+Gold should highlight important actions, selected states, branding details and meaningful status indicators.
+
+3.3 Visual composition
+
+Use:
+
+- Clean alignment.
+- Professional whitespace.
+- Subtle surface separation.
+- Consistent typography.
+- Purposeful borders.
+- Restrained shadows.
+- Clear content hierarchy.
+- Balanced dashboard layouts.
+- Carefully designed navigation.
+- Consistent component sizing.
+
+Avoid:
+
+- Excessive gradients.
+- Neon effects.
+- Unnecessary glassmorphism.
+- Excessive rounded cards.
+- Large decorative backgrounds.
+- Excessive shadows.
+- Overuse of gold.
+- Random icon placement.
+- Oversized headings.
+- Unnecessary illustrations.
+- Decorative controls that do nothing.
+
+The application should look expensive because of its design quality, not because of excessive visual effects.
+
+4. TEN SELECTABLE COLOUR PALETTES
+
+The application must provide all 10 requested accent palettes.
+
+These palettes must work in both Dark and Light appearances.
+
+The Luxury Academic foundation should remain the default visual identity, while users can select different accent palettes.
+
+4.1 Required palettes
+
+1. Slate Grey
+
+- Primary: #75889B
+- Secondary: #A4B1BE
+- Accent: #C1CCD5
+- Deep: #202831
+
+2. Indigo
+
+- Primary: #5369D9
+- Secondary: #7888EB
+- Accent: #9CAAFB
+- Deep: #1D2340
+
+3. Gold
+
+- Primary: #B58A3C
+- Secondary: #D2AC68
+- Accent: #E7C77B
+- Deep: #30291D
+
+4. Teal
+
+- Primary: #159C9C
+- Secondary: #45BDB7
+- Accent: #72D6D0
+- Deep: #163034
+
+5. Crimson Red
+
+- Primary: #C74359
+- Secondary: #DE687A
+- Accent: #F18A98
+- Deep: #351C25
+
+6. Sunset Orange
+
+- Primary: #D77B37
+- Secondary: #E79A58
+- Accent: #F3B46E
+- Deep: #35251D
+
+7. Ocean Blue
+
+- Primary: #3478D4
+- Secondary: #5798E5
+- Accent: #72B7F2
+- Deep: #14243B
+
+8. Royal Purple
+
+- Primary: #805AD5
+- Secondary: #A080E5
+- Accent: #B9A0F5
+- Deep: #211A38
+
+9. Rose Pink
+
+- Primary: #D65B91
+- Secondary: #E580AA
+- Accent: #F2A8C8
+- Deep: #351E2B
+
+10. Emerald
+
+- Primary: #159B72
+- Secondary: #3CB88F
+- Accent: #6BD7AD
+- Deep: #142D28
+
+These values are the starting accent colours, not complete background palettes.
+
+Create proper semantic colour tokens for every theme and appearance combination.
+
+Do not blindly apply the same colour to every component.
+
+4.2 Theme selection behaviour
+
+Every authenticated user must be able to customize their appearance.
+
+The Settings interface must provide:
+
+- Dark Theme.
+- Light Theme.
+- All 10 accent palettes.
+- Live preview.
+- Apply Theme.
+- Cancel Preview.
+- Reset to Default.
+
+Dark Theme must be selected by default for new users.
+
+Default accent palette:
+
+Gold — Luxury Academic
+
+Users must be able to choose any other accent palette.
+
+4.3 Live preview
+
+When a user selects a palette:
+
+1. Update a preview immediately.
+2. Show representative buttons, surfaces, navigation and text.
+3. Allow switching between Dark and Light preview.
+4. Do not permanently save a selection before Apply is pressed.
+5. Provide Cancel to restore the previous selection.
+6. Provide Apply to save the new preference.
+
+The theme must apply consistently throughout the application.
+
+4.4 Persistent preferences
+
+Persist each user's:
+
+- Appearance mode.
+- Accent palette.
+- Other relevant theme preferences.
+
+Use the existing user settings architecture where available.
+
+If remote preference storage is not appropriate for the existing architecture, use a secure, role-aware local preference mechanism.
+
+Do not store passwords, authentication tokens or sensitive account information in theme preferences.
+
+Ensure preferences do not leak between users sharing the same device.
+
+On logout, clear user-specific in-memory theme state.
+
+On login, restore the correct user's saved appearance.
+
+Avoid a flash of an incorrect theme during initialization.
+
+4.5 Theme engine architecture
+
+Implement a centralized theme system.
+
+Use CSS variables and design tokens.
+
+Recommended token structure:
+
+- "--background"
+- "--surface"
+- "--surface-secondary"
+- "--surface-elevated"
+- "--text-primary"
+- "--text-secondary"
+- "--text-muted"
+- "--border"
+- "--accent"
+- "--accent-hover"
+- "--accent-soft"
+- "--accent-contrast"
+- "--success"
+- "--warning"
+- "--error"
+- "--info"
+
+Theme changes must not require manually editing individual page components.
+
+All shared UI components must consume these tokens.
+
+5. COMPLETE APPLICATION REDESIGN
+
+Redesign every existing page, not just the homepage or login page.
+
+First inspect the route structure and identify every existing screen.
+
+Create a page inventory before implementation.
+
+For every page, evaluate:
+
+- Visual hierarchy.
+- Content organization.
+- Spacing.
+- Typography.
+- Navigation.
+- Component consistency.
+- Mobile usability.
+- Empty states.
+- Loading states.
+- Error states.
+- Interaction behaviour.
+
+Do not leave old-looking pages hidden behind newly redesigned dashboards.
+
+Every role must receive a consistent design system.
+
+6. PUBLIC LOGIN EXPERIENCE
+
+The public Student/Teacher login must remain a single unified login page.
+
+There must be:
+
+- One login page.
+- One ID field.
+- One password field.
+- One Sign In button.
+- No Student/Teacher selection cards.
+- No separate Student/Teacher login pages.
+- No role dropdown.
+
+Use:
+
+Student / Teacher ID
+
+Placeholder:
+
+"Enter your institutional ID"
+
+Password:
+
+"Enter your password"
+
+Student IDs use the existing "STU-xxxx" format.
+
+Teacher IDs use the existing "TCH-xxxx" format.
+
+After successful authentication, trusted account data must determine the user's role.
+
+Student → Student application.
+
+Teacher → Teacher application.
+
+Never trust a typed ID prefix as the sole authorization mechanism.
+
+Preserve the existing authentication implementation and role checks.
+
+Login design
+
+Create a sophisticated login experience with:
+
+- Premium ZELORA STUDYS branding.
+- Strong typography.
+- Elegant graphite background.
+- Restrained champagne-gold details.
+- Well-spaced login form.
+- Clear input labels.
+- Password visibility control.
+- Loading state.
+- Validation feedback.
+- Error feedback.
+- Accessible focus states.
+
+On desktop, use a balanced two-section layout.
+
+On mobile, use a focused single-column layout.
+
+Avoid unnecessary decorative elements.
+
+Admin login
+
+Keep the Admin Google login separate at:
+
+"/admin-login"
+
+Preserve:
+
+- Google Sign-In.
+- Existing Admin allowlist.
+- Initial allowlisted account: "07alphabro@gmail.com".
+- Google provider verification.
+- Email verification.
+- Active "admins/{uid}" verification.
+- Unauthorized account rejection.
+- Existing route protection.
+
+Do not expose Admin login as a public role-selection option.
+
+7. STARTUP AND LOADING EXPERIENCE
+
+Redesign the application startup screen.
+
+Brand:
+
+ZELORA STUDYS
+
+Use the Luxury Academic visual identity.
+
+Suggested appearance:
+
+- Graphite background.
+- Bold uppercase brand name.
+- Subtle champagne-gold brand accent.
+- Minimal animation.
+- Clean loading indicator.
+- Smooth transition.
+
+Use Motion for purposeful animations.
+
+The loading screen must represent actual initialization work.
+
+Connect it to:
+
+- Firebase initialization.
+- Authentication restoration.
+- Role verification.
+- User profile loading.
+- Theme preference restoration.
+- Route selection.
+
+Do not introduce artificial delays.
+
+Do not show fake percentage progress.
+
+Do not leave users on an infinite loading screen.
+
+Provide appropriate error handling and retry behaviour.
+
+Route correctly:
+
+- Unauthenticated member → unified login.
+- Student → Student dashboard.
+- Teacher → Teacher dashboard.
+- Admin → Admin application.
+- Direct "/admin-login" access → Admin login.
+
+8. ADMIN APPLICATION REDESIGN
+
+Redesign every existing Admin screen while preserving all functionality.
+
+Inspect and improve:
+
+- Admin dashboard.
+- Student management.
+- Teacher management.
+- Account creation.
+- Account status management.
+- Academic management.
+- Class and batch management.
+- Subject management.
+- Attendance.
+- Homework.
+- Tests and examinations.
+- Marks and results.
+- Fees.
+- Payment verification.
+- Salary management.
+- Reports.
+- Announcements.
+- Audit logs.
+- Settings.
+- Profile.
+- Other existing Admin pages.
+
+Do not create duplicate modules.
+
+Admin dashboard
+
+Create a professional dashboard with:
+
+- Clear page heading.
+- Relevant summary metrics.
+- Meaningful charts where existing data supports them.
+- Recent activity.
+- Important pending tasks.
+- Useful information hierarchy.
+
+Avoid displaying every metric as a large decorative card.
+
+Choose layouts based on the actual importance of information.
+
+Management tables
+
+Improve:
+
+- Search.
+- Filtering.
+- Sorting.
+- Pagination.
+- Row actions.
+- Status labels.
+- Empty states.
+- Loading states.
+- Mobile presentation.
+
+Preserve existing data access permissions.
+
+Do not expose student financial or personal information to unauthorized roles.
+
+9. TEACHER APPLICATION REDESIGN
+
+Redesign every existing Teacher screen.
+
+Preserve existing features and permissions.
+
+Inspect:
+
+- Teacher dashboard.
+- Assigned batches.
+- Timetable.
+- Student information.
+- Attendance.
+- Homework.
+- Homework submissions.
+- Tests.
+- Examinations.
+- Marks.
+- Results.
+- Announcements.
+- Profile.
+- Settings.
+- Other existing Teacher pages.
+
+The Teacher dashboard should prioritize the work teachers actually need to perform.
+
+Use clear task hierarchy.
+
+Make frequently used functions easy to find.
+
+Do not display Admin-only controls.
+
+Preserve teacher ownership restrictions and authorized data access.
+
+10. STUDENT APPLICATION REDESIGN
+
+Redesign every existing Student screen.
+
+Preserve existing features and permissions.
+
+Inspect:
+
+- Student dashboard.
+- Attendance.
+- Homework.
+- Assessments.
+- Examinations.
+- Marks.
+- Results.
+- Subject progress.
+- Fee information.
+- Payment information.
+- Announcements.
+- Profile.
+- Settings.
+- Other existing Student pages.
+
+The Student dashboard should prioritize:
+
+- Academic progress.
+- Attendance.
+- Upcoming work.
+- Homework.
+- Assessment information.
+- Released results.
+- Fee status.
+
+Use a clear, welcoming, professional academic interface.
+
+Avoid unnecessary complexity.
+
+Do not expose another student's information.
+
+Do not expose unreleased results or unauthorized financial information.
+
+11. COMPLETE COMPONENT AND INTERACTION REDESIGN
+
+Inspect every existing reusable component.
+
+The existing design system includes reusable components such as:
+
+- Button.
+- Card.
+- Input.
+- Checkbox.
+- Modal.
+- ConfirmDialog.
+- EmptyState.
+- IconButton.
+- PageHeader.
+- SearchInput.
+- Select.
+- StatTile.
+- StatusText.
+- Switch.
+- Table.
+- Tabs.
+- Textarea.
+- ThemeToggle.
+- AnalyticsCharts.
+
+Preserve and improve the existing shared component architecture.
+
+Do not create multiple inconsistent versions of the same component.
+
+Button behaviour
+
+Every button must have appropriate:
+
+- Default state.
+- Hover state.
+- Pressed state.
+- Focus state.
+- Disabled state.
+- Loading state.
+
+Buttons must perform their advertised actions.
+
+If an action is not available, do not display a misleading active button.
+
+Forms
+
+Improve:
+
+- Labels.
+- Placeholder text.
+- Required-field indicators.
+- Validation.
+- Error messages.
+- Success feedback.
+- Keyboard navigation.
+- Responsive field layouts.
+- Submission loading states.
+
+Preserve existing validation and business rules.
+
+Dialogs and modals
+
+Ensure:
+
+- Appropriate size.
+- Clear title.
+- Descriptive content.
+- Correct primary action.
+- Correct secondary action.
+- Accessible close controls.
+- Keyboard support.
+- Focus management.
+- Responsive layout.
+
+Destructive actions must use confirmation dialogs.
+
+Dropdowns and menus
+
+Ensure:
+
+- Correct positioning.
+- Keyboard accessibility.
+- Visible selected state.
+- Appropriate spacing.
+- No clipping outside viewport.
+- Consistent appearance in both themes.
+
+Tables
+
+Ensure:
+
+- Clear headers.
+- Readable rows.
+- Proper alignment.
+- Responsive behaviour.
+- Search and filtering.
+- Sorting where supported.
+- Pagination where supported.
+- Clear empty states.
+
+Do not hide important information on mobile without providing an accessible alternative.
+
+12. NAVIGATION REDESIGN
+
+Preserve the existing navigation structure.
+
+The current application uses:
+
+- Desktop sidebar.
+- Mobile and tablet navigation drawer.
+- Five-slot bottom navigation.
+- Centered Home item.
+- Profile access from the top-right area.
+- Sign Out in the dashboard menu/footer.
+
+Maintain these rules:
+
+1. Keep five bottom navigation slots.
+2. Keep Home centered.
+3. Do not add Profile as a bottom navigation item.
+4. Keep Profile accessible from the top-right area.
+5. Preserve dashboard menu Sign Out.
+6. Preserve logout confirmation.
+7. Preserve role-specific navigation.
+8. Do not show unauthorized modules.
+9. Preserve direct route protection.
+
+Improve navigation typography, spacing, active states, accessibility and responsiveness.
+
+The navigation must remain easy to use on smaller screens.
+
+13. PROFILE AND SETTINGS REDESIGN
+
+Preserve the existing Profile structure and behaviour.
+
+Profile should continue to display its existing:
+
+- Name information.
+- Login ID.
+- Role.
+- Account status.
+- Student class/batch where applicable.
+- Role-specific performance information.
+
+Do not reintroduce logout into Profile.
+
+Keep Sign Out in the appropriate dashboard menu/footer and preserve the existing Settings session controls.
+
+Settings
+
+Redesign Settings into a clear, professional interface.
+
+Preserve existing categories and permissions.
+
+Admin settings include the existing categories for:
+
+- Account security.
+- Centre profile.
+- Branding.
+- Appearance.
+- Academic configuration.
+- Fees and payments.
+- Attendance.
+- Notifications.
+- System information.
+- Data privacy.
+
+Teacher and Student settings should remain role-appropriate.
+
+Add the theme customization interface to the existing Appearance setting.
+
+Do not reintroduce the removed Workspace Modules category.
+
+Do not remove existing working settings.
+
+14. DATA VISUALIZATION AND DASHBOARD CHARTS
+
+Improve existing charts without inventing data.
+
+Use existing authorized application data.
+
+Charts must have:
+
+- Clear titles.
+- Readable labels.
+- Appropriate scales.
+- Useful legends.
+- Consistent theme colours.
+- Responsive sizing.
+- Empty states.
+- Loading states.
+- Error states.
+
+Do not show misleading analytics.
+
+Do not use decorative charts with hardcoded production values.
+
+Use accent palettes carefully so charts remain distinguishable and readable in both appearance modes.
+
+15. RESPONSIVE DESIGN
+
+The complete redesign must support:
+
+- Android phones.
+- iPhones.
+- Small tablets.
+- Large tablets.
+- Laptops.
+- Desktop monitors.
+
+Test representative viewport widths:
+
+- 360px.
+- 390px.
+- 430px.
+- 768px.
+- 1024px.
+- 1366px.
+- 1440px.
+
+Mobile
+
+- No horizontal overflow.
+- Appropriate touch targets.
+- Readable typography.
+- Comfortable form spacing.
+- Proper bottom navigation.
+- Correct drawer behaviour.
+- Responsive tables.
+- No overlapping content.
+- Safe-area-aware layouts.
+- Appropriate modal sizing.
+
+Tablet
+
+- Balanced layouts.
+- Appropriate drawer/sidebar behaviour.
+- Readable tables.
+- Correct grid adaptation.
+- Consistent spacing.
+
+Desktop
+
+- Professional sidebar.
+- Balanced content width.
+- Clear information hierarchy.
+- Appropriate use of whitespace.
+- Proper dashboard columns.
+- Consistent alignment.
+
+Do not simply shrink the desktop design to create the mobile design.
+
+Adapt the layout intelligently to each device.
+
+16. ACCESSIBILITY
+
+Apply accessibility improvements across the application.
+
+Requirements:
+
+- Semantic HTML.
+- Proper form labels.
+- Keyboard navigation.
+- Visible focus indicators.
+- Screen-reader-friendly buttons.
+- Appropriate contrast.
+- Accessible dialogs.
+- Meaningful error messages.
+- Accessible status labels.
+- Reduced-motion support.
+- Appropriate touch target sizes.
+
+Verify contrast in every palette and both appearance modes.
+
+Do not communicate important states using colour alone.
+
+17. ANIMATION AND MOTION
+
+Use Motion where it improves the experience.
+
+Appropriate animations include:
+
+- Page transitions.
+- Drawer opening and closing.
+- Modal transitions.
+- Button feedback.
+- Theme preview transitions.
+- Loading animation.
+- Small status transitions.
+
+Animations must be:
+
+- Subtle.
+- Fast.
+- Purposeful.
+- Consistent.
+- Performance-conscious.
+
+Avoid:
+
+- Excessive bounce effects.
+- Constant moving backgrounds.
+- Large parallax effects.
+- Unnecessary 3D animations.
+- Flashing elements.
+- Long page transitions.
+
+Respect reduced-motion preferences.
+
+18. FUNCTIONALITY AUDIT — EVERY VISIBLE CONTROL MUST WORK
+
+This is a critical requirement.
+
+The purpose of this redesign is not merely to improve appearance.
+
+Every visible interaction must remain functional.
+
+Audit every page and record every interactive element.
+
+For each element, verify:
+
+1. What action is expected?
+2. Is the action connected to the correct handler?
+3. Does it use the correct existing service?
+4. Does it respect role permissions?
+5. Does it provide loading feedback?
+6. Does it provide success or error feedback?
+7. Does it behave correctly on mobile?
+8. Does it preserve existing business rules?
+
+Check:
+
+- Buttons.
+- Links.
+- Navigation items.
+- Search fields.
+- Filters.
+- Sort controls.
+- Dropdowns.
+- Checkboxes.
+- Switches.
+- Tabs.
+- Forms.
+- Modals.
+- Confirmation dialogs.
+- Theme controls.
+- Profile controls.
+- Sign Out.
+- Table row actions.
+- Pagination.
+- Chart filters.
+- Settings actions.
+
+Do not add fake functionality.
+
+Do not use alert boxes as a substitute for professional feedback.
+
+Do not replace real services with mock data.
+
+Do not display active controls that do nothing.
+
+If an existing feature is genuinely unavailable because of a backend limitation, preserve its current behaviour and clearly document the limitation rather than pretending it works.
+
+19. SECURITY AND PRIVACY PRESERVATION
+
+The redesign must not weaken existing security.
+
+Preserve:
+
+- Firebase Authentication.
+- Admin Google allowlisting.
+- Admin provider verification.
+- Email verification.
+- Active Admin document verification.
+- Student/Teacher institutional ID authentication.
+- Trusted role detection.
+- RouteGuard.
+- Firestore Security Rules.
+- Storage Security Rules.
+- Student data isolation.
+- Teacher ownership restrictions.
+- Financial permissions.
+- Assessment and result protections.
+- Existing audit logs.
+
+Admin initial allowlisted Gmail:
+
+"07alphabro@gmail.com"
+
+The Admin login route remains:
+
+"/admin-login"
+
+Public Student/Teacher login remains unified.
+
+Never trust frontend-only role information.
+
+Never grant access based on a hidden navigation item.
+
+Never expose secrets in the frontend.
+
+Never store passwords in browser storage.
+
+Never weaken Firestore rules to make the new interface work.
+
+20. PERFORMANCE REQUIREMENTS
+
+The redesigned application must remain lightweight.
+
+Requirements:
+
+- Reuse existing dependencies.
+- Avoid unnecessary libraries.
+- Use shared components.
+- Avoid duplicate theme state.
+- Avoid repeated Firebase subscriptions.
+- Clean up listeners.
+- Avoid unnecessary re-renders.
+- Optimize expensive page components.
+- Use code splitting where appropriate.
+- Avoid large decorative assets.
+- Avoid unnecessary network requests.
+
+The application should remain usable on average Android devices and slower internet connections.
+
+Do not sacrifice usability for decorative effects.
+
+21. IMPLEMENTATION WORKFLOW
+
+Follow the implementation process in order.
+
+Phase A — Complete audit
+
+Inspect:
+
+- Repository structure.
+- All application routes.
+- All existing screens.
+- Authentication.
+- Firebase services.
+- Existing design tokens.
+- Shared components.
+- Navigation.
+- Settings.
+- Profile.
+- Dashboard layouts.
+- Forms.
+- Tables.
+- Modals.
+- Theme handling.
+- Existing tests.
+
+Create an internal inventory of every screen and reusable component.
+
+Do not start by replacing the entire design system blindly.
+
+Phase B — Design system
+
+Implement:
+
+- Luxury Academic foundation.
+- Central design tokens.
+- Ten accent palettes.
+- Dark and Light appearances.
+- Typography system.
+- Spacing system.
+- Border and radius system.
+- Shadow system.
+- Component states.
+
+Create a single source of truth for design tokens.
+
+Phase C — Theme engine
+
+Implement:
+
+- Dark Theme default.
+- Light Theme support.
+- Ten selectable accent palettes.
+- Live preview.
+- Apply and Cancel.
+- Reset to Default.
+- User preference persistence.
+- Correct initialization.
+- Cross-role theme consistency.
+
+Phase D — Shared components
+
+Redesign reusable components first.
+
+Verify that all existing screens inherit the new design consistently.
+
+Phase E — Application screens
+
+Redesign:
+
+1. Public login.
+2. Admin login.
+3. Admin application.
+4. Teacher application.
+5. Student application.
+6. Profile.
+7. Settings.
+8. Navigation.
+9. Reports and analytics.
+10. Loading and error states.
+
+Preserve every existing workflow.
+
+Phase F — Interaction audit
+
+Verify every visible interactive element.
+
+Fix disconnected handlers, broken links, incorrect states and inconsistent feedback.
+
+Do not modify business logic unnecessarily.
+
+Phase G — Responsive refinement
+
+Test all major screens at representative mobile, tablet and desktop widths.
+
+Phase H — Security and regression testing
+
+Verify authentication, role isolation, Firebase access and existing business features.
+
+Phase I — Production verification
+
+Run the production build and all available automated tests.
+
+22. REQUIRED TESTING
+
+Run:
+
+- TypeScript compilation.
+- ESLint.
+- Vite production build.
+- Existing security audit tests.
+- Existing Phase 2–10 verification suites.
+- Existing route tests.
+- Existing component tests.
+- Theme preference tests.
+- Role-based navigation tests.
+
+Do not delete tests or weaken assertions to make the build pass.
+
+Theme tests
+
+Verify:
+
+- New user receives Dark Theme.
+- Default palette is Gold.
+- Every one of the ten palettes can be selected.
+- Every palette works in Dark Theme.
+- Every palette works in Light Theme.
+- Preview updates correctly.
+- Cancel restores previous preferences.
+- Apply saves preferences.
+- Reset restores defaults.
+- Preferences persist after refresh.
+- Different users do not share personalized settings unintentionally.
+- No incorrect theme flash occurs.
+
+Functional tests
+
+Verify existing workflows for:
+
+- Student management.
+- Teacher management.
+- Attendance.
+- Homework.
+- Tests.
+- Examinations.
+- Marks.
+- Results.
+- Fees.
+- Payment verification.
+- Salaries.
+- Reports.
+- Settings.
+- Authentication.
+- Logout.
+
+Test using existing project test data and authorized test accounts.
+
+Security tests
+
+Verify:
+
+- Student cannot access Teacher routes.
+- Teacher cannot access Student-only data.
+- Member accounts cannot access Admin routes.
+- Unauthorized Admin Google accounts are rejected.
+- Inactive accounts are rejected.
+- Missing roles are rejected.
+- Direct route navigation is protected.
+
+Visual tests
+
+Where browser testing is available, inspect:
+
+- Login.
+- Admin dashboard.
+- Teacher dashboard.
+- Student dashboard.
+- Settings.
+- Theme selection.
+- Navigation drawer.
+- Desktop sidebar.
+- Forms.
+- Tables.
+- Modals.
+- Loading screen.
+
+If live browser testing is unavailable, state that explicitly.
+
+Do not claim unperformed tests passed.
+
+23. STRICTLY FORBIDDEN CHANGES
+
+Do not:
+
+1. Rebuild the entire application.
+2. Replace Firebase.
+3. Change the Firebase project ID.
+4. Introduce paid services.
+5. Enable Cloud Functions or Blaze.
+6. Remove existing features.
+7. Remove existing Firestore collections.
+8. Weaken Firebase security rules.
+9. Change the established role model.
+10. Merge Admin login with member login.
+11. Create separate Student and Teacher login pages.
+12. Reintroduce Student/Teacher selection cards.
+13. Add fake dashboard data.
+14. Replace existing services with mock services.
+15. Add AI APIs.
+16. Add payment gateways.
+17. Add unnecessary external integrations.
+18. Remove existing Profile functionality.
+19. Remove Sign Out functionality.
+20. Change the existing five-slot bottom navigation.
+21. Add Profile to bottom navigation.
+22. Reintroduce Workspace Modules in Settings.
+23. Add unnecessary decorative controls.
+24. Introduce a different brand name.
+25. Leave old visual styles on unmodified pages.
+26. Delete tests to hide failures.
+27. Rewrite working business logic unnecessarily.
+
+24. FINAL COMPLETION REPORT
+
+After implementation, provide a detailed report with the following sections.
+
+1. Project Audit
+
+Explain the existing architecture and the screens inspected.
+
+2. Design Identity
+
+Explain the Luxury Academic visual direction and design tokens.
+
+3. Theme System
+
+List all ten accent palettes and explain Dark/Light support.
+
+4. Theme Customization
+
+Explain live preview, Apply, Cancel, Reset and preference persistence.
+
+5. Admin Redesign
+
+List the Admin screens redesigned.
+
+6. Teacher Redesign
+
+List the Teacher screens redesigned.
+
+7. Student Redesign
+
+List the Student screens redesigned.
+
+8. Login and Startup
+
+Explain the unified login, separate Admin login and startup experience.
+
+9. Navigation
+
+Explain the preserved and improved navigation.
+
+10. Functional Audit
+
+Report the interactive controls inspected and repaired.
+
+11. Responsive Design
+
+Report actual viewport sizes tested.
+
+12. Accessibility
+
+Report keyboard, focus, contrast and reduced-motion checks.
+
+13. Security
+
+Confirm that authentication, Firebase rules and role separation remain intact.
+
+14. Files Modified
+
+List important files created, updated and removed with their purpose.
+
+15. Automated Tests
+
+Report actual test results.
+
+16. Visual Testing
+
+Report which screens were inspected in a real browser.
+
+17. Pending Work
+
+Clearly identify anything not implemented or not tested.
+
+25. FINAL ACCEPTANCE CRITERIA
+
+The redesign is complete only when:
+
+- [ ] All application screens have the new design.
+- [ ] Admin, Teacher and Student interfaces are consistent.
+- [ ] The Luxury Academic identity is implemented.
+- [ ] ZELORA STUDYS branding is consistent and uppercase.
+- [ ] Dark Theme is the default.
+- [ ] Light Theme is available.
+- [ ] All ten accent palettes are available.
+- [ ] Every palette works in both appearances.
+- [ ] Live preview works.
+- [ ] Apply, Cancel and Reset work.
+- [ ] Individual user preferences persist correctly.
+- [ ] The unified Student/Teacher login remains functional.
+- [ ] Admin Google login remains separate.
+- [ ] Every existing application module is preserved.
+- [ ] Every visible control has a working action or is clearly disabled.
+- [ ] Navigation remains functional.
+- [ ] Profile and Sign Out behaviour remain correct.
+- [ ] Mobile layouts work.
+- [ ] Tablet layouts work.
+- [ ] Desktop layouts work.
+- [ ] Accessibility is improved.
+- [ ] No unnecessary backend dependency was added.
+- [ ] Firebase Spark compatibility remains intact.
+- [ ] Security protections remain intact.
+- [ ] Existing automated tests continue to pass.
+- [ ] Production build succeeds.
+
+FINAL IMPLEMENTATION INSTRUCTION
+
+Work directly inside the existing ZELORA STUDYS repository.
+
+Inspect first. Plan carefully. Redesign incrementally.
+
+Do not replace working modules just to achieve a new visual appearance.
+
+The final experience should look like a premium, professionally designed academic management platform, with a Luxury Academic identity, a complete customizable colour system, elegant Dark and Light appearances, and a consistent experience across Admin, Teacher and Student applications.
+
+Every page must be polished. Every visible option must be understandable. Every interactive control must behave correctly. Every role must see only its authorized information.
+
+Preserve the current business logic, data, security and architecture.
+
+Do not stop after redesigning the dashboard or login screen.
+
+Complete the application-wide redesign, test it, and provide the final implementation report.
+
+If the work approaches an execution or context limit, save a precise progress checkpoint listing completed screens, modified files, remaining work and test results. Continue from that checkpoint without restarting or rewriting completed work.

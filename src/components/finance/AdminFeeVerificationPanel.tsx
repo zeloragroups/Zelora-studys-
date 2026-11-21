@@ -368,8 +368,8 @@ export function AdminFeeVerificationPanel({
       header: 'Frequency & Due Rule',
       render: (r) => (
         <div className="text-xs">
-          <p className="font-semibold capitalize text-[#20262B] dark:text-[#F4F7F6]">{r.frequency}</p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">{r.dueDateConfiguration}</p>
+          <p className="font-semibold capitalize text-[var(--text-primary)]">{r.frequency}</p>
+          <p className="text-[var(--text-muted)]">{r.dueDateConfiguration}</p>
         </div>
       ),
     },
@@ -399,8 +399,8 @@ export function AdminFeeVerificationPanel({
       header: 'Student',
       render: (row) => (
         <div>
-          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{row.studentName}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{row.studentName}</p>
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {row.account.studentId} · {row.className} ({row.batchName})
           </p>
         </div>
@@ -411,8 +411,8 @@ export function AdminFeeVerificationPanel({
       header: 'Period & Due',
       render: (row) => (
         <div className="text-xs">
-          <p className="font-medium text-[#20262B] dark:text-[#F4F7F6]">{row.account.periodLabel}</p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+          <p className="font-medium text-[var(--text-primary)]">{row.account.periodLabel}</p>
+          <p className="font-mono text-[var(--text-muted)] tabular-nums">
             Due {formatShortDate(row.account.dueAt)}
           </p>
         </div>
@@ -433,7 +433,7 @@ export function AdminFeeVerificationPanel({
       header: 'Verified Paid',
       align: 'right',
       render: (row) => (
-        <span className="font-mono tabular-nums text-[#168A63] dark:text-[#42DDA9] font-semibold">
+        <span className="font-mono tabular-nums text-[var(--accent-text)] font-semibold">
           {formatInrFromPaise(row.account.verifiedAmountPaidPaise)}
         </span>
       ),
@@ -444,11 +444,11 @@ export function AdminFeeVerificationPanel({
       align: 'right',
       render: (row) =>
         row.pendingClaimsPaise > 0 ? (
-          <span className="font-mono tabular-nums text-[#A67317] dark:text-[#E5B04D]">
+          <span className="font-mono tabular-nums text-[var(--warning)]">
             {formatInrFromPaise(row.pendingClaimsPaise)} ({row.pendingClaimsCount})
           </span>
         ) : (
-          <span className="text-[#68737C] dark:text-[#AAB6B4]">—</span>
+          <span className="text-[var(--text-muted)]">—</span>
         ),
     },
     {
@@ -492,8 +492,8 @@ export function AdminFeeVerificationPanel({
       header: 'Student & Period',
       render: (row) => (
         <div>
-          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{row.studentName}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{row.studentName}</p>
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {row.claim.studentId} · {row.periodLabel}
           </p>
         </div>
@@ -504,10 +504,10 @@ export function AdminFeeVerificationPanel({
       header: 'Payment Ref & Student UTR',
       render: (row) => (
         <div className="space-y-0.5 text-xs">
-          <p className="font-mono font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+          <p className="font-mono font-semibold text-[var(--text-primary)]">
             {row.claim.transactionReference}
           </p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-[var(--text-muted)]">
             {row.claim.paymentReference} · {formatShortDate(row.claim.paymentDate)}
           </p>
           {row.claim.duplicateTransactionFlag && (
@@ -606,10 +606,10 @@ export function AdminFeeVerificationPanel({
       header: 'Receipt Number',
       render: (r) => (
         <div>
-          <p className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+          <p className="font-mono font-semibold text-[var(--accent-text)]">
             {r.receiptNumber}
           </p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {formatShortDate(r.issuedAt)}
           </p>
         </div>
@@ -620,8 +620,8 @@ export function AdminFeeVerificationPanel({
       header: 'Student',
       render: (r) => (
         <div>
-          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{r.studentName}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{r.studentName}</p>
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {r.studentId} · {r.periodLabel}
           </p>
         </div>
@@ -764,7 +764,7 @@ export function AdminFeeVerificationPanel({
                   />
                 </div>
 
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3">
                   <Checkbox
                     checked={applyToUnpaidCurrent}
                     onChange={setApplyToUnpaidCurrent}
@@ -789,12 +789,12 @@ export function AdminFeeVerificationPanel({
               className="lg:col-span-2"
             >
               <div className="space-y-4">
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 space-y-1.5">
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Current Active Fee</p>
-                  <p className="text-2xl font-bold font-mono text-[#168A63] dark:text-[#42DDA9] tabular-nums">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-1.5">
+                  <p className="text-xs text-[var(--text-muted)]">Current Active Fee</p>
+                  <p className="text-2xl font-bold font-mono text-[var(--accent-text)] tabular-nums">
                     {activeFeeConfig ? formatInrFromPaise(activeFeeConfig.amountPaise) : 'Not Set'}
                   </p>
-                  <p className="text-xs text-[#343C42] dark:text-[#D5E0DD]">
+                  <p className="text-xs text-[var(--text-secondary)]">
                     {activeFeeConfig
                       ? `${activeFeeConfig.frequency} · ${activeFeeConfig.dueDateConfiguration}`
                       : 'Save a fee configuration to enable account generation.'}
@@ -833,7 +833,7 @@ export function AdminFeeVerificationPanel({
               mobileCardRender={(r) => (
                 <div className="space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">{r.id}</span>
+                    <span className="font-mono text-xs text-[var(--text-muted)]">{r.id}</span>
                     <StatusText
                       tone={r.status === 'active' ? 'nominal' : 'neutral'}
                       label={r.status === 'active' ? 'Active' : 'Historical'}
@@ -842,7 +842,7 @@ export function AdminFeeVerificationPanel({
                   <p className="font-mono text-base font-bold tabular-nums">
                     {formatInrFromPaise(r.amountPaise)} / {r.frequency}
                   </p>
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-xs text-[var(--text-muted)]">
                     {r.dueDateConfiguration} · Effective {formatShortDate(r.effectiveFrom)}
                   </p>
                 </div>
@@ -870,7 +870,7 @@ export function AdminFeeVerificationPanel({
                 onChange={(e) => setAccountPeriodFilter(e.target.value)}
                 placeholder="Period (e.g. 2026-11)"
                 aria-label="Filter by fee period"
-                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm bg-white dark:bg-[#151A1E] border border-[#E2E8E5] dark:border-[#344047] text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm bg-[var(--surface)] border border-[var(--border)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
               />
 
               <Select
@@ -932,10 +932,10 @@ export function AdminFeeVerificationPanel({
                   <div className="space-y-2.5">
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-semibold text-sm text-[#20262B] dark:text-[#F4F7F6]">
+                        <p className="font-semibold text-sm text-[var(--text-primary)]">
                           {row.studentName}
                         </p>
-                        <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="font-mono text-xs text-[var(--text-muted)]">
                           {row.account.studentId} · {row.account.periodLabel}
                         </p>
                       </div>
@@ -943,17 +943,17 @@ export function AdminFeeVerificationPanel({
                     </div>
                     <div className="grid grid-cols-3 gap-2 text-xs font-mono tabular-nums pt-1">
                       <div>
-                        <span className="block text-[#68737C] dark:text-[#AAB6B4] font-sans">Due</span>
+                        <span className="block text-[var(--text-muted)] font-sans">Due</span>
                         <span>{formatInrFromPaise(row.account.amountDuePaise)}</span>
                       </div>
                       <div>
-                        <span className="block text-[#68737C] dark:text-[#AAB6B4] font-sans">Verified</span>
-                        <span className="text-[#168A63] dark:text-[#42DDA9]">
+                        <span className="block text-[var(--text-muted)] font-sans">Verified</span>
+                        <span className="text-[var(--accent-text)]">
                           {formatInrFromPaise(row.account.verifiedAmountPaidPaise)}
                         </span>
                       </div>
                       <div>
-                        <span className="block text-[#68737C] dark:text-[#AAB6B4] font-sans">Remaining</span>
+                        <span className="block text-[var(--text-muted)] font-sans">Remaining</span>
                         <span className="font-bold">{formatInrFromPaise(row.account.remainingBalancePaise)}</span>
                       </div>
                     </div>
@@ -988,7 +988,7 @@ export function AdminFeeVerificationPanel({
                 { id: 'all', label: 'All Claims' },
               ]}
             />
-            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-xs text-[var(--text-muted)]">
               Manual verification confirms actual receipt in bank/UPI ledger before generating receipts.
             </p>
           </div>
@@ -1010,7 +1010,7 @@ export function AdminFeeVerificationPanel({
                     <div className="flex items-start justify-between gap-2">
                       <div>
                         <p className="font-semibold text-sm">{row.studentName}</p>
-                        <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="font-mono text-xs text-[var(--text-muted)]">
                           {row.claim.studentId} · {row.periodLabel}
                         </p>
                       </div>
@@ -1135,7 +1135,7 @@ export function AdminFeeVerificationPanel({
             subtitle="How Pay Now interacts with student fee balances."
             className="lg:col-span-2"
           >
-            <div className="space-y-3 text-xs text-[#343C42] dark:text-[#D5E0DD] leading-relaxed">
+            <div className="space-y-3 text-xs text-[var(--text-secondary)] leading-relaxed">
               <p>
                 <strong>No Automatic Bank Verification:</strong> Opening a UPI app via{' '}
                 <code className="font-mono">upi://pay</code> prepares the payment reference only.
@@ -1144,7 +1144,7 @@ export function AdminFeeVerificationPanel({
                 Students submit their UTR / transaction reference after paying. Only Admin review
                 and explicit verification reduces the remaining fee balance and issues a receipt.
               </p>
-              <div className="pt-2 border-t border-[#E2E8E5] dark:border-[#344047]">
+              <div className="pt-2 border-t border-[var(--border)]">
                 <StatusText
                   tone={upiConfig?.status === 'active' ? 'nominal' : 'warning'}
                   label={
@@ -1185,10 +1185,10 @@ export function AdminFeeVerificationPanel({
                 <div className="space-y-2.5">
                   <div className="flex items-start justify-between">
                     <div>
-                      <p className="font-mono font-semibold text-sm text-[#168A63] dark:text-[#42DDA9]">
+                      <p className="font-mono font-semibold text-sm text-[var(--accent-text)]">
                         {r.receiptNumber}
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="text-xs text-[var(--text-muted)]">
                         {r.studentName} ({r.studentId})
                       </p>
                     </div>
@@ -1232,25 +1232,25 @@ export function AdminFeeVerificationPanel({
       >
         {inspectAccount && (
           <div className="space-y-4 text-sm">
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-4 font-mono tabular-nums text-xs">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 font-mono tabular-nums text-xs">
               <div>
-                <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Total Due</span>
+                <span className="block font-sans text-[var(--text-muted)]">Total Due</span>
                 <span className="font-bold text-sm">{formatInrFromPaise(inspectAccount.account.amountDuePaise)}</span>
               </div>
               <div>
-                <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Verified Paid</span>
-                <span className="font-bold text-sm text-[#168A63] dark:text-[#42DDA9]">
+                <span className="block font-sans text-[var(--text-muted)]">Verified Paid</span>
+                <span className="font-bold text-sm text-[var(--accent-text)]">
                   {formatInrFromPaise(inspectAccount.account.verifiedAmountPaidPaise)}
                 </span>
               </div>
               <div>
-                <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Pending Claims</span>
-                <span className="font-bold text-sm text-[#A67317] dark:text-[#E5B04D]">
+                <span className="block font-sans text-[var(--text-muted)]">Pending Claims</span>
+                <span className="font-bold text-sm text-[var(--warning)]">
                   {formatInrFromPaise(inspectAccount.pendingClaimsPaise)}
                 </span>
               </div>
               <div>
-                <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Remaining</span>
+                <span className="block font-sans text-[var(--text-muted)]">Remaining</span>
                 <span className="font-bold text-sm">
                   {formatInrFromPaise(inspectAccount.account.remainingBalancePaise)}
                 </span>
@@ -1258,11 +1258,11 @@ export function AdminFeeVerificationPanel({
             </div>
 
             <div className="space-y-2">
-              <h4 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
+              <h4 className="text-xs font-semibold text-[var(--text-muted)]">
                 Claims & Verification History ({inspectAccount.claims.length})
               </h4>
               {inspectAccount.claims.length === 0 ? (
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">No payment claims submitted for this period.</p>
+                <p className="text-xs text-[var(--text-muted)]">No payment claims submitted for this period.</p>
               ) : (
                 <div className="space-y-2">
                   {inspectAccount.claims.map((c) => {
@@ -1270,17 +1270,17 @@ export function AdminFeeVerificationPanel({
                     return (
                       <div
                         key={c.id}
-                        className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3 flex flex-wrap items-center justify-between gap-2 text-xs"
+                        className="rounded-xl border border-[var(--border)] p-3 flex flex-wrap items-center justify-between gap-2 text-xs"
                       >
                         <div>
                           <p className="font-mono font-semibold">
                             {formatInrFromPaise(c.amountPaise)} · UTR: {c.transactionReference}
                           </p>
-                          <p className="text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="text-[var(--text-muted)]">
                             Ref {c.paymentReference} · Paid {formatShortDate(c.paymentDate)}
                           </p>
                           {c.rejectionReason && (
-                            <p className="text-[#D64C55] dark:text-[#EF6D75] mt-1">
+                            <p className="text-[var(--error)] mt-1">
                               Rejected: {c.rejectionReason}
                             </p>
                           )}
@@ -1295,7 +1295,7 @@ export function AdminFeeVerificationPanel({
 
             {inspectAccount.receipts.length > 0 && (
               <div className="space-y-2">
-                <h4 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
+                <h4 className="text-xs font-semibold text-[var(--text-muted)]">
                   Issued Receipts
                 </h4>
                 <div className="flex flex-wrap gap-2">
@@ -1329,7 +1329,7 @@ export function AdminFeeVerificationPanel({
       >
         {verifyTarget && (
           <form onSubmit={handleConfirmVerify} className="space-y-4">
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-4 space-y-1.5 text-xs">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-1.5 text-xs">
               <p>
                 <strong>Student:</strong> {verifyTarget.studentName} ({verifyTarget.claim.studentId})
               </p>
@@ -1355,7 +1355,7 @@ export function AdminFeeVerificationPanel({
               </Alert>
             )}
 
-            <div className="rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/65 dark:bg-[#244B3E]/70 p-3.5">
+            <div className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3.5">
               <Checkbox
                 checked={confirmIndependentCheck}
                 onChange={setConfirmIndependentCheck}
@@ -1396,7 +1396,7 @@ export function AdminFeeVerificationPanel({
       >
         {rejectTarget && (
           <form onSubmit={handleConfirmReject} className="space-y-4">
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-3.5 text-xs space-y-1">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 text-xs space-y-1">
               <p>
                 <strong>{rejectTarget.studentName}</strong> · {rejectTarget.periodLabel}
               </p>
@@ -1438,7 +1438,7 @@ export function AdminFeeVerificationPanel({
       >
         {correctPaymentTarget && (
           <form onSubmit={handleConfirmCorrectPayment} className="space-y-4">
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-3.5 text-xs space-y-1">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 text-xs space-y-1">
               <p>
                 <strong>Student:</strong> {correctPaymentTarget.studentName} ({correctPaymentTarget.claim.studentId})
               </p>

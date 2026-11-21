@@ -322,7 +322,7 @@ export function AdminAssessmentOverviewModule() {
             value={dateFilter}
             onChange={(e) => setDateFilter(e.target.value)}
             aria-label="Filter by date"
-            className="min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm text-[#171D21] dark:text-[#F4F7F6] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+            className="min-h-[44px] rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 text-sm text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
           />
 
           <Select
@@ -387,20 +387,20 @@ export function AdminAssessmentOverviewModule() {
               <div className="space-y-2.5">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {r.homework.id} · {r.homework.teacherId}
                     </p>
-                    <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {r.homework.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {r.className} · {r.batchName} · {r.subjectName}
                     </p>
                   </div>
                   <StatusText tone="neutral" label={r.indicator.toUpperCase()} />
                 </div>
                 <div className="flex items-center justify-between gap-2 pt-1">
-                  <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                  <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                     {r.submittedCount}/{r.totalAssignedStudents} submitted ({r.reviewedCount} reviewed)
                   </span>
                   <Button
@@ -420,13 +420,13 @@ export function AdminAssessmentOverviewModule() {
                 header: 'Homework',
                 render: (r) => (
                   <div>
-                    <p className="font-mono text-xs text-[#168A63] dark:text-[#42DDA9] font-semibold">
+                    <p className="font-mono text-xs text-[var(--accent-text)] font-semibold">
                       {r.homework.id} · {r.homework.teacherId}
                     </p>
-                    <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="font-semibold text-[var(--text-primary)]">
                       {r.homework.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {r.className} · {r.batchName} · {r.subjectName}
                     </p>
                   </div>
@@ -436,7 +436,7 @@ export function AdminAssessmentOverviewModule() {
                 key: 'counts',
                 header: 'Submissions',
                 render: (r) => (
-                  <span className="font-mono text-xs tabular-nums text-[#20262B] dark:text-[#F4F7F6]">
+                  <span className="font-mono text-xs tabular-nums text-[var(--text-primary)]">
                     {r.submittedCount}/{r.totalAssignedStudents} submitted ({r.reviewedCount}{' '}
                     reviewed)
                   </span>
@@ -474,13 +474,13 @@ export function AdminAssessmentOverviewModule() {
               <div className="space-y-2">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {r.test.id} · {r.test.teacherId}
                     </p>
-                    <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {r.test.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {r.className} · {r.batchName} · {r.subjectName}
                     </p>
                   </div>
@@ -489,7 +489,7 @@ export function AdminAssessmentOverviewModule() {
                     label={r.effectiveStatus.toUpperCase()}
                   />
                 </div>
-                <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                   {r.test.questions.length} MCQs · {r.test.totalMarks}m · {r.attemptCount} attempts ({r.evaluatedCount} evaluated)
                 </p>
               </div>
@@ -500,13 +500,13 @@ export function AdminAssessmentOverviewModule() {
                 header: 'Objective Test',
                 render: (r) => (
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {r.test.id} · {r.test.teacherId}
                     </p>
-                    <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="font-semibold text-[var(--text-primary)]">
                       {r.test.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {r.className} · {r.batchName} · {r.subjectName}
                     </p>
                   </div>
@@ -516,7 +516,7 @@ export function AdminAssessmentOverviewModule() {
                 key: 'meta',
                 header: 'Config & Attempts',
                 render: (r) => (
-                  <span className="font-mono text-xs tabular-nums text-[#20262B] dark:text-[#F4F7F6]">
+                  <span className="font-mono text-xs tabular-nums text-[var(--text-primary)]">
                     {r.test.questions.length} MCQs · {r.test.totalMarks}m · {r.attemptCount}{' '}
                     attempts ({r.evaluatedCount} evaluated)
                   </span>
@@ -545,13 +545,13 @@ export function AdminAssessmentOverviewModule() {
               <div className="space-y-2.5">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {r.examination.id} · {r.teacherName}
                     </p>
-                    <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {r.examination.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {r.className} · {r.batchName} · {r.subjectName}
                     </p>
                   </div>
@@ -561,7 +561,7 @@ export function AdminAssessmentOverviewModule() {
                   />
                 </div>
                 <div className="flex items-center justify-between gap-2 pt-1">
-                  <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                  <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                     {formatShortDate(r.examination.examDate)} · {r.marksEnteredCount}/{r.eligibleStudentCount} marks
                   </span>
                   <Button
@@ -580,13 +580,13 @@ export function AdminAssessmentOverviewModule() {
                 header: 'Examination',
                 render: (r) => (
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {r.examination.id} · {r.teacherName}
                     </p>
-                    <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="font-semibold text-[var(--text-primary)]">
                       {r.examination.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {r.className} · {r.batchName} · {r.subjectName}
                     </p>
                   </div>
@@ -596,7 +596,7 @@ export function AdminAssessmentOverviewModule() {
                 key: 'date',
                 header: 'Date & Marks',
                 render: (r) => (
-                  <span className="font-mono text-xs tabular-nums text-[#20262B] dark:text-[#F4F7F6]">
+                  <span className="font-mono text-xs tabular-nums text-[var(--text-primary)]">
                     {formatShortDate(r.examination.examDate)} · {r.marksEnteredCount}/
                     {r.eligibleStudentCount} marks recorded
                   </span>
@@ -632,18 +632,18 @@ export function AdminAssessmentOverviewModule() {
         {overview && tab === 'audit' && (
           <div className="space-y-5">
             <div>
-              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
+              <h3 className="text-xs font-semibold text-[var(--text-muted)] mb-2">
                 Examination Marks Audit Trail ({overview.marksAuditEntries.length})
               </h3>
               {overview.marksAuditEntries.length === 0 ? (
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs text-[var(--text-muted)]">
                   No marks corrections recorded yet.
                 </p>
               ) : (
-                <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs">
+                <ul className="divide-y divide-[var(--border)] text-xs">
                   {overview.marksAuditEntries.map((aud) => (
-                    <li key={aud.id} className="py-2 text-[#20262B] dark:text-[#F4F7F6]">
-                      <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <li key={aud.id} className="py-2 text-[var(--text-primary)]">
+                      <span className="font-mono font-semibold text-[var(--accent-text)]">
                         {aud.id}
                       </span>{' '}
                       · Exam {aud.examinationId} · Student {aud.studentId}:{' '}
@@ -659,18 +659,18 @@ export function AdminAssessmentOverviewModule() {
             </div>
 
             <div>
-              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
+              <h3 className="text-xs font-semibold text-[var(--text-muted)] mb-2">
                 Homework Review Audit Trail ({overview.homeworkAuditEntries.length})
               </h3>
               {overview.homeworkAuditEntries.length === 0 ? (
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs text-[var(--text-muted)]">
                   No homework review audits recorded yet.
                 </p>
               ) : (
-                <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs">
+                <ul className="divide-y divide-[var(--border)] text-xs">
                   {overview.homeworkAuditEntries.map((aud) => (
-                    <li key={aud.id} className="py-2 text-[#20262B] dark:text-[#F4F7F6]">
-                      <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <li key={aud.id} className="py-2 text-[var(--text-primary)]">
+                      <span className="font-mono font-semibold text-[var(--accent-text)]">
                         {aud.id}
                       </span>{' '}
                       · Homework {aud.homeworkId} · {aud.action.replace(/_/g, ' ')} by{' '}
@@ -694,29 +694,29 @@ export function AdminAssessmentOverviewModule() {
       >
         {hwInspect && (
           <div className="space-y-4">
-            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] whitespace-pre-line">
+            <p className="text-sm text-[var(--text-muted)] whitespace-pre-line">
               {hwInspect.homework.instructions}
             </p>
-            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+            <div className="divide-y divide-[var(--border)]">
               {hwInspect.submissions.length === 0 ? (
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] py-4">
+                <p className="text-xs text-[var(--text-muted)] py-4">
                   No student submissions yet.
                 </p>
               ) : (
                 hwInspect.submissions.map((item) => (
                   <div key={item.submission.id} className="py-3 space-y-1 text-xs">
-                    <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="font-semibold text-[var(--text-primary)]">
                       {item.studentName} ({item.submission.studentId}) ·{' '}
                       {item.submission.status.replace(/_/g, ' ')}
                       {item.submission.marksAwarded !== undefined
                         ? ` · Marks: ${item.submission.marksAwarded}`
                         : ''}
                     </p>
-                    <p className="text-[#20262B] dark:text-[#F4F7F6]">
+                    <p className="text-[var(--text-primary)]">
                       {item.submission.responseText}
                     </p>
                     {item.submission.privateTeacherNote && (
-                      <p className="text-[#A67317] dark:text-[#E5B04D]">
+                      <p className="text-[var(--warning)]">
                         Private Teacher Note: {item.submission.privateTeacherNote}
                       </p>
                     )}
@@ -744,21 +744,21 @@ export function AdminAssessmentOverviewModule() {
           <div className="space-y-4">
             {correctionError && <Alert tone="error">{correctionError}</Alert>}
             {examInspect.marks.length === 0 ? (
-              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-sm text-[var(--text-muted)]">
                 No marks recorded yet.
               </p>
             ) : (
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+              <div className="divide-y divide-[var(--border)]">
                 {examInspect.marks.map((m) => (
                   <div
                     key={m.id}
                     className="py-3 flex items-center justify-between gap-3"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">
                         {m.studentName} ({m.studentId})
                       </p>
-                      <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                         {m.marksObtained} / {m.maximumMarks} ({m.percentage}% ·{' '}
                         {m.resultStatus.toUpperCase()})
                       </p>
@@ -783,9 +783,9 @@ export function AdminAssessmentOverviewModule() {
             {correctingMark && (
               <form
                 onSubmit={handleAdminMarkCorrection}
-                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/65 p-4 space-y-3"
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-3"
               >
-                <p className="text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                <p className="text-xs font-semibold text-[var(--text-primary)]">
                   Audited Correction for {correctingMark.studentName} (Current:{' '}
                   {correctingMark.marksObtained})
                 </p>

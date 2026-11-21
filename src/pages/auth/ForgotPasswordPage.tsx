@@ -61,7 +61,7 @@ export function ForgotPasswordPage({ onNavigate }: ForgotPasswordPageProps) {
         <button
           type="button"
           onClick={() => onNavigate(ROUTES.PORTAL_LOGIN)}
-          className="inline-flex items-center gap-1.5 font-medium text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
+          className="inline-flex items-center gap-1.5 font-medium text-[var(--accent-text)] hover:underline cursor-pointer"
         >
           <ArrowLeft className="w-3.5 h-3.5" aria-hidden="true" />
           <span>Back to Sign In</span>

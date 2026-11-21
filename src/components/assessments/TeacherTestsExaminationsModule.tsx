@@ -555,17 +555,17 @@ export function TeacherTestsExaminationsModule() {
       header: 'Objective Test',
       render: (row) => (
         <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <span className="font-mono font-semibold text-[var(--accent-text)]">
               {row.test.id}
             </span>
             <span aria-hidden="true">·</span>
             <span>{row.subjectName}</span>
           </div>
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-semibold text-[var(--text-primary)]">
             {row.test.title}
           </p>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs text-[var(--text-muted)]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -576,11 +576,11 @@ export function TeacherTestsExaminationsModule() {
       header: 'Questions & Window',
       render: (row) => (
         <div className="text-xs space-y-0.5">
-          <p className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-mono tabular-nums text-[var(--text-primary)]">
             {row.test.questions.length} MCQs · {row.test.totalMarks} marks ·{' '}
             {row.test.durationMinutes} min
           </p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+          <p className="text-[var(--text-muted)] tabular-nums">
             {formatShortDate(row.test.startsAt)} – {formatShortDate(row.test.endsAt)}
           </p>
         </div>
@@ -601,7 +601,7 @@ export function TeacherTestsExaminationsModule() {
             }
             label={row.effectiveStatus.toUpperCase()}
           />
-          <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
             {row.attemptCount} attempts ·{' '}
             {row.test.manualResultsReleased ||
             row.test.resultReleaseMode === 'auto_after_submission'
@@ -676,17 +676,17 @@ export function TeacherTestsExaminationsModule() {
       header: 'Examination',
       render: (row) => (
         <div className="space-y-0.5">
-          <div className="flex items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+          <div className="flex items-center gap-2 text-xs text-[var(--text-muted)]">
+            <span className="font-mono font-semibold text-[var(--accent-text)]">
               {row.examination.id}
             </span>
             <span aria-hidden="true">·</span>
             <span>{row.subjectName}</span>
           </div>
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-semibold text-[var(--text-primary)]">
             {row.examination.title}
           </p>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs text-[var(--text-muted)]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -697,11 +697,11 @@ export function TeacherTestsExaminationsModule() {
       header: 'Schedule & Marks',
       render: (row) => (
         <div className="text-xs space-y-0.5 font-mono tabular-nums">
-          <p className="text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="text-[var(--text-primary)]">
             {formatShortDate(row.examination.examDate)} · {row.examination.startsAt}–
             {row.examination.endsAt}
           </p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-[var(--text-muted)]">
             Max {row.examination.maximumMarks}
             {row.examination.passingMarks !== undefined
               ? ` · Pass ${row.examination.passingMarks}`
@@ -731,7 +731,7 @@ export function TeacherTestsExaminationsModule() {
                   : row.examination.status.toUpperCase()
             }
           />
-          <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
             {row.marksEnteredCount} / {row.eligibleStudentCount} marks recorded
           </p>
         </div>
@@ -849,13 +849,13 @@ export function TeacherTestsExaminationsModule() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="text-xs font-mono font-semibold text-[var(--accent-text)]">
                       {row.test.id} · {row.subjectName}
                     </p>
-                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {row.test.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {row.className} · {row.batchName}
                     </p>
                   </div>
@@ -870,7 +870,7 @@ export function TeacherTestsExaminationsModule() {
                     label={row.effectiveStatus.toUpperCase()}
                   />
                 </div>
-                <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                   {row.test.questions.length} MCQs · {row.test.totalMarks} marks ·{' '}
                   {row.test.durationMinutes} min · {row.attemptCount} attempts
                 </p>
@@ -929,13 +929,13 @@ export function TeacherTestsExaminationsModule() {
               <div className="space-y-3">
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="text-xs font-mono font-semibold text-[var(--accent-text)]">
                       {row.examination.id} · {row.subjectName}
                     </p>
-                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {row.examination.title}
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       {row.className} · {row.batchName}
                     </p>
                   </div>
@@ -956,7 +956,7 @@ export function TeacherTestsExaminationsModule() {
                     }
                   />
                 </div>
-                <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                   {formatShortDate(row.examination.examDate)} · {row.examination.startsAt}–
                   {row.examination.endsAt} · {row.marksEnteredCount}/{row.eligibleStudentCount} marks
                 </p>
@@ -998,23 +998,23 @@ export function TeacherTestsExaminationsModule() {
             subtitle="Evaluated online test attempts across your assigned batches."
           >
             {resultsWorkspace.testResults.every((t) => t.attempts.length === 0) ? (
-              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-sm text-[var(--text-muted)]">
                 No student test attempts recorded yet.
               </p>
             ) : (
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+              <div className="divide-y divide-[var(--border)]">
                 {resultsWorkspace.testResults.map((group) => (
                   <div key={group.test.id} className="py-3 space-y-2">
                     <div className="flex flex-wrap items-center justify-between gap-2">
-                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">
                         {group.test.title} ({group.subjectName} · {group.batchName})
                       </p>
-                      <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                      <span className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                         {group.attempts.length} attempt(s)
                       </span>
                     </div>
                     {group.attempts.length > 0 && (
-                      <ul className="space-y-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <ul className="space-y-1 text-xs text-[var(--text-muted)]">
                         {group.attempts.map((a) => (
                           <li key={a.id} className="font-mono tabular-nums">
                             {a.studentName} ({a.studentId}) · Attempt #{a.attemptNumber} ·{' '}
@@ -1035,20 +1035,20 @@ export function TeacherTestsExaminationsModule() {
             title="Examination Marks Summary"
             subtitle="Marks recorded and pending student counts per examination."
           >
-            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+            <div className="divide-y divide-[var(--border)]">
               {resultsWorkspace.examinationResults.map((group) => (
                 <div key={group.examination.id} className="py-3 space-y-2">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                       {group.examination.title} ({group.subjectName} · {group.batchName})
                     </p>
-                    <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                    <span className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                       Recorded: {group.marks.length} · Pending: {group.pendingStudentCount} ·{' '}
                       {group.examination.resultsReleased ? 'Released' : 'Not Released'}
                     </span>
                   </div>
                   {group.marks.length > 0 && (
-                    <ul className="space-y-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <ul className="space-y-1 text-xs text-[var(--text-muted)]">
                       {group.marks.map((m) => (
                         <li key={m.id} className="font-mono tabular-nums">
                           {m.studentName} ({m.studentId}): {m.marksObtained}/
@@ -1216,9 +1216,9 @@ export function TeacherTestsExaminationsModule() {
           </div>
 
           {/* Question List Builder */}
-          <div className="border-t border-[#E2E8E5] dark:border-[#344047] pt-4 space-y-4">
+          <div className="border-t border-[var(--border)] pt-4 space-y-4">
             <div className="flex items-center justify-between">
-              <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+              <p className="text-sm font-semibold text-[var(--text-primary)]">
                 MCQ Questions ({testQuestions.length}) · Auto Total Marks:{' '}
                 <span className="font-mono tabular-nums">{liveTestTotalMarks}</span>
               </p>
@@ -1233,11 +1233,11 @@ export function TeacherTestsExaminationsModule() {
               </Button>
             </div>
 
-            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+            <div className="divide-y divide-[var(--border)]">
               {testQuestions.map((q, qIdx) => (
                 <div key={qIdx} className="py-4 first:pt-0 space-y-3">
                   <div className="flex items-center justify-between gap-2">
-                    <span className="text-xs font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <span className="text-xs font-mono font-semibold text-[var(--accent-text)]">
                       Question {qIdx + 1}
                     </span>
                     <div className="flex items-center gap-1">
@@ -1286,7 +1286,7 @@ export function TeacherTestsExaminationsModule() {
                         placeholder="Enter question text..."
                         aria-label={`Question ${qIdx + 1} text`}
                         required
-                        className="w-full min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                        className="w-full min-h-[44px] rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
                       />
                     </div>
                     <div>
@@ -1304,13 +1304,13 @@ export function TeacherTestsExaminationsModule() {
                         placeholder="Marks"
                         aria-label={`Question ${qIdx + 1} marks`}
                         required
-                        className="w-full min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm tabular-nums text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                        className="w-full min-h-[44px] rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 text-sm tabular-nums text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
                       />
                     </div>
                   </div>
 
                   <div className="space-y-2">
-                    <div className="flex items-center justify-between text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
                       <span>Options (Select radio button for the 1 correct answer)</span>
                       <button
                         type="button"
@@ -1320,7 +1320,7 @@ export function TeacherTestsExaminationsModule() {
                             options: [...prev.options, { text: '' }],
                           }))
                         }
-                        className="text-[#168A63] dark:text-[#42DDA9] font-medium underline cursor-pointer"
+                        className="text-[var(--accent-text)] font-medium underline cursor-pointer"
                       >
                         + Add Option
                       </button>
@@ -1338,7 +1338,7 @@ export function TeacherTestsExaminationsModule() {
                             }))
                           }
                           aria-label={`Mark option ${oIdx + 1} correct`}
-                          className="w-4 h-4 accent-[#168A63] dark:accent-[#42DDA9]"
+                          className="w-4 h-4 accent-[var(--accent)]"
                         />
                         <input
                           type="text"
@@ -1354,7 +1354,7 @@ export function TeacherTestsExaminationsModule() {
                           placeholder={`Option ${oIdx + 1}`}
                           aria-label={`Question ${qIdx + 1} option ${oIdx + 1}`}
                           required
-                          className="flex-1 min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                          className="flex-1 min-h-[44px] rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 text-sm text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
                         />
                         <IconButton
                           label="Move option up"
@@ -1408,7 +1408,7 @@ export function TeacherTestsExaminationsModule() {
                       }))
                     }
                     placeholder="Optional answer explanation (shown after result release)"
-                    className="w-full min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3 text-xs text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C] dark:placeholder:text-[#AAB6B4] focus:outline-none focus:ring-2 focus:ring-[#168A63]/35 dark:focus:ring-[#42DDA9]/45"
+                    className="w-full min-h-[44px] rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3 text-xs text-[var(--text-primary)] placeholder:text-[var(--text-muted)] focus:outline-none focus:ring-2 focus:ring-[var(--focus-ring)] "
                   />
                 </div>
               ))}
@@ -1444,25 +1444,25 @@ export function TeacherTestsExaminationsModule() {
       >
         {previewTest && (
           <div className="space-y-4">
-            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-sm text-[var(--text-muted)]">
               {previewTest.test.instructions}
             </p>
-            <ol className="divide-y divide-[#E2E8E5] dark:divide-[#344047] space-y-3">
+            <ol className="divide-y divide-[var(--border)] space-y-3">
               {previewTest.test.questions.map((q, idx) => (
                 <li key={q.id} className="pt-3 first:pt-0 space-y-1.5">
-                  <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <p className="text-sm font-semibold text-[var(--text-primary)]">
                     Q{idx + 1}. {q.questionText}{' '}
-                    <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                    <span className="font-mono text-xs text-[var(--text-muted)] tabular-nums">
                       ({q.marks} marks)
                     </span>
                   </p>
-                  <ul className="space-y-1 pl-4 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <ul className="space-y-1 pl-4 text-xs text-[var(--text-muted)]">
                     {q.options.map((opt) => (
                       <li
                         key={opt.id}
                         className={
                           opt.id === q.correctOptionId
-                            ? 'font-semibold text-[#168A63] dark:text-[#42DDA9]'
+                            ? 'font-semibold text-[var(--accent-text)]'
                             : ''
                         }
                       >
@@ -1490,28 +1490,28 @@ export function TeacherTestsExaminationsModule() {
         {attemptsModalTest && (
           <div className="space-y-4">
             {testAttempts.length === 0 ? (
-              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-sm text-[var(--text-muted)]">
                 No student has attempted this test yet.
               </p>
             ) : (
-              <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-sm">
+              <ul className="divide-y divide-[var(--border)] text-sm">
                 {testAttempts.map((a) => (
                   <li key={a.id} className="py-3 flex items-center justify-between gap-3">
                     <div>
-                      <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="font-semibold text-[var(--text-primary)]">
                         {a.studentName} ({a.studentId})
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="text-xs text-[var(--text-muted)]">
                         Attempt #{a.attemptNumber} · Started {formatDateTime(a.startedAt)}
                       </p>
                     </div>
                     <div className="text-right font-mono tabular-nums text-xs">
                       {a.status === 'evaluated' ? (
-                        <p className="font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                        <p className="font-semibold text-[var(--accent-text)]">
                           {a.marksObtained} / {a.totalMarks} ({a.percentage}%)
                         </p>
                       ) : (
-                        <p className="text-[#A67317] dark:text-[#E5B04D]">In Progress</p>
+                        <p className="text-[var(--warning)]">In Progress</p>
                       )}
                     </div>
                   </li>
@@ -1698,21 +1698,21 @@ export function TeacherTestsExaminationsModule() {
 
             {marksRoster.marks.length === 0 ? (
               <div className="space-y-4">
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs text-[var(--text-muted)]">
                   Enter marks for every eligible batch student ({marksRoster.eligibleStudents.length} active student(s)).
                 </p>
 
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
+                <div className="divide-y divide-[var(--border)] border-t border-b border-[var(--border)]">
                   {marksRoster.eligibleStudents.map((stu) => (
                     <div
                       key={stu.studentId}
                       className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div>
-                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">
                           {stu.studentName}
                         </p>
-                        <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="font-mono text-xs text-[var(--text-muted)]">
                           {stu.studentId} · {stu.enrolmentId}
                         </p>
                       </div>
@@ -1732,9 +1732,9 @@ export function TeacherTestsExaminationsModule() {
                           disabled={bulkReviewStep}
                           placeholder={`0–${marksRoster.examination.maximumMarks}`}
                           aria-label={`Marks for ${stu.studentName}`}
-                          className="w-28 min-h-[44px] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] px-3.5 text-sm tabular-nums font-mono text-[#171D21] dark:text-[#F4F7F6] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                          className="w-28 min-h-[44px] rounded-xl border border-[var(--border)] bg-[var(--surface)] px-3.5 text-sm tabular-nums font-mono text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
                         />
-                        <span className="text-xs font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                        <span className="text-xs font-mono text-[var(--text-muted)] tabular-nums">
                           / {marksRoster.examination.maximumMarks}
                         </span>
                       </div>
@@ -1778,8 +1778,8 @@ export function TeacherTestsExaminationsModule() {
                     </Button>
                   </div>
                 ) : (
-                  <div className="rounded-xl border border-[#A67317]/30 dark:border-[#E5B04D]/30 bg-[#A67317]/10 dark:bg-[#E5B04D]/15 p-3.5 space-y-3">
-                    <p className="text-xs font-semibold text-[#A67317] dark:text-[#E5B04D]">
+                  <div className="rounded-xl border border-[var(--warning-border)] bg-[var(--warning-soft)] p-3.5 space-y-3">
+                    <p className="text-xs font-semibold text-[var(--warning)]">
                       Confirm marks submission for {marksRoster.eligibleStudents.length} student(s). Subsequent edits require a mandatory audit reason.
                     </p>
                     <div className="flex justify-end gap-2">
@@ -1827,20 +1827,20 @@ export function TeacherTestsExaminationsModule() {
                   )}
                 </div>
 
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
+                <div className="divide-y divide-[var(--border)] border-t border-b border-[var(--border)]">
                   {marksRoster.marks.map((m) => (
                     <div
                       key={m.id}
                       className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div>
-                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">
                           {m.studentName}{' '}
-                          <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <span className="font-mono text-xs text-[var(--text-muted)]">
                             ({m.studentId})
                           </span>
                         </p>
-                        <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                           {m.marksObtained} / {m.maximumMarks} ({m.percentage}% ·{' '}
                           {m.resultStatus.toUpperCase()})
                           {m.corrected ? ' · Corrected' : ''}
@@ -1865,9 +1865,9 @@ export function TeacherTestsExaminationsModule() {
                 {correctingMark && (
                   <form
                     onSubmit={handleSaveMarkCorrection}
-                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/65 p-4 space-y-3"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-3"
                   >
-                    <p className="text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="text-xs font-semibold text-[var(--text-primary)]">
                       Audited Marks Correction: {correctingMark.studentName} (Current:{' '}
                       {correctingMark.marksObtained})
                     </p>
@@ -1912,13 +1912,13 @@ export function TeacherTestsExaminationsModule() {
 
                 {marksRoster.auditEntries.length > 0 && (
                   <div>
-                    <h4 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-1.5">
+                    <h4 className="text-xs font-semibold text-[var(--text-muted)] mb-1.5">
                       Marks Audit Trail ({marksRoster.auditEntries.length})
                     </h4>
-                    <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs">
+                    <ul className="divide-y divide-[var(--border)] text-xs">
                       {marksRoster.auditEntries.map((aud) => (
-                        <li key={aud.id} className="py-1.5 text-[#68737C] dark:text-[#AAB6B4]">
-                          <span className="font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <li key={aud.id} className="py-1.5 text-[var(--text-muted)]">
+                          <span className="font-mono font-semibold text-[var(--text-primary)]">
                             {aud.id}
                           </span>{' '}
                           · {aud.studentId}: {aud.previousMarks} → {aud.newMarks} by{' '}

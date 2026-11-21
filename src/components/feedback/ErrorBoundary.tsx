@@ -96,23 +96,23 @@ export class ErrorBoundary extends Component<ErrorBoundaryProps, ErrorBoundarySt
     }
 
     return (
-      <div className="min-h-screen bg-[#F7F9F8] dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] flex items-center justify-center p-6">
-        <div className="max-w-lg w-full rounded-2xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] p-7 shadow-sm space-y-5">
+      <div className="min-h-screen bg-[var(--background)] text-[var(--text-primary)] flex items-center justify-center p-6">
+        <div className="max-w-lg w-full rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-7 shadow-sm space-y-5">
           <div className="flex items-start gap-3.5">
-            <span className="w-11 h-11 rounded-xl bg-[#D64C55]/12 dark:bg-[#EF6D75]/18 text-[#D64C55] dark:text-[#EF6D75] flex items-center justify-center shrink-0">
+            <span className="w-11 h-11 rounded-xl bg-[var(--error-soft)] border border-[var(--error-border)] text-[var(--error)] flex items-center justify-center shrink-0">
               <AlertTriangle className="w-5 h-5" strokeWidth={1.75} aria-hidden="true" />
             </span>
             <div className="space-y-1">
               <h1 className="text-lg font-semibold tracking-tight">
                 {this.state.friendlyTitle}
               </h1>
-              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+              <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                 {this.state.friendlyMessage}
               </p>
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-[#E2E8E5] dark:border-[#344047]">
+          <div className="flex flex-wrap items-center justify-end gap-3 pt-2 border-t border-[var(--border)]">
             <Button
               variant="primary"
               size="sm"

@@ -58,7 +58,7 @@ export function TeacherSalaryModule() {
   if (!principal || principal.role !== 'teacher') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
+        <p className="text-sm text-[var(--error)]">
           Only authenticated Teachers can view their own salary schedule and payment records.
         </p>
       </Card>
@@ -78,8 +78,8 @@ export function TeacherSalaryModule() {
       header: 'Salary Period',
       render: (p) => (
         <div>
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">{p.periodLabel}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">{p.period}</p>
+          <p className="font-semibold text-[var(--text-primary)]">{p.periodLabel}</p>
+          <p className="font-mono text-xs text-[var(--text-muted)]">{p.period}</p>
         </div>
       ),
     },
@@ -91,7 +91,7 @@ export function TeacherSalaryModule() {
           <p className="font-medium">
             {p.salaryModel === 'fixed_monthly' ? 'Fixed Monthly' : 'Per-Session'} ({formatInrFromPaise(p.ratePaise)})
           </p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+          <p className="font-mono text-[var(--text-muted)] tabular-nums">
             {p.eligibleSessionIds.length} eligible session(s)
           </p>
           {p.requiresAdminReview && (
@@ -115,7 +115,7 @@ export function TeacherSalaryModule() {
       header: 'Paid',
       align: 'right',
       render: (p) => (
-        <span className="font-mono tabular-nums text-[#168A63] dark:text-[#42DDA9] font-semibold">
+        <span className="font-mono tabular-nums text-[var(--accent-text)] font-semibold">
           {formatInrFromPaise(p.paidAmountPaise)}
         </span>
       ),
@@ -139,7 +139,7 @@ export function TeacherSalaryModule() {
           <div className="space-y-0.5">
             <StatusText tone={meta.tone} label={meta.label} />
             {p.holdReason && (
-              <p className="text-[11px] text-[#D64C55] dark:text-[#EF6D75]">{p.holdReason}</p>
+              <p className="text-[11px] text-[var(--error)]">{p.holdReason}</p>
             )}
           </div>
         );
@@ -168,7 +168,7 @@ export function TeacherSalaryModule() {
       render: (r) => (
         <div className="text-xs">
           <p className="font-mono">{r.paymentReference ?? '—'}</p>
-          {r.note && <p className="text-[#68737C] dark:text-[#AAB6B4]">{r.note}</p>}
+          {r.note && <p className="text-[var(--text-muted)]">{r.note}</p>}
         </div>
       ),
     },
@@ -177,7 +177,7 @@ export function TeacherSalaryModule() {
       header: 'Amount Received',
       align: 'right',
       render: (r) => (
-        <span className="font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-semibold text-[var(--accent-text)]">
           {formatInrFromPaise(r.amountPaise)}
         </span>
       ),
@@ -204,7 +204,7 @@ export function TeacherSalaryModule() {
           {[0, 1, 2, 3].map((idx) => (
             <div
               key={idx}
-              className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33]/70 animate-pulse"
+              className="h-28 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
             />
           ))}
         </div>
@@ -270,7 +270,7 @@ export function TeacherSalaryModule() {
                       <div className="flex items-start justify-between">
                         <div>
                           <p className="font-semibold text-sm">{p.periodLabel}</p>
-                          <p className="text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="text-[var(--text-muted)]">
                             {p.eligibleSessionIds.length} eligible session(s)
                           </p>
                         </div>
@@ -300,11 +300,11 @@ export function TeacherSalaryModule() {
                   <div className="space-y-1 text-xs">
                     <div className="flex justify-between font-semibold">
                       <span className="font-mono">{r.period}</span>
-                      <span className="font-mono text-[#168A63] dark:text-[#42DDA9]">
+                      <span className="font-mono text-[var(--accent-text)]">
                         {formatInrFromPaise(r.amountPaise)}
                       </span>
                     </div>
-                    <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="font-mono text-[var(--text-muted)]">
                       {formatShortDate(r.paymentDate)} · {r.paymentReference ?? 'No reference'}
                     </p>
                   </div>

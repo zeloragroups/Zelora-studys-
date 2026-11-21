@@ -331,22 +331,22 @@ export function StudentTestsAndResultsModule({
                 className={cn(
                   'inline-flex items-center gap-1.5 font-mono text-base font-bold tabular-nums',
                   isExpired
-                    ? 'text-[#D64C55] dark:text-[#EF6D75]'
+                    ? 'text-[var(--error)]'
                     : isLowTime
-                      ? 'text-[#A67317] dark:text-[#E5B04D]'
-                      : 'text-[#168A63] dark:text-[#42DDA9]'
+                      ? 'text-[var(--warning)]'
+                      : 'text-[var(--accent-text)]'
                 )}
               >
                 <Clock className="w-4 h-4" aria-hidden="true" />
                 <span>{formatCountdown(remainingMs)}</span>
               </div>
-              <p className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                 Answered {answeredCount} / {questions.length} · Unanswered {unansweredCount}
               </p>
             </div>
           }
         >
-          <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] px-3.5 py-2.5 text-xs text-[#68737C] dark:text-[#AAB6B4] flex items-center justify-between gap-3 mb-5">
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] px-3.5 py-2.5 text-xs text-[var(--text-muted)] flex items-center justify-between gap-3 mb-5">
             <span>
               Countdown timer is enforced in-browser on the Spark free plan; server-side deadline enforcement requires Cloud Functions.
             </span>
@@ -356,7 +356,7 @@ export function StudentTestsAndResultsModule({
                 setActiveRunner(null);
                 void loadData();
               }}
-              className="text-[#168A63] dark:text-[#42DDA9] font-medium underline shrink-0 cursor-pointer"
+              className="text-[var(--accent-text)] font-medium underline shrink-0 cursor-pointer"
             >
               Pause & Exit (Progress Saved)
             </button>
@@ -370,7 +370,7 @@ export function StudentTestsAndResultsModule({
 
           {/* Question Navigator Grid */}
           <div className="mb-5">
-            <p className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4] mb-2">
+            <p className="text-xs font-semibold text-[var(--text-muted)] mb-2">
               Question Navigator
             </p>
             <div className="flex flex-wrap gap-2">
@@ -388,10 +388,10 @@ export function StudentTestsAndResultsModule({
                     className={cn(
                       'min-w-[44px] min-h-[44px] px-2.5 rounded-xl text-xs font-mono font-semibold border cursor-pointer transition-colors',
                       active
-                        ? 'bg-[#20262B] dark:bg-[#42DDA9] text-[#F4F7F6] dark:text-[#151A1E] border-[#20262B] dark:border-[#42DDA9]'
+                        ? 'bg-[var(--accent)] text-[var(--accent-contrast)] border-[var(--accent)]'
                         : answered
-                          ? 'bg-[#DDF8EE] dark:bg-[#244B3E] text-[#168A63] dark:text-[#42DDA9] border-[#B8EBD8] dark:border-[#316453]'
-                          : 'bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
+                          ? 'bg-[var(--accent-soft)] text-[var(--accent-text)] border-[var(--accent-border)]'
+                          : 'bg-[var(--surface)] text-[var(--text-primary)] border-[var(--border)] hover:bg-[var(--surface-secondary)]'
                     )}
                   >
                     {idx + 1}
@@ -404,8 +404,8 @@ export function StudentTestsAndResultsModule({
                 className={cn(
                   'min-h-[44px] px-3.5 rounded-xl text-xs font-medium border cursor-pointer whitespace-nowrap transition-colors',
                   reviewScreenOpen
-                    ? 'bg-[#20262B] dark:bg-[#42DDA9] text-[#F4F7F6] dark:text-[#151A1E] border-[#20262B] dark:border-[#42DDA9] font-semibold'
-                    : 'bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border-[#E2E8E5] dark:border-[#344047] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
+                    ? 'bg-[var(--accent)] text-[var(--accent-contrast)] border-[var(--accent)] font-semibold'
+                    : 'bg-[var(--surface)] text-[var(--text-primary)] border-[var(--border)] hover:bg-[var(--surface-secondary)]'
                 )}
               >
                 Review All Questions
@@ -416,14 +416,14 @@ export function StudentTestsAndResultsModule({
           {reviewScreenOpen ? (
             <div className="space-y-4">
               <div className="flex items-center justify-between">
-                <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                <h2 className="text-base font-semibold text-[var(--text-primary)]">
                   Pre-Submission Review Summary
                 </h2>
-                <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                <span className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                   {answeredCount} answered · {unansweredCount} unanswered
                 </span>
               </div>
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border-t border-b border-[#E2E8E5] dark:border-[#344047]">
+              <div className="divide-y divide-[var(--border)] border-t border-b border-[var(--border)]">
                 {questions.map((q, idx) => {
                   const chosenId = attempt.answers[q.id];
                   const chosenText = q.options.find((o) => o.id === chosenId)?.text;
@@ -433,10 +433,10 @@ export function StudentTestsAndResultsModule({
                       className="py-3 flex flex-col sm:flex-row sm:items-center justify-between gap-2"
                     >
                       <div className="min-w-0">
-                        <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                        <p className="text-sm font-medium text-[var(--text-primary)]">
                           Q{idx + 1}. {q.questionText}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {chosenText ? `Selected: ${chosenText}` : 'Not answered yet'}
                         </p>
                       </div>
@@ -480,15 +480,15 @@ export function StudentTestsAndResultsModule({
             currentQuestion && (
               <div className="space-y-5">
                 <div className="space-y-2">
-                  <div className="flex items-center justify-between text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                    <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                  <div className="flex items-center justify-between text-xs text-[var(--text-muted)]">
+                    <span className="font-mono font-semibold text-[var(--accent-text)]">
                       Question {currentQIdx + 1} of {questions.length}
                     </span>
                     <span className="font-mono tabular-nums">
                       {currentQuestion.marks} mark(s)
                     </span>
                   </div>
-                  <p className="text-base sm:text-lg font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <p className="text-base sm:text-lg font-semibold text-[var(--text-primary)]">
                     {currentQuestion.questionText}
                   </p>
                 </div>
@@ -502,8 +502,8 @@ export function StudentTestsAndResultsModule({
                         className={cn(
                           'flex items-center gap-3 rounded-xl border p-3.5 cursor-pointer transition-colors min-h-[44px]',
                           checked
-                            ? 'border-[#18B985] bg-[#DDF8EE]/75 dark:border-[#42DDA9] dark:bg-[#244B3E]/75'
-                            : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
+                            ? 'border-[var(--accent-border)] bg-[var(--accent-soft)]'
+                            : 'border-[var(--border)] bg-[var(--surface)] hover:bg-[var(--surface-secondary)]'
                         )}
                       >
                         <input
@@ -514,9 +514,9 @@ export function StudentTestsAndResultsModule({
                           onChange={() =>
                             void handleSelectOption(currentQuestion.id, opt.id)
                           }
-                          className="w-4 h-4 shrink-0 accent-[#18B985] dark:accent-[#42DDA9]"
+                          className="w-4 h-4 shrink-0 accent-[var(--accent)]"
                         />
-                        <span className="text-sm text-[#171D21] dark:text-[#F4F7F6]">
+                        <span className="text-sm text-[var(--text-primary)]">
                           {opt.text}
                         </span>
                       </label>
@@ -524,7 +524,7 @@ export function StudentTestsAndResultsModule({
                   })}
                 </div>
 
-                <div className="pt-3 border-t border-[#E2E8E5] dark:border-[#344047] flex flex-wrap items-center justify-between gap-3">
+                <div className="pt-3 border-t border-[var(--border)] flex flex-wrap items-center justify-between gap-3">
                   <div className="flex items-center gap-2">
                     <Button
                       variant="secondary"
@@ -578,12 +578,12 @@ export function StudentTestsAndResultsModule({
           subtitle="Once submitted, this attempt is locked and evaluated automatically."
         >
           <div className="space-y-4">
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 text-sm space-y-1">
-              <p className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 text-sm space-y-1">
+              <p className="font-mono tabular-nums text-[var(--text-primary)]">
                 Answered Questions: {answeredCount} / {questions.length}
               </p>
               {unansweredCount > 0 && (
-                <p className="text-xs text-[#A67317] dark:text-[#E5B04D]">
+                <p className="text-xs text-[var(--warning)]">
                   {unansweredCount} question(s) are currently unanswered and will score 0 marks.
                 </p>
               )}
@@ -618,10 +618,10 @@ export function StudentTestsAndResultsModule({
       header: 'Assessment',
       render: (row) => (
         <div className="space-y-0.5">
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
+          <p className="text-xs text-[var(--text-muted)] capitalize">
             {row.sourceType.replace(/_/g, ' ')} · {row.subjectName}
           </p>
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-semibold text-[var(--text-primary)]">
             {row.title}
           </p>
         </div>
@@ -631,7 +631,7 @@ export function StudentTestsAndResultsModule({
       key: 'date',
       header: 'Date & Released',
       render: (row) => (
-        <div className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+        <div className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
           <p>{formatShortDate(row.assessmentDate)}</p>
           <p>Released {formatShortDate(row.releasedAt)}</p>
         </div>
@@ -643,10 +643,10 @@ export function StudentTestsAndResultsModule({
       align: 'right',
       render: (row) => (
         <div className="space-y-0.5">
-          <p className="font-mono font-semibold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-mono font-semibold tabular-nums text-[var(--text-primary)]">
             {row.marksObtained} / {row.maximumMarks}
           </p>
-          <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
             {row.percentage}%
           </p>
         </div>
@@ -719,10 +719,10 @@ export function StudentTestsAndResultsModule({
             />
 
             {loading ? (
-              <div className="h-24 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse" />
+              <div className="h-24 rounded-xl bg-[var(--surface-secondary)] animate-pulse" />
             ) : tests.filter((t) => matchesTestFilter(t, testFilter)).length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
-                <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+              <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center space-y-2">
+                <p className="text-sm text-[var(--text-muted)]">
                   {tests.length === 0
                     ? 'No online tests published for your batch right now.'
                     : 'No online tests match this status filter.'}
@@ -738,7 +738,7 @@ export function StudentTestsAndResultsModule({
                 )}
               </div>
             ) : (
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+              <div className="divide-y divide-[var(--border)]">
                 {tests
                   .filter((t) => matchesTestFilter(t, testFilter))
                   .map((test) => {
@@ -751,8 +751,8 @@ export function StudentTestsAndResultsModule({
                         className="py-4 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                       >
                         <div className="space-y-1.5 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                            <span className="font-mono font-semibold text-[var(--accent-text)]">
                               {test.id}
                             </span>
                             <span aria-hidden="true">·</span>
@@ -763,10 +763,10 @@ export function StudentTestsAndResultsModule({
                               {test.durationMinutes} min
                             </span>
                           </div>
-                          <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                          <h2 className="text-base font-semibold text-[var(--text-primary)]">
                             {test.title}
                           </h2>
-                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="text-xs text-[var(--text-muted)]">
                             Window: {formatDateTime(test.startsAt)} –{' '}
                             {formatDateTime(test.endsAt)} · Attempts:{' '}
                             <span className="font-mono tabular-nums">
@@ -781,7 +781,7 @@ export function StudentTestsAndResultsModule({
                                   key={att.id}
                                   type="button"
                                   onClick={() => void handleOpenAttemptDetail(att.id)}
-                                  className="text-[#168A63] dark:text-[#42DDA9] font-mono tabular-nums underline cursor-pointer"
+                                  className="text-[var(--accent-text)] font-mono tabular-nums underline cursor-pointer"
                                 >
                                   Attempt #{att.attemptNumber}:{' '}
                                   {att.resultsVisible
@@ -872,13 +872,13 @@ export function StudentTestsAndResultsModule({
               }
               return !item.myMarks && !item.marksEnteredPendingRelease;
             }).length === 0 ? (
-              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-sm text-[var(--text-muted)]">
                 {exams.length === 0
                   ? 'No examinations scheduled for your batch right now.'
                   : 'No examinations match this status filter.'}
               </p>
             ) : (
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+              <div className="divide-y divide-[var(--border)]">
                 {exams
                   .filter((item) => {
                     if (examFilter === 'all') return true;
@@ -894,8 +894,8 @@ export function StudentTestsAndResultsModule({
                       className="py-4 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                     >
                       <div className="space-y-1">
-                        <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                          <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                        <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                          <span className="font-mono font-semibold text-[var(--accent-text)]">
                             {item.examination.id}
                           </span>
                           <span aria-hidden="true">·</span>
@@ -914,10 +914,10 @@ export function StudentTestsAndResultsModule({
                             </>
                           )}
                         </div>
-                        <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <h2 className="text-base font-semibold text-[var(--text-primary)]">
                           {item.examination.title}
                         </h2>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {item.examination.instructions}
                         </p>
                       </div>
@@ -925,7 +925,7 @@ export function StudentTestsAndResultsModule({
                       <div className="text-left sm:text-right shrink-0 space-y-1">
                         {item.myMarks ? (
                           <>
-                            <p className="font-mono text-sm font-bold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
+                            <p className="font-mono text-sm font-bold tabular-nums text-[var(--accent-text)]">
                               {item.myMarks.marksObtained} / {item.myMarks.maximumMarks} (
                               {item.myMarks.percentage}%)
                             </p>
@@ -959,7 +959,7 @@ export function StudentTestsAndResultsModule({
             subtitle="Average percentage = (Total marks obtained ÷ Total maximum marks) × 100 across released scores only."
           >
             {resultsDash.subjectSummaries.length === 0 ? (
-              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-sm text-[var(--text-muted)]">
                 No active subjects found for your batch enrolment.
               </p>
             ) : (
@@ -967,7 +967,7 @@ export function StudentTestsAndResultsModule({
                 {resultsDash.subjectSummaries.some(
                   (sub) => sub.availability === 'result_available' && sub.percentage !== null
                 ) && (
-                  <div className="pb-4 border-b border-[#E2E8E5] dark:border-[#344047]">
+                  <div className="pb-4 border-b border-[var(--border)]">
                     <ComparisonBarChart
                       data={resultsDash.subjectSummaries
                         .filter(
@@ -992,7 +992,7 @@ export function StudentTestsAndResultsModule({
                   </div>
                 )}
 
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                <div className="divide-y divide-[var(--border)]">
                   {resultsDash.subjectSummaries.map((sub) => {
                     const meta = SUBJECT_AVAILABILITY_META[sub.availability];
                     return (
@@ -1001,15 +1001,15 @@ export function StudentTestsAndResultsModule({
                         className="py-3.5 first:pt-1 last:pb-1 flex flex-wrap items-center justify-between gap-3"
                       >
                         <div className="space-y-0.5">
-                          <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">
                             {sub.subjectName}
                           </p>
-                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                          <p className="text-xs text-[var(--text-muted)] tabular-nums">
                             Released: {sub.releasedAssessmentsCount} · Pending:{' '}
                             {sub.pendingAssessmentsCount}
                           </p>
                           {sub.latestResultTitle && sub.latestResultDisplay && (
-                            <p className="text-xs text-[#343C42] dark:text-[#D5E0DD]">
+                            <p className="text-xs text-[var(--text-secondary)]">
                               Latest: {sub.latestResultTitle} —{' '}
                               <span className="font-mono font-semibold tabular-nums">
                                 {sub.latestResultDisplay}
@@ -1018,10 +1018,10 @@ export function StudentTestsAndResultsModule({
                           )}
                         </div>
                         <div className="text-right space-y-0.5">
-                          <p className="font-mono text-base font-bold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                          <p className="font-mono text-base font-bold tabular-nums text-[var(--text-primary)]">
                             {sub.displayPercentage}
                             {sub.availability === 'result_available' && (
-                              <span className="ml-2 text-xs font-normal text-[#68737C] dark:text-[#AAB6B4]">
+                              <span className="ml-2 text-xs font-normal text-[var(--text-muted)]">
                                 ({sub.totalMarksObtained}/{sub.totalMaximumMarks})
                               </span>
                             )}
@@ -1168,10 +1168,10 @@ export function StudentTestsAndResultsModule({
                 <div className="space-y-2">
                   <div className="flex items-start justify-between gap-2">
                     <div>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
+                      <p className="text-xs text-[var(--text-muted)] capitalize">
                         {row.sourceType.replace(/_/g, ' ')} · {row.subjectName}
                       </p>
-                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">
                         {row.title}
                       </p>
                     </div>
@@ -1187,11 +1187,11 @@ export function StudentTestsAndResultsModule({
                     />
                   </div>
                   <div className="flex items-center justify-between gap-2 text-xs font-mono tabular-nums">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">
+                    <span className="text-[var(--text-muted)]">
                       {formatShortDate(row.assessmentDate)} · Released{' '}
                       {formatShortDate(row.releasedAt)}
                     </span>
-                    <span className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <span className="font-semibold text-[var(--text-primary)]">
                       {row.marksObtained} / {row.maximumMarks} ({row.percentage}%)
                     </span>
                   </div>
@@ -1217,44 +1217,44 @@ export function StudentTestsAndResultsModule({
         {preStartTestModal && (
           <div className="space-y-4">
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 text-xs">
-              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
-                <p className="text-[#68737C] dark:text-[#AAB6B4]">Duration</p>
-                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3">
+                <p className="text-[var(--text-muted)]">Duration</p>
+                <p className="mt-1 font-mono font-semibold text-[var(--text-primary)] tabular-nums">
                   {preStartTestModal.durationMinutes} min
                 </p>
               </div>
-              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
-                <p className="text-[#68737C] dark:text-[#AAB6B4]">Questions</p>
-                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3">
+                <p className="text-[var(--text-muted)]">Questions</p>
+                <p className="mt-1 font-mono font-semibold text-[var(--text-primary)] tabular-nums">
                   {preStartTestModal.questionCount} MCQs
                 </p>
               </div>
-              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
-                <p className="text-[#68737C] dark:text-[#AAB6B4]">Total Marks</p>
-                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3">
+                <p className="text-[var(--text-muted)]">Total Marks</p>
+                <p className="mt-1 font-mono font-semibold text-[var(--text-primary)] tabular-nums">
                   {preStartTestModal.totalMarks}
                 </p>
               </div>
-              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3">
-                <p className="text-[#68737C] dark:text-[#AAB6B4]">Attempts</p>
-                <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
+              <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3">
+                <p className="text-[var(--text-muted)]">Attempts</p>
+                <p className="mt-1 font-mono font-semibold text-[var(--text-primary)] tabular-nums">
                   {preStartTestModal.attemptsUsed} / {preStartTestModal.maximumAttempts}
                 </p>
               </div>
             </div>
 
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 space-y-1.5 text-xs">
-              <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 space-y-1.5 text-xs">
+              <p className="font-semibold text-[var(--text-primary)]">
                 Instructions & Rules
               </p>
-              <p className="text-[#343C42] dark:text-[#D5E0DD] whitespace-pre-line leading-relaxed">
+              <p className="text-[var(--text-secondary)] whitespace-pre-line leading-relaxed">
                 {preStartTestModal.instructions}
               </p>
-              <p className="pt-1 text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="pt-1 text-[var(--text-muted)]">
                 Window: {formatDateTime(preStartTestModal.startsAt)} –{' '}
                 {formatDateTime(preStartTestModal.endsAt)}
               </p>
-              <p className="text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-[var(--text-muted)]">
                 Result Policy:{' '}
                 {preStartTestModal.resultReleaseMode === 'auto_after_submission'
                   ? 'Score released immediately after submission.'
@@ -1310,33 +1310,33 @@ export function StudentTestsAndResultsModule({
         {reviewDetailModal && (
           <div className="space-y-4">
             {!reviewDetailModal.attempt.resultsVisible ? (
-              <div className="rounded-xl border border-[#F0D9AA] dark:border-[#664D1E] bg-[#FDF6E7] dark:bg-[#332712] p-4 text-sm text-[#A67317] dark:text-[#E5B04D] flex items-center gap-2">
+              <div className="rounded-xl border border-[var(--warning-border)] bg-[var(--warning-soft)] p-4 text-sm text-[var(--warning)] flex items-center gap-2">
                 <ShieldAlert className="w-4 h-4 shrink-0" aria-hidden="true" />
                 <span>
                   Your attempt is locked and recorded. Scores and answer keys remain hidden until released under the test schedule.
                 </span>
               </div>
             ) : (
-              <ol className="divide-y divide-[#E2E8E5] dark:divide-[#344047] space-y-3">
+              <ol className="divide-y divide-[var(--border)] space-y-3">
                 {reviewDetailModal.questions.map((q, idx) => {
                   const chosenId = reviewDetailModal.attempt.answers[q.id];
                   const isCorrect = q.correctOptionId && chosenId === q.correctOptionId;
                   return (
                     <li key={q.id} className="pt-3 first:pt-0 space-y-1.5 text-sm">
-                      <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="font-semibold text-[var(--text-primary)]">
                         Q{idx + 1}. {q.questionText}{' '}
-                        <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <span className="font-mono text-xs text-[var(--text-muted)]">
                           ({q.marks}m)
                         </span>
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="text-xs text-[var(--text-muted)]">
                         Your Answer:{' '}
                         <span
                           className={
                             q.correctOptionId
                               ? isCorrect
-                                ? 'font-semibold text-[#168A63] dark:text-[#42DDA9]'
-                                : 'font-semibold text-[#D64C55] dark:text-[#EF6D75]'
+                                ? 'font-semibold text-[var(--accent-text)]'
+                                : 'font-semibold text-[var(--error)]'
                               : ''
                           }
                         >
@@ -1344,13 +1344,13 @@ export function StudentTestsAndResultsModule({
                         </span>
                       </p>
                       {q.correctOptionId && !isCorrect && (
-                        <p className="text-xs text-[#168A63] dark:text-[#42DDA9]">
+                        <p className="text-xs text-[var(--accent-text)]">
                           Correct Answer:{' '}
                           {q.options.find((o) => o.id === q.correctOptionId)?.text}
                         </p>
                       )}
                       {q.explanation && (
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           Explanation: {q.explanation}
                         </p>
                       )}

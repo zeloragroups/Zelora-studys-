@@ -191,8 +191,8 @@ export function AdminReportsAuditPanel({
       header: 'Student',
       render: (r) => (
         <div>
-          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{r.studentName}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{r.studentName}</p>
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {r.studentId} · {r.className} ({r.batchName})
           </p>
         </div>
@@ -214,7 +214,7 @@ export function AdminReportsAuditPanel({
       header: 'Verified Paid',
       align: 'right',
       render: (r) => (
-        <span className="text-[#168A63] dark:text-[#42DDA9] font-semibold">
+        <span className="text-[var(--accent-text)] font-semibold">
           {formatInrFromPaise(r.verifiedPaidPaise)}
         </span>
       ),
@@ -224,7 +224,7 @@ export function AdminReportsAuditPanel({
       header: 'Pending Claims',
       align: 'right',
       render: (r) => (
-        <span className="text-[#A67317] dark:text-[#E5B04D]">
+        <span className="text-[var(--warning)]">
           {formatInrFromPaise(r.pendingClaimsPaise)}
         </span>
       ),
@@ -258,8 +258,8 @@ export function AdminReportsAuditPanel({
       header: 'Teacher',
       render: (r) => (
         <div>
-          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{r.teacherName}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{r.teacherName}</p>
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {r.teacherId} · {r.period}
           </p>
         </div>
@@ -285,7 +285,7 @@ export function AdminReportsAuditPanel({
       header: 'Paid',
       align: 'right',
       render: (r) => (
-        <span className="text-[#168A63] dark:text-[#42DDA9] font-semibold">
+        <span className="text-[var(--accent-text)] font-semibold">
           {formatInrFromPaise(r.paidPaise)}
         </span>
       ),
@@ -320,7 +320,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs">
           <p className="font-mono tabular-nums">{formatShortDate(r.timestamp)}</p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">Actor: {r.actorId}</p>
+          <p className="font-mono text-[var(--text-muted)]">Actor: {r.actorId}</p>
         </div>
       ),
     },
@@ -329,10 +329,10 @@ export function AdminReportsAuditPanel({
       header: 'Entity & Action',
       render: (r) => (
         <div className="text-xs">
-          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+          <p className="font-semibold text-[var(--text-primary)]">
             {r.entityType.replace('_', ' ')} · {r.action}
           </p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">ID: {r.entityId}</p>
+          <p className="font-mono text-[var(--text-muted)]">ID: {r.entityId}</p>
         </div>
       ),
     },
@@ -342,11 +342,11 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs space-y-0.5">
           {r.previousValues && (
-            <p className="text-[#68737C] dark:text-[#AAB6B4]">From: {r.previousValues}</p>
+            <p className="text-[var(--text-muted)]">From: {r.previousValues}</p>
           )}
-          {r.newValues && <p className="text-[#20262B] dark:text-[#F4F7F6]">To: {r.newValues}</p>}
+          {r.newValues && <p className="text-[var(--text-primary)]">To: {r.newValues}</p>}
           {r.reason && (
-            <p className="text-[#168A63] dark:text-[#42DDA9]">Reason: {r.reason}</p>
+            <p className="text-[var(--accent-text)]">Reason: {r.reason}</p>
           )}
         </div>
       ),
@@ -360,7 +360,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs font-mono">
           <p>{formatShortDate(r.timestamp)}</p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">{r.actorId}</p>
+          <p className="text-[var(--text-muted)]">{r.actorId}</p>
         </div>
       ),
     },
@@ -370,7 +370,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs">
           <p className="font-semibold">{r.action.replace('_', ' ')}</p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">{r.paymentClaimId}</p>
+          <p className="font-mono text-[var(--text-muted)]">{r.paymentClaimId}</p>
         </div>
       ),
     },
@@ -380,7 +380,7 @@ export function AdminReportsAuditPanel({
       render: (r) => (
         <div className="text-xs space-y-0.5">
           {r.newValues && <p>{r.newValues}</p>}
-          {r.reason && <p className="text-[#D64C55] dark:text-[#EF6D75]">Reason: {r.reason}</p>}
+          {r.reason && <p className="text-[var(--error)]">Reason: {r.reason}</p>}
         </div>
       ),
     },
@@ -434,26 +434,26 @@ export function AdminReportsAuditPanel({
               }
             >
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Current Period ({dashboard.currentPeriod}) Verified</span>
-                  <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[var(--border)]">
+                  <span className="text-[var(--text-muted)]">Current Period ({dashboard.currentPeriod}) Verified</span>
+                  <span className="font-mono font-semibold text-[var(--accent-text)] tabular-nums">
                     {formatInrFromPaise(dashboard.currentMonthCollectionsPaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Current Year ({dashboard.currentYear}) Verified</span>
+                <div className="flex justify-between py-1.5 border-b border-[var(--border)]">
+                  <span className="text-[var(--text-muted)]">Current Year ({dashboard.currentYear}) Verified</span>
                   <span className="font-mono font-semibold tabular-nums">
                     {formatInrFromPaise(dashboard.currentYearCollectionsPaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Rejected Claims ({dashboard.rejectedClaimsCount})</span>
-                  <span className="font-mono text-[#D64C55] dark:text-[#EF6D75] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[var(--border)]">
+                  <span className="text-[var(--text-muted)]">Rejected Claims ({dashboard.rejectedClaimsCount})</span>
+                  <span className="font-mono text-[var(--error)] tabular-nums">
                     {formatInrFromPaise(dashboard.rejectedClaimsPaise)}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Active Fee Template</span>
+                  <span className="text-[var(--text-muted)]">Active Fee Template</span>
                   <span className="font-mono font-semibold">
                     {dashboard.activeFeeConfig
                       ? `${formatInrFromPaise(dashboard.activeFeeConfig.amountPaise)} / ${dashboard.activeFeeConfig.frequency}`
@@ -477,26 +477,26 @@ export function AdminReportsAuditPanel({
               }
             >
               <div className="space-y-3 text-sm">
-                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Total Salary Payable</span>
+                <div className="flex justify-between py-1.5 border-b border-[var(--border)]">
+                  <span className="text-[var(--text-muted)]">Total Salary Payable</span>
                   <span className="font-mono font-semibold tabular-nums">
                     {formatInrFromPaise(dashboard.totalTeacherSalaryPayablePaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Total Salary Paid</span>
-                  <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[var(--border)]">
+                  <span className="text-[var(--text-muted)]">Total Salary Paid</span>
+                  <span className="font-mono font-semibold text-[var(--accent-text)] tabular-nums">
                     {formatInrFromPaise(dashboard.totalTeacherSalaryPaidPaise)}
                   </span>
                 </div>
-                <div className="flex justify-between py-1.5 border-b border-[#E2E8E5] dark:border-[#344047]">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Pending Teacher Salary</span>
-                  <span className="font-mono font-semibold text-[#A67317] dark:text-[#E5B04D] tabular-nums">
+                <div className="flex justify-between py-1.5 border-b border-[var(--border)]">
+                  <span className="text-[var(--text-muted)]">Pending Teacher Salary</span>
+                  <span className="font-mono font-semibold text-[var(--warning)] tabular-nums">
                     {formatInrFromPaise(dashboard.pendingTeacherSalaryPaise)}
                   </span>
                 </div>
                 <div className="flex justify-between py-1.5">
-                  <span className="text-[#68737C] dark:text-[#AAB6B4]">Active UPI ID</span>
+                  <span className="text-[var(--text-muted)]">Active UPI ID</span>
                   <span className="font-mono text-xs">
                     {dashboard.upiConfig?.status === 'active'
                       ? dashboard.upiConfig.upiId
@@ -523,24 +523,24 @@ export function AdminReportsAuditPanel({
                     label: 'Verified Collections',
                     value: dashboard.totalVerifiedCollectionsPaise,
                     displayValue: formatInrFromPaise(dashboard.totalVerifiedCollectionsPaise),
-                    colorLight: '#35D6A0',
-                    colorDark: '#42DDA9',
+                    colorLight: 'var(--accent)',
+                    colorDark: 'var(--accent)',
                   },
                   {
                     id: 'pending',
                     label: 'Pending Verification Claims',
                     value: dashboard.pendingPaymentClaimsPaise,
                     displayValue: formatInrFromPaise(dashboard.pendingPaymentClaimsPaise),
-                    colorLight: '#D69B35',
-                    colorDark: '#E5B04D',
+                    colorLight: 'var(--warning)',
+                    colorDark: 'var(--warning)',
                   },
                   {
                     id: 'outstanding',
                     label: 'Outstanding Student Fees',
                     value: dashboard.totalOutstandingStudentFeesPaise,
                     displayValue: formatInrFromPaise(dashboard.totalOutstandingStudentFeesPaise),
-                    colorLight: '#20262B',
-                    colorDark: '#AAB6B4',
+                    colorLight: 'var(--text-secondary)',
+                    colorDark: 'var(--text-secondary)',
                   },
                 ]}
               />
@@ -657,7 +657,7 @@ export function AdminReportsAuditPanel({
                   onChange={(e) =>
                     onChangeReportFilter({ ...reportFilter, month: e.target.value })
                   }
-                  className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                  className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-[var(--surface)] text-[var(--text-primary)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
                 />
               ) : (
                 <input
@@ -668,7 +668,7 @@ export function AdminReportsAuditPanel({
                     onChangeReportFilter({ ...reportFilter, year: e.target.value })
                   }
                   placeholder="YYYY (e.g. 2026)"
-                  className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60 border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                  className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-[var(--surface)] text-[var(--text-primary)] placeholder:text-[var(--text-muted)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
                 />
               )}
 
@@ -682,7 +682,7 @@ export function AdminReportsAuditPanel({
                     dateFrom: e.target.value || undefined,
                   })
                 }
-                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-[var(--surface)] text-[var(--text-primary)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
               />
 
               <input
@@ -695,7 +695,7 @@ export function AdminReportsAuditPanel({
                     dateTo: e.target.value || undefined,
                   })
                 }
-                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6] border border-[#E2E8E5] dark:border-[#344047] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                className="w-full min-h-[44px] rounded-xl px-3.5 text-sm font-mono tabular-nums bg-[var(--surface)] text-[var(--text-primary)] border border-[var(--border)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
               />
 
               <Select
@@ -756,7 +756,7 @@ export function AdminReportsAuditPanel({
 
           {reportSummary && (
             <div className="print-surface space-y-6">
-              <div className="rounded-2xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
+              <div className="rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-4 sm:p-5 flex flex-wrap items-center justify-between gap-4">
                 <div className="flex items-center gap-3 min-w-0">
                   <BrandLogoMark
                     logoConfiguration={applicationBranding.logoConfiguration}
@@ -764,14 +764,14 @@ export function AdminReportsAuditPanel({
                     size="md"
                   />
                   <div className="min-w-0">
-                    <h2 className="text-base sm:text-lg font-bold font-display text-[#20262B] dark:text-[#F4F7F6] truncate">
+                    <h2 className="text-base sm:text-lg font-bold font-display text-[var(--text-primary)] truncate">
                       {centreProfile.centreName}
                     </h2>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       Financial Statement · {reportSummary.periodTitle} · {academicDefaults.academicYearDisplay}
                     </p>
                     {centreContactSummary && (
-                      <p className="text-[11px] font-mono text-[#68737C] dark:text-[#AAB6B4] mt-0.5">
+                      <p className="text-[11px] font-mono text-[var(--text-muted)] mt-0.5">
                         {centreContactSummary}
                       </p>
                     )}
@@ -900,11 +900,11 @@ export function AdminReportsAuditPanel({
                   <p className="font-semibold">
                     {r.entityType.replace('_', ' ')} · {r.action}
                   </p>
-                  <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="font-mono text-[var(--text-muted)]">
                     {r.entityId} · {r.actorId} · {formatShortDate(r.timestamp)}
                   </p>
                   {r.newValues && <p>{r.newValues}</p>}
-                  {r.reason && <p className="text-[#168A63] dark:text-[#42DDA9]">{r.reason}</p>}
+                  {r.reason && <p className="text-[var(--accent-text)]">{r.reason}</p>}
                 </div>
               )}
             />
@@ -913,7 +913,7 @@ export function AdminReportsAuditPanel({
           <Card
             title={`Payment Verification Audit Log (${paymentVerificationAudit.length})`}
             subtitle="Dedicated ledger tracking every student claim submission, admin verification, rejection, and payment correction."
-            action={<History className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />}
+            action={<History className="w-4 h-4 text-[var(--accent-text)]" aria-hidden="true" />}
           >
             <Table
               columns={verificationAuditColumns}
@@ -923,7 +923,7 @@ export function AdminReportsAuditPanel({
               mobileCardRender={(r) => (
                 <div className="space-y-1 text-xs">
                   <p className="font-semibold">{r.action.replace('_', ' ')} ({r.paymentClaimId})</p>
-                  <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="font-mono text-[var(--text-muted)]">
                     {r.actorId} · {formatShortDate(r.timestamp)}
                   </p>
                   {r.newValues && <p>{r.newValues}</p>}

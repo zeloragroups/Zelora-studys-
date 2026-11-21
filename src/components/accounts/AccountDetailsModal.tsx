@@ -70,9 +70,9 @@ export function AccountDetailsModal({
       maxWidthClass="max-w-xl"
     >
       <div className="space-y-5">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#E2E8E5] dark:border-[#344047]">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[var(--border)]">
           <div className="flex items-center gap-2.5">
-            <span className="font-mono text-sm font-semibold text-[#168A63] dark:text-[#42DDA9]">
+            <span className="font-mono text-sm font-semibold text-[var(--accent-text)]">
               {account.accountId}
             </span>
             <Button
@@ -93,24 +93,24 @@ export function AccountDetailsModal({
 
         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 text-sm">
           <div>
-            <dt className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Account Type</dt>
+            <dt className="text-xs text-[var(--text-muted)]">Account Type</dt>
             <dd className="mt-0.5 font-medium capitalize">{account.role}</dd>
           </div>
           <div>
-            <dt className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Phone Number</dt>
+            <dt className="text-xs text-[var(--text-muted)]">Phone Number</dt>
             <dd className="mt-0.5 font-mono tabular-nums">{account.phone}</dd>
           </div>
           <div>
-            <dt className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Email Address</dt>
+            <dt className="text-xs text-[var(--text-muted)]">Email Address</dt>
             <dd className="mt-0.5">{account.email ?? 'Not provided'}</dd>
           </div>
           <div>
-            <dt className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Created On</dt>
+            <dt className="text-xs text-[var(--text-muted)]">Created On</dt>
             <dd className="mt-0.5 font-mono tabular-nums text-xs">{formatShortDate(account.createdAt)}</dd>
           </div>
           {account.role === 'student' && (
             <div className="sm:col-span-2">
-              <dt className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Class & Batch</dt>
+              <dt className="text-xs text-[var(--text-muted)]">Class & Batch</dt>
               <dd className="mt-0.5 font-medium">
                 {account.className ?? 'Unassigned'} · {account.batchName ?? 'Unassigned'}
               </dd>
@@ -118,14 +118,14 @@ export function AccountDetailsModal({
           )}
           {account.updatedAt && (
             <div className="sm:col-span-2">
-              <dt className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Last Updated</dt>
+              <dt className="text-xs text-[var(--text-muted)]">Last Updated</dt>
               <dd className="mt-0.5 font-mono tabular-nums text-xs">{formatShortDate(account.updatedAt)}</dd>
             </div>
           )}
         </dl>
 
         {/* Actions */}
-        <div className="pt-4 border-t border-[#E2E8E5] dark:border-[#344047] flex flex-wrap gap-2.5">
+        <div className="pt-4 border-t border-[var(--border)] flex flex-wrap gap-2.5">
           <Button
             variant="secondary"
             size="sm"
@@ -153,21 +153,21 @@ export function AccountDetailsModal({
         </div>
 
         {/* Audit History */}
-        <div className="pt-4 border-t border-[#E2E8E5] dark:border-[#344047] space-y-2.5">
-          <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
+        <div className="pt-4 border-t border-[var(--border)] space-y-2.5">
+          <h3 className="text-xs font-semibold text-[var(--text-muted)]">
             Account Activity History (Passwords Never Stored or Shown)
           </h3>
           {auditEntries.length === 0 ? (
-            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">No audit entries recorded.</p>
+            <p className="text-xs text-[var(--text-muted)]">No audit entries recorded.</p>
           ) : (
             <ul className="space-y-2 max-h-40 overflow-y-auto text-xs">
               {auditEntries.map((entry) => (
                 <li
                   key={entry.id}
-                  className="flex items-start justify-between gap-3 py-1.5 border-b border-[#E2E8E5] dark:border-[#344047] last:border-0"
+                  className="flex items-start justify-between gap-3 py-1.5 border-b border-[var(--border)] last:border-0"
                 >
-                  <span className="text-[#343C42] dark:text-[#D4DDDC]">{entry.summary}</span>
-                  <span className="font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4] whitespace-nowrap shrink-0">
+                  <span className="text-[var(--text-secondary)]">{entry.summary}</span>
+                  <span className="font-mono tabular-nums text-[var(--text-muted)] whitespace-nowrap shrink-0">
                     {formatShortDate(entry.timestamp)}
                   </span>
                 </li>

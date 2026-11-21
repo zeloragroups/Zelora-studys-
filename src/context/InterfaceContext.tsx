@@ -77,6 +77,7 @@ export function InterfaceProvider({ children }: { children: ReactNode }) {
     setLegacyPreviewPatch(null);
     applyAppearanceDefaults({
       defaultTheme: latest.appearanceDefaults.defaultTheme,
+      defaultAccentPalette: latest.appearanceDefaults.defaultAccentPalette,
       allowPersonalThemePreference: latest.appearanceDefaults.allowPersonalThemePreference,
     });
     return latest;
@@ -91,6 +92,7 @@ export function InterfaceProvider({ children }: { children: ReactNode }) {
       setPersistedSettings(latest);
       applyAppearanceDefaults({
         defaultTheme: latest.appearanceDefaults.defaultTheme,
+        defaultAccentPalette: latest.appearanceDefaults.defaultAccentPalette,
         allowPersonalThemePreference: latest.appearanceDefaults.allowPersonalThemePreference,
       });
     });
@@ -133,6 +135,9 @@ export function InterfaceProvider({ children }: { children: ReactNode }) {
         effectivePublicSettings.centreProfile.publicEmail ||
         DEFAULT_BRANDING_CONFIG.supportEmailPlaceholder,
       defaultTheme: effectivePublicSettings.appearanceDefaults.defaultTheme,
+      defaultAccentPalette:
+        effectivePublicSettings.appearanceDefaults.defaultAccentPalette ??
+        DEFAULT_BRANDING_CONFIG.defaultAccentPalette,
     };
     return legacyPreviewPatch ? { ...base, ...legacyPreviewPatch } : base;
   }, [effectivePublicSettings, legacyPreviewPatch]);

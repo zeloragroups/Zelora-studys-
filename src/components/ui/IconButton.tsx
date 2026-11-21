@@ -13,13 +13,13 @@ interface IconButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
 
 const VARIANT_CLASSES: Record<IconButtonVariant, string> = {
   neutral:
-    'border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#252E33] text-[#343C42] dark:text-[#D4DDDC] hover:bg-[#F0F4F2] dark:hover:bg-[#2B353A] hover:text-[#171D21] dark:hover:text-[#F4F7F6]',
+    'border border-[var(--border)] bg-[var(--surface)] text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]',
   mint:
-    'border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/70 dark:bg-[#244B3E]/70 text-[#168A63] dark:text-[#42DDA9] hover:bg-[#DDF8EE] dark:hover:bg-[#244B3E]',
+    'border border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-text)] hover:opacity-90',
   danger:
-    'border border-[#D64C55]/25 dark:border-[#EF6D75]/30 bg-white dark:bg-[#252E33] text-[#D64C55] dark:text-[#EF6D75] hover:bg-[#D64C55]/10 dark:hover:bg-[#EF6D75]/15',
+    'border border-[var(--error-border)] bg-[var(--surface)] text-[var(--error)] hover:bg-[var(--error-soft)]',
   ghost:
-    'border border-transparent bg-transparent text-[#68737C] dark:text-[#AAB6B4] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] hover:text-[#171D21] dark:hover:text-[#F4F7F6]',
+    'border border-transparent bg-transparent text-[var(--text-secondary)] hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]',
 };
 
 const SIZE_CLASSES: Record<IconButtonSize, string> = {
@@ -44,8 +44,8 @@ export function IconButton({
       title={title ?? label}
       className={cn(
         'inline-flex items-center justify-center shrink-0 cursor-pointer',
-        'transition-[transform,background-color,border-color,color] duration-150 ease-out active:scale-[0.97]',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
+        'transition-[transform,background-color,border-color,color,opacity] duration-150 ease-out active:scale-[0.97]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]',
         'disabled:opacity-50 disabled:pointer-events-none',
         VARIANT_CLASSES[variant],
         SIZE_CLASSES[size],

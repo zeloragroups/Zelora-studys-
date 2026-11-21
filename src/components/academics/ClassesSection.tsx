@@ -147,7 +147,7 @@ export function ClassesSection({
       key: 'classId',
       header: 'Class ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-mono text-xs font-semibold text-[var(--accent-text)]">
           {row.classId}
         </span>
       ),
@@ -157,9 +157,9 @@ export function ClassesSection({
       header: 'Class Name',
       render: (row) => (
         <div>
-          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.name}</p>
+          <p className="font-medium text-[var(--text-primary)]">{row.name}</p>
           {row.description && (
-            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[260px]">
+            <p className="text-xs text-[var(--text-muted)] truncate max-w-[260px]">
               {row.description}
             </p>
           )}
@@ -192,7 +192,7 @@ export function ClassesSection({
       key: 'createdAt',
       header: 'Created',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+        <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
           {formatShortDate(row.createdAt)}
         </span>
       ),
@@ -273,23 +273,23 @@ export function ClassesSection({
 
         <div className="md:hidden space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+            <p className="text-sm text-[var(--text-muted)] py-4 text-center">
               No matching classes found.
             </p>
           ) : (
             filtered.map((cls) => (
               <div
                 key={cls.classId}
-                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
+                className="rounded-xl border border-[var(--border)] p-4 space-y-2.5 bg-[var(--surface)]"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {cls.classId}
                     </p>
-                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{cls.name}</p>
+                    <p className="font-medium text-[var(--text-primary)]">{cls.name}</p>
                     {cls.description && (
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">{cls.description}</p>
+                      <p className="text-xs text-[var(--text-muted)]">{cls.description}</p>
                     )}
                   </div>
                   <StatusText
@@ -297,7 +297,7 @@ export function ClassesSection({
                     label={cls.status === 'active' ? 'Active' : 'Inactive'}
                   />
                 </div>
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                <p className="text-xs text-[var(--text-muted)] tabular-nums">
                   {getBatchCount(cls.classId)} batches · {getStudentCount(cls.classId)} enrolled students
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1">

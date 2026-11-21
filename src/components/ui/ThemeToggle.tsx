@@ -30,18 +30,18 @@ export function ThemeToggle({ compact = false, className }: ThemeToggleProps) {
       }
       className={cn(
         'inline-flex items-center justify-center gap-2 min-h-[40px] rounded-xl px-3 py-2 text-xs font-medium whitespace-nowrap shrink-0',
-        'border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#252E33]',
-        'text-[#20262B] dark:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#2B353A]',
+        'border border-[var(--border)] bg-[var(--surface)] dark:bg-[var(--surface-secondary)]',
+        'text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] dark:hover:bg-[var(--surface-elevated)]',
         'transition-colors duration-150',
         allowPersonalThemePreference ? 'cursor-pointer' : 'opacity-65 cursor-not-allowed',
-        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
+        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]',
         className
       )}
     >
       {isDark ? (
-        <Sun className="w-4 h-4 shrink-0 text-[#E5B04D]" strokeWidth={1.75} aria-hidden="true" />
+        <Sun className="w-4 h-4 shrink-0 text-[var(--accent)]" strokeWidth={1.75} aria-hidden="true" />
       ) : (
-        <Moon className="w-4 h-4 shrink-0 text-[#343C42]" strokeWidth={1.75} aria-hidden="true" />
+        <Moon className="w-4 h-4 shrink-0 text-[var(--text-primary)]" strokeWidth={1.75} aria-hidden="true" />
       )}
       {!compact && <span>{isDark ? 'Light Mode' : 'Dark Mode'}</span>}
     </button>

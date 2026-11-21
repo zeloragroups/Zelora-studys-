@@ -6,16 +6,15 @@ import {
   Info,
   KeyRound,
   LogOut,
-  Moon,
   Palette,
   ShieldCheck,
-  Sun,
   UserCircle2,
 } from 'lucide-react';
 import { APP_PACKAGE_VERSION } from '../../config/branding';
 import { useAuth } from '../../context/AuthContext';
 import { useInterface } from '../../context/InterfaceContext';
 import { useTheme } from '../../context/ThemeContext';
+import { ACCENT_PALETTE_MAP } from '../../design/palettes';
 import { academicService, isFirebaseConnectedMode, studentPortalService } from '../../services';
 import type { StudentProfileSummary } from '../../services/contracts/studentPortalService';
 import type { TeacherWorkspaceData } from '../../types';
@@ -28,6 +27,7 @@ import { IconButton } from '../ui/IconButton';
 import { Input } from '../ui/Input';
 import { StatusText } from '../ui/StatusText';
 import { SettingsShell, type SettingsCategoryItem } from './SettingsShell';
+import { ThemeCustomizationPanel } from './ThemeCustomizationPanel';
 
 type MemberSettingsCategory =
   | 'my_account'
@@ -57,11 +57,11 @@ export function MemberSettingsModule({
   const { branding, publicSettings } = useInterface();
   const {
     theme,
+    accentPalette,
     defaultTheme,
+    defaultAccentPalette,
     allowPersonalThemePreference,
     hasPersonalPreference,
-    setTheme,
-    resetToDefaultTheme,
   } = useTheme();
 
   const [activeCategory, setActiveCategory] = useState<MemberSettingsCategory | null>(null);
@@ -156,6 +156,9 @@ export function MemberSettingsModule({
     notifCats.feesReceipts,
   ].filter(Boolean).length;
 
+  const activePaletteName = ACCENT_PALETTE_MAP[accentPalette].name;
+  const defaultPaletteName = ACCENT_PALETTE_MAP[defaultAccentPalette].name;
+
   const categories: SettingsCategoryItem<MemberSettingsCategory>[] = [
     {
       id: 'my_account',
@@ -171,14 +174,14 @@ export function MemberSettingsModule({
     },
     {
       id: 'appearance',
-      title: 'Appearance',
+      title: 'Appearance & Accent Colour',
       description:
-        'Choose your Light Mode or Dark Charcoal theme on this device when allowed by the centre.',
+        'Choose Light or Dark Mode and any of 10 curated accent colour palettes with live preview.',
       summary: allowPersonalThemePreference
-        ? `${theme === 'dark' ? 'Dark Charcoal' : 'Light Mode'}${hasPersonalPreference ? ' · Personal' : ' · Centre Default'}`
-        : `Locked to ${defaultTheme === 'dark' ? 'Dark Charcoal' : 'Light Mode'}`,
+        ? `${theme === 'dark' ? 'Dark Mode' : 'Light Mode'} · ${activePaletteName}${hasPersonalPreference ? ' · Personal' : ' · Default'}`
+        : `Locked to ${defaultTheme === 'dark' ? 'Dark Mode' : 'Light Mode'} · ${defaultPaletteName}`,
       group: 'Preferences',
-      keywords: ['theme', 'dark', 'light', 'mode', 'charcoal'],
+      keywords: ['theme', 'dark', 'light', 'mode', 'palette', 'colour', 'accent', 'gold'],
       icon: Palette,
     },
     {
@@ -221,31 +224,31 @@ export function MemberSettingsModule({
           >
             <div className="space-y-4">
               <div className="grid gap-3 sm:grid-cols-2 text-sm">
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5">
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Full Name</p>
-                  <p className="mt-1 font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                  <p className="text-xs text-[var(--text-muted)]">Full Name</p>
+                  <p className="mt-1 font-semibold text-[var(--text-primary)]">
                     {principal.fullName}
                   </p>
                 </div>
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-3.5">
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">Login ID</p>
-                  <p className="mt-1 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5">
+                  <p className="text-xs text-[var(--text-muted)]">Login ID</p>
+                  <p className="mt-1 font-mono font-semibold text-[var(--text-primary)]">
                     {principal.loginId}
                   </p>
                 </div>
               </div>
 
               {principal.role === 'student' && studentProfile && (
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-3 text-xs">
+                <div className="rounded-xl border border-[var(--border)] p-4 space-y-3 text-xs">
                   <div className="grid gap-3 sm:grid-cols-2">
                     <div>
-                      <p className="text-[#68737C] dark:text-[#AAB6B4]">Registered Phone</p>
-                      <p className="mt-0.5 font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-[var(--text-muted)]">Registered Phone</p>
+                      <p className="mt-0.5 font-mono font-semibold text-[var(--text-primary)]">
                         {studentProfile.phone}
                       </p>
                     </div>
                     <div>
-                      <p className="text-[#68737C] dark:text-[#AAB6B4]">Enrolment Status</p>
+                      <p className="text-[var(--text-muted)]">Enrolment Status</p>
                       <div className="mt-0.5">
                         <StatusText
                           tone={studentProfile.enrolmentStatus === 'active' ? 'nominal' : 'warning'}
@@ -258,24 +261,24 @@ export function MemberSettingsModule({
                       </div>
                     </div>
                   </div>
-                  <div className="pt-2.5 border-t border-[#E2E8E5] dark:border-[#344047]">
-                    <p className="text-[#68737C] dark:text-[#AAB6B4]">Class & Batch</p>
-                    <p className="mt-0.5 text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <div className="pt-2.5 border-t border-[var(--border)]">
+                    <p className="text-[var(--text-muted)]">Class & Batch</p>
+                    <p className="mt-0.5 text-sm font-semibold text-[var(--text-primary)]">
                       {studentProfile.enrolmentStatus === 'active'
                         ? `${studentProfile.className ?? studentProfile.classId} · ${studentProfile.batchName ?? studentProfile.batchId}`
                         : 'No active batch assigned'}
                     </p>
                   </div>
-                  <p className="text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                  <p className="text-[var(--text-muted)] leading-relaxed">
                     {studentProfile.immutableNotice}
                   </p>
                 </div>
               )}
 
               {principal.role === 'teacher' && teacherWs && (
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-1.5 text-xs">
-                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Assigned Teaching Scope</p>
-                  <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] tabular-nums">
+                <div className="rounded-xl border border-[var(--border)] p-4 space-y-1.5 text-xs">
+                  <p className="text-[var(--text-muted)]">Assigned Teaching Scope</p>
+                  <p className="text-sm font-semibold text-[var(--text-primary)] tabular-nums">
                     {teacherWs.assignments.length} active subject-batch assignment(s) ·{' '}
                     {teacherWs.timetable.length} weekly timetable session(s)
                   </p>
@@ -290,85 +293,7 @@ export function MemberSettingsModule({
         );
 
       case 'appearance':
-        return (
-          <Card
-            title="Device Theme Preference"
-            subtitle={
-              allowPersonalThemePreference
-                ? `Select Light Mode or Dark Charcoal on this device. Centre default is ${defaultTheme === 'dark' ? 'Dark Charcoal' : 'Light Mode'}.`
-                : `Your centre Administrator has locked this portal to ${defaultTheme === 'dark' ? 'Dark Charcoal' : 'Light Mode'}.`
-            }
-          >
-            <div className="space-y-5">
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-3" role="radiogroup" aria-label="Theme preference">
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={theme === 'light'}
-                  disabled={!allowPersonalThemePreference}
-                  onClick={() => setTheme('light')}
-                  className={cn(
-                    'rounded-xl border p-4 text-left transition-all space-y-2',
-                    allowPersonalThemePreference ? 'cursor-pointer' : 'opacity-65 cursor-not-allowed',
-                    theme === 'light'
-                      ? 'border-[#18B985] bg-[#DDF8EE]/70 ring-2 ring-[#35D6A0]/25'
-                      : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E]/70 hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <Sun className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" strokeWidth={1.75} aria-hidden="true" />
-                    {theme === 'light' && <StatusText tone="nominal" label="Active" />}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
-                      Light Mode
-                    </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                      Crisp white canvas, charcoal text & mint accents
-                    </p>
-                  </div>
-                </button>
-
-                <button
-                  type="button"
-                  role="radio"
-                  aria-checked={theme === 'dark'}
-                  disabled={!allowPersonalThemePreference}
-                  onClick={() => setTheme('dark')}
-                  className={cn(
-                    'rounded-xl border p-4 text-left transition-all space-y-2',
-                    allowPersonalThemePreference ? 'cursor-pointer' : 'opacity-65 cursor-not-allowed',
-                    theme === 'dark'
-                      ? 'border-[#42DDA9] bg-[#244B3E] ring-2 ring-[#42DDA9]/25'
-                      : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E]/70 hover:bg-[#F0F4F2] dark:hover:bg-[#252E33]'
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <Moon className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" strokeWidth={1.75} aria-hidden="true" />
-                    {theme === 'dark' && <StatusText tone="nominal" label="Active" />}
-                  </div>
-                  <div>
-                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
-                      Dark Charcoal
-                    </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                      Deep charcoal surfaces & high-contrast mint
-                    </p>
-                  </div>
-                </button>
-              </div>
-
-              {allowPersonalThemePreference && hasPersonalPreference && (
-                <div className="flex flex-wrap items-center justify-between gap-2 pt-3 border-t border-[#E2E8E5] dark:border-[#344047] text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                  <span>Personal theme override is active on this browser.</span>
-                  <Button variant="secondary" size="sm" onClick={resetToDefaultTheme}>
-                    Follow Centre Default
-                  </Button>
-                </div>
-              )}
-            </div>
-          </Card>
-        );
+        return <ThemeCustomizationPanel centreName={branding.centreName} />;
 
       case 'security': {
         const meetsMinLength = newPassword.length >= 8;
@@ -377,7 +302,8 @@ export function MemberSettingsModule({
         const matchesConfirm =
           confirmNewPassword.length > 0 && newPassword === confirmNewPassword;
         const hasMixedChars =
-          /[A-Za-z]/.test(newPassword) && (/[0-9]/.test(newPassword) || /[^A-Za-z0-9]/.test(newPassword));
+          /[A-Za-z]/.test(newPassword) &&
+          (/[0-9]/.test(newPassword) || /[^A-Za-z0-9]/.test(newPassword));
         const strengthLevel: 0 | 1 | 2 | 3 = !newPassword
           ? 0
           : !meetsMinLength
@@ -494,7 +420,11 @@ export function MemberSettingsModule({
                       <IconButton
                         size="sm"
                         variant="ghost"
-                        label={showConfirmPassword ? 'Hide confirmation password' : 'Show confirmation password'}
+                        label={
+                          showConfirmPassword
+                            ? 'Hide confirmation password'
+                            : 'Show confirmation password'
+                        }
                         onClick={() => setShowConfirmPassword((prev) => !prev)}
                         icon={
                           showConfirmPassword ? (
@@ -509,12 +439,12 @@ export function MemberSettingsModule({
                 </div>
 
                 {/* Password Strength & Requirement Checklist */}
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 space-y-3">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-3">
                   <div className="flex items-center justify-between gap-2 text-xs">
-                    <span className="font-medium text-[#343C42] dark:text-[#D4DDDC]">
+                    <span className="font-medium text-[var(--text-secondary)]">
                       Password readiness
                     </span>
-                    <span className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                    <span className="font-mono text-[var(--text-muted)]">
                       {strengthLabel}
                     </span>
                   </div>
@@ -526,11 +456,11 @@ export function MemberSettingsModule({
                           'h-1.5 rounded-full transition-colors duration-150',
                           strengthLevel >= step
                             ? strengthLevel === 3
-                              ? 'bg-[#18B985] dark:bg-[#42DDA9]'
+                              ? 'bg-[var(--success)]'
                               : strengthLevel === 2
-                                ? 'bg-[#35D6A0] dark:bg-[#42DDA9]'
-                                : 'bg-[#D69B35] dark:bg-[#E5B04D]'
-                            : 'bg-[#E2E8E5] dark:bg-[#344047]'
+                                ? 'bg-[var(--accent)]'
+                                : 'bg-[var(--warning)]'
+                            : 'bg-[var(--border)]'
                         )}
                       />
                     ))}
@@ -552,7 +482,7 @@ export function MemberSettingsModule({
                 </div>
 
                 <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-xs text-[var(--text-muted)]">
                     Changes apply immediately on your next sign-in.
                   </p>
                   <Button
@@ -573,7 +503,7 @@ export function MemberSettingsModule({
                 subtitle={`Signed in as ${principal.loginId} (${roleLabel}).`}
               >
                 <div className="flex flex-wrap items-center justify-between gap-3">
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-xs text-[var(--text-muted)]">
                     Sign out cleanly before leaving a shared classroom or family device.
                   </p>
                   <Button
@@ -607,7 +537,7 @@ export function MemberSettingsModule({
             }
           >
             <div className="space-y-4">
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-sm">
+              <div className="divide-y divide-[var(--border)] text-sm">
                 {[
                   {
                     label: 'Attendance & Absence Alerts',
@@ -635,10 +565,10 @@ export function MemberSettingsModule({
                     className="py-3 first:pt-0 last:pb-0 flex items-center justify-between gap-4"
                   >
                     <div className="min-w-0">
-                      <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="font-medium text-[var(--text-primary)]">
                         {item.label}
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">{item.desc}</p>
+                      <p className="text-xs text-[var(--text-muted)]">{item.desc}</p>
                     </div>
                     <StatusText
                       tone={item.enabled ? 'nominal' : 'neutral'}
@@ -661,27 +591,27 @@ export function MemberSettingsModule({
             title="Application Information"
             subtitle="Verified portal identity and release summary."
           >
-            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-sm">
+            <div className="divide-y divide-[var(--border)] text-sm">
               <div className="py-2.5 flex items-center justify-between gap-4">
-                <span className="text-[#68737C] dark:text-[#AAB6B4]">Centre Name</span>
-                <span className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                <span className="text-[var(--text-muted)]">Centre Name</span>
+                <span className="font-semibold text-[var(--text-primary)]">
                   {branding.centreName}
                 </span>
               </div>
               <div className="py-2.5 flex items-center justify-between gap-4">
-                <span className="text-[#68737C] dark:text-[#AAB6B4]">Academic Session</span>
-                <span className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                <span className="text-[var(--text-muted)]">Academic Session</span>
+                <span className="font-medium text-[var(--text-primary)]">
                   {branding.academicYearLabel}
                 </span>
               </div>
               <div className="py-2.5 flex items-center justify-between gap-4">
-                <span className="text-[#68737C] dark:text-[#AAB6B4]">Application Version</span>
-                <span className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                <span className="text-[var(--text-muted)]">Application Version</span>
+                <span className="font-mono tabular-nums text-[var(--text-primary)]">
                   v{APP_PACKAGE_VERSION}
                 </span>
               </div>
               <div className="py-2.5 flex items-center justify-between gap-4">
-                <span className="text-[#68737C] dark:text-[#AAB6B4]">Runtime Connection</span>
+                <span className="text-[var(--text-muted)]">Runtime Connection</span>
                 <StatusText
                   tone={isFirebaseConnectedMode() ? 'nominal' : 'info'}
                   label={
@@ -702,7 +632,7 @@ export function MemberSettingsModule({
       <SettingsShell
         eyebrow={`${branding.centreName} · ${roleLabel}`}
         title="Settings"
-        subtitle="Browse your account details, theme preferences, password security, notification visibility, and application details."
+        subtitle="Browse your account details, theme & accent palette, password security, notification visibility, and application details."
         rightSlot={<StatusText tone="nominal" label={`${principal.loginId} · ${roleLabel}`} />}
         categories={categories}
         activeCategoryId={activeCategory}

@@ -99,18 +99,18 @@ export function SettingsShell<T extends string = string>({
           {rightSlot && <div className="shrink-0">{rightSlot}</div>}
         </div>
 
-        <header className="flex items-start gap-3.5 pb-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-          <span className="w-11 h-11 rounded-xl bg-[#DDF8EE] dark:bg-[#244B3E] border border-[#B8EBD8] dark:border-[#316453] text-[#168A63] dark:text-[#42DDA9] inline-flex items-center justify-center shrink-0">
+        <header className="flex items-start gap-3.5 pb-3 border-b border-[var(--border)]">
+          <span className="w-11 h-11 rounded-xl bg-[var(--accent-soft)] border border-[var(--accent-border)] text-[var(--accent-text)] inline-flex items-center justify-center shrink-0">
             <ActiveIcon className="w-5 h-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">
-            <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-xs font-medium text-[var(--text-muted)]">
               {activeCategory.group ?? 'Settings'} · {eyebrow}
             </p>
-            <h1 className="mt-0.5 text-xl sm:text-2xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6] text-balance">
+            <h1 className="mt-0.5 text-xl sm:text-2xl font-semibold tracking-tight text-[var(--text-primary)] text-balance">
               {activeCategory.title}
             </h1>
-            <p className="mt-1 text-sm text-[#68737C] dark:text-[#AAB6B4] max-w-2xl leading-relaxed">
+            <p className="mt-1 text-sm text-[var(--text-secondary)] max-w-2xl leading-relaxed">
               {activeCategory.description}
             </p>
           </div>
@@ -123,7 +123,7 @@ export function SettingsShell<T extends string = string>({
             {[0, 1].map((idx) => (
               <div
                 key={idx}
-                className="h-44 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33]/70 animate-pulse"
+                className="h-44 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
               />
             ))}
           </div>
@@ -131,7 +131,7 @@ export function SettingsShell<T extends string = string>({
           <div className="lg:grid lg:grid-cols-12 lg:gap-6 items-start">
             <nav
               aria-label="Settings categories"
-              className="hidden lg:block lg:col-span-4 xl:col-span-3 rounded-2xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429] p-2 space-y-1 sticky top-20"
+              className="hidden lg:block lg:col-span-4 xl:col-span-3 rounded-2xl border border-[var(--border)] bg-[var(--surface)] p-2 space-y-1 sticky top-20"
             >
               {categories.map((cat) => {
                 const Icon = cat.icon;
@@ -143,19 +143,19 @@ export function SettingsShell<T extends string = string>({
                     onClick={() => onSelectCategory(cat.id)}
                     aria-current={isSelected ? 'page' : undefined}
                     className={cn(
-                      'w-full flex items-center gap-2.5 min-h-[42px] px-3 py-2 rounded-xl text-left text-xs transition-colors duration-150 cursor-pointer',
-                      'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
+                      'w-full flex items-center gap-2.5 min-h-[42px] px-3 py-2 rounded-xl text-left text-xs transition-colors duration-150 cursor-pointer border',
+                      'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--accent)]',
                       isSelected
-                        ? 'bg-[#20262B] text-[#F4F7F6] font-semibold dark:bg-[#244B3E] dark:text-[#F4F7F6]'
-                        : 'text-[#343C42] font-medium hover:bg-[#F0F4F2] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:bg-[#252E33] dark:hover:text-[#F4F7F6]'
+                        ? 'bg-[var(--accent-soft)] border-[var(--accent-border)] text-[var(--text-primary)] font-semibold'
+                        : 'border-transparent text-[var(--text-secondary)] font-medium hover:bg-[var(--surface-secondary)] hover:text-[var(--text-primary)]'
                     )}
                   >
                     <Icon
                       className={cn(
                         'w-4 h-4 shrink-0',
                         isSelected
-                          ? 'text-[#35D6A0] dark:text-[#42DDA9]'
-                          : 'text-[#68737C] dark:text-[#AAB6B4]'
+                          ? 'text-[var(--accent-text)]'
+                          : 'text-[var(--text-muted)]'
                       )}
                       strokeWidth={1.75}
                     />
@@ -199,7 +199,7 @@ export function SettingsShell<T extends string = string>({
           {[0, 1, 2, 3].map((idx) => (
             <div
               key={idx}
-              className="h-24 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33]/70 animate-pulse"
+              className="h-24 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
             />
           ))}
         </div>
@@ -218,7 +218,7 @@ export function SettingsShell<T extends string = string>({
         <div className="space-y-6">
           {groupedFiltered.map(({ group, items }) => (
             <section key={group} className="space-y-3">
-              <h2 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
+              <h2 className="text-xs font-semibold uppercase tracking-wider text-[var(--text-muted)]">
                 {group}
               </h2>
               <div className="grid gap-3 sm:grid-cols-2">
@@ -230,32 +230,32 @@ export function SettingsShell<T extends string = string>({
                       type="button"
                       onClick={() => onSelectCategory(cat.id)}
                       className={cn(
-                        'w-full flex items-center justify-between gap-3.5 rounded-2xl border border-[#E2E8E5] dark:border-[#344047]',
-                        'bg-white dark:bg-[#1D2429] hover:bg-[#F7F9F8] dark:hover:bg-[#252E33]/80',
-                        'hover:border-[#B8EBD8] dark:hover:border-[#316453] p-4 sm:p-5 text-left transition-colors duration-150 cursor-pointer group',
-                        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]'
+                        'w-full flex items-center justify-between gap-3.5 rounded-2xl border border-[var(--border)]',
+                        'bg-[var(--surface)] hover:bg-[var(--surface-secondary)]',
+                        'hover:border-[var(--accent-border)] p-4 sm:p-5 text-left transition-colors duration-150 cursor-pointer group',
+                        'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[var(--accent)]'
                       )}
                     >
                       <div className="flex items-start gap-3.5 min-w-0">
-                        <span className="w-10 h-10 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] group-hover:bg-[#DDF8EE] dark:group-hover:bg-[#244B3E] text-[#343C42] dark:text-[#AAB6B4] group-hover:text-[#168A63] dark:group-hover:text-[#42DDA9] inline-flex items-center justify-center shrink-0 transition-colors">
+                        <span className="w-10 h-10 rounded-xl bg-[var(--surface-secondary)] group-hover:bg-[var(--accent-soft)] border border-[var(--border)] group-hover:border-[var(--accent-border)] text-[var(--text-secondary)] group-hover:text-[var(--accent-text)] inline-flex items-center justify-center shrink-0 transition-colors">
                           <Icon className="w-5 h-5" strokeWidth={1.75} />
                         </span>
                         <div className="min-w-0">
-                          <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6] leading-snug">
+                          <p className="text-sm font-semibold text-[var(--text-primary)] leading-snug">
                             {cat.title}
                           </p>
-                          <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed line-clamp-2">
+                          <p className="mt-1 text-xs text-[var(--text-secondary)] leading-relaxed line-clamp-2">
                             {cat.description}
                           </p>
                           {cat.summary && (
-                            <p className="mt-1.5 text-[11px] font-medium text-[#168A63] dark:text-[#42DDA9] truncate">
+                            <p className="mt-1.5 text-[11px] font-medium text-[var(--accent-text)] truncate">
                               {cat.summary}
                             </p>
                           )}
                         </div>
                       </div>
                       <ChevronRight
-                        className="w-4 h-4 text-[#68737C] dark:text-[#AAB6B4] group-hover:text-[#168A63] dark:group-hover:text-[#42DDA9] shrink-0 transition-transform group-hover:translate-x-0.5"
+                        className="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--accent-text)] shrink-0 transition-transform group-hover:translate-x-0.5"
                         strokeWidth={1.75}
                         aria-hidden="true"
                       />

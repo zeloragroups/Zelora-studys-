@@ -167,7 +167,7 @@ export function EnrolmentsSection({
       key: 'enrolmentId',
       header: 'Enrolment ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-mono text-xs font-semibold text-[var(--accent-text)]">
           {row.enrolmentId}
         </span>
       ),
@@ -179,10 +179,10 @@ export function EnrolmentsSection({
         const acc = studentMap.get(row.studentAccountId.toUpperCase());
         return (
           <div>
-            <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+            <p className="font-medium text-[var(--text-primary)]">
               {acc?.name ?? row.studentAccountId}
             </p>
-            <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="font-mono text-xs text-[var(--text-muted)]">
               {row.studentAccountId}
               {acc && acc.status !== 'active' ? ' · Account Inactive' : ''}
             </p>
@@ -195,10 +195,10 @@ export function EnrolmentsSection({
       header: 'Class & Batch',
       render: (row) => (
         <div className="text-xs">
-          <p className="font-medium text-[#20262B] dark:text-[#F4F7F6]">
+          <p className="font-medium text-[var(--text-primary)]">
             {classMap.get(row.classId)?.name ?? row.classId}
           </p>
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-[var(--text-muted)]">
             {batchMap.get(row.batchId)?.name ?? row.batchId}
           </p>
         </div>
@@ -208,7 +208,7 @@ export function EnrolmentsSection({
       key: 'enrolmentDate',
       header: 'Enrolled On',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+        <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
           {formatShortDate(row.enrolmentDate)}
         </span>
       ),
@@ -323,7 +323,7 @@ export function EnrolmentsSection({
 
           <div className="md:hidden space-y-3">
             {filtered.length === 0 ? (
-              <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+              <p className="text-sm text-[var(--text-muted)] py-4 text-center">
                 No matching enrolments found.
               </p>
             ) : (
@@ -332,17 +332,17 @@ export function EnrolmentsSection({
                 return (
                   <div
                     key={enr.enrolmentId}
-                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
+                    className="rounded-xl border border-[var(--border)] p-4 space-y-2.5 bg-[var(--surface)]"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                        <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                           {enr.enrolmentId} · {enr.studentAccountId}
                         </p>
-                        <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                        <p className="font-medium text-[var(--text-primary)]">
                           {acc?.name ?? enr.studentAccountId}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {classMap.get(enr.classId)?.name ?? enr.classId} ·{' '}
                           {batchMap.get(enr.batchId)?.name ?? enr.batchId}
                         </p>
@@ -379,21 +379,21 @@ export function EnrolmentsSection({
         padding="sm"
       >
         {unenrolledStudents.length === 0 ? (
-          <p className="text-xs sm:text-sm text-[#68737C] dark:text-[#AAB6B4] py-2">
+          <p className="text-xs sm:text-sm text-[var(--text-muted)] py-2">
             All student accounts currently have an active class and batch enrolment.
           </p>
         ) : (
-          <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+          <ul className="divide-y divide-[var(--border)]">
             {unenrolledStudents.map((stu) => (
               <li
                 key={stu.accountId}
                 className="py-3 flex flex-wrap items-center justify-between gap-3"
               >
                 <div>
-                  <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
                     {stu.name}
                   </p>
-                  <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                     {stu.accountId} · {stu.phone}
                   </p>
                 </div>

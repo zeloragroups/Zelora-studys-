@@ -25,15 +25,15 @@ export function PageHeader({
     >
       <div className="min-w-0">
         {eyebrow && (
-          <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4] tracking-[0.01em]">
+          <p className="text-xs font-medium text-[var(--accent-text)] tracking-[0.02em]">
             {eyebrow}
           </p>
         )}
-        <h1 className="mt-1 text-2xl sm:text-[30px] font-semibold tracking-tight leading-tight text-[#171D21] dark:text-[#F4F7F6] text-balance">
+        <h1 className="mt-1 text-2xl sm:text-[30px] font-semibold tracking-tight leading-tight text-[var(--text-primary)] text-balance">
           {title}
         </h1>
         {subtitle && (
-          <p className="mt-1.5 text-sm text-[#68737C] dark:text-[#AAB6B4] max-w-2xl leading-relaxed">
+          <p className="mt-1.5 text-sm text-[var(--text-secondary)] max-w-2xl leading-relaxed">
             {subtitle}
           </p>
         )}

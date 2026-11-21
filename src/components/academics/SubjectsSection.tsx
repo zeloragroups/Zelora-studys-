@@ -128,7 +128,7 @@ export function SubjectsSection({
       key: 'subjectId',
       header: 'Subject ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-mono text-xs font-semibold text-[var(--accent-text)]">
           {row.subjectId}
         </span>
       ),
@@ -138,9 +138,9 @@ export function SubjectsSection({
       header: 'Subject',
       render: (row) => (
         <div>
-          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.name}</p>
+          <p className="font-medium text-[var(--text-primary)]">{row.name}</p>
           {row.code && (
-            <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">{row.code}</p>
+            <p className="font-mono text-xs text-[var(--text-muted)]">{row.code}</p>
           )}
         </div>
       ),
@@ -149,7 +149,7 @@ export function SubjectsSection({
       key: 'classes',
       header: 'Associated Classes',
       render: (row) => (
-        <span className="text-xs text-[#343C42] dark:text-[#D4DDDC]">
+        <span className="text-xs text-[var(--text-secondary)]">
           {formatClassesLabel(row.classIds)}
         </span>
       ),
@@ -259,22 +259,22 @@ export function SubjectsSection({
 
         <div className="md:hidden space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+            <p className="text-sm text-[var(--text-muted)] py-4 text-center">
               No matching subjects found.
             </p>
           ) : (
             filtered.map((sub) => (
               <div
                 key={sub.subjectId}
-                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
+                className="rounded-xl border border-[var(--border)] p-4 space-y-2.5 bg-[var(--surface)]"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {sub.subjectId} {sub.code ? `· ${sub.code}` : ''}
                     </p>
-                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{sub.name}</p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="font-medium text-[var(--text-primary)]">{sub.name}</p>
+                    <p className="text-xs text-[var(--text-muted)]">
                       {formatClassesLabel(sub.classIds)}
                     </p>
                   </div>
@@ -325,10 +325,10 @@ export function SubjectsSection({
             placeholder="e.g. MTH-10"
           />
           <div className="space-y-2">
-            <span className="block text-sm font-medium text-[#20262B] dark:text-[#F4F7F6]">
+            <span className="block text-sm font-medium text-[var(--text-primary)]">
               Associated Classes
             </span>
-            <div className="space-y-2.5 rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E] p-3.5 max-h-44 overflow-y-auto">
+            <div className="space-y-2.5 rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 max-h-44 overflow-y-auto">
               {classes.map((c) => {
                 const checked = selectedClassIds.includes(c.classId);
                 return (

@@ -107,7 +107,7 @@ export function StudentNotificationsModule({
   if (!principal || principal.role !== 'student') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
+        <p className="text-sm text-[var(--error)]">
           Notifications and announcements are restricted to authenticated Student / Parent accounts.
         </p>
       </Card>
@@ -224,7 +224,7 @@ export function StudentNotificationsModule({
           {[0, 1, 2].map((i) => (
             <div
               key={i}
-              className="h-24 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+              className="h-24 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
             />
           ))}
         </div>
@@ -240,8 +240,8 @@ export function StudentNotificationsModule({
                 className={cn(
                   'min-h-[40px] px-3 rounded-xl text-xs font-medium border cursor-pointer transition-colors',
                   unreadOnly
-                    ? 'border-[#168A63] bg-[#DDF8EE] text-[#168A63] dark:border-[#42DDA9] dark:bg-[#244B3E] dark:text-[#42DDA9]'
-                    : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] text-[#68737C] dark:text-[#AAB6B4]'
+                    ? 'border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-text)]'
+                    : 'border-[var(--border)] bg-[var(--surface)] text-[var(--text-muted)]'
                 )}
               >
                 {unreadOnly ? 'Showing Unread Only' : 'Filter: Unread Only'}
@@ -288,29 +288,29 @@ export function StudentNotificationsModule({
             />
 
             {filteredNotifications.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
+              <div className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center space-y-2">
                 <Bell
-                  className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
+                  className="w-5 h-5 text-[var(--text-muted)] mx-auto"
                   aria-hidden="true"
                 />
-                <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                <p className="text-sm font-medium text-[var(--text-primary)]">
                   {unreadOnly
                     ? 'No unread notifications in this category'
                     : 'No notifications recorded in this category'}
                 </p>
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs text-[var(--text-muted)]">
                   Alerts appear automatically when teachers mark absence, publish homework or tests, release results, or Admin verifies fees.
                 </p>
               </div>
             ) : (
-              <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+              <ul className="divide-y divide-[var(--border)]">
                 {filteredNotifications.map((notif) => (
                   <li
                     key={notif.id}
                     className="py-4 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                   >
                     <div className="space-y-1.5 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
                         <StatusText tone={notif.tone} label={notif.typeLabel} />
                         <span aria-hidden="true">·</span>
                         <span className="font-mono tabular-nums">
@@ -322,10 +322,10 @@ export function StudentNotificationsModule({
                         </span>
                       </div>
 
-                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">
                         {notif.title}
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                      <p className="text-xs text-[var(--text-muted)] leading-relaxed">
                         {notif.message}
                       </p>
                     </div>
@@ -389,23 +389,23 @@ export function StudentNotificationsModule({
                 onChange={setAnnouncementFilter}
                 items={ANNOUNCEMENT_FILTERS}
               />
-              <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <span className="text-xs text-[var(--text-muted)]">
                 Read-only · Published by Tuition Centre Admin
               </span>
             </div>
 
             {filteredAnnouncements.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
+              <div className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center space-y-2">
                 <Megaphone
-                  className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
+                  className="w-5 h-5 text-[var(--text-muted)] mx-auto"
                   aria-hidden="true"
                 />
-                <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                <p className="text-sm font-medium text-[var(--text-primary)]">
                   No announcements match this filter
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+              <div className="divide-y divide-[var(--border)]">
                 {filteredAnnouncements.map((item) => {
                   const ann = item.announcement;
                   const scopeLabel =
@@ -423,8 +423,8 @@ export function StudentNotificationsModule({
                     >
                       <div className="flex flex-wrap items-start justify-between gap-3">
                         <div className="space-y-1 min-w-0">
-                          <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                            <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                          <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                            <span className="font-mono font-semibold text-[var(--accent-text)]">
                               {ann.announcementId}
                             </span>
                             <span aria-hidden="true">·</span>
@@ -440,7 +440,7 @@ export function StudentNotificationsModule({
                               </>
                             )}
                           </div>
-                          <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                          <h2 className="text-base font-semibold text-[var(--text-primary)]">
                             {ann.title}
                           </h2>
                         </div>
@@ -464,7 +464,7 @@ export function StudentNotificationsModule({
                         </div>
                       </div>
 
-                      <p className="text-sm text-[#343C42] dark:text-[#D5E0DD] whitespace-pre-line leading-relaxed">
+                      <p className="text-sm text-[var(--text-secondary)] whitespace-pre-line leading-relaxed">
                         {ann.content}
                       </p>
                     </article>

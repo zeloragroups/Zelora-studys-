@@ -119,7 +119,7 @@ export function AccountManagementModule() {
         <button
           type="button"
           onClick={() => setDetailAccount(row)}
-          className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
+          className="font-mono text-xs font-semibold text-[var(--accent-text)] hover:underline cursor-pointer"
         >
           {row.accountId}
         </button>
@@ -130,9 +130,9 @@ export function AccountManagementModule() {
       header: 'Name',
       render: (row) => (
         <div>
-          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.name}</p>
+          <p className="font-medium text-[var(--text-primary)]">{row.name}</p>
           {row.email && (
-            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[180px]">
+            <p className="text-xs text-[var(--text-muted)] truncate max-w-[180px]">
               {row.email}
             </p>
           )}
@@ -143,7 +143,7 @@ export function AccountManagementModule() {
       key: 'role',
       header: 'Type',
       render: (row) => (
-        <span className="capitalize text-xs font-medium text-[#343C42] dark:text-[#D4DDDC]">
+        <span className="capitalize text-xs font-medium text-[var(--text-secondary)]">
           {row.role}
         </span>
       ),
@@ -153,11 +153,11 @@ export function AccountManagementModule() {
       header: 'Class & Batch',
       render: (row) =>
         row.role === 'student' ? (
-          <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <span className="text-xs text-[var(--text-muted)]">
             {row.className ?? '—'} · {row.batchName ?? '—'}
           </span>
         ) : (
-          <span className="text-xs text-[#68737C]/60 dark:text-[#AAB6B4]/60">—</span>
+          <span className="text-xs text-[var(--text-muted)]">—</span>
         ),
     },
     {
@@ -179,7 +179,7 @@ export function AccountManagementModule() {
       key: 'createdAt',
       header: 'Created',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4] whitespace-nowrap">
+        <span className="font-mono text-xs tabular-nums text-[var(--text-muted)] whitespace-nowrap">
           {formatShortDate(row.createdAt)}
         </span>
       ),
@@ -338,13 +338,13 @@ export function AccountManagementModule() {
                 {[0, 1, 2].map((i) => (
                   <div
                     key={i}
-                    className="h-28 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+                    className="h-28 rounded-xl bg-[var(--surface-secondary)] animate-pulse"
                   />
                 ))}
               </div>
             ) : accounts.length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-3">
-                <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">No matching accounts found</p>
+              <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center space-y-3">
+                <p className="text-sm font-medium text-[var(--text-primary)]">No matching accounts found</p>
                 {hasFilters && (
                   <Button variant="secondary" size="sm" onClick={handleClearFilters}>
                     Clear Filters
@@ -355,21 +355,21 @@ export function AccountManagementModule() {
               accounts.map((acc) => (
                 <div
                   key={acc.accountId}
-                  className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-3 bg-white dark:bg-[#151A1E]/70"
+                  className="rounded-xl border border-[var(--border)] p-4 space-y-3 bg-[var(--surface)]"
                 >
                   <div className="flex items-start justify-between gap-3">
                     <div>
                       <button
                         type="button"
                         onClick={() => setDetailAccount(acc)}
-                        className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
+                        className="font-mono text-xs font-semibold text-[var(--accent-text)] hover:underline cursor-pointer"
                       >
                         {acc.accountId}
                       </button>
-                      <p className="mt-0.5 font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="mt-0.5 font-medium text-[var(--text-primary)]">
                         {acc.name}
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
+                      <p className="text-xs text-[var(--text-muted)] capitalize">
                         {acc.role}
                         {acc.role === 'student' && acc.className
                           ? ` · ${acc.className} · ${acc.batchName ?? ''}`
@@ -382,7 +382,7 @@ export function AccountManagementModule() {
                     />
                   </div>
 
-                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[#E2E8E5] dark:border-[#344047] text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-[var(--border)] text-xs text-[var(--text-muted)]">
                     <span className="font-mono">{acc.phone}</span>
                     <span>{formatShortDate(acc.createdAt)}</span>
                   </div>
@@ -424,23 +424,23 @@ export function AccountManagementModule() {
           subtitle={isFirebaseConnectedMode() ? 'Latest provisioned IDs in Cloud Firestore' : 'Latest provisioned IDs in the local development adapter'}
           padding="sm"
         >
-          <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+          <ul className="divide-y divide-[var(--border)]">
             {overview.recentAccounts.map((acc) => (
               <li key={acc.accountId} className="py-2.5 flex flex-wrap items-center justify-between gap-2 text-sm">
                 <div className="flex items-center gap-3">
                   <button
                     type="button"
                     onClick={() => setDetailAccount(acc)}
-                    className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer"
+                    className="font-mono text-xs font-semibold text-[var(--accent-text)] hover:underline cursor-pointer"
                   >
                     {acc.accountId}
                   </button>
-                  <span className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{acc.name}</span>
-                  <span className="text-xs text-[#68737C] dark:text-[#AAB6B4] capitalize">
+                  <span className="font-medium text-[var(--text-primary)]">{acc.name}</span>
+                  <span className="text-xs text-[var(--text-muted)] capitalize">
                     {acc.role}
                   </span>
                 </div>
-                <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <span className="font-mono text-xs text-[var(--text-muted)]">
                   {formatShortDate(acc.createdAt)}
                 </span>
               </li>

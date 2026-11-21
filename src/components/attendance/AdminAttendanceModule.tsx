@@ -233,10 +233,10 @@ export function AdminAttendanceModule() {
       header: 'Session',
       render: (row) => (
         <div>
-          <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+          <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
             {row.session.id}
           </p>
-          <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
             {row.session.sessionDate}
           </p>
         </div>
@@ -247,8 +247,8 @@ export function AdminAttendanceModule() {
       header: 'Class & Subject',
       render: (row) => (
         <div>
-          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.subjectName}</p>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-medium text-[var(--text-primary)]">{row.subjectName}</p>
+          <p className="text-xs text-[var(--text-muted)]">
             {row.className} · {row.batchName}
           </p>
         </div>
@@ -258,7 +258,7 @@ export function AdminAttendanceModule() {
       key: 'teacher',
       header: 'Teacher',
       render: (row) => (
-        <span className="text-xs text-[#343C42] dark:text-[#D5E0DD]">
+        <span className="text-xs text-[var(--text-secondary)]">
           {row.teacherName}
         </span>
       ),
@@ -268,11 +268,11 @@ export function AdminAttendanceModule() {
       header: 'Type',
       render: (row) => (
         <div className="text-xs">
-          <p className="capitalize text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="capitalize text-[var(--text-primary)]">
             {row.session.sessionType === 'examination' ? 'Examination' : 'Regular'}
           </p>
           {row.session.examTitle && (
-            <p className="text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[140px]">
+            <p className="text-[var(--text-muted)] truncate max-w-[140px]">
               {row.session.examTitle}
             </p>
           )}
@@ -283,7 +283,7 @@ export function AdminAttendanceModule() {
       key: 'counts',
       header: 'Counts (P / A / L / E)',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-[#343C42] dark:text-[#D5E0DD]">
+        <span className="font-mono text-xs tabular-nums text-[var(--text-secondary)]">
           {row.summary.presentCount} / {row.summary.absentCount} /{' '}
           {row.summary.lateCount} / {row.summary.excusedCount} (
           {row.summary.displayPercentage})
@@ -334,7 +334,7 @@ export function AdminAttendanceModule() {
       key: 'id',
       header: 'Audit ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-mono text-xs font-semibold text-[var(--accent-text)]">
           {row.id}
         </span>
       ),
@@ -343,7 +343,7 @@ export function AdminAttendanceModule() {
       key: 'session',
       header: 'Session / Record',
       render: (row) => (
-        <span className="font-mono text-xs text-[#343C42] dark:text-[#D5E0DD]">
+        <span className="font-mono text-xs text-[var(--text-secondary)]">
           {row.attendanceSessionId}
           {row.attendanceRecordId ? ` · ${row.attendanceRecordId}` : ''}
         </span>
@@ -353,7 +353,7 @@ export function AdminAttendanceModule() {
       key: 'action',
       header: 'Action',
       render: (row) => (
-        <span className="text-xs font-medium capitalize text-[#171D21] dark:text-[#F4F7F6]">
+        <span className="text-xs font-medium capitalize text-[var(--text-primary)]">
           {row.action.replace(/_/g, ' ')}
         </span>
       ),
@@ -364,14 +364,14 @@ export function AdminAttendanceModule() {
       render: (row) => (
         <div className="text-xs space-y-0.5">
           {row.previousValue && row.newValue ? (
-            <p className="font-mono text-[#171D21] dark:text-[#F4F7F6]">
+            <p className="font-mono text-[var(--text-primary)]">
               {row.previousValue} → {row.newValue}
             </p>
           ) : (
-            <p className="text-[#68737C] dark:text-[#AAB6B4]">{row.newValue ?? '—'}</p>
+            <p className="text-[var(--text-muted)]">{row.newValue ?? '—'}</p>
           )}
           {row.reason && (
-            <p className="text-[#68737C] dark:text-[#AAB6B4]">Reason: {row.reason}</p>
+            <p className="text-[var(--text-muted)]">Reason: {row.reason}</p>
           )}
         </div>
       ),
@@ -385,7 +385,7 @@ export function AdminAttendanceModule() {
       key: 'timestamp',
       header: 'Timestamp',
       render: (row) => (
-        <span className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+        <span className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
           {formatShortDate(row.timestamp)}
         </span>
       ),
@@ -451,9 +451,9 @@ export function AdminAttendanceModule() {
               padding="sm"
             >
               <div className="overflow-x-auto">
-                <table className="min-w-full divide-y divide-[#E2E8E5] dark:divide-[#344047] text-xs sm:text-sm">
+                <table className="min-w-full divide-y divide-[var(--border)] text-xs sm:text-sm">
                   <thead>
-                    <tr className="text-left text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <tr className="text-left text-xs text-[var(--text-muted)]">
                       <th className="py-2 pr-3 font-semibold">Class</th>
                       <th className="py-2 px-3 font-semibold text-right">Submitted</th>
                       <th className="py-2 px-3 font-semibold text-right">Present</th>
@@ -463,10 +463,10 @@ export function AdminAttendanceModule() {
                       <th className="py-2 pl-3 font-semibold text-right">Attendance %</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                  <tbody className="divide-y divide-[var(--border)]">
                     {overview.byClass.map((row) => (
                       <tr key={row.classId}>
-                        <td className="py-2.5 pr-3 font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                        <td className="py-2.5 pr-3 font-medium text-[var(--text-primary)]">
                           {row.className}
                         </td>
                         <td className="py-2.5 px-3 text-right font-mono tabular-nums">
@@ -539,7 +539,7 @@ export function AdminAttendanceModule() {
                 value={dateFilter}
                 onChange={(e) => setDateFilter(e.target.value)}
                 aria-label="Filter attendance by date"
-                className="min-h-[44px] rounded-xl px-3.5 py-2.5 text-sm bg-white dark:bg-[#151A1E] border border-[#E2E8E5] dark:border-[#344047] text-[#171D21] dark:text-[#F4F7F6] focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25 transition-colors duration-150"
+                className="min-h-[44px] rounded-xl px-3.5 py-2.5 text-sm bg-[var(--surface)] border border-[var(--border)] text-[var(--text-primary)] focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)] transition-colors duration-150"
               />
 
               <Select
@@ -630,24 +630,24 @@ export function AdminAttendanceModule() {
 
             <div className="md:hidden space-y-3">
               {sessions.length === 0 ? (
-                <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] text-center py-6">
+                <p className="text-sm text-[var(--text-muted)] text-center py-6">
                   No matching attendance sessions found.
                 </p>
               ) : (
                 sessions.map((row) => (
                   <div
                     key={row.session.id}
-                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-[#F7F9F8] dark:bg-[#151A1E]/75"
+                    className="rounded-xl border border-[var(--border)] p-4 space-y-2.5 bg-[var(--surface-secondary)]"
                   >
                     <div className="flex items-start justify-between gap-2">
                       <div>
-                        <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                        <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                           {row.session.id} · {row.session.sessionDate}
                         </p>
-                        <p className="font-semibold text-sm text-[#20262B] dark:text-[#F4F7F6]">
+                        <p className="font-semibold text-sm text-[var(--text-primary)]">
                           {row.subjectName}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {row.className} · {row.batchName} · {row.teacherName}
                         </p>
                       </div>
@@ -662,7 +662,7 @@ export function AdminAttendanceModule() {
                         label={row.session.status}
                       />
                     </div>
-                    <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                       P:{row.summary.presentCount} A:{row.summary.absentCount} L:
                       {row.summary.lateCount} E:{row.summary.excusedCount} ·{' '}
                       {row.summary.displayPercentage}
@@ -712,30 +712,30 @@ export function AdminAttendanceModule() {
             {auditEntries.map((entry) => (
               <div
                 key={entry.id}
-                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 space-y-1.5 bg-[#F7F9F8] dark:bg-[#151A1E]/75 text-xs"
+                className="rounded-xl border border-[var(--border)] p-3.5 space-y-1.5 bg-[var(--surface-secondary)] text-xs"
               >
                 <div className="flex items-center justify-between gap-2">
-                  <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                  <span className="font-mono font-semibold text-[var(--accent-text)]">
                     {entry.id}
                   </span>
-                  <span className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                  <span className="font-mono text-[var(--text-muted)]">
                     {formatShortDate(entry.timestamp)}
                   </span>
                 </div>
-                <p className="font-medium capitalize text-[#171D21] dark:text-[#F4F7F6]">
+                <p className="font-medium capitalize text-[var(--text-primary)]">
                   {entry.action.replace(/_/g, ' ')} ({entry.attendanceSessionId})
                 </p>
                 {entry.previousValue && entry.newValue ? (
-                  <p className="font-mono text-[#343C42] dark:text-[#D5E0DD]">
+                  <p className="font-mono text-[var(--text-secondary)]">
                     {entry.previousValue} → {entry.newValue}
                   </p>
                 ) : (
-                  <p className="text-[#68737C] dark:text-[#AAB6B4]">{entry.newValue}</p>
+                  <p className="text-[var(--text-muted)]">{entry.newValue}</p>
                 )}
                 {entry.reason && (
-                  <p className="text-[#68737C] dark:text-[#AAB6B4]">Reason: {entry.reason}</p>
+                  <p className="text-[var(--text-muted)]">Reason: {entry.reason}</p>
                 )}
-                <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">Actor: {entry.actorId}</p>
+                <p className="font-mono text-[var(--text-muted)]">Actor: {entry.actorId}</p>
               </div>
             ))}
           </div>
@@ -756,7 +756,7 @@ export function AdminAttendanceModule() {
       >
         {selectedSession && (
           <div className="space-y-5">
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 bg-[#F0F4F2] dark:bg-[#151A1E] text-xs space-y-1 font-mono tabular-nums">
+            <div className="rounded-xl border border-[var(--border)] p-3.5 bg-[var(--surface-secondary)] text-xs space-y-1 font-mono tabular-nums">
               <p>
                 Teacher: {selectedSession.teacherName} ({selectedSession.session.teacherId}) ·
                 Type:{' '}
@@ -772,20 +772,20 @@ export function AdminAttendanceModule() {
             </div>
 
             <div className="space-y-2">
-              <h3 className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+              <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                 Student Roster ({selectedSession.records.length})
               </h3>
-              <ul className="divide-y divide-[#E2E8E5] dark:divide-[#344047] max-h-64 overflow-y-auto">
+              <ul className="divide-y divide-[var(--border)] max-h-64 overflow-y-auto">
                 {selectedSession.records.map((item) => (
                   <li
                     key={item.record.id}
                     className="py-2.5 flex flex-wrap items-center justify-between gap-2"
                   >
                     <div>
-                      <p className="text-sm font-medium text-[#20262B] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-medium text-[var(--text-primary)]">
                         {item.studentName}
                       </p>
-                      <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="font-mono text-xs text-[var(--text-muted)]">
                         {item.record.studentId}
                         {item.record.remarks ? ` · ${item.record.remarks}` : ''}
                       </p>
@@ -818,12 +818,12 @@ export function AdminAttendanceModule() {
             </div>
 
             {selectedSession.auditEntries.length > 0 && (
-              <div className="space-y-2 pt-3 border-t border-[#E2E8E5] dark:border-[#344047]">
-                <div className="flex items-center gap-2 text-xs font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-                  <History className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+              <div className="space-y-2 pt-3 border-t border-[var(--border)]">
+                <div className="flex items-center gap-2 text-xs font-semibold text-[var(--text-primary)]">
+                  <History className="w-3.5 h-3.5 text-[var(--accent-text)]" aria-hidden="true" />
                   <span>Session Audit Trail ({selectedSession.auditEntries.length})</span>
                 </div>
-                <ul className="space-y-1.5 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <ul className="space-y-1.5 text-xs text-[var(--text-muted)]">
                   {selectedSession.auditEntries.map((aud) => (
                     <li key={aud.id} className="font-mono">
                       [{formatShortDate(aud.timestamp)}] {aud.actorId} ·{' '}
@@ -852,8 +852,8 @@ export function AdminAttendanceModule() {
         <form onSubmit={handleSubmitCorrection} className="space-y-4">
           {correctionError && <Alert tone="error">{correctionError}</Alert>}
 
-          <div className="text-xs text-[#68737C] dark:text-[#AAB6B4] space-y-1">
-            <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+          <div className="text-xs text-[var(--text-muted)] space-y-1">
+            <p className="font-semibold text-[var(--text-primary)]">
               {correctionTarget?.studentName} ({correctionTarget?.record.studentId})
             </p>
             <p>

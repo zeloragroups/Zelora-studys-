@@ -31,7 +31,7 @@ export function Tabs<T extends string = string>({
         role="tablist"
         aria-label={ariaLabel}
         className={cn(
-          'flex items-center gap-1 overflow-x-auto no-scrollbar border-b border-[#E2E8E5] dark:border-[#344047]',
+          'flex items-center gap-1 overflow-x-auto no-scrollbar border-b border-[var(--border)]',
           className
         )}
       >
@@ -46,10 +46,10 @@ export function Tabs<T extends string = string>({
               onClick={() => onChange(item.id)}
               className={cn(
                 'relative inline-flex items-center gap-2 min-h-[42px] px-3.5 py-2 text-xs sm:text-sm font-medium whitespace-nowrap shrink-0 transition-colors duration-150 cursor-pointer',
-                'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
+                'focus-visible:outline-2 focus-visible:outline-offset-[-2px] focus-visible:outline-[var(--accent)]',
                 active
-                  ? 'text-[#168A63] dark:text-[#42DDA9] font-semibold'
-                  : 'text-[#68737C] dark:text-[#AAB6B4] hover:text-[#171D21] dark:hover:text-[#F4F7F6]'
+                  ? 'text-[var(--accent-text)] font-semibold'
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               )}
             >
               {item.icon}
@@ -62,7 +62,7 @@ export function Tabs<T extends string = string>({
               {active && (
                 <span
                   aria-hidden="true"
-                  className="absolute inset-x-1.5 bottom-0 h-0.5 rounded-full bg-[#18B985] dark:bg-[#42DDA9]"
+                  className="absolute inset-x-1.5 bottom-0 h-0.5 rounded-full bg-[var(--accent)]"
                 />
               )}
             </button>
@@ -78,7 +78,7 @@ export function Tabs<T extends string = string>({
       aria-label={ariaLabel}
       className={cn(
         'inline-flex max-w-full items-center gap-1 overflow-x-auto no-scrollbar rounded-xl p-1',
-        'bg-[#F0F4F2] dark:bg-[#252E33] border border-[#E2E8E5] dark:border-[#344047]',
+        'bg-[var(--surface-secondary)] border border-[var(--border)]',
         className
       )}
     >
@@ -92,17 +92,17 @@ export function Tabs<T extends string = string>({
             aria-selected={active}
             onClick={() => onChange(item.id)}
             className={cn(
-              'inline-flex items-center gap-1.5 min-h-[38px] px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap shrink-0 transition-[background-color,color,box-shadow] duration-150 cursor-pointer',
-              'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]',
+              'inline-flex items-center gap-1.5 min-h-[38px] px-3 py-1.5 rounded-lg text-xs font-medium whitespace-nowrap shrink-0 transition-[background-color,color,box-shadow,border-color] duration-150 cursor-pointer',
+              'focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-[var(--accent)]',
               active
-                ? 'bg-white dark:bg-[#1D2429] text-[#171D21] dark:text-[#F4F7F6] font-semibold shadow-xs border border-[#E2E8E5] dark:border-[#344047]'
-                : 'text-[#68737C] dark:text-[#AAB6B4] hover:text-[#171D21] dark:hover:text-[#F4F7F6] border border-transparent'
+                ? 'bg-[var(--surface)] text-[var(--text-primary)] font-semibold shadow-xs border border-[var(--border)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)] border border-transparent'
             )}
           >
             {item.icon}
             <span>{item.label}</span>
             {typeof item.count === 'number' && (
-              <span className="font-mono tabular-nums text-[11px] text-[#68737C] dark:text-[#AAB6B4]">
+              <span className="font-mono tabular-nums text-[11px] text-[var(--text-muted)]">
                 {item.count}
               </span>
             )}

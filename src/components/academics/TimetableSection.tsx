@@ -212,12 +212,12 @@ export function TimetableSection({
         className={cn(
           'rounded-xl border p-3 space-y-2 transition-colors',
           entry.status === 'cancelled'
-            ? 'border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33]/60 opacity-75'
-            : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#1D2429]'
+            ? 'border-[var(--border)] bg-[var(--surface-secondary)] opacity-75'
+            : 'border-[var(--border)] bg-[var(--surface)]'
         )}
       >
         <div className="flex items-center justify-between gap-2">
-          <span className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
+          <span className="font-mono text-xs font-semibold tabular-nums text-[var(--accent-text)]">
             {entry.startTime}–{entry.endTime}
           </span>
           <StatusText
@@ -227,18 +227,18 @@ export function TimetableSection({
         </div>
 
         <div>
-          <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">{subject}</p>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-sm font-semibold text-[var(--text-primary)]">{subject}</p>
+          <p className="text-xs text-[var(--text-muted)]">
             {cls} · {batch}
           </p>
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs text-[var(--text-muted)]">
             {teacher}
             {entry.room ? ` · ${entry.room}` : ''}
           </p>
         </div>
 
-        <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-[#E2E8E5] dark:border-[#344047]">
-          <span className="font-mono text-[11px] text-[#68737C] dark:text-[#AAB6B4]">{entry.entryId}</span>
+        <div className="flex items-center justify-between gap-2 pt-1.5 border-t border-[var(--border)]">
+          <span className="font-mono text-[11px] text-[var(--text-muted)]">{entry.entryId}</span>
           <div className="inline-flex items-center gap-1">
             <IconButton
               size="sm"
@@ -363,7 +363,7 @@ export function TimetableSection({
 
           <div className="space-y-3">
             {filteredEntries.filter((e) => e.dayOfWeek === mobileDay).length === 0 ? (
-              <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center text-xs text-[var(--text-muted)]">
                 No sessions scheduled on {mobileDay}.
               </div>
             ) : (
@@ -379,22 +379,22 @@ export function TimetableSection({
             return (
               <div
                 key={day}
-                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 p-3.5 space-y-3"
+                className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 space-y-3"
               >
-                <div className="flex items-center justify-between pb-2 border-b border-[#E2E8E5] dark:border-[#344047]">
+                <div className="flex items-center justify-between pb-2 border-b border-[var(--border)]">
                   <div className="flex items-center gap-2">
-                    <CalendarClock className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
-                    <h3 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <CalendarClock className="w-4 h-4 text-[var(--accent-text)]" aria-hidden="true" />
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                       {day}
                     </h3>
                   </div>
-                  <span className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                  <span className="font-mono text-xs text-[var(--text-muted)] tabular-nums">
                     {dayEntries.filter((e) => e.status === 'active').length} active
                   </span>
                 </div>
 
                 {dayEntries.length === 0 ? (
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+                  <p className="text-xs text-[var(--text-muted)] py-4 text-center">
                     No sessions
                   </p>
                 ) : (

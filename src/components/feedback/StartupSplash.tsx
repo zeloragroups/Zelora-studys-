@@ -14,7 +14,7 @@ interface StartupSplashProps {
 }
 
 /**
- * ZELORA STUDYS Startup Loading Screen.
+ * ZELORA STUDYS Luxury Academic Startup Loading Screen.
  * - Directly tracks real authentication and session restoration (`isReady`).
  * - Never shows fake percentages or blocks indefinitely once initialization completes.
  */
@@ -53,7 +53,7 @@ export function StartupSplash({
           key="zelora-startup-splash"
           initial={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.22, ease: [0.16, 1, 0.3, 1] } }}
-          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#151A1E] text-[#F4F7F6]"
+          className="fixed inset-0 z-50 flex flex-col items-center justify-center px-6 bg-[#17191D] text-[#F5F3EF]"
           role="status"
           aria-live="polite"
           aria-label="Initializing ZELORA STUDYS workspace"
@@ -68,14 +68,14 @@ export function StartupSplash({
               logoConfiguration={logoConfiguration}
               alt={brandTitle}
               size="lg"
-              className="border-[#35413F] bg-[#1D2429] text-[#42DDA9]"
+              className="border-[#57482E] bg-[#202329] text-[var(--accent)]"
             />
 
-            <h1 className="mt-5 font-display text-2xl sm:text-[26px] font-bold tracking-[0.14em] uppercase text-[#F4F7F6]">
+            <h1 className="mt-5 font-display text-2xl sm:text-[26px] font-bold tracking-[0.16em] uppercase text-[#F5F3EF]">
               {brandTitle}
             </h1>
 
-            <p className="mt-1.5 text-xs sm:text-sm text-[#A8B4B0]">
+            <p className="mt-1.5 text-xs sm:text-sm text-[#B7B3AA]">
               {initError
                 ? initError
                 : timedOut
@@ -85,7 +85,7 @@ export function StartupSplash({
 
             {!initError && !timedOut ? (
               <div
-                className="mt-6 w-48 h-1 rounded-full bg-[#252E33] overflow-hidden"
+                className="mt-6 w-48 h-1 rounded-full bg-[#282C33] overflow-hidden"
                 aria-hidden="true"
               >
                 <motion.div
@@ -96,7 +96,7 @@ export function StartupSplash({
                     repeat: Infinity,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className="h-full w-1/2 rounded-full bg-[#42DDA9]"
+                  className="h-full w-1/2 rounded-full bg-[var(--accent)]"
                 />
               </div>
             ) : (
@@ -105,7 +105,7 @@ export function StartupSplash({
                   <button
                     type="button"
                     onClick={onRetry}
-                    className="min-h-[40px] px-4 py-2 rounded-xl bg-[#42DDA9] text-[#151A1E] text-xs font-semibold hover:bg-[#18B985] transition-colors cursor-pointer"
+                    className="min-h-[40px] px-4 py-2 rounded-xl bg-[var(--accent)] text-[var(--accent-contrast)] text-xs font-semibold hover:bg-[var(--accent-hover)] transition-colors cursor-pointer"
                   >
                     Retry
                   </button>
@@ -113,7 +113,7 @@ export function StartupSplash({
                 <button
                   type="button"
                   onClick={() => setVisible(false)}
-                  className="min-h-[40px] px-4 py-2 rounded-xl border border-[#35413F] bg-[#1D2429] text-xs font-medium text-[#F4F7F6] hover:bg-[#252E33] transition-colors cursor-pointer"
+                  className="min-h-[40px] px-4 py-2 rounded-xl border border-[#393D43] bg-[#202329] text-xs font-medium text-[#F5F3EF] hover:bg-[#282C33] transition-colors cursor-pointer"
                 >
                   Continue to Sign In
                 </button>

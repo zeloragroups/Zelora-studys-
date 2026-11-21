@@ -27,14 +27,14 @@ export function SearchInput({
       {label && (
         <label
           htmlFor={inputId}
-          className="block text-sm font-medium text-[#20262B] dark:text-[#F4F7F6]"
+          className="block text-sm font-medium text-[var(--text-primary)]"
         >
           {label}
         </label>
       )}
       <div className="relative">
         <Search
-          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[#68737C] dark:text-[#AAB6B4]"
+          className="pointer-events-none absolute left-3.5 top-1/2 -translate-y-1/2 w-4 h-4 text-[var(--text-muted)]"
           strokeWidth={1.75}
           aria-hidden="true"
         />
@@ -47,10 +47,10 @@ export function SearchInput({
           className={cn(
             'w-full min-h-[44px] rounded-xl pl-10 py-2.5 text-sm',
             value ? 'pr-10' : 'pr-3.5',
-            'bg-white dark:bg-[#151A1E] text-[#171D21] dark:text-[#F4F7F6]',
-            'placeholder:text-[#68737C]/75 dark:placeholder:text-[#AAB6B4]/60',
-            'border border-[#E2E8E5] dark:border-[#344047]',
-            'focus:border-[#18B985] dark:focus:border-[#42DDA9] focus:outline-2 focus:outline-[#35D6A0]/25 dark:focus:outline-[#42DDA9]/25',
+            'bg-[var(--surface)] dark:bg-[var(--background)] text-[var(--text-primary)]',
+            'placeholder:text-[var(--text-muted)]',
+            'border border-[var(--border)]',
+            'focus:border-[var(--accent)] focus:outline-2 focus:outline-[var(--focus-ring)]',
             'transition-colors duration-150',
             '[&::-webkit-search-cancel-button]:hidden',
             className
@@ -62,7 +62,7 @@ export function SearchInput({
             type="button"
             onClick={() => onValueChange('')}
             aria-label="Clear search"
-            className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 inline-flex items-center justify-center rounded-lg text-[#68737C] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] transition-colors cursor-pointer"
+            className="absolute right-1.5 top-1/2 -translate-y-1/2 w-8 h-8 inline-flex items-center justify-center rounded-lg text-[var(--text-secondary)] hover:text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] transition-colors cursor-pointer"
           >
             <X className="w-3.5 h-3.5" strokeWidth={2} aria-hidden="true" />
           </button>

@@ -71,17 +71,17 @@ export function StatTile({
       : value;
 
   const isCharcoal = resolvedTone === 'charcoal';
-  const isMint = resolvedTone === 'mint';
+  const isAccent = resolvedTone === 'mint';
 
   return (
     <div
       className={cn(
         'rounded-2xl border p-4 sm:p-5 transition-colors duration-150',
         isCharcoal
-          ? 'bg-[#20262B] dark:bg-[#252E33] border-[#343C42] dark:border-[#344047] text-[#F4F7F6]'
-          : isMint
-            ? 'bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 border-[#B8EBD8] dark:border-[#316453]'
-            : 'bg-white dark:bg-[#1D2429] border-[#E2E8E5] dark:border-[#344047] shadow-[0_1px_2px_rgba(23,29,33,0.03)] dark:shadow-none',
+          ? 'bg-[var(--hero-surface)] border-[var(--hero-border)] text-[var(--hero-text)]'
+          : isAccent
+            ? 'bg-[var(--accent-soft)] border-[var(--accent-border)]'
+            : 'bg-[var(--surface)] border-[var(--border)] shadow-[var(--shadow-subtle)]',
         className
       )}
     >
@@ -90,10 +90,10 @@ export function StatTile({
           className={cn(
             'text-xs font-medium',
             isCharcoal
-              ? 'text-[#AAB6B4]'
-              : isMint
-                ? 'text-[#168A63] dark:text-[#42DDA9]'
-                : 'text-[#68737C] dark:text-[#AAB6B4]'
+              ? 'text-[var(--hero-muted)]'
+              : isAccent
+                ? 'text-[var(--accent-text)]'
+                : 'text-[var(--text-secondary)]'
           )}
         >
           {label}
@@ -103,10 +103,10 @@ export function StatTile({
             className={cn(
               'w-8 h-8 rounded-lg inline-flex items-center justify-center shrink-0',
               isCharcoal
-                ? 'bg-[#343C42] text-[#42DDA9]'
-                : isMint
-                  ? 'bg-white/90 dark:bg-[#1D2429] text-[#168A63] dark:text-[#42DDA9] border border-[#B8EBD8]/70 dark:border-[#316453]'
-                  : 'bg-[#F0F4F2] dark:bg-[#252E33] text-[#343C42] dark:text-[#AAB6B4]'
+                ? 'bg-[var(--hero-secondary)] text-[var(--hero-accent)]'
+                : isAccent
+                  ? 'bg-[var(--surface)] text-[var(--accent-text)] border border-[var(--accent-border)]'
+                  : 'bg-[var(--surface-secondary)] text-[var(--text-secondary)]'
             )}
             aria-hidden="true"
           >
@@ -117,7 +117,7 @@ export function StatTile({
       <p
         className={cn(
           'mt-2.5 text-2xl sm:text-[28px] font-semibold tracking-tight font-mono tabular-nums leading-none',
-          isCharcoal ? 'text-[#F4F7F6]' : 'text-[#171D21] dark:text-[#F4F7F6]'
+          isCharcoal ? 'text-[var(--hero-text)]' : 'text-[var(--text-primary)]'
         )}
       >
         {prefix}
@@ -128,9 +128,7 @@ export function StatTile({
         <p
           className={cn(
             'mt-2 text-xs leading-snug',
-            isCharcoal
-              ? 'text-[#AAB6B4]'
-              : 'text-[#68737C] dark:text-[#AAB6B4]'
+            isCharcoal ? 'text-[var(--hero-muted)]' : 'text-[var(--text-secondary)]'
           )}
         >
           {caption}

@@ -25,6 +25,7 @@ import { APP_PACKAGE_VERSION } from '../../config/branding';
 import { useAuth } from '../../context/AuthContext';
 import { useInterface } from '../../context/InterfaceContext';
 import { useTheme } from '../../context/ThemeContext';
+import { ACCENT_PALETTE_MAP, ACCENT_PALETTES, DEFAULT_ACCENT_PALETTE } from '../../design/palettes';
 import {
   isFirebaseConnectedMode,
   LOCAL_LOGO_NOTICE,
@@ -58,6 +59,7 @@ import { Table, type TableColumn } from '../ui/Table';
 import { Textarea } from '../ui/Textarea';
 import { AdminMigrationSection } from './AdminMigrationSection';
 import { SettingsShell, type SettingsCategoryItem } from './SettingsShell';
+import { ThemeCustomizationPanel } from './ThemeCustomizationPanel';
 
 type AdminSettingsCategory =
   | 'account_security'
@@ -435,10 +437,10 @@ export function AdminSettingsModule({
       header: 'Timestamp & Admin',
       render: (r) => (
         <div className="text-xs">
-          <p className="font-mono tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+          <p className="font-mono tabular-nums text-[var(--text-primary)]">
             {formatDateTime(r.timestamp)}
           </p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-[var(--text-muted)]">
             {r.actorId} · {r.id}
           </p>
         </div>
@@ -449,8 +451,8 @@ export function AdminSettingsModule({
       header: 'Change',
       render: (r) => (
         <div className="text-xs">
-          <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">{r.summary}</p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{r.summary}</p>
+          <p className="font-mono text-[var(--text-muted)]">
             {r.category.replace(/_/g, ' ')}
           </p>
         </div>
@@ -461,8 +463,8 @@ export function AdminSettingsModule({
       header: 'Previous → New',
       render: (r) => (
         <div className="text-xs space-y-0.5">
-          <p className="text-[#68737C] dark:text-[#AAB6B4]">From: {r.previousValues}</p>
-          <p className="text-[#171D21] dark:text-[#F4F7F6]">To: {r.newValues}</p>
+          <p className="text-[var(--text-muted)]">From: {r.previousValues}</p>
+          <p className="text-[var(--text-primary)]">To: {r.newValues}</p>
         </div>
       ),
     },
@@ -517,10 +519,10 @@ export function AdminSettingsModule({
     {
       id: 'appearance',
       title: 'Appearance & Personalisation',
-      description: 'Default Light Mode or Dark Charcoal theme and user override policy.',
-      summary: `${settings?.appearanceDefaults.defaultTheme === 'dark' ? 'Dark Charcoal' : 'Light Mode'} · ${settings?.appearanceDefaults.allowPersonalThemePreference ? 'Personal override allowed' : 'Locked to centre default'}`,
+      description: 'Light or Dark Mode, 10 curated accent colour palettes, live theme preview, and override policy.',
+      summary: `${settings?.appearanceDefaults.defaultTheme === 'dark' ? 'Dark Mode' : 'Light Mode'} · ${ACCENT_PALETTE_MAP[settings?.appearanceDefaults.defaultAccentPalette ?? DEFAULT_ACCENT_PALETTE].name} · ${settings?.appearanceDefaults.allowPersonalThemePreference ? 'Personal override allowed' : 'Locked to centre default'}`,
       group: 'Centre & Brand',
-      keywords: ['theme', 'dark', 'light', 'charcoal', 'override'],
+      keywords: ['theme', 'dark', 'light', 'palette', 'accent', 'gold', 'colour', 'override'],
       icon: Palette,
     },
     {
@@ -596,23 +598,23 @@ export function AdminSettingsModule({
                 subtitle="Active Admin identity and authorization boundary (no secrets exposed)."
               >
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between py-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Admin ID</span>
-                    <span className="font-mono font-semibold">{principal.loginId}</span>
+                  <div className="flex justify-between py-2 border-b border-[var(--border)]">
+                    <span className="text-[var(--text-muted)]">Admin ID</span>
+                    <span className="font-mono font-semibold text-[var(--text-primary)]">{principal.loginId}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Display Name</span>
-                    <span className="font-semibold">{principal.fullName}</span>
+                  <div className="flex justify-between py-2 border-b border-[var(--border)]">
+                    <span className="text-[var(--text-muted)]">Display Name</span>
+                    <span className="font-semibold text-[var(--text-primary)]">{principal.fullName}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Account Status</span>
+                  <div className="flex justify-between py-2 border-b border-[var(--border)]">
+                    <span className="text-[var(--text-muted)]">Account Status</span>
                     <StatusText tone="nominal" label="Active Administrator" />
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Session Adapter</span>
-                    <span className="font-mono text-xs">{session.dataSourceMode}</span>
+                  <div className="flex justify-between py-2 border-b border-[var(--border)]">
+                    <span className="text-[var(--text-muted)]">Session Adapter</span>
+                    <span className="font-mono text-xs text-[var(--text-primary)]">{session.dataSourceMode}</span>
                   </div>
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed pt-1">
+                  <p className="text-xs text-[var(--text-muted)] leading-relaxed pt-1">
                     Admin signs in exclusively via Google Sign-In (07alphabro@gmail.com). Teacher and Student password resets are logged by Admin inside the Accounts module.
                   </p>
                   {onSignOut && (
@@ -635,23 +637,23 @@ export function AdminSettingsModule({
                 subtitle="Last persisted Admin change recorded in application settings."
               >
                 <div className="space-y-3 text-sm">
-                  <div className="flex justify-between py-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Updated By</span>
-                    <span className="font-mono font-semibold">{settings.updatedBy}</span>
+                  <div className="flex justify-between py-2 border-b border-[var(--border)]">
+                    <span className="text-[var(--text-muted)]">Updated By</span>
+                    <span className="font-mono font-semibold text-[var(--text-primary)]">{settings.updatedBy}</span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Last Updated</span>
-                    <span className="font-mono text-xs tabular-nums">
+                  <div className="flex justify-between py-2 border-b border-[var(--border)]">
+                    <span className="text-[var(--text-muted)]">Last Updated</span>
+                    <span className="font-mono text-xs tabular-nums text-[var(--text-primary)]">
                       {formatDateTime(settings.updatedAt)}
                     </span>
                   </div>
-                  <div className="flex justify-between py-2 border-b border-[#E2E8E5] dark:border-[#344047]">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Schema Version</span>
-                    <span className="font-mono">v{settings.schemaVersion}</span>
+                  <div className="flex justify-between py-2 border-b border-[var(--border)]">
+                    <span className="text-[var(--text-muted)]">Schema Version</span>
+                    <span className="font-mono text-[var(--text-primary)]">v{settings.schemaVersion}</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-[#68737C] dark:text-[#AAB6B4]">Audit Entries</span>
-                    <span className="font-mono font-semibold tabular-nums">
+                    <span className="text-[var(--text-muted)]">Audit Entries</span>
+                    <span className="font-mono font-semibold tabular-nums text-[var(--text-primary)]">
                       {auditEntries.length}
                     </span>
                   </div>
@@ -662,7 +664,7 @@ export function AdminSettingsModule({
             <Card
               title={`Settings Audit History (${auditEntries.length})`}
               subtitle="Append-only log of centre profile, branding, appearance, academic, and notification changes."
-              action={<History className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />}
+              action={<History className="w-4 h-4 text-[var(--accent-text)]" aria-hidden="true" />}
             >
               <Table
                 columns={auditColumns}
@@ -672,14 +674,14 @@ export function AdminSettingsModule({
                 emptyDescription="Any updates to centre profile, branding, theme policy, or notification settings appear here."
                 mobileCardRender={(r) => (
                   <div className="space-y-1 text-xs">
-                    <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="font-semibold text-[var(--text-primary)]">
                       {r.summary}
                     </p>
-                    <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="font-mono text-[var(--text-muted)]">
                       {r.actorId} · {formatDateTime(r.timestamp)}
                     </p>
-                    <p className="text-[#68737C] dark:text-[#AAB6B4]">From: {r.previousValues}</p>
-                    <p className="text-[#171D21] dark:text-[#F4F7F6]">To: {r.newValues}</p>
+                    <p className="text-[var(--text-muted)]">From: {r.previousValues}</p>
+                    <p className="text-[var(--text-primary)]">To: {r.newValues}</p>
                   </div>
                 )}
               />
@@ -735,12 +737,12 @@ export function AdminSettingsModule({
                 </div>
               </div>
 
-              <div className="pt-4 border-t border-[#E2E8E5] dark:border-[#344047] space-y-4">
+              <div className="pt-4 border-t border-[var(--border)] space-y-4">
                 <div>
-                  <h3 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                     Optional Contact & Address Details
                   </h3>
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="text-xs text-[var(--text-muted)]">
                     Leave blank if not published yet — blank fields never show fabricated placeholder data on receipts or portals.
                   </p>
                 </div>
@@ -955,7 +957,7 @@ export function AdminSettingsModule({
                     }
                   />
 
-                  <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 space-y-3">
+                  <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-3">
                     <div className="flex flex-wrap items-center justify-between gap-3">
                       <div className="flex items-center gap-3">
                         <BrandLogoMark
@@ -964,10 +966,10 @@ export function AdminSettingsModule({
                           size="lg"
                         />
                         <div>
-                          <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                          <p className="text-sm font-semibold text-[var(--text-primary)]">
                             Application Logo Mark
                           </p>
-                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="text-xs text-[var(--text-muted)]">
                             {brandingDraft.logoConfiguration.mode === 'custom_local_image' ||
                             brandingDraft.logoConfiguration.mode === 'firebase_storage_image'
                               ? `${brandingDraft.logoConfiguration.fileName ?? 'Custom image'} (${Math.round(
@@ -979,7 +981,7 @@ export function AdminSettingsModule({
                       </div>
 
                       <div className="flex flex-wrap items-center gap-2">
-                        <label className="min-h-[40px] px-3 py-2 inline-flex items-center gap-1.5 rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#252E33] text-xs font-medium text-[#20262B] dark:text-[#F4F7F6] hover:bg-[#F0F4F2] dark:hover:bg-[#2B353A] cursor-pointer">
+                        <label className="min-h-[40px] px-3 py-2 inline-flex items-center gap-1.5 rounded-xl border border-[var(--border)] bg-[var(--surface)] text-xs font-medium text-[var(--text-primary)] hover:bg-[var(--surface-secondary)] cursor-pointer transition-colors">
                           <ImagePlus className="w-3.5 h-3.5" aria-hidden="true" />
                           <span>Upload PNG / JPG / WebP</span>
                           <input
@@ -1003,7 +1005,7 @@ export function AdminSettingsModule({
                         )}
                       </div>
                     </div>
-                    <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                    <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
                       {brandingDraft.logoConfiguration.storageNotice || LOCAL_LOGO_NOTICE} Maximum size: 250 KB (local preview) / 2 MB (Firebase Storage).
                     </p>
                   </div>
@@ -1059,10 +1061,10 @@ export function AdminSettingsModule({
               >
                 <div className="space-y-4">
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs font-medium text-[var(--text-muted)]">
                       1. Portal Header & Sidebar Badge
                     </p>
-                    <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-3 flex items-center justify-between gap-3">
+                    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3 flex items-center justify-between gap-3">
                       <div className="flex items-center gap-2.5 min-w-0">
                         <BrandLogoMark
                           logoConfiguration={brandingDraft.logoConfiguration}
@@ -1070,10 +1072,10 @@ export function AdminSettingsModule({
                           size="sm"
                         />
                         <div className="min-w-0">
-                          <p className="text-sm font-bold font-display text-[#171D21] dark:text-[#F4F7F6] truncate">
+                          <p className="text-sm font-bold font-display text-[var(--text-primary)] truncate">
                             {brandingDraft.displayName || 'Application Name'}
                           </p>
-                          <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] truncate">
+                          <p className="text-[11px] text-[var(--text-muted)] truncate">
                             {brandingDraft.shortName} · {academicDraft.academicYearDisplay}
                           </p>
                         </div>
@@ -1082,41 +1084,41 @@ export function AdminSettingsModule({
                   </div>
 
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs font-medium text-[var(--text-muted)]">
                       2. Teacher & Student Login Welcome
                     </p>
-                    <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] p-4 space-y-1.5">
-                      <p className="text-[11px] font-medium text-[#168A63] dark:text-[#42DDA9]">
+                    <div className="rounded-xl border border-[var(--border)] bg-[var(--surface)] p-4 space-y-1.5">
+                      <p className="text-[11px] font-medium text-[var(--accent-text)]">
                         Teacher & Student Portal · {academicDraft.academicYearDisplay}
                       </p>
-                      <p className="text-base font-bold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-base font-bold text-[var(--text-primary)]">
                         {brandingDraft.loginWelcomeHeading || 'Welcome Back'}
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                      <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                         {brandingDraft.loginDescription}
                       </p>
                     </div>
                   </div>
 
                   <div className="space-y-1.5">
-                    <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs font-medium text-[var(--text-muted)]">
                       3. Receipt & Printable Report Masthead
                     </p>
-                    <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#DDF8EE]/55 dark:bg-[#244B3E]/70 p-3.5 flex items-start gap-3">
+                    <div className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3.5 flex items-start gap-3">
                       <BrandLogoMark
                         logoConfiguration={brandingDraft.logoConfiguration}
                         alt={centreDraft.centreName}
                         size="md"
                       />
                       <div className="min-w-0">
-                        <p className="text-[11px] font-medium text-[#168A63] dark:text-[#42DDA9]">
+                        <p className="text-[11px] font-medium text-[var(--accent-text)]">
                           Official Verified Payment Receipt
                         </p>
-                        <p className="text-sm font-bold font-display text-[#171D21] dark:text-[#F4F7F6] truncate">
+                        <p className="text-sm font-bold font-display text-[var(--text-primary)] truncate">
                           {centreDraft.centreName}
                         </p>
                         {brandingDraft.tagline && (
-                          <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] truncate">
+                          <p className="text-[11px] text-[var(--text-muted)] truncate">
                             {brandingDraft.tagline}
                           </p>
                         )}
@@ -1131,100 +1133,122 @@ export function AdminSettingsModule({
 
       case 'appearance':
         return (
-          <Card
-            title="Theme & Appearance Defaults"
-            subtitle="Set the default Light or Dark Charcoal theme for new users without overriding anyone's existing personal choice."
-          >
-            <form onSubmit={handleSaveAppearance} className="space-y-5">
-              <div className="grid gap-4 sm:grid-cols-2">
-                <button
-                  type="button"
-                  onClick={() =>
-                    setAppearanceDraft({ ...appearanceDraft, defaultTheme: 'light' })
-                  }
-                  className={cn(
-                    'rounded-2xl border p-4 text-left transition-all cursor-pointer space-y-3',
-                    appearanceDraft.defaultTheme === 'light'
-                      ? 'border-[#18B985] bg-[#DDF8EE]/60 ring-2 ring-[#35D6A0]/25'
-                      : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E]/60'
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
-                      <Sun className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
-                      <span>Default: Light Mode</span>
-                    </span>
-                    {appearanceDraft.defaultTheme === 'light' && (
-                      <StatusText tone="nominal" label="Selected" />
-                    )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-[#F7F9F8] border border-[#E2E8E5]" />
-                    <span className="w-6 h-6 rounded-lg bg-[#20262B] border border-[#E2E8E5]" />
-                    <span className="w-6 h-6 rounded-lg bg-[#35D6A0]" />
-                    <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                      Crisp off-white, charcoal & mint
-                    </span>
-                  </div>
-                </button>
+          <div className="space-y-6">
+            <ThemeCustomizationPanel centreName={centreDraft.centreName} />
 
-                <button
-                  type="button"
-                  onClick={() =>
-                    setAppearanceDraft({ ...appearanceDraft, defaultTheme: 'dark' })
-                  }
-                  className={cn(
-                    'rounded-2xl border p-4 text-left transition-all cursor-pointer space-y-3',
-                    appearanceDraft.defaultTheme === 'dark'
-                      ? 'border-[#42DDA9] bg-[#252E33] ring-2 ring-[#42DDA9]/25'
-                      : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E]/60'
-                  )}
-                >
-                  <div className="flex items-center justify-between">
-                    <span className="inline-flex items-center gap-2 text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
-                      <Moon className="w-4 h-4 text-[#42DDA9]" aria-hidden="true" />
-                      <span>Default: Dark Charcoal</span>
-                    </span>
-                    {appearanceDraft.defaultTheme === 'dark' && (
-                      <StatusText tone="nominal" label="Selected" />
+            <Card
+              title="Centre Default Appearance Policy"
+              subtitle="Set the institution-wide default Dark or Light Mode and accent colour palette for new sign-ins without overriding personal preferences."
+            >
+              <form onSubmit={handleSaveAppearance} className="space-y-5">
+                <div className="grid gap-4 sm:grid-cols-2">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAppearanceDraft({ ...appearanceDraft, defaultTheme: 'dark' })
+                    }
+                    className={cn(
+                      'rounded-2xl border p-4 text-left transition-colors cursor-pointer space-y-3',
+                      appearanceDraft.defaultTheme === 'dark'
+                        ? 'border-[var(--accent)] bg-[var(--accent-soft)]'
+                        : 'border-[var(--border)] bg-[var(--surface-secondary)] hover:border-[var(--accent-border)]'
                     )}
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <span className="w-6 h-6 rounded-lg bg-[#151A1E] border border-[#344047]" />
-                    <span className="w-6 h-6 rounded-lg bg-[#1D2429] border border-[#344047]" />
-                    <span className="w-6 h-6 rounded-lg bg-[#42DDA9]" />
-                    <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                      Deep charcoal slate & vibrant mint
-                    </span>
-                  </div>
-                </button>
-              </div>
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                        <Moon className="w-4 h-4 text-[var(--accent-text)]" aria-hidden="true" />
+                        <span>Default: Dark Mode</span>
+                      </span>
+                      {appearanceDraft.defaultTheme === 'dark' && (
+                        <StatusText tone="nominal" label="Selected" />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-[#17191D] border border-[#393D43]" />
+                      <span className="w-6 h-6 rounded-lg bg-[#202329] border border-[#393D43]" />
+                      <span className="w-6 h-6 rounded-lg bg-[#C5A46D]" />
+                      <span className="text-xs text-[var(--text-secondary)]">
+                        Deep Graphite & Gold
+                      </span>
+                    </div>
+                  </button>
 
-              <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4">
-                <Switch
-                  checked={appearanceDraft.allowPersonalThemePreference}
-                  onChange={(checked) =>
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setAppearanceDraft({ ...appearanceDraft, defaultTheme: 'light' })
+                    }
+                    className={cn(
+                      'rounded-2xl border p-4 text-left transition-colors cursor-pointer space-y-3',
+                      appearanceDraft.defaultTheme === 'light'
+                        ? 'border-[var(--accent)] bg-[var(--accent-soft)]'
+                        : 'border-[var(--border)] bg-[var(--surface-secondary)] hover:border-[var(--accent-border)]'
+                    )}
+                  >
+                    <div className="flex items-center justify-between">
+                      <span className="inline-flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                        <Sun className="w-4 h-4 text-[var(--accent-text)]" aria-hidden="true" />
+                        <span>Default: Light Mode</span>
+                      </span>
+                      {appearanceDraft.defaultTheme === 'light' && (
+                        <StatusText tone="nominal" label="Selected" />
+                      )}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <span className="w-6 h-6 rounded-lg bg-[#F8F5EF] border border-[#E6E0D5]" />
+                      <span className="w-6 h-6 rounded-lg bg-[#FFFFFF] border border-[#E6E0D5]" />
+                      <span className="w-6 h-6 rounded-lg bg-[#9C7329]" />
+                      <span className="text-xs text-[var(--text-secondary)]">
+                        Warm Ivory & Crisp White
+                      </span>
+                    </div>
+                  </button>
+                </div>
+
+                <Select
+                  label="Centre Default Accent Colour Palette"
+                  value={appearanceDraft.defaultAccentPalette ?? DEFAULT_ACCENT_PALETTE}
+                  onChange={(e) =>
                     setAppearanceDraft({
                       ...appearanceDraft,
-                      allowPersonalThemePreference: checked,
+                      defaultAccentPalette: e.target
+                        .value as AppearanceDefaults['defaultAccentPalette'],
                     })
                   }
-                  label="Allow users to choose a personal Light / Dark Charcoal override"
-                  description="When enabled, changing the centre default only applies to users who have not set a personal theme preference on their device. Disable to enforce the centre default everywhere."
-                />
-              </div>
-
-              <div className="flex justify-end">
-                <Button
-                  type="submit"
-                  loading={saving}
-                  iconLeft={<Save className="w-4 h-4" aria-hidden="true" />}
                 >
-                  Save Appearance Policy
-                </Button>
-              </div>
-            </form>
-          </Card>
+                  {ACCENT_PALETTES.map((palette) => (
+                    <option key={palette.id} value={palette.id}>
+                      {palette.name} — {palette.description}
+                    </option>
+                  ))}
+                </Select>
+
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4">
+                  <Switch
+                    checked={appearanceDraft.allowPersonalThemePreference}
+                    onChange={(checked) =>
+                      setAppearanceDraft({
+                        ...appearanceDraft,
+                        allowPersonalThemePreference: checked,
+                      })
+                    }
+                    label="Allow users to choose a personal theme and accent palette"
+                    description="When enabled, updating the centre default only applies to users who have not saved a personal preference. Disable to enforce the centre default everywhere."
+                  />
+                </div>
+
+                <div className="flex justify-end">
+                  <Button
+                    type="submit"
+                    loading={saving}
+                    iconLeft={<Save className="w-4 h-4" aria-hidden="true" />}
+                  >
+                    Save Appearance Policy
+                  </Button>
+                </div>
+              </form>
+            </Card>
+          </div>
         );
 
       case 'academic':
@@ -1267,7 +1291,7 @@ export function AdminSettingsModule({
               </div>
 
               <div className="space-y-2">
-                <p className="text-sm font-medium text-[#20262B] dark:text-[#F4F7F6]">
+                <p className="text-sm font-medium text-[var(--text-primary)]">
                   Default Student Timetable View
                 </p>
                 <div className="grid grid-cols-2 gap-3">
@@ -1279,8 +1303,8 @@ export function AdminSettingsModule({
                     className={cn(
                       'min-h-[44px] rounded-xl border px-3 py-2 text-xs font-semibold cursor-pointer transition-colors',
                       academicDraft.defaultTimetableView === 'weekly'
-                        ? 'border-[#B8EBD8] bg-[#DDF8EE] text-[#168A63] dark:border-[#316453] dark:bg-[#244B3E] dark:text-[#42DDA9]'
-                        : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] text-[#68737C] dark:text-[#AAB6B4]'
+                        ? 'border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-text)]'
+                        : 'border-[var(--border)] bg-[var(--surface-secondary)] text-[var(--text-secondary)]'
                     )}
                   >
                     Full Weekly Grid
@@ -1293,8 +1317,8 @@ export function AdminSettingsModule({
                     className={cn(
                       'min-h-[44px] rounded-xl border px-3 py-2 text-xs font-semibold cursor-pointer transition-colors',
                       academicDraft.defaultTimetableView === 'today'
-                        ? 'border-[#B8EBD8] bg-[#DDF8EE] text-[#168A63] dark:border-[#316453] dark:bg-[#244B3E] dark:text-[#42DDA9]'
-                        : 'border-[#E2E8E5] dark:border-[#344047] bg-white dark:bg-[#151A1E] text-[#68737C] dark:text-[#AAB6B4]'
+                        ? 'border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--accent-text)]'
+                        : 'border-[var(--border)] bg-[var(--surface-secondary)] text-[var(--text-secondary)]'
                     )}
                   >
                     Today Focus View
@@ -1361,33 +1385,33 @@ export function AdminSettingsModule({
                   <button
                     type="button"
                     onClick={() => onNavigateShortcut('finance', 'fee_config')}
-                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] p-4 text-left transition-colors cursor-pointer flex items-center justify-between gap-3 group"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] hover:border-[var(--accent-border)] p-4 text-left transition-colors cursor-pointer flex items-center justify-between gap-3 group"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">
                         Fee Structure Rules
                       </p>
-                      <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="mt-1 text-xs text-[var(--text-muted)]">
                         Configure class/batch fixed INR fee amounts and due dates.
                       </p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-[#68737C] group-hover:text-[#168A63] dark:text-[#AAB6B4] dark:group-hover:text-[#42DDA9] shrink-0" aria-hidden="true" />
+                    <ArrowRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--accent-text)] shrink-0" aria-hidden="true" />
                   </button>
 
                   <button
                     type="button"
                     onClick={() => onNavigateShortcut('finance', 'upi_config')}
-                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 hover:bg-[#F0F4F2] dark:hover:bg-[#252E33] p-4 text-left transition-colors cursor-pointer flex items-center justify-between gap-3 group"
+                    className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] hover:border-[var(--accent-border)] p-4 text-left transition-colors cursor-pointer flex items-center justify-between gap-3 group"
                   >
                     <div>
-                      <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-semibold text-[var(--text-primary)]">
                         UPI Pay Now Settings
                       </p>
-                      <p className="mt-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="mt-1 text-xs text-[var(--text-muted)]">
                         Set verified Merchant UPI VPA and payee display name.
                       </p>
                     </div>
-                    <ArrowRight className="w-4 h-4 text-[#68737C] group-hover:text-[#168A63] dark:text-[#AAB6B4] dark:group-hover:text-[#42DDA9] shrink-0" aria-hidden="true" />
+                    <ArrowRight className="w-4 h-4 text-[var(--text-muted)] group-hover:text-[var(--accent-text)] shrink-0" aria-hidden="true" />
                   </button>
                 </div>
 
@@ -1416,13 +1440,13 @@ export function AdminSettingsModule({
             }
           >
             <div className="space-y-4">
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] text-sm">
+              <div className="divide-y divide-[var(--border)] text-sm">
                 <div className="py-3 first:pt-0 flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="font-medium text-[var(--text-primary)]">
                       Supported Session Types
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       Daily regular batch sessions and scheduled examination attendance.
                     </p>
                   </div>
@@ -1430,10 +1454,10 @@ export function AdminSettingsModule({
                 </div>
                 <div className="py-3 flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="font-medium text-[var(--text-primary)]">
                       Admin Correction Audit Trail
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       Every Admin attendance correction requires a written reason and records immutable audit history.
                     </p>
                   </div>
@@ -1441,10 +1465,10 @@ export function AdminSettingsModule({
                 </div>
                 <div className="py-3 last:pb-0 flex items-center justify-between gap-4">
                   <div>
-                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="font-medium text-[var(--text-primary)]">
                       Automatic Absence Alerts
                     </p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="text-xs text-[var(--text-muted)]">
                       Absent markings generate in-app alerts visible in Admin Attendance and Student Notification Centre.
                     </p>
                   </div>
@@ -1462,7 +1486,7 @@ export function AdminSettingsModule({
             subtitle="Control category visibility inside the unified Student Notification Centre. External channels remain disconnected."
           >
             <form onSubmit={handleNotificationSubmit} className="space-y-5">
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 px-4">
+              <div className="divide-y divide-[var(--border)] rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] px-4">
                 {(
                   [
                     {
@@ -1522,7 +1546,7 @@ export function AdminSettingsModule({
                   <option value="unread_only">Unread Only by Default</option>
                 </Select>
 
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 sm:mt-6">
+                <div className="rounded-xl border border-[var(--border)] p-3.5 sm:mt-6">
                   <Switch
                     checked={notifDraft.showUnreadBadgesInNavigation}
                     onChange={(checked) =>
@@ -1600,23 +1624,23 @@ export function AdminSettingsModule({
               }
             >
               <div className="grid gap-4 sm:grid-cols-2 text-sm">
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 space-y-1.5">
-                  <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-1.5">
+                  <p className="text-xs font-medium text-[var(--text-muted)]">
                     Application Identity & Package Version
                   </p>
-                  <p className="font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                  <p className="font-semibold text-[var(--text-primary)]">
                     {settings.applicationBranding.displayName} ({settings.centreProfile.centreName})
                   </p>
-                  <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                  <p className="font-mono text-xs text-[var(--text-muted)]">
                     Package Version: v{APP_PACKAGE_VERSION}
                   </p>
                 </div>
 
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E]/60 p-4 space-y-1.5">
-                  <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 space-y-1.5">
+                  <p className="text-xs font-medium text-[var(--text-muted)]">
                     Persistence & Storage Mode
                   </p>
-                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                  <p className="text-xs text-[var(--text-secondary)] leading-relaxed">
                     {isFirebaseConnectedMode()
                       ? 'Connected directly to Firebase project academy-0007 (Authentication & Cloud Firestore on Spark Free Plan; Cloud Functions disabled) with strict role-scoped security rules.'
                       : 'Explicit LOCAL_DEMO development mode active inside this browser.'}
@@ -1629,7 +1653,7 @@ export function AdminSettingsModule({
               title="Service & Integration Inventory"
               subtitle="Exact status of frontend modules, Firebase services, and disconnected external services."
             >
-              <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+              <div className="divide-y divide-[var(--border)]">
                 {integrations.map((item) => {
                   const badge = getIntegrationTone(item.status);
                   return (
@@ -1638,10 +1662,10 @@ export function AdminSettingsModule({
                       className="py-3.5 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
                     >
                       <div className="space-y-0.5 min-w-0">
-                        <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <p className="text-sm font-semibold text-[var(--text-primary)]">
                           {item.name}
                         </p>
-                        <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="text-xs text-[var(--text-muted)]">
                           {item.purpose} — {item.detail}
                         </p>
                       </div>
@@ -1666,7 +1690,7 @@ export function AdminSettingsModule({
               subtitle="Reset your local browser theme override back to the centre default without affecting stored data."
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs text-[var(--text-muted)]">
                   Clears only the local device theme choice stored in this browser.
                 </p>
                 <Button

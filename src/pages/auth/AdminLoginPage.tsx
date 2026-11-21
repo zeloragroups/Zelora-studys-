@@ -87,7 +87,7 @@ export function AdminLoginPage({ onNavigate }: AdminLoginPageProps) {
           Continue with Google
         </Button>
 
-        <p className="text-xs text-center text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+        <p className="text-xs text-center text-[var(--text-secondary)] leading-relaxed">
           Restricted to authorized Administrator Google accounts. Unauthorized Google accounts are denied access.
         </p>
       </div>

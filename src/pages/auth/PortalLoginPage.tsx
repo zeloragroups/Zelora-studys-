@@ -114,21 +114,21 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
   };
 
   return (
-    <div className="min-h-screen flex flex-col bg-[#F7F9F8] dark:bg-[#151A1E] text-[#20262B] dark:text-[#F4F7F6]">
+    <div className="min-h-screen flex flex-col bg-[var(--background)] text-[var(--text-primary)]">
       {/* Compact Header */}
-      <header className="h-14 px-4 sm:px-6 border-b border-[#E2E8E5] dark:border-[#35413F] bg-white/95 dark:bg-[#1D2429]/95 backdrop-blur-md">
+      <header className="h-14 px-4 sm:px-6 border-b border-[var(--border)] bg-[var(--surface)]/95 backdrop-blur-md">
         <div className="max-w-5xl mx-auto h-full flex items-center justify-between gap-4">
           <button
             type="button"
             onClick={() => onNavigate(ROUTES.HOME)}
-            className="inline-flex items-center gap-2.5 text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9] rounded-lg"
+            className="inline-flex items-center gap-2.5 text-left cursor-pointer focus-visible:outline-2 focus-visible:outline-[var(--accent)] rounded-lg"
           >
             <BrandLogoMark
               logoConfiguration={publicSettings.applicationBranding.logoConfiguration}
               alt={brandTitle}
               size="sm"
             />
-            <span className="font-display text-sm sm:text-base font-bold tracking-[0.06em] uppercase text-[#20262B] dark:text-[#F4F7F6] whitespace-nowrap">
+            <span className="font-display text-sm sm:text-base font-bold tracking-[0.08em] uppercase text-[var(--text-primary)] whitespace-nowrap">
               {brandTitle}
             </span>
           </button>
@@ -143,7 +143,7 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
           {/* Desktop Left Showcase Panel */}
           <section
             aria-label="Platform Overview"
-            className="hidden lg:flex lg:col-span-6 flex-col justify-between rounded-2xl border border-[#E2E8E5] dark:border-[#35413F] bg-white dark:bg-[#1D2429] p-8"
+            className="hidden lg:flex lg:col-span-6 flex-col justify-between rounded-2xl border border-[var(--hero-border)] bg-[var(--hero-surface)] text-[var(--hero-text)] p-8 shadow-[0_12px_36px_rgba(23,25,29,0.14)] dark:shadow-none"
           >
             <div className="space-y-6">
               <div className="flex items-center gap-3">
@@ -153,63 +153,63 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
                   size="md"
                 />
                 <div>
-                  <p className="font-display text-lg font-bold tracking-[0.08em] uppercase text-[#20262B] dark:text-[#F4F7F6]">
+                  <p className="font-display text-lg font-bold tracking-[0.09em] uppercase text-[var(--hero-text)]">
                     {brandTitle}
                   </p>
-                  <p className="text-xs text-[#66736D] dark:text-[#A8B4B0]">
+                  <p className="text-xs text-[var(--hero-muted)]">
                     {branding.academicYearLabel}
                   </p>
                 </div>
               </div>
 
               <div className="space-y-3">
-                <h2 className="font-display text-3xl font-semibold tracking-tight text-[#20262B] dark:text-[#F4F7F6] text-balance">
+                <h2 className="font-display text-3xl font-semibold tracking-tight text-[var(--hero-text)] text-balance">
                   One Academic Workspace for Students &amp; Faculty
                 </h2>
-                <p className="text-sm leading-relaxed text-[#66736D] dark:text-[#A8B4B0]">
+                <p className="text-sm leading-relaxed text-[var(--hero-muted)]">
                   Sign in with your assigned institutional ID and password. Your dashboard, timetable, coursework, and academic records load automatically for your account.
                 </p>
               </div>
             </div>
 
-            <div className="mt-8 pt-6 border-t border-[#E2E8E5] dark:border-[#35413F] space-y-4">
+            <div className="mt-8 pt-6 border-t border-[var(--hero-border)] space-y-4">
               <div className="flex items-start gap-3">
-                <span className="w-8 h-8 rounded-lg bg-[#F0F4F2] dark:bg-[#252E33] text-[#18B985] dark:text-[#42DDA9] inline-flex items-center justify-center shrink-0">
+                <span className="w-8 h-8 rounded-lg bg-[var(--hero-secondary)] border border-[var(--hero-border)] text-[var(--accent)] inline-flex items-center justify-center shrink-0">
                   <CalendarCheck2 className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                  <p className="text-sm font-semibold text-[var(--hero-text)]">
                     Attendance &amp; Class Schedules
                   </p>
-                  <p className="text-xs text-[#66736D] dark:text-[#A8B4B0]">
+                  <p className="text-xs text-[var(--hero-muted)]">
                     Real-time batch timetables and session attendance tracking.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <span className="w-8 h-8 rounded-lg bg-[#F0F4F2] dark:bg-[#252E33] text-[#18B985] dark:text-[#42DDA9] inline-flex items-center justify-center shrink-0">
+                <span className="w-8 h-8 rounded-lg bg-[var(--hero-secondary)] border border-[var(--hero-border)] text-[var(--accent)] inline-flex items-center justify-center shrink-0">
                   <BookOpenCheck className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                  <p className="text-sm font-semibold text-[var(--hero-text)]">
                     Homework &amp; Online Assessments
                   </p>
-                  <p className="text-xs text-[#66736D] dark:text-[#A8B4B0]">
+                  <p className="text-xs text-[var(--hero-muted)]">
                     Structured assignments, objective tests, and verified feedback.
                   </p>
                 </div>
               </div>
 
               <div className="flex items-start gap-3">
-                <span className="w-8 h-8 rounded-lg bg-[#F0F4F2] dark:bg-[#252E33] text-[#18B985] dark:text-[#42DDA9] inline-flex items-center justify-center shrink-0">
+                <span className="w-8 h-8 rounded-lg bg-[var(--hero-secondary)] border border-[var(--hero-border)] text-[var(--accent)] inline-flex items-center justify-center shrink-0">
                   <ClipboardCheck className="w-4 h-4" strokeWidth={1.75} aria-hidden="true" />
                 </span>
                 <div>
-                  <p className="text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                  <p className="text-sm font-semibold text-[var(--hero-text)]">
                     Results &amp; Fee Transparency
                   </p>
-                  <p className="text-xs text-[#66736D] dark:text-[#A8B4B0]">
+                  <p className="text-xs text-[var(--hero-muted)]">
                     Published examination scores, digital receipts, and verified notices.
                   </p>
                 </div>
@@ -224,16 +224,16 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
             transition={{ duration: 0.2, ease: [0.16, 1, 0.3, 1] }}
             className="lg:col-span-6 flex items-center"
           >
-            <div className="w-full rounded-2xl bg-white dark:bg-[#1D2429] border border-[#E2E8E5] dark:border-[#35413F] shadow-[0_6px_28px_rgba(23,29,33,0.06)] dark:shadow-none p-6 sm:p-8">
+            <div className="w-full rounded-2xl bg-[var(--surface)] border border-[var(--border)] shadow-[0_8px_30px_rgba(23,25,29,0.06)] dark:shadow-none p-6 sm:p-8">
               <div className="mb-6">
-                <div className="flex items-center gap-2 text-xs font-medium text-[#168A63] dark:text-[#42DDA9]">
+                <div className="flex items-center gap-2 text-xs font-medium text-[var(--accent-text)]">
                   <GraduationCap className="w-4 h-4 shrink-0" strokeWidth={1.75} aria-hidden="true" />
                   <span>{brandTitle} · Student &amp; Teacher Sign In</span>
                 </div>
-                <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight text-[#20262B] dark:text-[#F4F7F6] text-balance">
+                <h1 className="mt-2 font-display text-2xl font-semibold tracking-tight text-[var(--text-primary)] text-balance">
                   {publicSettings.applicationBranding.loginWelcomeHeading || 'Welcome Back'}
                 </h1>
-                <p className="mt-1.5 text-sm text-[#66736D] dark:text-[#A8B4B0] leading-relaxed">
+                <p className="mt-1.5 text-sm text-[var(--text-secondary)] leading-relaxed">
                   {publicSettings.applicationBranding.loginDescription ||
                     'Enter your institutional ID and password to access your Student or Teacher workspace.'}
                 </p>
@@ -299,7 +299,7 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
                   <button
                     type="button"
                     onClick={() => onNavigate(ROUTES.PORTAL_FORGOT_PASSWORD)}
-                    className="text-xs font-medium text-[#168A63] dark:text-[#42DDA9] hover:underline cursor-pointer rounded focus-visible:outline-2 focus-visible:outline-[#18B985] dark:focus-visible:outline-[#42DDA9]"
+                    className="text-xs font-medium text-[var(--accent-text)] hover:underline cursor-pointer rounded focus-visible:outline-2 focus-visible:outline-[var(--accent)]"
                   >
                     Forgot password?
                   </button>
@@ -317,7 +317,7 @@ export function PortalLoginPage({ onNavigate }: PortalLoginPageProps) {
                 </Button>
               </form>
 
-              <p className="mt-6 pt-5 border-t border-[#E2E8E5] dark:border-[#35413F] text-xs text-[#66736D] dark:text-[#A8B4B0] leading-relaxed">
+              <p className="mt-6 pt-5 border-t border-[var(--border)] text-xs text-[var(--text-secondary)] leading-relaxed">
                 Trouble signing in? Contact your ZELORA STUDYS administrator for institutional ID recovery or account activation.
               </p>
             </div>

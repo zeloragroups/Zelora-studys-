@@ -36,11 +36,11 @@ function isSafeLogoSrc(src?: string): string | undefined {
 
 /**
  * Shared brand logo surface. Renders an Admin-uploaded image when configured,
- * otherwise falls back to the Deep Charcoal + Mint Academy emblem.
+ * otherwise falls back to the Deep Graphite + Champagne Gold Academy emblem.
  */
 export function BrandLogoMark({
   logoConfiguration,
-  alt = 'Tuition centre logo',
+  alt = 'ZELORA STUDYS logo',
   size = 'md',
   className,
 }: BrandLogoMarkProps) {
@@ -57,7 +57,7 @@ export function BrandLogoMark({
       <span
         className={cn(
           SIZE_CLASSES[size],
-          'bg-white dark:bg-[#252E33] border border-[#E2E8E5] dark:border-[#344047] inline-flex items-center justify-center shrink-0 overflow-hidden p-0.5 shadow-xs',
+          'bg-[var(--surface)] border border-[var(--border)] inline-flex items-center justify-center shrink-0 overflow-hidden p-0.5 shadow-xs',
           className
         )}
       >
@@ -74,7 +74,7 @@ export function BrandLogoMark({
     <span
       className={cn(
         SIZE_CLASSES[size],
-        'bg-[#20262B] dark:bg-[#252E33] border border-[#343C42] dark:border-[#344047] text-[#35D6A0] dark:text-[#42DDA9] inline-flex items-center justify-center shrink-0 shadow-xs',
+        'bg-[var(--hero-surface)] border border-[var(--accent-border)] text-[var(--accent)] dark:text-[var(--accent)] inline-flex items-center justify-center shrink-0 shadow-xs',
         className
       )}
     >

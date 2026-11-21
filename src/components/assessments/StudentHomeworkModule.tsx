@@ -244,17 +244,17 @@ export function StudentHomeworkModule() {
               {[0, 1].map((i) => (
                 <div
                   key={i}
-                  className="h-24 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+                  className="h-24 rounded-xl bg-[var(--surface-secondary)] animate-pulse"
                 />
               ))}
             </div>
           ) : filteredItems.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
+            <div className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center space-y-2">
               <BookText
-                className="w-6 h-6 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
+                className="w-6 h-6 text-[var(--text-muted)] mx-auto"
                 aria-hidden="true"
               />
-              <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 {items.length === 0
                   ? 'No homework assigned to your active batch yet'
                   : 'No homework matches this filter'}
@@ -273,7 +273,7 @@ export function StudentHomeworkModule() {
               )}
             </div>
           ) : (
-            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+            <div className="divide-y divide-[var(--border)]">
               {filteredItems.map((item) => {
                 const statusMeta = SUBMISSION_STATUS_META[item.effectiveStatus];
                 const lockLabel = item.canSubmitOrResubmit
@@ -292,8 +292,8 @@ export function StudentHomeworkModule() {
                     className="py-4 first:pt-1 last:pb-1 flex flex-col sm:flex-row sm:items-start justify-between gap-4"
                   >
                     <div className="space-y-1.5 min-w-0">
-                      <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
-                        <span className="font-mono font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                      <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
+                        <span className="font-mono font-semibold text-[var(--accent-text)]">
                           {item.homework.id}
                         </span>
                         <span aria-hidden="true">·</span>
@@ -308,26 +308,26 @@ export function StudentHomeworkModule() {
                         </span>
                       </div>
 
-                      <h2 className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                      <h2 className="text-base font-semibold text-[var(--text-primary)]">
                         {item.homework.title}
                       </h2>
 
-                      <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] line-clamp-2">
+                      <p className="text-sm text-[var(--text-muted)] line-clamp-2">
                         {item.homework.instructions}
                       </p>
 
                       <div className="pt-1 flex flex-wrap items-center gap-3">
                         <StatusText tone={statusMeta.tone} label={statusMeta.label} />
-                        <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <span className="text-xs text-[var(--text-muted)]">
                           {lockLabel}
                         </span>
                         {item.submission?.reviewedAt && (
-                          <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                          <span className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                             Reviewed {formatShortDate(item.submission.reviewedAt)}
                           </span>
                         )}
                         {item.submission?.marksAwarded !== undefined && (
-                          <span className="text-xs font-mono font-semibold tabular-nums text-[#171D21] dark:text-[#F4F7F6]">
+                          <span className="text-xs font-mono font-semibold tabular-nums text-[var(--text-primary)]">
                             Marks: {item.submission.marksAwarded}
                             {item.homework.maximumMarks
                               ? ` / ${item.homework.maximumMarks}`
@@ -335,7 +335,7 @@ export function StudentHomeworkModule() {
                           </span>
                         )}
                         {item.submission?.feedback && (
-                          <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <span className="text-xs text-[var(--text-muted)]">
                             Feedback: {item.submission.feedback}
                           </span>
                         )}
@@ -376,16 +376,16 @@ export function StudentHomeworkModule() {
       >
         {selectedItem && (
           <div className="space-y-5">
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-4 text-sm text-[#171D21] dark:text-[#F4F7F6] whitespace-pre-line">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-4 text-sm text-[var(--text-primary)] whitespace-pre-line">
               {selectedItem.homework.instructions}
             </div>
 
             {selectedItem.submission &&
               (selectedItem.submission.feedback ||
                 selectedItem.submission.marksAwarded !== undefined) && (
-                <div className="rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE] dark:bg-[#244B3E] p-3.5 space-y-1 text-sm">
+                <div className="rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] p-3.5 space-y-1 text-sm">
                   <div className="flex flex-wrap items-center justify-between gap-2">
-                    <p className="font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-semibold text-[var(--accent-text)]">
                       Teacher Review
                       {selectedItem.submission.marksAwarded !== undefined && (
                         <span className="ml-2 font-mono tabular-nums">
@@ -398,13 +398,13 @@ export function StudentHomeworkModule() {
                       )}
                     </p>
                     {selectedItem.submission.reviewedAt && (
-                      <span className="text-xs font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                      <span className="text-xs font-mono tabular-nums text-[var(--text-muted)]">
                         Reviewed {formatDateTime(selectedItem.submission.reviewedAt)}
                       </span>
                     )}
                   </div>
                   {selectedItem.submission.feedback && (
-                    <p className="text-xs text-[#171D21] dark:text-[#F4F7F6]">
+                    <p className="text-xs text-[var(--text-primary)]">
                       {selectedItem.submission.feedback}
                     </p>
                   )}
@@ -444,18 +444,18 @@ export function StudentHomeworkModule() {
               </form>
             ) : (
               <div className="space-y-2.5">
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3 flex items-center gap-2 text-xs text-[#343C42] dark:text-[#D5E0DD]">
-                  <Lock className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9] shrink-0" aria-hidden="true" />
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3 flex items-center gap-2 text-xs text-[var(--text-secondary)]">
+                  <Lock className="w-3.5 h-3.5 text-[var(--accent-text)] shrink-0" aria-hidden="true" />
                   <span>
                     {selectedItem.homework.status === 'closed'
                       ? 'This homework has been closed by the teacher. Submissions and edits are locked.'
                       : 'This submission has been reviewed and locked. Edits are allowed only if the teacher returns it for revision.'}
                   </span>
                 </div>
-                <p className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
+                <p className="text-xs font-semibold text-[var(--text-muted)]">
                   Submitted Response
                 </p>
-                <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3.5 text-sm text-[#171D21] dark:text-[#F4F7F6] whitespace-pre-line">
+                <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 text-sm text-[var(--text-primary)] whitespace-pre-line">
                   {selectedItem.submission?.responseText ?? 'No submission recorded (Homework closed).'}
                 </div>
               </div>
@@ -463,9 +463,9 @@ export function StudentHomeworkModule() {
 
             {selectedItem.submission &&
               selectedItem.submission.revisionHistory.length > 0 && (
-                <div className="pt-3 border-t border-[#E2E8E5] dark:border-[#344047] space-y-2">
-                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6]">
-                    <History className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9]" aria-hidden="true" />
+                <div className="pt-3 border-t border-[var(--border)] space-y-2">
+                  <div className="flex items-center gap-1.5 text-xs font-semibold text-[var(--text-primary)]">
+                    <History className="w-3.5 h-3.5 text-[var(--accent-text)]" aria-hidden="true" />
                     <span>
                       Submission Revision History (
                       {selectedItem.submission.revisionHistory.length})
@@ -475,17 +475,17 @@ export function StudentHomeworkModule() {
                     {selectedItem.submission.revisionHistory.map((rev) => (
                       <li
                         key={rev.revisionNumber}
-                        className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#252E33] p-3 space-y-1"
+                        className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3 space-y-1"
                       >
-                        <p className="font-mono tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="font-mono tabular-nums text-[var(--text-muted)]">
                           Revision #{rev.revisionNumber} · {formatDateTime(rev.submittedAt)}
                           {rev.isLate ? ' · Late Submission' : ' · On Time'}
                         </p>
-                        <p className="text-[#171D21] dark:text-[#F4F7F6] whitespace-pre-line">
+                        <p className="text-[var(--text-primary)] whitespace-pre-line">
                           {rev.responseText}
                         </p>
                         {rev.feedback && (
-                          <p className="text-[#168A63] dark:text-[#42DDA9]">
+                          <p className="text-[var(--accent-text)]">
                             Review ({rev.reviewAction?.replace(/_/g, ' ')}): {rev.feedback}
                             {rev.marksAwarded !== undefined ? ` · Marks: ${rev.marksAwarded}` : ''}
                           </p>

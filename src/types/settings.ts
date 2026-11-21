@@ -1,3 +1,5 @@
+import type { AccentPaletteId } from '../design/palettes';
+
 export interface CentreProfile {
   centreName: string;
   shortName: string;
@@ -36,6 +38,7 @@ export interface ApplicationBranding {
 
 export interface AppearanceDefaults {
   defaultTheme: 'light' | 'dark';
+  defaultAccentPalette?: AccentPaletteId;
   allowPersonalThemePreference: boolean;
 }
 

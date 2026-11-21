@@ -113,12 +113,12 @@ export function FoundationHub() {
     {
       key: 'title',
       header: 'Milestone',
-      render: (row) => <span className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.title}</span>,
+      render: (row) => <span className="font-medium text-[var(--text-primary)]">{row.title}</span>,
     },
     {
       key: 'scope',
       header: 'Planned Deliverables',
-      render: (row) => <span className="text-xs text-[#68737C] dark:text-[#AAB6B4]">{row.scope}</span>,
+      render: (row) => <span className="text-xs text-[var(--text-muted)]">{row.scope}</span>,
     },
     {
       key: 'status',
@@ -136,28 +136,28 @@ export function FoundationHub() {
   const interfacesList = Object.values(INTERFACE_SPECS);
 
   return (
-    <div className="min-h-screen bg-[#F7F9F8] dark:bg-[#151A1E] text-[#20262B] dark:text-[#F4F7F6]">
+    <div className="min-h-screen bg-[var(--surface-secondary)] text-[var(--text-primary)]">
       {/* Strict 3-Zone Top Bar Contract */}
-      <header className="sticky top-0 z-30 border-b border-[#E2E8E5] dark:border-[#344047] bg-white/95 dark:bg-[#1D2429]/95 backdrop-blur-sm">
+      <header className="sticky top-0 z-30 border-b border-[var(--border)] bg-[var(--surface)]/95 backdrop-blur-sm">
         <div className="max-w-6xl mx-auto h-14 px-4 sm:px-6 flex items-center justify-between gap-8">
           <a
             href="#top"
-            className="font-display text-base sm:text-lg font-bold tracking-tight text-[#171D21] dark:text-[#F4F7F6] whitespace-nowrap shrink-0"
+            className="font-display text-base sm:text-lg font-bold tracking-tight text-[var(--text-primary)] whitespace-nowrap shrink-0"
           >
             {branding.centreName}
           </a>
 
-          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[#343C42] dark:text-[#AAB6B4]">
-            <a href="#interfaces" className="hover:text-[#171D21] dark:hover:text-[#F4F7F6] transition-colors whitespace-nowrap shrink-0">
+          <nav className="hidden md:flex items-center gap-6 text-sm font-medium text-[var(--text-secondary)]">
+            <a href="#interfaces" className="hover:text-[var(--text-primary)] transition-colors whitespace-nowrap shrink-0">
               Interfaces
             </a>
-            <a href="#design-system" className="hover:text-[#171D21] dark:hover:text-[#F4F7F6] transition-colors whitespace-nowrap shrink-0">
+            <a href="#design-system" className="hover:text-[var(--text-primary)] transition-colors whitespace-nowrap shrink-0">
               Design System
             </a>
-            <a href="#architecture" className="hover:text-[#171D21] dark:hover:text-[#F4F7F6] transition-colors whitespace-nowrap shrink-0">
+            <a href="#architecture" className="hover:text-[var(--text-primary)] transition-colors whitespace-nowrap shrink-0">
               Architecture
             </a>
-            <a href="#roadmap" className="hover:text-[#171D21] dark:hover:text-[#F4F7F6] transition-colors whitespace-nowrap shrink-0">
+            <a href="#roadmap" className="hover:text-[var(--text-primary)] transition-colors whitespace-nowrap shrink-0">
               Roadmap
             </a>
           </nav>
@@ -177,17 +177,17 @@ export function FoundationHub() {
       <main id="top" className="max-w-6xl mx-auto px-4 sm:px-6 py-8 sm:py-10 space-y-10">
         {/* Hero Overview */}
         <section className="space-y-4">
-          <div className="flex flex-wrap items-center gap-2 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <div className="flex flex-wrap items-center gap-2 text-xs text-[var(--text-muted)]">
             <span>Phase 1 of 10</span>
             <span aria-hidden="true">·</span>
             <span>Foundation, Architecture & Design System</span>
             <span aria-hidden="true">·</span>
             <span>{branding.academicYearLabel}</span>
           </div>
-          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[#171D21] dark:text-[#F4F7F6] max-w-3xl text-balance">
+          <h1 className="text-3xl sm:text-4xl font-bold tracking-tight text-[var(--text-primary)] max-w-3xl text-balance">
             Unified Tuition Centre Ecosystem Architecture
           </h1>
-          <p className="text-base text-[#343C42] dark:text-[#AAB6B4] max-w-2xl leading-relaxed">
+          <p className="text-base text-[var(--text-secondary)] max-w-2xl leading-relaxed">
             Four responsive web interfaces engineered around one shared TypeScript domain model, strict ID-based role access, and a disconnected Firebase integration layer ready for manual connection.
           </p>
         </section>
@@ -221,10 +221,10 @@ export function FoundationHub() {
         {/* Four Web Interfaces */}
         <section id="interfaces" className="space-y-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6]">
+            <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">
               Four Separate Web Interface Shells
             </h2>
-            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <p className="text-xs text-[var(--text-muted)]">
               Select any shell to inspect its Phase 1 navigation and role boundaries
             </p>
           </div>
@@ -246,10 +246,10 @@ export function FoundationHub() {
                   </Button>
                 }
               >
-                <p className="text-sm text-[#343C42] dark:text-[#AAB6B4] leading-relaxed">
+                <p className="text-sm text-[var(--text-secondary)] leading-relaxed">
                   {iface.responsibility}
                 </p>
-                <div className="mt-4 pt-3 border-t border-[#E2E8E5] dark:border-[#344047] flex flex-wrap gap-x-4 gap-y-1 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                <div className="mt-4 pt-3 border-t border-[var(--border)] flex flex-wrap gap-x-4 gap-y-1 text-xs text-[var(--text-muted)]">
                   {iface.navItems.map((nav) => (
                     <span key={nav.id}>{nav.label}</span>
                   ))}
@@ -261,7 +261,7 @@ export function FoundationHub() {
 
         {/* Reusable Design System & Interaction Verification */}
         <section id="design-system" className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6]">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">
             Design System & Interactive Feedback Standards
           </h2>
 
@@ -283,8 +283,8 @@ export function FoundationHub() {
                   </Button>
                 </div>
 
-                <div className="pt-4 border-t border-[#E2E8E5] dark:border-[#344047] space-y-2">
-                  <p className="text-xs font-medium text-[#68737C] dark:text-[#AAB6B4]">
+                <div className="pt-4 border-t border-[var(--border)] space-y-2">
+                  <p className="text-xs font-medium text-[var(--text-muted)]">
                     Dual-coded semantic states (icon + label, zero static pills)
                   </p>
                   <div className="flex flex-wrap items-center gap-5">
@@ -317,8 +317,8 @@ export function FoundationHub() {
                   hint="No public self-registration; Admin issues all IDs."
                 />
                 {feedbackBanner && (
-                  <p className="flex items-center gap-2 text-xs font-medium text-[#20262B] dark:text-[#F4F7F6]">
-                    <Check className="w-3.5 h-3.5 text-[#168A63] dark:text-[#42DDA9] shrink-0" aria-hidden="true" />
+                  <p className="flex items-center gap-2 text-xs font-medium text-[var(--text-primary)]">
+                    <Check className="w-3.5 h-3.5 text-[var(--accent-text)] shrink-0" aria-hidden="true" />
                     <span>{feedbackBanner}</span>
                   </p>
                 )}
@@ -329,17 +329,17 @@ export function FoundationHub() {
 
         {/* Architecture & Disconnected Backend Status */}
         <section id="architecture" className="space-y-4">
-          <h2 className="text-xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6]">
+          <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">
             Backend Separation & Governance Status
           </h2>
 
           <div className="grid gap-4 md:grid-cols-3">
             <Card padding="sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-                <Database className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9] shrink-0" aria-hidden="true" />
+              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                <Database className="w-4 h-4 text-[var(--accent-text)] shrink-0" aria-hidden="true" />
                 <span>Firebase Layer</span>
               </div>
-              <p className="mt-2 text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+              <p className="mt-2 text-xs text-[var(--text-muted)] leading-relaxed">
                 {firebaseDescriptor.message}
               </p>
               <div className="mt-3">
@@ -351,11 +351,11 @@ export function FoundationHub() {
             </Card>
 
             <Card padding="sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-                <Shield className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9] shrink-0" aria-hidden="true" />
+              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                <Shield className="w-4 h-4 text-[var(--accent-text)] shrink-0" aria-hidden="true" />
                 <span>Security & Zero-AI Policy</span>
               </div>
-              <p className="mt-2 text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+              <p className="mt-2 text-xs text-[var(--text-muted)] leading-relaxed">
                 No AI APIs, no readable passwords, no payment gateways, and no automatic WhatsApp messaging connected.
               </p>
               <div className="mt-3">
@@ -364,11 +364,11 @@ export function FoundationHub() {
             </Card>
 
             <Card padding="sm">
-              <div className="flex items-center gap-2 text-sm font-semibold text-[#20262B] dark:text-[#F4F7F6]">
-                <Layers className="w-4 h-4 text-[#168A63] dark:text-[#42DDA9] shrink-0" aria-hidden="true" />
+              <div className="flex items-center gap-2 text-sm font-semibold text-[var(--text-primary)]">
+                <Layers className="w-4 h-4 text-[var(--accent-text)] shrink-0" aria-hidden="true" />
                 <span>Service Registry Isolation</span>
               </div>
-              <p className="mt-2 text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+              <p className="mt-2 text-xs text-[var(--text-muted)] leading-relaxed">
                 UI modules call contract-backed services via src/services/index.ts with zero silent fallback to local demo data in production.
               </p>
               <div className="mt-3">
@@ -381,10 +381,10 @@ export function FoundationHub() {
         {/* 10-Phase Roadmap Table */}
         <section id="roadmap" className="space-y-4">
           <div className="flex flex-wrap items-baseline justify-between gap-2">
-            <h2 className="text-xl font-semibold tracking-tight text-[#171D21] dark:text-[#F4F7F6]">
+            <h2 className="text-xl font-semibold tracking-tight text-[var(--text-primary)]">
               10-Phase Implementation Roadmap
             </h2>
-            <span className="inline-flex items-center gap-1.5 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+            <span className="inline-flex items-center gap-1.5 text-xs text-[var(--text-muted)]">
               <Sparkles className="w-3.5 h-3.5" aria-hidden="true" />
               <span>Approval required between phases</span>
             </span>

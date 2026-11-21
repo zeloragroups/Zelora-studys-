@@ -262,40 +262,40 @@ export function AnnouncementsModule() {
               {[0, 1].map((i) => (
                 <div
                   key={i}
-                  className="h-24 rounded-xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+                  className="h-24 rounded-xl bg-[var(--surface-secondary)] animate-pulse"
                 />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-8 text-center space-y-2">
-              <Megaphone className="w-6 h-6 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
-              <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+            <div className="rounded-xl border border-dashed border-[var(--border)] p-8 text-center space-y-2">
+              <Megaphone className="w-6 h-6 text-[var(--text-muted)] mx-auto" aria-hidden="true" />
+              <p className="text-sm font-medium text-[var(--text-primary)]">
                 No announcements match this filter
               </p>
-              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-xs text-[var(--text-muted)]">
                 Create a text-only announcement targeted to teachers, students, or specific batches.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+            <div className="divide-y divide-[var(--border)]">
               {filtered.map((ann) => {
                 const st = statusMeta(ann.publicationStatus);
                 return (
                   <article key={ann.announcementId} className="py-4 first:pt-1 last:pb-1 space-y-2.5">
                     <div className="flex flex-wrap items-start justify-between gap-2">
                       <div>
-                        <p className="font-mono text-xs tabular-nums text-[#68737C] dark:text-[#AAB6B4]">
+                        <p className="font-mono text-xs tabular-nums text-[var(--text-muted)]">
                           {ann.announcementId} · {audienceLabel(ann)} ·{' '}
                           {formatShortDate(ann.publishedAt ?? ann.createdAt)}
                         </p>
-                        <h3 className="mt-1 text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <h3 className="mt-1 text-base font-semibold text-[var(--text-primary)]">
                           {ann.title}
                         </h3>
                       </div>
                       <StatusText tone={st.tone} label={st.label} />
                     </div>
 
-                    <p className="text-sm text-[#343C42] dark:text-[#D4DDDC] whitespace-pre-line leading-relaxed">
+                    <p className="text-sm text-[var(--text-secondary)] whitespace-pre-line leading-relaxed">
                       {ann.content}
                     </p>
 

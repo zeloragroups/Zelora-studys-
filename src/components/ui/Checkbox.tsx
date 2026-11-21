@@ -45,10 +45,10 @@ export function Checkbox({
         <span
           className={cn(
             'w-[18px] h-[18px] rounded-md border flex items-center justify-center transition-colors duration-150',
-            'peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[#18B985] dark:peer-focus-visible:outline-[#42DDA9]',
+            'peer-focus-visible:outline-2 peer-focus-visible:outline-offset-2 peer-focus-visible:outline-[var(--accent)]',
             checked
-              ? 'bg-[#35D6A0] dark:bg-[#42DDA9] border-[#18B985] dark:border-[#42DDA9] text-[#171D21]'
-              : 'bg-white dark:bg-[#151A1E] border-[#C8D3CE] dark:border-[#495760] text-transparent'
+              ? 'bg-[var(--accent)] border-[var(--accent)] text-[var(--accent-contrast)]'
+              : 'bg-[var(--surface)] dark:bg-[var(--background)] border-[var(--border)] text-transparent'
           )}
           aria-hidden="true"
         >
@@ -58,12 +58,12 @@ export function Checkbox({
       {(label || description) && (
         <span className="min-w-0">
           {label && (
-            <span className="block text-sm font-medium text-[#171D21] dark:text-[#F4F7F6] leading-snug">
+            <span className="block text-sm font-medium text-[var(--text-primary)] leading-snug">
               {label}
             </span>
           )}
           {description && (
-            <span className="block mt-0.5 text-xs text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+            <span className="block mt-0.5 text-xs text-[var(--text-secondary)] leading-relaxed">
               {description}
             </span>
           )}

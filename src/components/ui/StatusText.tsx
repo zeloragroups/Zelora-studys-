@@ -10,11 +10,11 @@ interface StatusTextProps {
 }
 
 const TONE_MAP: Record<SemanticTone, string> = {
-  nominal: 'text-[#168A63] dark:text-[#42DDA9]',
-  warning: 'text-[#A67317] dark:text-[#E5B04D]',
-  danger: 'text-[#D64C55] dark:text-[#EF6D75]',
-  info: 'text-[#4285A5] dark:text-[#62A7C7]',
-  neutral: 'text-[#68737C] dark:text-[#AAB6B4]',
+  nominal: 'text-[var(--success)]',
+  warning: 'text-[var(--warning)]',
+  danger: 'text-[var(--error)]',
+  info: 'text-[var(--info)]',
+  neutral: 'text-[var(--text-secondary)]',
 };
 
 /**

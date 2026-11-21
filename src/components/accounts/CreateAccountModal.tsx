@@ -247,7 +247,7 @@ export function CreateAccountModal({
             </div>
           </Alert>
 
-          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="text-xs text-[var(--text-muted)]">
             For security, passwords are never stored in Firestore or displayed again.
           </p>
 
@@ -259,22 +259,22 @@ export function CreateAccountModal({
         <div className="space-y-5">
           {formError && <Alert tone="error">{formError}</Alert>}
 
-          <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047] border border-[#E2E8E5] dark:border-[#344047] rounded-xl text-sm bg-white dark:bg-[#151A1E]/70">
+          <div className="divide-y divide-[var(--border)] border border-[var(--border)] rounded-xl text-sm bg-[var(--surface)]">
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-[#68737C] dark:text-[#AAB6B4]">Generated ID</span>
+              <span className="text-[var(--text-muted)]">Generated ID</span>
               <span className="font-mono font-semibold">{previewId}</span>
             </div>
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-[#68737C] dark:text-[#AAB6B4]">Full Name</span>
+              <span className="text-[var(--text-muted)]">Full Name</span>
               <span className="font-medium text-right">{name.trim()}</span>
             </div>
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-[#68737C] dark:text-[#AAB6B4]">Role</span>
+              <span className="text-[var(--text-muted)]">Role</span>
               <span className="capitalize">{role}</span>
             </div>
             {isStudent && (
               <div className="px-4 py-2.5 flex justify-between gap-4">
-                <span className="text-[#68737C] dark:text-[#AAB6B4]">Class & Batch</span>
+                <span className="text-[var(--text-muted)]">Class & Batch</span>
                 <span className="text-right">
                   {selectedClass && selectedBatch
                     ? `${selectedClass.name} · ${selectedBatch.name}`
@@ -283,22 +283,22 @@ export function CreateAccountModal({
               </div>
             )}
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-[#68737C] dark:text-[#AAB6B4]">Phone</span>
+              <span className="text-[var(--text-muted)]">Phone</span>
               <span className="font-mono tabular-nums">{phone.trim()}</span>
             </div>
             {email.trim() && (
               <div className="px-4 py-2.5 flex justify-between gap-4">
-                <span className="text-[#68737C] dark:text-[#AAB6B4]">Email</span>
+                <span className="text-[var(--text-muted)]">Email</span>
                 <span className="truncate">{email.trim()}</span>
               </div>
             )}
             <div className="px-4 py-2.5 flex justify-between gap-4">
-              <span className="text-[#68737C] dark:text-[#AAB6B4]">Initial Status</span>
+              <span className="text-[var(--text-muted)]">Initial Status</span>
               <span className="capitalize">{status}</span>
             </div>
             {firebaseConnected && (
               <div className="px-4 py-2.5 flex justify-between gap-4">
-                <span className="text-[#68737C] dark:text-[#AAB6B4]">Provisioning Method</span>
+                <span className="text-[var(--text-muted)]">Provisioning Method</span>
                 <span className="text-right text-xs font-medium">
                   {isManualConsoleMode
                     ? `Link Console UID (${existingAuthUid.trim()})`
@@ -322,12 +322,12 @@ export function CreateAccountModal({
           {formError && <Alert tone="error">{formError}</Alert>}
 
           {/* Read-only Auto-generated ID preview */}
-          <div className="flex items-center justify-between gap-3 rounded-xl border border-[#B8EBD8] dark:border-[#316453] bg-[#DDF8EE]/65 dark:bg-[#244B3E]/55 px-3.5 py-2.5">
+          <div className="flex items-center justify-between gap-3 rounded-xl border border-[var(--accent-border)] bg-[var(--accent-soft)] px-3.5 py-2.5">
             <div>
-              <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-xs text-[var(--text-muted)]">
                 Auto-Generated {isStudent ? 'Student' : 'Teacher'} ID
               </p>
-              <p className="font-mono text-sm font-semibold text-[#168A63] dark:text-[#42DDA9]">
+              <p className="font-mono text-sm font-semibold text-[var(--accent-text)]">
                 {previewId || 'Generating...'}
               </p>
             </div>
@@ -345,8 +345,8 @@ export function CreateAccountModal({
           </div>
 
           {firebaseConnected && (
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 p-3 space-y-2.5">
-              <p className="text-xs font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3 space-y-2.5">
+              <p className="text-xs font-semibold text-[var(--text-primary)]">
                 Spark Account Provisioning Method
               </p>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
@@ -358,8 +358,8 @@ export function CreateAccountModal({
                   }}
                   className={`rounded-lg border px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
                     provisioningMode === 'spark_secondary_auth'
-                      ? 'border-[#35D6A0] bg-[#DDF8EE] dark:border-[#42DDA9] dark:bg-[#244B3E] text-[#171D21] dark:text-[#F4F7F6] font-semibold'
-                      : 'border-[#E2E8E5] dark:border-[#344047] text-[#68737C] dark:text-[#AAB6B4]'
+                      ? 'border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--text-primary)] font-semibold'
+                      : 'border-[var(--border)] text-[var(--text-muted)]'
                   }`}
                 >
                   Isolated Spark Auth (Recommended)
@@ -372,20 +372,20 @@ export function CreateAccountModal({
                   }}
                   className={`rounded-lg border px-3 py-2 text-left text-xs transition-colors cursor-pointer ${
                     provisioningMode === 'manual_console_uid'
-                      ? 'border-[#35D6A0] bg-[#DDF8EE] dark:border-[#42DDA9] dark:bg-[#244B3E] text-[#171D21] dark:text-[#F4F7F6] font-semibold'
-                      : 'border-[#E2E8E5] dark:border-[#344047] text-[#68737C] dark:text-[#AAB6B4]'
+                      ? 'border-[var(--accent-border)] bg-[var(--accent-soft)] text-[var(--text-primary)] font-semibold'
+                      : 'border-[var(--border)] text-[var(--text-muted)]'
                   }`}
                 >
                   Link Pre-Created Console UID
                 </button>
               </div>
               {isManualConsoleMode ? (
-                <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
                   Create this user in Firebase Console → Authentication → Users with email{' '}
-                  <span className="font-mono font-semibold text-[#171D21] dark:text-[#F4F7F6]">{derivedAuthEmail}</span>, then paste its UID below.
+                  <span className="font-mono font-semibold text-[var(--text-primary)]">{derivedAuthEmail}</span>, then paste its UID below.
                 </p>
               ) : (
-                <p className="text-[11px] text-[#68737C] dark:text-[#AAB6B4] leading-relaxed">
+                <p className="text-[11px] text-[var(--text-muted)] leading-relaxed">
                   Creates the account in an isolated in-memory secondary Firebase App so your Admin session remains signed in. Unlinked Auth accounts without an Admin-written Firestore profile cannot access app data.
                 </p>
               )}
@@ -433,7 +433,7 @@ export function CreateAccountModal({
                 </Select>
               </div>
             ) : (
-              <p className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F0F4F2] dark:bg-[#151A1E]/70 px-3.5 py-2.5 text-xs text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] px-3.5 py-2.5 text-xs text-[var(--text-muted)]">
                 No active classes or batches are configured yet. You can create this student account now and assign their class/batch later under Academics.
               </p>
             )
@@ -494,7 +494,7 @@ export function CreateAccountModal({
                       type="button"
                       onClick={() => setShowPassword((prev) => !prev)}
                       aria-label={showPassword ? 'Hide password' : 'Show password'}
-                      className="w-9 h-9 inline-flex items-center justify-center rounded-lg text-[#68737C] hover:text-[#171D21] dark:text-[#AAB6B4] dark:hover:text-[#F4F7F6] cursor-pointer"
+                      className="w-9 h-9 inline-flex items-center justify-center rounded-lg text-[var(--text-muted)] hover:text-[var(--text-primary)] cursor-pointer"
                     >
                       {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
                     </button>

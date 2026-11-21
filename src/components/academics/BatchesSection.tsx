@@ -149,7 +149,7 @@ export function BatchesSection({
       key: 'batchId',
       header: 'Batch ID',
       render: (row) => (
-        <span className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-mono text-xs font-semibold text-[var(--accent-text)]">
           {row.batchId}
         </span>
       ),
@@ -159,9 +159,9 @@ export function BatchesSection({
       header: 'Batch Name',
       render: (row) => (
         <div>
-          <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{row.name}</p>
+          <p className="font-medium text-[var(--text-primary)]">{row.name}</p>
           {row.description && (
-            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] truncate max-w-[240px]">
+            <p className="text-xs text-[var(--text-muted)] truncate max-w-[240px]">
               {row.description}
             </p>
           )}
@@ -172,7 +172,7 @@ export function BatchesSection({
       key: 'classId',
       header: 'Class',
       render: (row) => (
-        <span className="text-xs text-[#343C42] dark:text-[#D4DDDC]">
+        <span className="text-xs text-[var(--text-secondary)]">
           {classNameMap.get(row.classId) ?? row.classId}
         </span>
       ),
@@ -301,22 +301,22 @@ export function BatchesSection({
 
         <div className="md:hidden space-y-3">
           {filtered.length === 0 ? (
-            <p className="text-sm text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+            <p className="text-sm text-[var(--text-muted)] py-4 text-center">
               No matching batches found.
             </p>
           ) : (
             filtered.map((batch) => (
               <div
                 key={batch.batchId}
-                className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 space-y-2.5 bg-white dark:bg-[#151A1E]/70"
+                className="rounded-xl border border-[var(--border)] p-4 space-y-2.5 bg-[var(--surface)]"
               >
                 <div className="flex items-start justify-between gap-2">
                   <div>
-                    <p className="font-mono text-xs font-semibold text-[#168A63] dark:text-[#42DDA9]">
+                    <p className="font-mono text-xs font-semibold text-[var(--accent-text)]">
                       {batch.batchId}
                     </p>
-                    <p className="font-medium text-[#171D21] dark:text-[#F4F7F6]">{batch.name}</p>
-                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="font-medium text-[var(--text-primary)]">{batch.name}</p>
+                    <p className="text-xs text-[var(--text-muted)]">
                       {classNameMap.get(batch.classId) ?? batch.classId}
                     </p>
                   </div>
@@ -325,7 +325,7 @@ export function BatchesSection({
                     label={batch.status === 'active' ? 'Active' : 'Inactive'}
                   />
                 </div>
-                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+                <p className="text-xs text-[var(--text-muted)] tabular-nums">
                   {getStudentCount(batch.batchId)} enrolled students
                 </p>
                 <div className="flex flex-wrap gap-2 pt-1">

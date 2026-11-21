@@ -182,7 +182,7 @@ export function AdminFinanceModule({ initialTab = 'overview' }: AdminFinanceModu
   if (!principal || principal.role !== 'admin') {
     return (
       <Card title="Access Denied">
-        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
+        <p className="text-sm text-[var(--error)]">
           Only authorized Administrators can manage fee structures, payment verifications, receipts, and teacher salaries.
         </p>
       </Card>
@@ -251,7 +251,7 @@ export function AdminFinanceModule({ initialTab = 'overview' }: AdminFinanceModu
           {[0, 1, 2, 3].map((idx) => (
             <div
               key={idx}
-              className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33]/70 animate-pulse"
+              className="h-28 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
             />
           ))}
         </div>

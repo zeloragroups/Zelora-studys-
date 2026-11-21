@@ -56,7 +56,7 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
   if (!principal || principal.role !== 'teacher') {
     return (
       <Card title="Access Restricted">
-        <p className="text-sm text-[#D64C55] dark:text-[#EF6D75]">
+        <p className="text-sm text-[var(--error)]">
           This workspace is strictly restricted to authenticated Teacher accounts.
         </p>
       </Card>
@@ -97,7 +97,7 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
           {[0, 1].map((i) => (
             <div
               key={i}
-              className="h-28 rounded-2xl bg-[#F0F4F2] dark:bg-[#252E33] animate-pulse"
+              className="h-28 rounded-2xl bg-[var(--surface-secondary)] animate-pulse"
             />
           ))}
         </div>
@@ -131,12 +131,12 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                   subtitle="Only classes, batches, and subjects actively assigned to your teacher ID appear here."
                 >
                   {workspace.assignments.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
-                      <BookOpen className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
-                      <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                    <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center space-y-2">
+                      <BookOpen className="w-5 h-5 text-[var(--text-muted)] mx-auto" aria-hidden="true" />
+                      <p className="text-sm font-medium text-[var(--text-primary)]">
                         No active class or subject assignments yet
                       </p>
-                      <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="text-xs text-[var(--text-muted)]">
                         Contact the Admin office when your batch assignments are finalized.
                       </p>
                     </div>
@@ -145,16 +145,16 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                       {workspace.assignments.map((item) => (
                         <div
                           key={item.assignment.assignmentId}
-                          className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-4 bg-[#F7F9F8] dark:bg-[#151A1E] space-y-1.5"
+                          className="rounded-xl border border-[var(--border)] p-4 bg-[var(--surface-secondary)] space-y-1.5"
                         >
-                          <p className="font-mono text-xs text-[#168A63] dark:text-[#42DDA9] font-semibold">
+                          <p className="font-mono text-xs text-[var(--accent-text)] font-semibold">
                             {item.assignment.assignmentId}
                             {item.subjectRecord.code ? ` · ${item.subjectRecord.code}` : ''}
                           </p>
-                          <p className="text-base font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                          <p className="text-base font-semibold text-[var(--text-primary)]">
                             {item.subjectRecord.name}
                           </p>
-                          <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                          <p className="text-xs text-[var(--text-muted)]">
                             {item.classRecord.name} · {item.batchRecord.name}
                           </p>
                         </div>
@@ -169,12 +169,12 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                   subtitle="Weekly schedule filtered exclusively to your active teaching sessions."
                 >
                   {sortedTimetable.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
+                    <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center space-y-2">
                       <CalendarClock
-                        className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto"
+                        className="w-5 h-5 text-[var(--text-muted)] mx-auto"
                         aria-hidden="true"
                       />
-                      <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                      <p className="text-sm font-medium text-[var(--text-primary)]">
                         No active teaching sessions scheduled
                       </p>
                     </div>
@@ -194,7 +194,7 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                         <div className="space-y-2.5">
                           {sortedTimetable.filter((t) => t.entry.dayOfWeek === selectedDay).length ===
                           0 ? (
-                            <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] py-4 text-center">
+                            <p className="text-xs text-[var(--text-muted)] py-4 text-center">
                               No sessions on {selectedDay}.
                             </p>
                           ) : (
@@ -203,16 +203,16 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                               .map((slot) => (
                                 <div
                                   key={slot.entry.entryId}
-                                  className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 bg-[#F0F4F2] dark:bg-[#252E33]"
+                                  className="rounded-xl border border-[var(--border)] p-3.5 bg-[var(--surface-secondary)]"
                                 >
-                                  <p className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
+                                  <p className="font-mono text-xs font-semibold tabular-nums text-[var(--accent-text)]">
                                     {slot.entry.startTime}–{slot.entry.endTime}
                                     {slot.entry.room ? ` · ${slot.entry.room}` : ''}
                                   </p>
-                                  <p className="mt-1 font-semibold text-sm text-[#171D21] dark:text-[#F4F7F6]">
+                                  <p className="mt-1 font-semibold text-sm text-[var(--text-primary)]">
                                     {slot.subjectName}
                                   </p>
-                                  <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                                  <p className="text-xs text-[var(--text-muted)]">
                                     {slot.className} · {slot.batchName}
                                   </p>
                                 </div>
@@ -228,26 +228,26 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
                           return (
                             <div
                               key={day}
-                              className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3.5 bg-[#F0F4F2] dark:bg-[#252E33] space-y-2.5"
+                              className="rounded-xl border border-[var(--border)] p-3.5 bg-[var(--surface-secondary)] space-y-2.5"
                             >
-                              <h3 className="text-xs font-semibold text-[#68737C] dark:text-[#AAB6B4]">
+                              <h3 className="text-xs font-semibold text-[var(--text-muted)]">
                                 {day}
                               </h3>
                               {slots.length === 0 ? (
-                                <p className="text-xs text-[#68737C] dark:text-[#AAB6B4] py-2">No sessions</p>
+                                <p className="text-xs text-[var(--text-muted)] py-2">No sessions</p>
                               ) : (
                                 slots.map((slot) => (
                                   <div
                                     key={slot.entry.entryId}
-                                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3 bg-[#FFFFFF] dark:bg-[#1D2429] space-y-1"
+                                    className="rounded-xl border border-[var(--border)] p-3 bg-[var(--surface)] space-y-1"
                                   >
-                                    <p className="font-mono text-xs font-semibold tabular-nums text-[#168A63] dark:text-[#42DDA9]">
+                                    <p className="font-mono text-xs font-semibold tabular-nums text-[var(--accent-text)]">
                                       {slot.entry.startTime}–{slot.entry.endTime}
                                     </p>
-                                    <p className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                                    <p className="text-sm font-semibold text-[var(--text-primary)]">
                                       {slot.subjectName}
                                     </p>
-                                    <p className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                                    <p className="text-xs text-[var(--text-muted)]">
                                       {slot.className} · {slot.batchName}
                                       {slot.entry.room ? ` · ${slot.entry.room}` : ''}
                                     </p>
@@ -270,25 +270,25 @@ export function TeacherAcademicWorkspace({ section }: TeacherAcademicWorkspacePr
               subtitle="Read-only notices published by Admin for teachers or your assigned classes and batches."
             >
               {workspace.announcements.length === 0 ? (
-                <div className="rounded-xl border border-dashed border-[#E2E8E5] dark:border-[#344047] p-6 text-center space-y-2">
-                  <Megaphone className="w-5 h-5 text-[#68737C] dark:text-[#AAB6B4] mx-auto" aria-hidden="true" />
-                  <p className="text-sm font-medium text-[#171D21] dark:text-[#F4F7F6]">
+                <div className="rounded-xl border border-dashed border-[var(--border)] p-6 text-center space-y-2">
+                  <Megaphone className="w-5 h-5 text-[var(--text-muted)] mx-auto" aria-hidden="true" />
+                  <p className="text-sm font-medium text-[var(--text-primary)]">
                     No active announcements for your teaching assignments
                   </p>
                 </div>
               ) : (
-                <div className="divide-y divide-[#E2E8E5] dark:divide-[#344047]">
+                <div className="divide-y divide-[var(--border)]">
                   {workspace.announcements.map((ann) => (
                     <article key={ann.announcementId} className="py-3.5 first:pt-1 last:pb-1 space-y-1.5">
                       <div className="flex flex-wrap items-center justify-between gap-2">
-                        <h3 className="text-sm font-semibold text-[#171D21] dark:text-[#F4F7F6]">
+                        <h3 className="text-sm font-semibold text-[var(--text-primary)]">
                           {ann.title}
                         </h3>
-                        <span className="font-mono tabular-nums text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                        <span className="font-mono tabular-nums text-xs text-[var(--text-muted)]">
                           {formatShortDate(ann.publishedAt ?? ann.createdAt)}
                         </span>
                       </div>
-                      <p className="text-sm text-[#343C42] dark:text-[#D5E0DD] whitespace-pre-line">
+                      <p className="text-sm text-[var(--text-secondary)] whitespace-pre-line">
                         {ann.content}
                       </p>
                     </article>

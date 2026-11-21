@@ -262,8 +262,8 @@ export function AdminSalaryPanel({
       header: 'Teacher & Period',
       render: (p) => (
         <div>
-          <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">{p.teacherName}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-semibold text-[var(--text-primary)]">{p.teacherName}</p>
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {p.teacherId} · {p.periodLabel}
           </p>
         </div>
@@ -277,7 +277,7 @@ export function AdminSalaryPanel({
           <p className="font-medium">
             {p.salaryModel === 'fixed_monthly' ? 'Fixed Monthly' : 'Per-Session'} ({formatInrFromPaise(p.ratePaise)})
           </p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4] tabular-nums">
+          <p className="font-mono text-[var(--text-muted)] tabular-nums">
             {p.eligibleSessionIds.length} submitted non-cancelled session(s)
           </p>
           {p.requiresAdminReview && (
@@ -301,7 +301,7 @@ export function AdminSalaryPanel({
       header: 'Paid',
       align: 'right',
       render: (p) => (
-        <span className="font-mono tabular-nums text-[#168A63] dark:text-[#42DDA9] font-semibold">
+        <span className="font-mono tabular-nums text-[var(--accent-text)] font-semibold">
           {formatInrFromPaise(p.paidAmountPaise)}
         </span>
       ),
@@ -402,7 +402,7 @@ export function AdminSalaryPanel({
       render: (r) => (
         <div>
           <p className="font-mono font-semibold text-xs">{r.id}</p>
-          <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-xs text-[var(--text-muted)]">
             {r.teacherId} · {r.period}
           </p>
         </div>
@@ -414,7 +414,7 @@ export function AdminSalaryPanel({
       render: (r) => (
         <div className="text-xs">
           <p className="font-mono tabular-nums">{formatShortDate(r.paymentDate)}</p>
-          <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+          <p className="font-mono text-[var(--text-muted)]">
             {r.paymentReference ?? 'No external ref'}
           </p>
         </div>
@@ -425,7 +425,7 @@ export function AdminSalaryPanel({
       header: 'Paid Amount',
       align: 'right',
       render: (r) => (
-        <span className="font-semibold text-[#168A63] dark:text-[#42DDA9]">
+        <span className="font-semibold text-[var(--accent-text)]">
           {formatInrFromPaise(r.amountPaise)}
         </span>
       ),
@@ -434,7 +434,7 @@ export function AdminSalaryPanel({
       key: 'note',
       header: 'Note / Audit',
       render: (r) => (
-        <div className="text-xs text-[#68737C] dark:text-[#AAB6B4]">
+        <div className="text-xs text-[var(--text-muted)]">
           <p>{r.note ?? '—'}</p>
           {r.corrected && (
             <StatusText tone="warning" label={`Corrected: ${r.correctionReason ?? ''}`} />
@@ -597,7 +597,7 @@ export function AdminSalaryPanel({
                 <div className="flex items-start justify-between">
                   <div>
                     <p className="font-semibold text-sm">{p.teacherName}</p>
-                    <p className="font-mono text-xs text-[#68737C] dark:text-[#AAB6B4]">
+                    <p className="font-mono text-xs text-[var(--text-muted)]">
                       {p.periodLabel} · {p.salaryModel === 'fixed_monthly' ? 'Fixed Monthly' : 'Per-Session'}
                     </p>
                   </div>
@@ -605,17 +605,17 @@ export function AdminSalaryPanel({
                 </div>
                 <div className="grid grid-cols-3 gap-2 text-xs font-mono tabular-nums">
                   <div>
-                    <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Payable</span>
+                    <span className="block font-sans text-[var(--text-muted)]">Payable</span>
                     <span>{formatInrFromPaise(p.payableAmountPaise)}</span>
                   </div>
                   <div>
-                    <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Paid</span>
-                    <span className="text-[#168A63] dark:text-[#42DDA9]">
+                    <span className="block font-sans text-[var(--text-muted)]">Paid</span>
+                    <span className="text-[var(--accent-text)]">
                       {formatInrFromPaise(p.paidAmountPaise)}
                     </span>
                   </div>
                   <div>
-                    <span className="block font-sans text-[#68737C] dark:text-[#AAB6B4]">Remaining</span>
+                    <span className="block font-sans text-[var(--text-muted)]">Remaining</span>
                     <span className="font-bold">{formatInrFromPaise(p.remainingAmountPaise)}</span>
                   </div>
                 </div>
@@ -663,11 +663,11 @@ export function AdminSalaryPanel({
             <div className="space-y-2 text-xs">
               <div className="flex justify-between">
                 <span className="font-mono font-semibold">{r.id} · {r.teacherId}</span>
-                <span className="font-mono font-bold text-[#168A63] dark:text-[#42DDA9]">
+                <span className="font-mono font-bold text-[var(--accent-text)]">
                   {formatInrFromPaise(r.amountPaise)}
                 </span>
               </div>
-              <p className="text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-[var(--text-muted)]">
                 {r.period} · Paid {formatShortDate(r.paymentDate)}
               </p>
               <Button
@@ -698,7 +698,7 @@ export function AdminSalaryPanel({
       >
         {payPeriodTarget && (
           <form onSubmit={handleRecordPayment} className="space-y-4">
-            <div className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] bg-[#F7F9F8] dark:bg-[#151A1E] p-3.5 text-xs space-y-1 font-mono tabular-nums">
+            <div className="rounded-xl border border-[var(--border)] bg-[var(--surface-secondary)] p-3.5 text-xs space-y-1 font-mono tabular-nums">
               <p>Period: {payPeriodTarget.periodLabel}</p>
               <p>Total Payable: {formatInrFromPaise(payPeriodTarget.payableAmountPaise)}</p>
               <p>Already Paid: {formatInrFromPaise(payPeriodTarget.paidAmountPaise)}</p>
@@ -875,7 +875,7 @@ export function AdminSalaryPanel({
               <Alert tone="warning">{inspectPeriod.reviewReason}</Alert>
             )}
             {inspectPeriod.eligibleSessionsSummary.length === 0 ? (
-              <p className="text-[#68737C] dark:text-[#AAB6B4]">
+              <p className="text-[var(--text-muted)]">
                 No eligible submitted attendance sessions found for {inspectPeriod.periodLabel}.
               </p>
             ) : (
@@ -883,13 +883,13 @@ export function AdminSalaryPanel({
                 {inspectPeriod.eligibleSessionsSummary.map((s) => (
                   <div
                     key={s.sessionId}
-                    className="rounded-xl border border-[#E2E8E5] dark:border-[#344047] p-3 flex flex-wrap items-center justify-between gap-2"
+                    className="rounded-xl border border-[var(--border)] p-3 flex flex-wrap items-center justify-between gap-2"
                   >
                     <div>
-                      <p className="font-semibold text-[#20262B] dark:text-[#F4F7F6]">
+                      <p className="font-semibold text-[var(--text-primary)]">
                         {s.className} · {s.batchName} ({s.subjectName})
                       </p>
-                      <p className="font-mono text-[#68737C] dark:text-[#AAB6B4]">
+                      <p className="font-mono text-[var(--text-muted)]">
                         {s.sessionId} · {formatShortDate(s.sessionDate)} · {s.sessionType}
                       </p>
                     </div>
