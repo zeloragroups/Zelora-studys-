@@ -267,8 +267,16 @@ function runAdminAuthSeparationChecks() {
   assert.ok(routesSrc.includes("path: '/admin'"));
   assert.equal(routesSrc.includes('ADMIN_FORGOT_PASSWORD'), false);
 
-  const redirectsSrc = fs.readFileSync(path.join(rootDir, 'public/_redirects'), 'utf8');
-  assert.ok(redirectsSrc.includes('/* /index.html 200'));
+  assert.equal(
+    fs.existsSync(path.join(rootDir, 'public/_redirects')),
+    false,
+    'public/_redirects must not contain /* /index.html 200 infinite-loop rule'
+  );
+  assert.equal(
+    fs.existsSync(path.join(rootDir, 'public/404.html')),
+    false,
+    'Top-level 404.html must not disable Cloudflare Pages automatic SPA fallback'
+  );
 }
 
 function runSparkPlanOnlyChecks() {
